@@ -41,3 +41,7 @@
 ### Frontend-Modul Meldelisten
 
 * Gibt die Meldeliste eines Turniers aus
+
+## Technische Abläufe
+
+* [Turniermeldungen über das Formular](MELDUNGEN.md)

@@ -1,5 +1,18 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.1.0 (2022-04-13)
+
+* Add: Backend-Module Spieler, Turniere, Meldungen
+* Add: tl_fernschach_spieler, tl_fernschach_mitgliedschaften
+* Add: tl_fernschach_turniere, tl_fernschach_meldungen
+* Add: Abhängigkeit codefog/contao-haste
+* Add: Frontend-Modul Meldeformular.php
+* Change: Ausbau tl_fernschach_mitgliedschaften
+* Add: Zuordnung der Meldungen zu Spielern in tl_fernschach_spieler, ggfs. Neuanlegen des Spielers
+* Change: Anpassung tl_fernschach_spieler anhand von tl_mitgliederverwaltung
+* Delete: tl_fernschach_mitgliedschaften -> kommt in tl_fernschach_spieler mit rein
+* Kompletteinbau des contao-mitgliederverwaltung-bundle
+
 ## Version 0.0.1 (2022-02-24)
 
 * Initiale Version für Contao 4

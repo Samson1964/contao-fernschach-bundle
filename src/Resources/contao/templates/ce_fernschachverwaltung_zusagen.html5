@@ -1,0 +1,16 @@
+<?php $this->extend('block_searchable'); ?>
+
+<?php $this->block('content'); ?>
+
+<table>
+<tr>
+	<th>Teilnehmer</th>
+</tr>
+<?php foreach($this->daten as $item): ?>
+	<tr>
+		<td><?= $item['nachname'] ?>, <?= $item['vorname'] ?></td>
+	</tr>
+<?php endforeach; ?>
+</table>
+
+<?php $this->endblock(); ?>

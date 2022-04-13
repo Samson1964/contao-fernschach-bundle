@@ -1,10 +1,10 @@
 <?php
 
 $GLOBALS['TL_LANG']['tl_module']['options_legend'] = 'Einstellungen';
-$GLOBALS['TL_LANG']['tl_module']['mitgliederverwaltung_zeitraum'] = array('Zeitraum wählen', 'Rückwirkenden Zeitraum auswählen, zu dem Daten angezeigt werden sollen.');
-$GLOBALS['TL_LANG']['tl_module']['mitgliederverwaltung_anzahl'] = array('Maximale Anzahl', 'Maximale Anzahl der anzuzeigenden Datensätze');
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum'] = array('Zeitraum wählen', 'Rückwirkenden Zeitraum auswählen, zu dem Daten angezeigt werden sollen.');
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_anzahl'] = array('Maximale Anzahl', 'Maximale Anzahl der anzuzeigenden Datensätze');
 
-$GLOBALS['TL_LANG']['tl_module']['mitgliederverwaltung_zeitraum_options'] = array
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'] = array
 (
 	'-1 month'            => 'Letzter Monat',
 	'-2 months'           => 'Letzte 2 Monate',

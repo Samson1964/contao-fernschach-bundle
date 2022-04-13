@@ -1,11 +1,11 @@
 <?php
 
 $GLOBALS['TL_LANG']['CTE']['correspondence_chess'] = 'Fernschach-Elemente';
-$GLOBALS['TL_LANG']['CTE']['mitgliederverwaltung_zusagen'] = array('Turnierzusagen anzeigen', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
+$GLOBALS['TL_LANG']['CTE']['fernschachverwaltung_zusagen'] = array('Turnierzusagen anzeigen', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 
 
-$GLOBALS['TL_LANG']['tl_mitgliederverwaltung_import']['headline'] = 'Mitgliederdaten aus einer CSV-Datei importieren';
-$GLOBALS['TL_LANG']['tl_mitgliederverwaltung_import']['format'] = 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'] = 'Mitgliederdaten aus einer CSV-Datei importieren';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['format'] = 
 'Die hochgeladenen CSV-Dateien müssen im UTF-8-Format vorliegen. Je Zeile steht ein Datensatz in der Datei. 
 Die 1. Zeile ist die Kopfzeile mit der Definition der Spalten. Die Spalten werden mit einem Semikolon voneinander getrennt.
 Die Reihenfolge der Spalten ist frei wählbar.<br><br>
@@ -30,7 +30,7 @@ PREFIX_title = 1, wenn vorhanden - leerlassen, wenn nicht vorhanden<br>
 PREFIX_date = Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ oder leerlassen<br><br>
 <i>Mögliche Prefixe: gm, im, wgm, fm, wim, cm, wfm, wcm, fgm, sim, fim, ccm, lgm, cce, lim</i>';
 
-$GLOBALS['TL_LANG']['tl_mitgliederverwaltung']['normen_titel'] = array
+$GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array
 (
 	'fgm' => 'GM',
 	'sim' => 'SIM',

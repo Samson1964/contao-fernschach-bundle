@@ -1,0 +1,25 @@
+.tl_content .inline
+{
+	display            : inline-block;
+}
+
+.align-right
+{
+	text-align         : right;
+}
+
+.tl_folder_tlist
+{
+	padding            : 2px 5px 3px;
+}
+
+.item
+{
+	padding-left       : 5px;
+	padding-right      : 5px;
+}
+
+#tl_navigation .group-fernschach {
+	background:url("/bundles/contaofernschach/images/knight_yellow_24.png") 3px 2px no-repeat;
+	background-size: 16px;
+}
