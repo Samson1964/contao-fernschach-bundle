@@ -8,11 +8,11 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben S
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen', 'Kennzeichen bzw. Kennziffer des Turniers/der Turnierserie');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Meldedatum', 'Meldedatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Art', 'Art des Turniers');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turniertyp', 'Typ des Turniers');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'Nenngeld in Euro');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiter_legend'] = 'Turnierleiter';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterName'] = array('Name', 'Name des Turnierleiters');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterName'] = array('Turnierleiter', 'Name des Turnierleiters');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterEmail'] = array('E-Mail', 'E-Mail-Adresse des Turnierleiters');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['applications_legend'] = 'Bewerbungen';
@@ -45,4 +45,5 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'] = array
 (
 	'n' => 'Nationales Turnier',
 	'i' => 'Internationales Turnier',
+	'e' => 'Einladungsturnier',
 );
