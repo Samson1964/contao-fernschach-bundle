@@ -42,9 +42,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		),
 		'global_operations' => array
 		(
-			'import' => array
+			'importSpieler' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['import'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'],
 				'href'                => 'key=importSpieler',
 				'icon'                => 'bundles/contaofernschach/images/import.png'
 			),

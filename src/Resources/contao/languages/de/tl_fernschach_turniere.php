@@ -34,6 +34,13 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['copy'] = array('Turnier kopieren'
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['delete'] = array('Turnier löschen', 'Turnier %s löschen');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'] = array('Turnier aktivieren/deaktivieren', 'Turnier %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['show'] = array('Turnierdetails anzeigen', 'Details des Turnier %s anzeigen');
+
+/**
+ * Buttons für globale Operationen
+ */
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['importTurniere'] = array('Import Turniere', 'Import von neuen Turnieren bzw. vorhandene Turniere ergänzen.');
+
+
 /**
  * Sonstige Felder
  */

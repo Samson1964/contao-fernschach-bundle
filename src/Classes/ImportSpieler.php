@@ -237,8 +237,8 @@ class ImportSpieler extends \Backend
 	<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">
 	<input type="hidden" name="MAX_FILE_SIZE" value="8048000">
 	
-<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'].'</h2>
-<p style="margin: 18px;">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['format'].'
+	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'].'</h2>
+	<p style="margin: 18px;">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['format'].'
 
 	<div class="tl_tbox">
 		<div class="widget">

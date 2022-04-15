@@ -23,3 +23,17 @@
 	background:url("/bundles/contaofernschach/images/knight_yellow_24.png") 3px 2px no-repeat;
 	background-size: 16px;
 }
+
+table.tl_fernschach_tabelle {
+	border-collapse: collapse;
+	margin: 18px;
+	border: 1px solid #c0c0c0;
+	border-radius: 5px;
+}
+
+table.tl_fernschach_tabelle th,
+table.tl_fernschach_tabelle td {
+	padding: 6px;;
+	border: 1px solid #DFDFDF;
+	vertical-align: top;
+}

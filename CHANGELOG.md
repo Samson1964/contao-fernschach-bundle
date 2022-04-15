@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.2.0 (2022-04-15)
+
+* Turnierimport fertiggestellt (classes/ImportTurniere)
+* Buchungsimport fertiggestellt (classes/ImportBuchungen)
+
 ## Version 0.1.1 (2022-04-14)
 
 * Add: tl_member.fernschach_memberId für Zuordnung eines BdF-Spielers/Mitglieds zu einem Frontend-Mitglied

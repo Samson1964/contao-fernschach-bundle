@@ -112,7 +112,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Aktiv', 'Akti
  * Buttons für Operationen
  */
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['new'] = array('Neuen Spieler', 'Neuen Spieler anlegen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['new'] = array('Neuer Spieler', 'Neuen Spieler anlegen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['edit'] = array('Spieler bearbeiten', 'Spieler %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['copy'] = array('Spieler kopieren', 'Spieler %s kopieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'] = array('Spieler löschen', 'Spieler %s löschen');
@@ -126,9 +126,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bea
  * Buttons für globale Operationen
  */
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['import'] = array('Import', 'Neue Spieler importieren bzw. alte Spieler ergänzen');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['tournaments'] = array('Turniere', 'Turniere verwalten');
-
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'] = array('Import Spieler', 'Neue Spieler importieren bzw. alte Spieler ergänzen');
 
 /**
  * Select-Felder

@@ -53,9 +53,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_konto'] = array
 		),
 		'global_operations' => array
 		(
-			'import' => array
+			'importBuchungen' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_konto']['import'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_konto']['importBuchungen'],
 				'href'                => 'key=importBuchungen',
 				'icon'                => 'bundles/contaofernschach/images/import.png'
 			),
@@ -122,9 +122,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_konto'] = array
 		),
 		'pid' => array
 		(
-			'foreignKey'              => 'tl_fernschach.nachname',
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
 		'tstamp' => array
 		(
@@ -355,7 +353,7 @@ class tl_fernschach_konto extends Backend
 		{
 			while($objBuchungen->next())
 			{
-				$saldo += $objBuchungen->betrag;
+				$saldo += (int)$objBuchungen->betrag;
 			}
 		}
 		return $saldo;
@@ -381,7 +379,7 @@ class tl_fernschach_konto extends Backend
 	 */
 	public function getTurniere(\DataContainer $dc)
 	{
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_tournaments ORDER BY titel ASC")
+		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY titel ASC")
 		                                       ->execute();
 
 		$arr = array();

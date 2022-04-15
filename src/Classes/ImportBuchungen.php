@@ -1,6 +1,6 @@
 <?php
 
-namespace Schachbulle\ContaoMitgliederverwaltungBundle\Classes;
+namespace Schachbulle\ContaoFernschachBundle\Classes;
 
 /**
  * Class ImportBuchungen
@@ -13,7 +13,7 @@ class ImportBuchungen extends \Backend
 	}
 
 	/**
-	 * Importiert eine Turnierliste
+	 * Importiert eine Buchungsliste
 	 */
 	public function run()
 	{
@@ -37,7 +37,7 @@ class ImportBuchungen extends \Backend
 		$objUploader = new $class();
 
 		// Formular wurde abgeschickt, Wortliste importieren
-		if (\Input::post('FORM_SUBMIT') == 'tl_mitgliederverwaltung_import')
+		if (\Input::post('FORM_SUBMIT') == 'tl_fernschach_import_buchungen')
 		{
 			$arrUploaded = $objUploader->uploadTo('system/tmp');
 
@@ -59,7 +59,7 @@ class ImportBuchungen extends \Backend
 					continue;
 				}
 
-				log_message('Importiere Datei: '.$txtFile,'mitgliederverwaltung.log');
+				log_message('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
 				$resFile = $objFile->handle;
 				$record_count = 0;
 				$neu_count = 0;
@@ -70,75 +70,96 @@ class ImportBuchungen extends \Backend
 				while(!feof($resFile))
 				{
 					$zeile = trim(fgets($resFile));
-					$spalte = explode(';', $zeile);
-					if($record_count == 0)
+					if($zeile) // nur nichtleere Zeilen berücksichtigen
 					{
-						// Kopfzeile auslesen
-						$kopf = $spalte;
-						log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'mitgliederverwaltung.log');
-					}
-					else
-					{
-						log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'mitgliederverwaltung.log');
-						// Datensatz auslesen
-						$set = array();
-						$mitgliedsdaten = array();
-						for($x = 0; $x < count($spalte); $x++)
+						$spalte = explode(';', $zeile);
+						if($record_count == 0)
 						{
-							switch($kopf[$x])
-							{
-								case 'datum':
-									$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
-								case 'art':
-									$set['art'] = $spalte[$x]; break;
-								case 'betrag':
-									$set['betrag'] = (double)str_replace(',', '.', $spalte[$x]); break;
-								case 'verwendungszweck':
-									$set['verwendungszweck'] = $spalte[$x]; break;
-								case 'published':
-									$set['published'] = $spalte[$x]; break;
-								default:
-							}
-						}
-
-						if($set['titel'])
-						{
-							// Nach Titel suchen
-							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_mitgliederverwaltung_konto WHERE pid = ?")
-							                                     ->limit(1)
-							                                     ->execute($set['pid']);
-						}
-
-						if($objResult->numRows)
-						{
-							log_message('Set-Array Update:','mitgliederverwaltung.log');
-							log_message(print_r($set,true),'mitgliederverwaltung.log');
-							// Turniertitel bereits vorhanden, dann überschreiben
-							$objUpdate = \Database::getInstance()->prepare("UPDATE tl_mitgliederverwaltung_konto %s WHERE id = ?")
-							                                     ->set($set)
-							                                     ->execute($objResult->id);
-							\Controller::createNewVersion('tl_mitgliederverwaltung_tournaments', $objResult->id);
-							$update_count++;
+							// Kopfzeile auslesen
+							$kopf = $spalte;
+							log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 						}
 						else
 						{
-							if($set)
+							log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+							// Datensatz auslesen
+							$set = array();
+							$mitgliedsdaten = array();
+							for($x = 0; $x < count($spalte); $x++)
 							{
-								log_message('Set-Array Insert:','mitgliederverwaltung.log');
-								log_message(print_r($set,true),'mitgliederverwaltung.log');
-								// Neues Turnier
-								$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_mitgliederverwaltung_konto %s")
+								switch($kopf[$x])
+								{
+									case 'betrag':
+										$set['betrag'] = (double)str_replace(',', '.', $spalte[$x]); break;
+									case 'art':
+										$set['art'] = $spalte[$x]; break;
+									case 'datum':
+										$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
+									case 'verwendungszweck':
+										$set['verwendungszweck'] = $spalte[$x]; break;
+									case 'turnier':
+										$set['turnier'] = self::getTurnierId($spalte[$x]); break; // Turnier ggfs. erstellen
+									case 'comment':
+										$set['comment'] = $spalte[$x]; break;
+									case 'published':
+										$set['published'] = $spalte[$x]; break;
+									case 'id':
+										$set['id'] = (int)$spalte[$x]; break;
+									// Die nächsten 3 Felder müssen noch aufgelöst werden, um eine pid zu ermitteln
+									case 'memberId':
+										$set['memberId'] = $spalte[$x]; break;
+									case 'nachname':
+										$set['nachname'] = $spalte[$x]; break;
+									case 'vorname':
+										$set['vorname'] = $spalte[$x]; break;
+									default:
+								}
+							}
+                    	
+							// memberId, nachname, vorname in eine pid auflösen
+							$set['pid'] = self::getSpielerId($set['memberId'], $set['nachname'], $set['vorname']);
+							unset($set['memberId']);
+							unset($set['nachname']);
+							unset($set['vorname']);
+                    	
+							// Turnierzuordnung prüfen
+							if(!isset($set['turnier']))
+							{
+								// Feld turnier ist nicht definiert, Feld verwendungszweck verwenden wenn vorhanden
+								if(!isset($set['verwendungszweck']))
+								{
+									$set['turnier'] = 0; // Felder turnier und verwendungszweck sind nicht definiert
+								}
+								else
+								{
+									$set['turnier'] = self::getTurnierId($set['verwendungszweck']); // Turnier ggfs. erstellen
+								}
+							}
+                    	
+							$set['tstamp'] = time(); // Änderungsdatum setzen
+                    	
+							if($set['pid'])
+							{
+								// Buchung eintragen, wenn ein Spieler zugeordnet werden konnte
+								log_message('Set-Array Update tl_fernschach_konto:','fernschach-verwaltung.log');
+								log_message(print_r($set,true),'fernschach-verwaltung.log');
+								$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_konto %s")
 								                                     ->set($set)
 								                                     ->execute();
 								$neu_count++;
 							}
+							else
+							{
+								log_message('Set-Array Update failed tl_fernschach_konto - pid not found:','fernschach-verwaltung.log');
+								log_message(print_r($set,true),'fernschach-verwaltung.log');
+							}
 						}
+						$record_count++;  
 					}
-					$record_count++;
 				}
 
 				$dauer = sprintf('%f0.4', microtime(true) - $start);
-				\System::log('Turnierimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
+				\System::log('Buchungsimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
 			}
 
 			// Cookie setzen und zurückkehren zur Adressenliste (key=import aus URL entfernen)
@@ -151,19 +172,25 @@ class ImportBuchungen extends \Backend
 <div id="tl_buttons">
 <a href="'.ampersand(str_replace('&key=importBuchungen', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
-'.\Message::generate().'
-<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_wortliste_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
-<div class="tl_formbody_edit">
-<input type="hidden" name="FORM_SUBMIT" value="tl_mitgliederverwaltung_import">
-<input type="hidden" name="REQUEST_TOKEN" value="' . REQUEST_TOKEN . '">
-<input type="hidden" name="MAX_FILE_SIZE" value="' . \Config::get('maxFileSize') . '">
 
-<div class="tl_tbox">
-	<div class="widget">
-		<h3>'.$GLOBALS['TL_LANG']['MSC']['source'][0].'</h3>'.$objUploader->generateMarkup().(isset($GLOBALS['TL_LANG']['MSC']['source'][1]) ? '
-		<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['MSC']['source'][1].'</p>' : '').'
+'.\Message::generate().'
+
+<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_fernschach_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
+
+<div class="tl_formbody_edit">
+	<input type="hidden" name="FORM_SUBMIT" value="tl_fernschach_import_buchungen">
+	<input type="hidden" name="REQUEST_TOKEN" value="' . REQUEST_TOKEN . '">
+	<input type="hidden" name="MAX_FILE_SIZE" value="' . \Config::get('maxFileSize') . '">
+
+	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_buchungen_import']['headline'].'</h2>
+	<p style="margin: 18px;">'.$GLOBALS['TL_LANG']['tl_fernschach_buchungen_import']['format'].'
+	
+	<div class="tl_tbox">
+		<div class="widget">
+			<h3>'.$GLOBALS['TL_LANG']['MSC']['source'][0].'</h3>'.$objUploader->generateMarkup().(isset($GLOBALS['TL_LANG']['MSC']['source'][1]) ? '
+			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['MSC']['source'][1].'</p>' : '').'
+		</div>
 	</div>
-</div>
 </div>
 
 <div class="tl_formbody_submit">
@@ -194,6 +221,124 @@ class ImportBuchungen extends \Backend
 	                return false; // ungültiges UTF-8-Zeichen
 	    }
 	    return true; // kein ungültiges UTF-8-Zeichen gefunden
+	}
+
+	/**
+	 * Funktion getTurnierId
+	 * =====================
+	 * Ermittelt zu einem Turniernamen die ID des Turniers. Existiert der Name noch nicht, wird das Turnier neu angelegt
+	 * @param       string - Name des Turniers
+	 * @return      id des Turniers
+	 */
+	function getTurnierId($string)
+	{
+		if(!$string) return 0; // Kein Turniername, deshalb keine Zuordnung
+
+		$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE titel = ?")
+		                                     ->limit(1)
+		                                     ->execute($string);
+
+		if($objResult->numRows)
+		{
+			// Turnier ist vorhanden
+			return $objResult->id;
+		}
+		else
+		{
+			// Turnier nicht vorhanden, neu anlegen
+			$set = array
+			(
+				'tstamp'    => time(),
+				'titel'     => $string,
+				'published' => '',
+			);
+			log_message('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
+			log_message(print_r($set,true),'fernschach-verwaltung.log');
+			// Neues Turnier
+			$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_turniere %s")
+			                                     ->set($set)
+			                                     ->execute();
+			return $objInsert->insertId;
+		}
+
+	}
+
+	/**
+	 * Funktion getSpielerId
+	 * =====================
+	 * Ermittelt zu einem Mitgliedsnummer, einem Vor- und Nachnamen die ID des Spielers. Existiert der Spieler noch nicht, wird er neu angelegt
+	 * @param memberId   integer - Mitgliedsnummer
+	 * @param nachname   string - Nachname
+	 * @param vorname    string - Vorname
+	 * @return           id des Spielers
+	 */
+	function getSpielerId($memberId, $nachname, $vorname)
+	{
+		if(!$memberId && !$nachname && !$vorname) return 0; // Kein Spieler zuordenbar
+
+		if($memberId)
+		{
+			// Nach Mitgliedsnummer suchen
+			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+			                                     ->limit(1)
+			                                     ->execute($memberId);
+			if($objResult->numRows)
+			{
+				// Spieler ist vorhanden
+				return $objResult->id;
+			}
+			else
+			{
+				// Spieler nicht vorhanden, neu anlegen
+				$set = array
+				(
+					'tstamp'    => time(),
+					'memberId'  => $memberId,
+					'nachname'  => $nachname,
+					'vorname'   => $vorname,
+					'published' => '',
+				);
+				log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+				log_message(print_r($set,true),'fernschach-verwaltung.log');
+				// Neues Turnier
+				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
+				                                     ->set($set)
+				                                     ->execute();
+				return $objInsert->insertId;
+			}
+		}
+		else
+		{
+			// Mitgliedsnummer nicht vorhanden, deshalb nach Namen suchen (Vorhandensein des Namens wurde oben schon geprüft)
+			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE nachname = ? AND vorname = ?")
+			                                     ->limit(1)
+			                                     ->execute($nachname, $vorname);
+			if($objResult->numRows)
+			{
+				// mind. 1 Spieler gefunden
+				return $objResult->id;
+			}
+			else
+			{
+				// Spieler nicht vorhanden, neu anlegen
+				$set = array
+				(
+					'tstamp'    => time(),
+					'memberId'  => $memberId,
+					'nachname'  => $nachname,
+					'vorname'   => $vorname,
+					'published' => '',
+				);
+				log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+				log_message(print_r($set,true),'fernschach-verwaltung.log');
+				// Neues Turnier
+				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
+				                                     ->set($set)
+				                                     ->execute();
+				return $objInsert->insertId;
+			}
+		}
+
 	}
 
 }
