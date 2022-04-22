@@ -40,7 +40,7 @@ class Zusagen extends \ContentElement
 			{
 				// Turnierzusagen einlesen
 				$zusagen = array();
-				$objSpieler = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, a.id AS bewerbung_id, a.applicationDate AS bewerbungsdatum, a.state AS status, a.promiseDate AS zusagedatum FROM tl_mitgliederverwaltung_applications AS a LEFT JOIN tl_mitgliederverwaltung AS m ON a.pid = m.id WHERE a.tournament=? AND a.state=? ORDER BY m.nachname ASC, m.vorname ASC")
+				$objSpieler = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, a.id AS bewerbung_id, a.applicationDate AS bewerbungsdatum, a.state AS status, a.promiseDate AS zusagedatum FROM tl_fernschach_turnierbewerbungen AS a LEFT JOIN tl_fernschach_spieler AS m ON a.pid = m.id WHERE a.tournament=? AND a.state=? ORDER BY m.nachname ASC, m.vorname ASC")
 				                                      ->execute($objTurnier->id, 1);
 
 				if($objSpieler->numRows)

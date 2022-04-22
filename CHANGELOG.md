@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.2.2 (2022-04-22)
+
+* Fix: Inhaltselement Zusagen - Spieler wurden nicht angezeigt im Frontend
+
 ## Version 0.2.1 (2022-04-22)
 
 * Change: Icons in tl_fernschach_turniere verkleinert von 16 auf 12px
