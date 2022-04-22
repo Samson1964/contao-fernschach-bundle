@@ -396,22 +396,48 @@ class Meldeformular extends \Module
 	}
 
 	/**
-	 * Alle Turniere einlesen
+	 * Funktion getTournaments
+	 * =======================
+	 * Turniere einlesen: veröffentlicht, Online-Anmeldung aktiv, ohne Meldedatum oder Meldedatum kleiner akt. Datum
 	 *
 	 * @return array
 	 */
 	public function getTournaments()
 	{
 		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY titel")
-		                           ->execute();
+		$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY titel")
+		                           ->execute(time(), 0, 1, 1);
 
 		while ($objForms->next())
 		{
-			$arrForms[$objForms->id] = $objForms->titel;
+			$meldedatum = $objForms->registrationDate ? ' (Meldedatum: '.date('d.m.Y', $objForms->registrationDate).')' : ' (ohne Meldedatum)';
+			$arrForms[$objForms->id] = $objForms->titel.$meldedatum;
 		}
 
 		return $arrForms;
+	}
+
+	/*
+	 * Confirmation
+	 */
+	private function sendNotification($arrData, $objMember)
+	{
+		$arrTokens['member_id'] = $objMember->id;
+		$arrTokens['member_email'] = $objMember->email;
+		$arrTokens['member_firstname'] = $objMember->firstname;
+		$arrTokens['member_lastname'] = $objMember->lastname;
+		
+		foreach ($arrData as $key => $data) {
+			$arrTokens['form_' . $key] = $data;
+		}
+		
+		$calendar = CalendarModel::findOneById($arrData['calendar_id']);
+		$arrTokens['form_calendar_title'] = $calendar->title;
+		
+		$objNotification = Notification::findByPk($this->nc_notification);
+		if (null !== $objNotification) {
+			$objNotification->send($arrTokens);
+		}
 	}
 
 }

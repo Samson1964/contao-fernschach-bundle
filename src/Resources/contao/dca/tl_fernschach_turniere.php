@@ -34,7 +34,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'label' => array
 		(
 			// Das Feld aktiv wird vom label_callback überschrieben
-			'fields'                  => array('titel', 'startDate', 'bewerbungen', 'zusagen'),
+			'fields'                  => array('titel', 'registrationDate', 'startDate', 'bewerbungen', 'zusagen'),
 			'showColumns'             => true,
 			'format'                  => '%s',
 			'label_callback'          => array('tl_fernschach_turniere', 'viewLabels'),
@@ -96,7 +96,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'default'                     => '{tournament_legend},titel,kennziffer,registrationDate,startDate,art,nenngeld;;{turnierleiter_legend},turnierleiterName,turnierleiterEmail;{applications_legend},applications;{publish_legend},published'
+		'default'                     => '{tournament_legend},titel,kennziffer,registrationDate,startDate,typ,nenngeld;{meldung_legend},onlineAnmeldung,spielerMax,art,artInfo;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},applications,applicationText;{publish_legend},published'
 	),
 
 	// Felder
@@ -176,13 +176,17 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
-		'art' => array(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'],
+		'typ' => array(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'radio',
-			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'],
-			'eval'                    => array('tl_class'=>'w50', 'includeBlankOption'=>false),
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ_options'],
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'includeBlankOption'  => true
+			),
 			'sql'                     => "varchar(1) NOT NULL default ''"
 		),
 		'nenngeld' => array
@@ -193,6 +197,65 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'digit', 'mandatory'=>false, 'tl_class'=>'w50', 'maxlength'=>6),
 			'sql'                     => "varchar(6) NOT NULL default ''"
+		),
+		'onlineAnmeldung' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => 1,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+			),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		),
+		'spielerMax' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'],
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'default'                 => 0,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'digit', 
+				'mandatory'           => false, 
+				'tl_class'            => 'w50', 
+				'maxlength'           => 6
+			),
+			'sql'                     => "int(6) unsigned NOT NULL default 0"
+		),
+		'art' => array(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'radio',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'],
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'includeBlankOption'  => true
+			),
+			'sql'                     => "varchar(1) NOT NULL default ''"
+		),
+		'artInfo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'],
+			'inputType'               => 'text',
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'search'                  => true,
+			'flag'                    => 1,
+			'eval'                    => array
+			(
+				'mandatory'           => false, 
+				'maxlength'           => 255, 
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'turnierleiterName' => array
 		(
@@ -227,11 +290,36 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
+		'turnierleiterUserId' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterUserId'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'foreignKey'              => 'tl_user.CONCAT(username," (",name,")")',
+			'relation'                => array('type'=>'belongsToMany', 'load'=>'lazy'),
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true,
+				'chosen'              => true,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		// Gibt die Liste der Bewerbungen aus
 		'applications' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['applications'],
 			'input_field_callback'    => array('tl_fernschach_turniere', 'getApplications'),
+		),
+		'applicationText' => array
+		(
+			'exclude'                 => true,
+			'search'                  => true,
+			'inputType'               => 'textarea',
+			'eval'                    => array('mandatory'=>false, 'rte'=>'tinyMCE', 'helpwizard'=>true),
+			'explanation'             => 'insertTags',
+			'sql'                     => "mediumtext NULL"
 		),
 		'bewerbungen' => array
 		(
@@ -306,8 +394,8 @@ class tl_fernschach_turniere extends Backend
 
 		$turnier_id = $dc->activeRecord->id;
 
-		$objApplications = $this->Database->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, a.id AS bewerbung_id, a.applicationDate AS bewerbungsdatum, a.state AS status, a.promiseDate AS zusagedatum FROM tl_fernschach_turnierbewerbungen AS a LEFT JOIN tl_fernschach_spieler AS m ON a.pid = m.id WHERE a.tournament=?")
-		                                  ->execute($turnier_id);
+		$objApplications = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, a.id AS bewerbung_id, a.applicationDate AS bewerbungsdatum, a.state AS status, a.promiseDate AS zusagedatum FROM tl_fernschach_turnierbewerbungen AS a LEFT JOIN tl_fernschach_spieler AS m ON a.pid = m.id WHERE a.tournament=?")
+		                                           ->execute($turnier_id);
 		$ausgabe = '<div class="long widget">'; // Wichtig damit das Auf- und Zuklappen funktioniert
 		$ausgabe .= '<table class="tl_listing showColumns">';
 		$ausgabe .= '<tbody><tr>';
@@ -336,6 +424,7 @@ class tl_fernschach_turniere extends Backend
 			$ausgabe .= '</tr>';
 		}
 		$ausgabe .= '</tbody></table>';
+		$ausgabe .= '<p style="margin: 18px 0 0 5px;">'.$objApplications->numRows.' Bewerbung(en) gefunden</p>';
 		$ausgabe .= '</div>';
 		return $ausgabe;
 
@@ -429,11 +518,11 @@ class tl_fernschach_turniere extends Backend
 	public function viewLabels($row, $label, Contao\DataContainer $dc, $args)
 	{
 
-		$args[2] = $this->bewerbungen[$row['id']];
-		$args[3] = '';
-		if($this->status[$row['id']][0]) $args[3] .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->status[$row['id']][0].$this->generateImage('bundles/contaofernschach/images/fragezeichen.png', 'ohne Entscheidung').'</span>&nbsp;';
-		if($this->status[$row['id']][1]) $args[3] .= '<span title="Anzahl der Zusagen">'.$this->status[$row['id']][1].$this->generateImage('bundles/contaofernschach/images/ja.png', 'Zusagen').'</span>&nbsp;';
-		if($this->status[$row['id']][2]) $args[3] .= '<span title="Anzahl der Absagen">'.$this->status[$row['id']][2].$this->generateImage('bundles/contaofernschach/images/nein.png', 'Absagen').'</span>';
+		$args[3] = $this->bewerbungen[$row['id']];
+		$args[4] = '';
+		if($this->status[$row['id']][0]) $args[4] .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->status[$row['id']][0].$this->generateImage($this->getImage('bundles/contaofernschach/images/fragezeichen.png', 12, 12, 'proportional'), 'ohne Entscheidung').'</span>&nbsp;';
+		if($this->status[$row['id']][1]) $args[4] .= '<span title="Anzahl der Zusagen">'.$this->status[$row['id']][1].$this->generateImage($this->getImage('bundles/contaofernschach/images/ja.png', 12, 12, 'proportional'), 'Zusagen').'</span>&nbsp;';
+		if($this->status[$row['id']][2]) $args[4] .= '<span title="Anzahl der Absagen">'.$this->status[$row['id']][2].$this->generateImage($this->getImage('bundles/contaofernschach/images/nein.png', 12, 12, 'proportional'), 'Absagen').'</span>';
 
 		// Datensatz komplett zurückgeben
 		return $args;

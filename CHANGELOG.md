@@ -1,5 +1,21 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.2.1 (2022-04-22)
+
+* Change: Icons in tl_fernschach_turniere verkleinert von 16 auf 12px
+* Fix: tl_module Meldeformular Turnieranmeldung
+* Add: tl_fernschach_turniere.turnierleiterUserId für die Zuordnung eines Turnierleiters/Turniers zu einem Backend-Benutzer
+* Add: Meldedatum des Turniers in Meldeformular ausgeben
+* Change: Auswahl der Turniere im Meldeformular verbessert
+* Add: tl_fernschach_turniere.onlineAnmeldung - Checkbox, ob das Turnier im Online-Meldeformular angezeigt werden soll
+* Add: tl_fernschach_turniere.spielerMax - Maximale Anzahl von Spielern festlegen
+* Add: tl_fernschach_turniere.art - Turnierart (Klassenturnier, Thematurnier usw.)
+* Add: tl_fernschach_turniere.artInfo - Freies Feld für die Turnierart
+* Add: Im Turnier die Anzahl der Bewerbungen ausgeben
+* Add: Nutzung Notification-Center
+* Add: Inhaltselement Zusagen
+* Add: tl_fernschach_turniere.applicationText für Zusagen-Ansicht im Frontend
+
 ## Version 0.2.0 (2022-04-15)
 
 * Turnierimport fertiggestellt (classes/ImportTurniere)

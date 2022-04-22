@@ -60,8 +60,22 @@ $GLOBALS['FE_MOD']['fernschachverwaltung'] = array
 	'fernschachverwaltung_titelnormen_liste' => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormenLast',
 );
 
-///**
-// * Inhaltselemente
-// */
-//
-//$GLOBALS['TL_CTE']['correspondence_chess']['mitgliederverwaltung_zusagen'] = 'Schachbulle\ContaoMitgliederverwaltungBundle\ContentElements\Zusagen';
+/**
+ * Notification-Center
+ */
+$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['fernschach'] = array
+(
+	'meldeformular'     => array
+	(
+		'recipients'    => array('admin_email', 'form_*', 'member_*'),
+		'email_subject' => array('form_*', 'member_*'),
+		'email_text'    => array('form_*', 'member_*'),
+		'email_html'    => array('form_*', 'member_*'),
+	),
+);
+
+/**
+ * Inhaltselemente
+ */
+
+$GLOBALS['TL_CTE']['fernschachverwaltung']['turnierbewerbungen_zusagen'] = 'Schachbulle\ContaoFernschachBundle\ContentElements\Zusagen';

@@ -3,7 +3,7 @@
 /**
  * Paletten
  */
-$GLOBALS['TL_DCA']['tl_content']['palettes']['fernschachverwaltung_zusagen'] = '{type_legend},type,headline;{fernschachverwaltung_legend},fernschachverwaltung_id;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['turnierbewerbungen_zusagen'] = '{type_legend},type,headline;{fernschachverwaltung_legend},fernschachverwaltung_id;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
 /**
  * Felder
@@ -17,11 +17,11 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['fernschachverwaltung_id'] = array
 	'inputType'               => 'select',
 	'eval'                    => array
 	(
-		'mandatory'           => true,
+		'mandatory'           => false,
 		'multiple'            => false,
 		'chosen'              => true,
 		'submitOnChange'      => false,
-		'includeBlankOption'  => false,
+		'includeBlankOption'  => true,
 		'tl_class'            => 'long',
 	),
 	'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -44,16 +44,16 @@ class tl_content_fernschachverwaltung extends \Backend
 	}
 
 	/**
-	 * Liefert die Liste der registrierten Turniere zurück
+	 * Liefert die Liste der registrierten Einladungsturniere zurück
 	 */
 	public static function getTournaments()
 	{
-		$objRegister = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY date DESC ")
-		                                       ->execute();
+		$objRegister = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE typ = ? ORDER BY startDate DESC")
+		                                       ->execute('e');
 		$array = array();
 		while($objRegister->next())
 		{
-			$array[$objRegister->id] = $objRegister->titel . ' [Start: ' . date('d.m.Y', $objRegister->date) . ']';
+			$array[$objRegister->id] = $objRegister->titel . ' [Start: ' . date('d.m.Y', $objRegister->startDate) . '] '.$objRegister->id;
 		}
 		return $array;
 	}
