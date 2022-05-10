@@ -13,6 +13,7 @@
 $GLOBALS['TL_LANG']['MOD']['fernschach'] = array('Fernschach-Verwaltung', 'Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['MOD']['fernschach-spieler'] = array('Spieler', 'Spieler verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-meldungen'] = array('Meldungen', 'Turnier-Anmeldungen verwalten');
+$GLOBALS['TL_LANG']['MOD']['fernschach-turnierkategorien'] = array('Turnierkategorien', 'Turnierkategorien und Turnierhauptklassen verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere'] = array('Turniere', 'Turniere verwalten');
 
 /**

@@ -1,21 +1,25 @@
 <?php
 
+
 /**
- * Tabelle tl_fernschach_meldungen
+ * Tabelle tl_fernschach_turniere_meldungen
  */
-$GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
+$GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 (
 
 	// Konfiguration
 	'config' => array
 	(
+		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['mainTitle'],
 		'dataContainer'               => 'Table',
 		'enableVersioning'            => true,
+		'ptable'                      => 'tl_fernschach_turniere',
 		'sql' => array
 		(
 			'keys' => array
 			(
-				'id' => 'primary'
+				'id'                  => 'primary',
+				'pid'                 => 'index',
 			)
 		),
 	),
@@ -25,17 +29,16 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 	(
 		'sorting' => array
 		(
-			'mode'                    => 1,
-			'fields'                  => array('meldungDatum','nachname','vorname'),
+			'mode'                    => 4,
+			'headerFields'            => array('title', 'registrationDate', 'startDate'),
 			'flag'                    => 1,
 			'panelLayout'             => 'filter;sort,search,limit',
+			'child_record_callback'   => array('tl_fernschach_turniere_meldungen', 'listMeldungen'),
+			'disableGrouping'         => true
 		),
 		'label' => array
 		(
-			// Das Feld aktiv wird vom label_callback überschrieben
-			'fields'                  => array('meldungDatum','meldungTurnier','meldungNenngeld','nachname','vorname'),
-			'showColumns'             => true,
-			'label_callback'          => array('tl_fernschach_meldungen', 'viewLabels'),
+			'fields'                  => array('vorname'),
 		),
 		'global_operations' => array
 		(
@@ -51,33 +54,33 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['edit'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['edit'],
 				'href'                => 'act=edit',
 				'icon'                => 'edit.gif'
 			),
 			'copy' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['copy'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.gif',
 			),
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['delete'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['toggle'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_fernschach_meldungen', 'toggleIcon')
+				'button_callback'     => array('tl_fernschach_turniere_meldungen', 'toggleIcon')
 			),
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['show'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.gif',
 				'attributes'          => 'style="margin-right:3px"'
@@ -88,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'default'                     => '{person_legend},vorname,nachname,spielerId;{contact_legend},plz,ort,strasse,email,fax;{memberships_legend},memberId;{turnier_legend},meldungDatum,meldungTurnier,meldungAnzahl,meldungNenngeld;{nenngeld_legend},nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{publish_legend},published'
+		'default'                     => '{person_legend},vorname,nachname,spielerId;{contact_legend},plz,ort,strasse,email,fax;{memberships_legend},memberId;{turnier_legend},meldungDatum,meldungNenngeld;{nenngeld_legend},nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{publish_legend},published'
 	),
 
 	// Felder
@@ -98,6 +101,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
 		),
+		'pid' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'tstamp' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -105,38 +112,46 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		// Hier wird die id aus tl_fernschach_spieler eingetragen
 		'spielerId' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['spielerId'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['spielerId'],
+			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_fernschach_meldungen', 'spielerCallback'),
-			'eval'                    => array('mandatory'=>false, 'chosen'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
+			'foreignKey'              => 'tl_fernschach_spieler.CONCAT(nachname,", ",vorname," (",memberId,")")',
+			'relation'                => array('type'=>'belongsToMany', 'load'=>'lazy'),
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true,
+				'chosen'              => true,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50'
+			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'vorname' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['vorname'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['vorname'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
 			'flag'                    => 1,
 			'search'                  => true,
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>40, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(40) NOT NULL default ''"
 		),
 		'nachname' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['nachname'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nachname'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
 			'flag'                    => 1,
 			'filter'                  => true,
 			'search'                  => true,
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
+			'eval'                    => array('mandatory'=>false, 'maxlength'=>40, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(40) NOT NULL default ''"
 		),
 		'email' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['email'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['email'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -152,7 +167,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'fax' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['fax'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['fax'],
 			'exclude'                 => true,
 			'search'                  => true,
 			'inputType'               => 'text',
@@ -167,7 +182,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'plz' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['plz'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['plz'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -179,7 +194,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'ort' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['ort'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['ort'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -191,7 +206,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'strasse' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['strasse'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['strasse'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -202,7 +217,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'memberId' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['memberId'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['memberId'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -230,42 +245,15 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 				'datepicker'          => true,
 				'tl_class'            => 'w50 wizard'
 			),
-			'sql'                     => "varchar(10) NOT NULL default ''"
-		),
-		'meldungTurnier' => array
-		(
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'filter'                  => true,
-			'options_callback'        => array('tl_fernschach_meldungen', 'getTournaments'),
-			'eval'                    => array
+			'load_callback' => array
 			(
-				'includeBlankOption'  => true,
-				'chosen'              => true,
-				'tl_class'            => 'long clr'
+				array('tl_fernschach_turniere_meldungen', 'loadDate')
 			),
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),
-		'meldungAnzahl' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['meldungAnzahl'],
-			'inputType'               => 'text',
-			'exclude'                 => true,
-			'sorting'                 => true,
-			'flag'                    => 1,
-			'filter'                  => true,
-			'search'                  => true,
-			'eval'                    => array
-			(
-				'mandatory'           => false,
-				'maxlength'           => 3,
-				'tl_class'            => 'w50 clr'
-			),
-			'sql'                     => "varchar(3) NOT NULL default ''"
+			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
 		'meldungNenngeld' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['meldungNenngeld'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungNenngeld'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -283,7 +271,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'nenngeldDate' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['nenngeldDate'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldDate'],
 			'exclude'                 => true,
 			'sorting'                 => true,
 			'flag'                    => 6,
@@ -298,13 +286,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 			),
 			'load_callback' => array
 			(
-				array('tl_fernschach_meldungen', 'loadDate')
+				array('tl_fernschach_turniere_meldungen', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
 		'nenngeldGuthaben' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['nenngeldGuthaben'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldGuthaben'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
@@ -317,7 +305,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'infoQualifikation' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['infoQualifikation'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['infoQualifikation'],
 			'inputType'               => 'textarea',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -328,7 +316,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 		),
 		'bemerkungen' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['bemerkungen'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['bemerkungen'],
 			'inputType'               => 'textarea',
 			'exclude'                 => true,
 			'sorting'                 => true,
@@ -337,9 +325,15 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 			'eval'                    => array('mandatory'=>false, 'tl_class'=>'long'),
 			'sql'                     => "text NULL"
 		),
+		// Enthält die id des Turniers, wo der Meldende mitspielt (wird automatisch bei der Zuordnung gefüllt)
+		'teilnehmer' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['teilnehmer'],
+			'sql'                     => "int(10) unsigned NOT NULL default 0"
+		),
 		'published' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_meldungen']['published'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['published'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -353,7 +347,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_meldungen'] = array
 /**
  * Class tl_member_aktivicon
  */
-class tl_fernschach_meldungen extends \Backend
+class tl_fernschach_turniere_meldungen extends \Backend
 {
 
 	/**
@@ -387,7 +381,7 @@ class tl_fernschach_meldungen extends \Backend
 		}
 
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_meldungen::published', 'alexf'))
+		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_meldungen::published', 'alexf'))
 		{
 			return '';
 		}
@@ -410,18 +404,18 @@ class tl_fernschach_meldungen extends \Backend
 	public function toggleVisibility($intId, $blnPublished)
 	{
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_meldungen::published', 'alexf'))
+		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_meldungen::published', 'alexf'))
 		{
-			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_fernschach_meldungen toggleVisibility', TL_ERROR);
+			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_fernschach_turniere_meldungen toggleVisibility', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
 
-		$this->createInitialVersion('tl_fernschach_meldungen', $intId);
+		$this->createInitialVersion('tl_fernschach_turniere_meldungen', $intId);
 
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_meldungen']['fields']['published']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen']['fields']['published']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_meldungen']['fields']['published']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen']['fields']['published']['save_callback'] as $callback)
 			{
 				$this->import($callback[0]);
 				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
@@ -429,9 +423,9 @@ class tl_fernschach_meldungen extends \Backend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_fernschach_meldungen SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
+		$this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
 		               ->execute($intId);
-		$this->createNewVersion('tl_fernschach_meldungen', $intId);
+		$this->createNewVersion('tl_fernschach_turniere_meldungen', $intId);
 	}
 
 	/**
@@ -443,74 +437,34 @@ class tl_fernschach_meldungen extends \Backend
 	 */
 	public function loadDate($value)
 	{
-		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		if($value) return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		else return '';
 	}
 
 	/**
-	 * Alle Turniere einlesen
-	 *
-	 * @return array
+	 * Generiere eine Zeile als HTML
+	 * @param array
+	 * @return string
 	 */
-	public function getTournaments()
+	public function listMeldungen($arrRow)
 	{
-		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY titel")
-		                           ->execute();
 
-		while ($objForms->next())
+		$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler();
+
+		$temp = '<div class="tl_content_left">';
+		// Vor- und Nachname
+		$temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		// Zuordnung
+		if($arrRow['spielerId']) 
 		{
-			$arrForms[$objForms->id] = $objForms->titel . ' (Kennziffer: ' . $objForms->kennziffer . ')';
+			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']].'';
 		}
+		else $temp .= ' - nicht zugeordnet';
+		// Meldedatum
+		$temp .= ' - Anmeldung am: <b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b>';
+		$temp .= '</div>';
+		return $temp;
 
-		return $arrForms;
-	}
-
-	/**
-	 * Zeigt zu einem Datensatz die Anzahl der Bewerbungen/Zusagen an
-	 *
-	 * @param array                $row
-	 * @param string               $label
-	 * @param Contao\DataContainer $dc
-	 * @param array                $args        Index 6 ist das Feld lizenzen
-	 *
-	 * @return array
-	 */
-	public function viewLabels($row, $label, Contao\DataContainer $dc, $args)
-	{
-		static $tournaments;
-
-		if(!$tournaments)
-		{
-			// Turniere einlesen, da noch nicht vorhanden
-			$tournaments = array();
-			$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere")
-			                           ->execute();
-
-			while ($objForms->next())
-			{
-				$tournaments[$objForms->id] = $objForms->titel;
-			}
-		}
-		$args[1] = $tournaments[$row['meldungTurnier']];
-		$args[2] = $args[2] ? str_replace('.', ',', sprintf('%1.2f',$row['meldungNenngeld'])).' €' : '';
-
-		// Datensatz komplett zurückgeben
-		return $args;
-	}
-
-	public function spielerCallback(\DataContainer $dc)
-	{
-		$return = array();
-		$result = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler ORDER BY nachname ASC, vorname ASC')
-		                                  ->execute();
-		if($result->numRows)
-		{
-			while($result->next())
-			{
-				$return[$result->id] = $result->nachname.','.$result->vorname;
-			}
-		}
-		return $return;
 	}
 
 }

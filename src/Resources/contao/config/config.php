@@ -33,15 +33,11 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'tables'            => array
 		(
 			'tl_fernschach_turniere',
+			'tl_fernschach_turniere_meldungen',
+			'tl_fernschach_turniere_spieler',
+			'tl_fernschach_turniere_bewerbungen',
 		),
 		'importTurniere'    => array('Schachbulle\ContaoFernschachBundle\Classes\ImportTurniere', 'run'),
-	),
-	'fernschach-meldungen'  => array
-	(
-		'tables'            => array
-		(
-			'tl_fernschach_meldungen',
-		),
 	),
 );
 

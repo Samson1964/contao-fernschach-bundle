@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.3.0 (2022-05-10)
+
+* Change: ce_fernschach_zusagen h3 statt h2 als Überschrift
+* Add: tl_fernschach_turnierkategorien für die Verwaltung der Turnierkategorien
+* Add: tl_fernschach_turnierhauptklassen für die Verwaltung der Turnierhauptklassen
+* Change: tl_fernschach_turniere auf Baumstruktur umgebaut, die alten Felder kommen in den Typ tournament
+* Add: tl_fernschach_turniere_meldungen und tl_fernschach_turniere_spieler
+* Add: tl_fernschach_turniere_bewerbungen
+
 ## Version 0.2.2 (2022-04-22)
 
 * Fix: Inhaltselement Zusagen - Spieler wurden nicht angezeigt im Frontend

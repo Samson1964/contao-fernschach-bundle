@@ -1,8 +1,14 @@
 <?php
 
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Kategorien & Turniere';
+
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Turnier/Kategorie';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Typ', 'Typ des Turniers bzw. der Kategorie. Es werden nur die an dieser Stelle möglichen Typen angezeigt.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben Sie hier den Turniertitel ein');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen', 'Kennzeichen bzw. Kennziffer des Turniers/der Turnierserie');
@@ -13,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'N
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldung_legend'] = 'Online-Anmeldung';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'] = array('Online-Anmeldung', 'Turnier im Online-Meldeformular anzeigen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungErlaubt'] = array('Bewerbungen erlaubt', 'Bewerbungen für das Turnier sind erlaubt. Aktiviert die dazugehörende Tabelle.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
@@ -30,18 +37,21 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['promiseDate'] = array('Datum', 'D
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['applicationText'] = array('Hinweistext', 'Tragen Sie hier Informationen und Links zum Turnier ein. Dieser Text wird im Frontend bei den Zusagen angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['publish_legend'] = 'Aktivieren';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier das Turnier');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Eintrag.');
 
 /**
  * Buttons für Operationen
  */
 
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['new'] = array('Neues Turnier', 'Neues Turnier anlegen');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['edit'] = array('Turnier bearbeiten', 'Turnier %s bearbeiten');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['copy'] = array('Turnier kopieren', 'Turnier %s kopieren');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['delete'] = array('Turnier löschen', 'Turnier %s löschen');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'] = array('Turnier aktivieren/deaktivieren', 'Turnier %s aktivieren/deaktivieren');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['show'] = array('Turnierdetails anzeigen', 'Details des Turnier %s anzeigen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['new'] = array('Neuer Eintrag', 'Neue Kategorie oder neues Turnier anlegen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['edit'] = array('Eintrag bearbeiten', 'Kategorie bzw. Turnier %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editBewerbungen'] = array('Bewerbungen bearbeiten', 'Bewerbungen des Turniers %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editMeldungen'] = array('Anmeldungen bearbeiten', 'Anmeldungen des Turniers %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editSpieler'] = array('Spieler bearbeiten', 'Teilnehmer/Spieler des Turniers %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['copy'] = array('Eintrag kopieren', 'Kategorie bzw. Turnier %s kopieren');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['delete'] = array('Eintrag löschen', 'Kategorie bzw. Turnier %s löschen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'] = array('Eintrag aktivieren/deaktivieren', 'Kategorie bzw. Turnier %s aktivieren/deaktivieren');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['show'] = array('Eintragsdetails anzeigen', 'Details der Kategorie bzw. des Turniers %s anzeigen');
 
 /**
  * Buttons für globale Operationen
@@ -55,6 +65,13 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['importTurniere'] = array('Import 
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungen'] = array('Bewerbungen', 'Anzahl der Bewerbungen');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['zusagen'] = array('Status', 'Anzahl der Zu- oder Absagen');
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'] = array
+(
+	'category'   => 'Kategorie',
+	'tournament' => 'Meldefähiges Turnier',
+	'group'      => 'Turniergruppe',
+);
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ_options'] = array
 (

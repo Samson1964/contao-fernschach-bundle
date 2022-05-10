@@ -12,16 +12,17 @@
 
 
 /**
- * Table tl_fernschach_turnierbewerbungen
+ * Table tl_fernschach_turniere_bewerbungen
  */
-$GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
+$GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 (
 
 	// Config
 	'config' => array
 	(
+		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['mainTitle'],
 		'dataContainer'               => 'Table',
-		'ptable'                      => 'tl_fernschach_spieler',
+		'ptable'                      => 'tl_fernschach_turniere',
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'sql' => array
@@ -41,15 +42,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 			'mode'                    => 4,
 			'fields'                  => array('id'),
 			'flag'                    => 3,
-			'headerFields'            => array('nachname', 'vorname'),
+			'headerFields'            => array('title', 'registrationDate', 'startDate'),
 			'panelLayout'             => 'filter;sort;search,limit',
-			'child_record_callback'   => array('tl_fernschach_turnierbewerbungen', 'listTournaments'),
+			'child_record_callback'   => array('tl_fernschach_turniere_bewerbungen', 'listBewerbungen'),
 			'disableGrouping'         => true
-		),
-		'label' => array
-		(
-			'fields'                  => array('tournament'),
-			'format'                  => '%s',
 		),
 		'global_operations' => array
 		(
@@ -65,35 +61,35 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['edit'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['edit'],
 				'href'                => 'act=edit',
 				'icon'                => 'edit.gif',
 			),
 			'copy' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['copy'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.gif',
-				//'button_callback'     => array('tl_fernschach_turnierbewerbungen', 'copyArchive')
+				//'button_callback'     => array('tl_fernschach_turniere_bewerbungen', 'copyArchive')
 			),
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['delete'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
-				//'button_callback'     => array('tl_fernschach_turnierbewerbungen', 'deleteArchive')
+				//'button_callback'     => array('tl_fernschach_turniere_bewerbungen', 'deleteArchive')
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['toggle'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['toggle'],
 				'icon'                => 'visible.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_fernschach_turnierbewerbungen', 'toggleIcon')
+				'button_callback'     => array('tl_fernschach_turniere_bewerbungen', 'toggleIcon')
 			),
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['show'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.gif'
 			)
@@ -103,7 +99,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{application_legend},tournament,applicationDate;{promise_legend},state,promiseDate,comment;{publish_legend},published'
+		'default'                     => '{application_legend},vorname,nachname,applicationDate;{player_legend:hide},spielerId;{promise_legend:hide},state,promiseDate,comment;{publish_legend},published'
 	),
 
 	// Fields
@@ -126,21 +122,41 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'tournament' => array
+		'vorname' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['tournament'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['vorname'],
 			'exclude'                 => true,
-			'search'                  => true,
-			'filter'                  => true,
 			'sorting'                 => true,
-			'inputType'               => 'select',
-			'options_callback'        => array('tl_fernschach_turnierbewerbungen', 'getTournaments'),
-			'eval'                    => array('doNotCopy'=>true, 'chosen'=>true, 'mandatory'=>true, 'includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "int(10) unsigned NOT NULL default 0"
+			'search'                  => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'mandatory'           => true, 
+				'maxlength'           => 40, 
+				'tl_class'            =>'w50'
+			),
+			'sql'                     => "varchar(40) NOT NULL default ''"
+		),
+		'nachname' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['nachname'],
+			'exclude'                 => true,
+			'sorting'                 => true,
+			'search'                  => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'mandatory'           => true, 
+				'maxlength'           => 40, 
+				'tl_class'            =>'w50'
+			),
+			'sql'                     => "varchar(40) NOT NULL default ''"
 		),
 		'applicationDate' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['applicationDate'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['applicationDate'],
 			'default'                 => time(),
 			'exclude'                 => true,
 			'filter'                  => true,
@@ -150,24 +166,41 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 			'eval'                    => array('rgxp'=>'date', 'mandatory'=>true, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
 			'load_callback' => array
 			(
-				array('tl_fernschach_turnierbewerbungen', 'loadDate')
+				array('tl_fernschach_turniere_bewerbungen', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
+		'spielerId' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['spielerId'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'foreignKey'              => 'tl_fernschach_spieler.CONCAT(nachname,", ",vorname," (",memberId,")")',
+			'relation'                => array('type'=>'belongsToMany', 'load'=>'lazy'),
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true,
+				'chosen'              => true,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'state' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['state'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'inputType'               => 'radio',
 			'default'                 => 0,
 			'options'                 => array('0', '1', '2'),
 			'eval'                    => array('tl_class'=>'w50'),
-			'reference'               => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['state_options'],
+			'reference'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state_options'],
 			'sql'                     => "varchar(1) NOT NULL default '0'"
 		),
 		'promiseDate' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['promiseDate'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['promiseDate'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'sorting'                 => true,
@@ -176,7 +209,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 			'eval'                    => array('rgxp'=>'date', 'mandatory'=>false, 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'clr w50 wizard'),
 			'load_callback' => array
 			(
-				array('tl_fernschach_turnierbewerbungen', 'loadDate')
+				array('tl_fernschach_turniere_bewerbungen', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
@@ -193,11 +226,15 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 		),
 		'published' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turnierbewerbungen']['published'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['published'],
 			'inputType'               => 'checkbox',
 			'default'                 => 1,
 			'filter'                  => true,
-			'eval'                    => array('tl_class' => 'w50','isBoolean' => true),
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'isBoolean'           => true
+			),
 			'sql'                     => "char(1) NOT NULL default '1'"
 		),
 	)
@@ -205,18 +242,16 @@ $GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen'] = array
 
 
 /**
- * Class tl_fernschach_turnierbewerbungen
+ * Class tl_fernschach_turniere_bewerbungen
  *
  * Provide miscellaneous methods that are used by the data configuration array.
  * @copyright  Leo Feyer 2005-2014
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_fernschach_turnierbewerbungen extends Backend
+class tl_fernschach_turniere_bewerbungen extends Backend
 {
 
-	var $turniere = array();
-	
 	/**
 	 * Import the back end user object
 	 */
@@ -224,17 +259,6 @@ class tl_fernschach_turnierbewerbungen extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-
-		$objTurniere = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere")
-		                              ->execute();
-
-		if($objTurniere->numRows)
-		{
-			while($objTurniere->next())
-			{
-				$this->turniere[$objTurniere->id] = $objTurniere->titel;
-			}
-		}
 
 	}
 
@@ -249,7 +273,7 @@ class tl_fernschach_turnierbewerbungen extends Backend
 		}
 
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turnierbewerbungen::published', 'alexf'))
+		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_bewerbungen::published', 'alexf'))
 		{
 			return '';
 		}
@@ -267,9 +291,9 @@ class tl_fernschach_turnierbewerbungen extends Backend
 	public function toggleVisibility($intId, $blnPublished)
 	{
 		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turnierbewerbungen::published', 'alexf'))
+		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_bewerbungen::published', 'alexf'))
 		{
-			$this->log('Kein Zugriffsrecht für Aktivierung Datensatz ID "'.$intId.'"', 'tl_fernschach_turnierbewerbungen toggleVisibility', TL_ERROR);
+			$this->log('Kein Zugriffsrecht für Aktivierung Datensatz ID "'.$intId.'"', 'tl_fernschach_turniere_bewerbungen toggleVisibility', TL_ERROR);
 			// Zurücklink generieren, ab C4 ist das ein symbolischer Link zu "contao"
 			if (version_compare(VERSION, '4.0', '>='))
 			{
@@ -282,12 +306,12 @@ class tl_fernschach_turnierbewerbungen extends Backend
 			$this->redirect($backlink.'?act=error');
 		}
 
-		$this->createInitialVersion('tl_fernschach_turnierbewerbungen', $intId);
+		$this->createInitialVersion('tl_fernschach_turniere_bewerbungen', $intId);
 
 		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen']['fields']['published']['save_callback']))
+		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen']['fields']['published']['save_callback']))
 		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turnierbewerbungen']['fields']['published']['save_callback'] as $callback)
+			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen']['fields']['published']['save_callback'] as $callback)
 			{
 				$this->import($callback[0]);
 				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
@@ -295,9 +319,9 @@ class tl_fernschach_turnierbewerbungen extends Backend
 		}
 
 		// Update the database
-		$this->Database->prepare("UPDATE tl_fernschach_turnierbewerbungen SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
+		$this->Database->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
 		               ->execute($intId);
-		$this->createNewVersion('tl_fernschach_turnierbewerbungen', $intId);
+		$this->createNewVersion('tl_fernschach_turniere_bewerbungen', $intId);
 	}
 
 	/**
@@ -305,12 +329,19 @@ class tl_fernschach_turnierbewerbungen extends Backend
 	 * @param array
 	 * @return string
 	 */
-	public function listTournaments($arrRow)
+	public function listBewerbungen($arrRow)
 	{
-		// Status
-		if($arrRow['state'] == 0) $temp = '<b>'.$this->turniere[$arrRow['tournament']].'</b>';
-		elseif($arrRow['state'] == 1) $temp = '<b style="color:green">'.$this->turniere[$arrRow['tournament']].'</b>';
-		else $temp = '<b style="color:red">'.$this->turniere[$arrRow['tournament']].'</b>';
+		$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler();
+		// Vor- und Nachname
+		if($arrRow['state'] == 0) $temp = '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		elseif($arrRow['state'] == 1) $temp = '<b style="color:green">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		else $temp = '<b style="color:red">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		// Zuordnung
+		if($arrRow['spielerId']) 
+		{
+			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']].'';
+		}
+		else $temp .= ' - nicht zugeordnet';
 		// Bewerbungsdatum
 		$temp .= ' - Bewerbung am: <b>'.date('d.m.Y', $arrRow['applicationDate']).'</b>';
 		// Status
@@ -335,8 +366,4 @@ class tl_fernschach_turnierbewerbungen extends Backend
 		else return '';
 	}
 
-	public function getTournaments(DataContainer $dc)
-	{
-		return $this->turniere;
-	}
 }
