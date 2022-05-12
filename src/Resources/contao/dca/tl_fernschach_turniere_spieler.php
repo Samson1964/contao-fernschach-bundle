@@ -250,15 +250,27 @@ class tl_fernschach_turniere_spieler extends \Backend
 		// ID des meldefähigen Turniers ermitteln
 		$objTurnier = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 		                             ->execute($dc->activeRecord->pid);
-		// Alle gemeldeten Spieler dieses Turniers laden
+		// Alle Meldungen dieses Turniers laden
 		$objSpieler = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? ORDER BY teilnehmer ASC, nachname ASC, vorname ASC")
 		                             ->execute($objTurnier->pid);
 
 		$spieler = array();
 		while ($objSpieler->next())
 		{
-			//$spieler[$objSpieler->id] = $objSpieler->vorname.' '.$objSpieler->nachname.' (meldungId = '.$objSpieler->teilnehmer.' / id = '.$objSpieler->id.' / '.$dc->activeRecord->pid.')';
-			$spieler[$objSpieler->id] = $objSpieler->vorname.' '.$objSpieler->nachname.' ['.($objSpieler->teilnehmer ? 'registriert als Teilnehmer' : 'nicht registriert').']';
+			if($objSpieler->teilnehmer)
+			{
+				// Meldung im Turnier als Teilnehmer bereits registriert
+				if($objSpieler->id == $dc->activeRecord->meldungId)
+				{
+					// Nur in Auswahlliste anzeigen, wenn Spieler-ID = Meldung-ID
+					$spieler[$objSpieler->id] = $objSpieler->vorname.' '.$objSpieler->nachname.' [aktuell zugeordnet]';
+				}
+			}
+			else
+			{
+				// Unbearbeitete Meldung
+				$spieler[$objSpieler->id] = $objSpieler->vorname.' '.$objSpieler->nachname;
+			}
 		}
 
 		return $spieler;

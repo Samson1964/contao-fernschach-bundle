@@ -237,6 +237,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldungDatum'],
 			'exclude'                 => true,
+			'default'                 => time(),
 			'inputType'               => 'text',
 			'flag'                    => 6,
 			'eval'                    => array

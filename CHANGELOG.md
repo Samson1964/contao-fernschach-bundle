@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.3.1 (2022-05-11)
+
+* Add: tl_fernschach_turniere_meldungen.meldungDatum -> time() als default
+* Change: Zuordnung Meldungen zu den Turniergruppen optimiert
+
 ## Version 0.3.0 (2022-05-10)
 
 * Change: ce_fernschach_zusagen h3 statt h2 als Überschrift
