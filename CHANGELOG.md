@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.3.2 (2022-05-11)
+
+* Change: tl_fernschach_spieler -> Bearbeitungslink für Bewerbungen deaktiviert
+* Add: Informationen zu den Bewerbungen im Baum von tl_fernschach_turniere
+* Fix: Im Navigationspfad des Turnierbaumes fehlte ein Icon
+* Add: tl_fernschach_turniere_bewerbungen.stateOrganizer für Aktivierung der Veranstalterzusage
+* Change: Inhaltselement Zusagen angepaßt wegen der neuen Baumstruktur
+* Change: Inhaltselement Zusagen -> Veranstalterzusage erforderlich
+
 ## Version 0.3.1 (2022-05-11)
 
 * Add: tl_fernschach_turniere_meldungen.meldungDatum -> time() als default

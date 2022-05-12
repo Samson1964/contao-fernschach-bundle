@@ -99,7 +99,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{application_legend},vorname,nachname,applicationDate;{player_legend:hide},spielerId;{promise_legend:hide},state,promiseDate,comment;{publish_legend},published'
+		'default'                     => '{application_legend},vorname,nachname,applicationDate;{player_legend:hide},spielerId;{promise_legend:hide},state,stateOrganizer,promiseDate,comment;{publish_legend},published'
 	),
 
 	// Fields
@@ -197,6 +197,19 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 			'eval'                    => array('tl_class'=>'w50'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state_options'],
 			'sql'                     => "varchar(1) NOT NULL default '0'"
+		),
+		'stateOrganizer' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['stateOrganizer'],
+			'inputType'               => 'checkbox',
+			'default'                 => '',
+			'filter'                  => true,
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'isBoolean'           => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'promiseDate' => array
 		(

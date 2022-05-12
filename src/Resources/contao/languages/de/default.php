@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['TL_LANG']['CTE']['correspondence_chess'] = 'Fernschach-Elemente';
+$GLOBALS['TL_LANG']['CTE']['fernschachverwaltung'] = array('Fernschach-Verwaltung', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung_zusagen'] = array('Turnierzusagen anzeigen', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 
 

@@ -12,7 +12,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['player_legend'] = 'Zu
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['spielerId'] = array('Spieler/Mitglied', 'Wählen Sie einen Spieler aus, dem diese Bewerbung zugeordnet wird.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['promise_legend'] = 'Zu- oder Absage';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state'] = array('Status', 'Status der Zu- oder Absage');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state'] = array('Status BdF', 'Status der Zu- oder Absage vom BdF');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['stateOrganizer'] = array('Zusage Veranstalter', 'Nur wenn diese Checkbox aktiviert ist, wird der Spieler im Frontend angezeigt.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['promiseDate'] = array('Datum', 'Zu- oder Absagedatum im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['comment'] = array('Kommentar', 'Interner Kommentar');
 

@@ -74,6 +74,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		),
 		'operations' => array
 		(
+			'infoBewerbungen' => array
+			(
+				'button_callback'     => array('tl_fernschach_turniere', 'infoBewerbungen')
+			),
 			'editheader' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editheader'],
@@ -441,6 +445,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 class tl_fernschach_turniere extends \Backend
 {
 
+	var $bewerbungen = array(); // Nimmt die Daten aus tl_fernschach_turniere_bewerbungen auf
+	
 	/**
 	 * Import the back end user object
 	 */
@@ -448,6 +454,30 @@ class tl_fernschach_turniere extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+
+		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE published=?")
+		                                          ->execute(1);
+		if($objBewerbungen->numRows)
+		{
+			while($objBewerbungen->next())
+			{
+				$this->bewerbungen[$objBewerbungen->pid]['anzahl']++;
+				switch($objBewerbungen->state)
+				{
+					case 0: // ohne Entscheidung
+						$this->bewerbungen[$objBewerbungen->pid]['unklar']++;
+						break;
+					case 1: // Zusage
+						$this->bewerbungen[$objBewerbungen->pid]['zusagen']++;
+						break;
+					case 2: // Absage
+						$this->bewerbungen[$objBewerbungen->pid]['absagen']++;
+						break;
+				}
+			}
+		}
+		//print_r($this->bewerbungen);
+
 	}
 
 	/**
@@ -474,7 +504,7 @@ class tl_fernschach_turniere extends \Backend
 			// Infos zur aktuellen Kategorie laden
 			$objActual = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_turniere WHERE published = ? AND id = ?')
 			                                     ->execute(1, $cat);
-			$breadcrumb[] = '<img src="bundles/contaofernschach/images/category.png" width="18" height="18" alt=""> ' . $objActual->title;
+			$breadcrumb[] = '<img src="bundles/contaofernschach/images/ordner_gelb.png" width="18" height="18" alt=""> ' . $objActual->title;
 			
 			// Navigation vervollständigen
 			$pid = $objActual->pid;
@@ -637,8 +667,8 @@ class tl_fernschach_turniere extends \Backend
 		}
 
 		$objRow = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE id=?")
-								 ->limit(1)
-								 ->execute($intId);
+		                         ->limit(1)
+		                         ->execute($intId);
 
 		if ($objRow->numRows < 1)
 		{
@@ -770,28 +800,6 @@ class tl_fernschach_turniere extends \Backend
 		else return '';
 	}
 
-	/**
-	 * Zeigt zu einem Datensatz die Anzahl der Bewerbungen/Zusagen an
-	 *
-	 * @param array                $row
-	 * @param string               $label
-	 * @param Contao\DataContainer $dc
-	 * @param array                $args        Index 6 ist das Feld lizenzen
-	 *
-	 * @return array
-	 */
-	public function viewLabels($row, $label, Contao\DataContainer $dc, $args)
-	{
-
-		$args[3] = $this->bewerbungen[$row['id']];
-		$args[4] = '';
-		if($this->status[$row['id']][0]) $args[4] .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->status[$row['id']][0].$this->generateImage($this->getImage('bundles/contaofernschach/images/fragezeichen.png', 12, 12, 'proportional'), 'ohne Entscheidung').'</span>&nbsp;';
-		if($this->status[$row['id']][1]) $args[4] .= '<span title="Anzahl der Zusagen">'.$this->status[$row['id']][1].$this->generateImage($this->getImage('bundles/contaofernschach/images/ja.png', 12, 12, 'proportional'), 'Zusagen').'</span>&nbsp;';
-		if($this->status[$row['id']][2]) $args[4] .= '<span title="Anzahl der Absagen">'.$this->status[$row['id']][2].$this->generateImage($this->getImage('bundles/contaofernschach/images/nein.png', 12, 12, 'proportional'), 'Absagen').'</span>';
-
-		// Datensatz komplett zurückgeben
-		return $args;
-	}
 
 	/**
 	 * Liefert die Liste der in der aktuellen Kategorie möglichen Typen
@@ -895,6 +903,40 @@ class tl_fernschach_turniere extends \Backend
 			$icon = 'bundles/contaofernschach/images/turnier_bewerbungen_inaktiv.png';
 			$title = 'Keine Bewerbungen möglich bei diesem Eintrag';
 			return '<span>'.\Image::getHtml($icon, $label).'</span> ';
+		}
+
+	}
+
+	/**
+	 * Gibt den Button für die Bearbeitung der Bewerbungen zurück
+	 * @param array
+	 * @param string
+	 * @param string
+	 * @param string
+	 * @param string
+	 * @param string
+	 * @return string
+	 */
+	public function infoBewerbungen($row, $href, $label, $title, $icon, $attributes)
+	{
+
+		if($row['bewerbungErlaubt'] && $row['type'] == 'tournament')
+		{
+			// Bewerbungen können bearbeitet werden, deshalb Anzahl Bewerbungen anzeigen
+			if($this->bewerbungen[$row['id']])
+			{
+				$temp = '<span style="color:#9F9F9F;">Bewerbungen: <b>'.$this->bewerbungen[$row['id']]['anzahl'].'</b> [';
+				if($this->bewerbungen[$row['id']]['unklar']) $temp .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->bewerbungen[$row['id']]['unklar'].$this->generateImage($this->getImage('bundles/contaofernschach/images/fragezeichen.png', 12, 12, 'proportional'), 'ohne Entscheidung').'</span> ';
+				if($this->bewerbungen[$row['id']]['zusagen']) $temp .= '<span title="Anzahl der Zusagen">'.$this->bewerbungen[$row['id']]['zusagen'].$this->generateImage($this->getImage('bundles/contaofernschach/images/ja.png', 12, 12, 'proportional'), 'Zusagen').'</span> ';
+				if($this->bewerbungen[$row['id']]['absagen']) $temp .= '<span title="Anzahl der Absagen">'.$this->bewerbungen[$row['id']]['absagen'].$this->generateImage($this->getImage('bundles/contaofernschach/images/nein.png', 12, 12, 'proportional'), 'Absagen').'</span> ';
+				$temp = rtrim($temp).']</span><span style="width:20px; display:inline-block;"></span>';
+			}
+			return $temp;
+		}
+		else
+		{
+			// Keine Bearbeitung von Bewerbungen
+			return '';
 		}
 
 	}

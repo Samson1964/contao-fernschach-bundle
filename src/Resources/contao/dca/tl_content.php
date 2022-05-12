@@ -3,7 +3,7 @@
 /**
  * Paletten
  */
-$GLOBALS['TL_DCA']['tl_content']['palettes']['turnierbewerbungen_zusagen'] = '{type_legend},type,headline;{fernschachverwaltung_legend},fernschachverwaltung_id;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['fernschachverwaltung_zusagen'] = '{type_legend},type,headline;{fernschachverwaltung_legend},fernschachverwaltung_id;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
 /**
  * Felder
@@ -48,15 +48,14 @@ class tl_content_fernschachverwaltung extends \Backend
 	 */
 	public static function getTournaments()
 	{
-		$objRegister = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE typ = ? ORDER BY startDate DESC")
-		                                       ->execute('e');
+		$objRegister = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE type=? AND typ=? ORDER BY startDate DESC")
+		                                       ->execute('tournament', 'e');
 		$array = array();
 		while($objRegister->next())
 		{
-			$array[$objRegister->id] = $objRegister->titel . ' [Start: ' . date('d.m.Y', $objRegister->startDate) . '] '.$objRegister->id;
+			$array[$objRegister->id] = $objRegister->title . ' [Start: ' . date('d.m.Y', $objRegister->startDate) . '] ID: '.$objRegister->id;
 		}
 		return $array;
 	}
-
 
 }

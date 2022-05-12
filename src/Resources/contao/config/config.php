@@ -74,4 +74,4 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['fernschach'] = array
  * Inhaltselemente
  */
 
-$GLOBALS['TL_CTE']['fernschachverwaltung']['turnierbewerbungen_zusagen'] = 'Schachbulle\ContaoFernschachBundle\ContentElements\Zusagen';
+$GLOBALS['TL_CTE']['fernschachverwaltung']['fernschachverwaltung_zusagen'] = 'Schachbulle\ContaoFernschachBundle\ContentElements\Zusagen';

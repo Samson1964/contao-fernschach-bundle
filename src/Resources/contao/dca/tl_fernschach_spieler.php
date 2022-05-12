@@ -77,12 +77,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'icon'                => 'delete.gif',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"'
 			),
-			'bewerbungen' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bewerbungen'],
-				'href'                => 'table=tl_fernschach_turnierbewerbungen',
-				'icon'                => 'bundles/contaofernschach/images/bewerbungen.png'
-			),
+			//'bewerbungen' => array
+			//(
+			//	'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bewerbungen'],
+			//	'href'                => 'table=tl_fernschach_turnierbewerbungen',
+			//	'icon'                => 'bundles/contaofernschach/images/bewerbungen.png'
+			//),
 			'konto' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'],
