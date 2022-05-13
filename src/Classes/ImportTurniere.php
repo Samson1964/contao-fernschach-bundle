@@ -88,9 +88,9 @@ class ImportTurniere extends \Backend
 							switch($kopf[$x])
 							{
 								case 'titel':
-									$set['titel'] = $spalte[$x]; break;
+									$set['title'] = (string)$spalte[$x]; break;
 								case 'kennziffer':
-									$set['kennziffer'] = $spalte[$x]; break;
+									$set['kennziffer'] = (string)$spalte[$x]; break;
 								case 'registrationDate':
 									$set['registrationDate'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
 								case 'startDate':
@@ -100,19 +100,24 @@ class ImportTurniere extends \Backend
 								case 'nenngeld':
 									$set['nenngeld'] = (double)str_replace(',', '.', $spalte[$x]); break;
 								case 'turnierleiterName':
-									$set['turnierleiterName'] = $spalte[$x]; break;
+									$set['turnierleiterName'] = (string)$spalte[$x]; break;
 								case 'turnierleiterEmail':
-									$set['turnierleiterEmail'] = $spalte[$x]; break;
+									$set['turnierleiterEmail'] = (string)$spalte[$x]; break;
 								case 'published':
 									$set['published'] = $spalte[$x]; break;
 								case 'id':
 									$set['id'] = (int)$spalte[$x]; break;
+								case 'pid':
+									$set['pid'] = (int)$spalte[$x]; break;
+								case 'typ':
+									$set['type'] = (string)$spalte[$x]; break;
 								default:
 							}
 						}
 
 						if($set['id'])
 						{
+							unset($set['pid']); // pid-Feld löschen, da nicht benötigt
 							// ID ist gesetzt, vorhandenes Turnier mit dieser ID überschreiben/ergänzen
 							log_message('Set-Array Update tl_fernschach_turniere:','fernschach-verwaltung.log');
 							log_message(print_r($set,true),'fernschach-verwaltung.log');
@@ -122,12 +127,12 @@ class ImportTurniere extends \Backend
 							\Controller::createNewVersion('tl_fernschach_turniere', $set['id']);
 							$update_count++;
 						}
-						elseif($set['titel'])
+						elseif($set['title'])
 						{
 							unset($set['id']); // ID-Feld muß gelöscht werden, sonst funktioniert das Update nicht
 							// Nur Turniere mit gesetztem Titel importieren
 							// Nach Titel suchen
-							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE titel = ?")
+							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE title = ?")
 							                                     ->limit(1)
 							                                     ->execute($set['titel']);
 

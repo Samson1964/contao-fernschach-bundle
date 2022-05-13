@@ -91,6 +91,10 @@ Folgende Spaltenarten werden unterstützt:
 	<td>i = international, n = national, e = Einladungsturnier</td>
 </tr>
 <tr>
+	<td>typ</td>
+	<td>Möglich sind folgende Werte: category, tournament, group</td>
+</tr>
+<tr>
 	<td>kennziffer</td>
 	<td>Turnier-Kennziffer (max. 255 Zeichen)</td>
 </tr>
@@ -116,12 +120,15 @@ Folgende Spaltenarten werden unterstützt:
 </tr>
 <tr>
 	<td>published</td>
-	<td>1 = Turnier veröffentlicht, bei Nichtveröffentlichung leerlassen. Wenn das Feld <b>published</b> fehlt, wird das Turnier automatisch veröffentlicht!
-</td>
+	<td>1 = Turnier veröffentlicht, bei Nichtveröffentlichung leerlassen. Wenn das Feld <b>published</b> fehlt, wird das Turnier automatisch veröffentlicht!</td>
 </tr>
 <tr>
 	<td>id</td>
 	<td>ID des Datensatzes in der Datenbank. Ein bereits vorhandenes Turnier wird überschrieben bzw. ergänzt. Damit läßt sich auch das Feld <b>titel</b> überschreiben! Ist das Feld <b>id</b> leer, wird wieder nach dem Feld <b>titel</b> verfahren.</td>
+</tr>
+<tr>
+	<td>pid</td>
+	<td>ID des Eltern-Datensatzes in der Datenbank. Das importierte Turnier wird in diese Kategorie/dieses Turnier eingefügt. Bei gesetztem Feld <b>id</b> wird das Feld <b>pid</b> ignoriert!</td>
 </tr>
 </table>
 ';

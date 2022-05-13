@@ -64,6 +64,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'class'               => 'header_toggle',
 				'showOnSelect'        => true 
 			),
+			'importTurniere' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['importTurniere'],
+				'href'                => 'key=importTurniere',
+				'icon'                => 'bundles/contaofernschach/images/import.png'
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -138,17 +144,18 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type'), 
+		'__selector__'                => array('type', 'bewerbungErlaubt'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
 		'category'                    => '{title_legend},title,type;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld;{meldung_legend},onlineAnmeldung,bewerbungErlaubt,spielerMax,art,artInfo;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},applications,applicationText;{publish_legend},published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld;{meldung_legend},onlineAnmeldung,spielerMax,art,artInfo;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},bewerbungErlaubt;{publish_legend},published',
 		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{publish_legend},published',
 	), 
 
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'protected'                   => 'groups'
+		'protected'                   => 'groups',
+		'bewerbungErlaubt'            => 'applications,applicationText'
 	), 
 	
 	// Fields
@@ -287,20 +294,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'sql'                     => "char(1) NOT NULL default '1'"
 		),
-		'bewerbungErlaubt' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungErlaubt'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'default'                 => '',
-			'inputType'               => 'checkbox',
-			'eval'                    => array
-			(
-				'tl_class'            => 'w50', 
-				'isBoolean'           => true,
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
 		'spielerMax' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'],
@@ -394,6 +387,21 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'bewerbungErlaubt' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungErlaubt'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => '',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+				'submitOnChange'      => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		// Gibt die Liste der Bewerbungen aus
 		'applications' => array
@@ -751,9 +759,9 @@ class tl_fernschach_turniere extends \Backend
 
 		$turnier_id = $dc->activeRecord->id;
 
-		$objApplications = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, b.nachname AS nachname, b.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=?")
+		$objApplications = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachnameM, m.vorname AS vornameM, b.nachname AS nachname, b.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=?")
 		                                           ->execute($turnier_id);
-		$ausgabe = '<div class="long widget">'; // Wichtig damit das Auf- und Zuklappen funktioniert
+		$ausgabe = '<div class="long widget" style="margin-top:10px;">'; // Wichtig damit das Auf- und Zuklappen funktioniert
 		$ausgabe .= '<table class="tl_listing showColumns">';
 		$ausgabe .= '<tbody><tr>';
 		$ausgabe .= '<th class="tl_folder_tlist">'.$GLOBALS['TL_LANG']['tl_fernschach_turniere']['name'][0].'</th>';
@@ -771,7 +779,14 @@ class tl_fernschach_turniere extends \Backend
 			else $style = ' style="color:red"';
 			$oddeven = $oddeven == 'odd' ? 'even' : 'odd';
 			$ausgabe .= '<tr class="'.$oddeven.'" onmouseover="Theme.hoverRow(this,1)" onmouseout="Theme.hoverRow(this,0)">';
-			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$objApplications->nachname.','.$objApplications->vorname.'</td>';
+			if($objApplications->nachname || $objApplications->vorname)
+			{
+				$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$objApplications->nachname.','.$objApplications->vorname.'</td>';
+			}
+			else
+			{
+				$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$objApplications->nachnameM.','.$objApplications->vornameM.'</td>';
+			}
 			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.($objApplications->bewerbungsdatum ? date('d.m.Y', $objApplications->bewerbungsdatum) : '-').'</td>';
 			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.($objApplications->status == 0 ? 'ohne Entscheidung' : ($objApplications->status == 1 ? 'Zusage' : 'Absage')).'</td>';
 			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.($objApplications->zusagedatum ? date('d.m.Y', $objApplications->zusagedatum) : '-').'</td>';

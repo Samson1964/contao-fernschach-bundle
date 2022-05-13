@@ -25,6 +25,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 		'ptable'                      => 'tl_fernschach_turniere',
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
+		//'onsubmit_callback'             => array
+		//(
+		//	array('tl_fernschach_turniere_bewerbungen', 'setSpielername')
+		//),
 		'sql' => array
 		(
 			'keys' => array
@@ -130,8 +134,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 			'search'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
+			'load_callback'           => array
+			(
+				array('tl_fernschach_turniere_bewerbungen','getVorname')
+			),
 			'eval'                    => array
 			(
+				'alwaysSave'          => true,
 				'mandatory'           => true, 
 				'maxlength'           => 40, 
 				'tl_class'            =>'w50'
@@ -146,8 +155,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 			'search'                  => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
+			'load_callback'           => array
+			(
+				array('tl_fernschach_turniere_bewerbungen','getNachname')
+			),
 			'eval'                    => array
 			(
+				'alwaysSave'          => true,
 				'mandatory'           => true, 
 				'maxlength'           => 40, 
 				'tl_class'            =>'w50'
@@ -182,6 +196,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 				'includeBlankOption'  => true,
 				'chosen'              => true,
 				'mandatory'           => false, 
+				'submitOnChange'      => true,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -352,7 +367,7 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 		// Zuordnung
 		if($arrRow['spielerId']) 
 		{
-			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']].'';
+			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'];
 		}
 		else $temp .= ' - nicht zugeordnet';
 		// Bewerbungsdatum
@@ -377,6 +392,32 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 	{
 		if($value) return strtotime(date('Y-m-d', $value) . ' 00:00:00');
 		else return '';
+	}
+
+	/**
+	 * load_callback: Wird bei der Initialisierung eines Formularfeldes ausgeführt.
+	 * @param $varValue
+	 * @param $dc
+	 * @return var
+	 */
+	public function getVorname($varValue, DataContainer $dc) 
+	{               
+		if(!$varValue && $dc->activeRecord->spielerId)
+		{
+			// Kein Vorname, dann Vorname aus Spielertabelle holen
+			$varValue = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
+		}
+		return $varValue;
+	}
+
+	public function getNachname($varValue, DataContainer $dc) 
+	{
+		if(!$varValue && $dc->activeRecord->spielerId)
+		{
+			// Kein Nachname, dann Nachname aus Spielertabelle holen
+			$varValue = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
+		}
+		return $varValue;
 	}
 
 }

@@ -1,6 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
-## Version 0.3.2 (2022-05-11)
+## Version 0.3.3 (2022-05-13)
+
+* Change: Bewerbungen in Turnier-Einstellungen nur anzeigen, wenn Bewerbungen erlaubt sind
+* Fix: In Einstellungen von Turnieren mit Bewerbungen fehlen die Namen
+* Fix: Im Formular für die Bewerbungen sollte Vor- und Nachname automatisch ausgefüllt werden, wenn leer
+* Add: Importfunktion für Turniere wieder eingebaut
+
+## Version 0.3.2 (2022-05-12)
 
 * Change: tl_fernschach_spieler -> Bearbeitungslink für Bewerbungen deaktiviert
 * Add: Informationen zu den Bewerbungen im Baum von tl_fernschach_turniere

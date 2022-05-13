@@ -4,8 +4,8 @@
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['application_legend'] = 'Bewerbung';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['vorname'] = array('Vorname', 'Vorname des Bewerbers');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['nachname'] = array('Nachname', 'Nachname des Bewerbers');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['vorname'] = array('Vorname', 'Vorname des Bewerbers. Falls leer, wird der Vorname automatisch anhand des unten ausgewählten Spielers eingetragen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['nachname'] = array('Nachname', 'Nachname des Bewerbers. Falls leer, wird der Nachname automatisch anhand des unten ausgewählten Spielers eingetragen.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['applicationDate'] = array('Bewerbungsdatum', 'Bewerbungsdatum im Format TT.MM.JJJJ');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['player_legend'] = 'Zuordnung';
