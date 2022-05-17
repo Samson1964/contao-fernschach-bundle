@@ -70,7 +70,7 @@ class ImportSpieler extends \Backend
 				while(!feof($resFile))
 				{
 					$zeile = trim(fgets($resFile));
-					$spalte = explode(';', $zeile);
+					$spalte = explode('|', $zeile);
 					if($record_count == 0)
 					{
 						// Kopfzeile auslesen
@@ -85,6 +85,7 @@ class ImportSpieler extends \Backend
 						$mitgliedsdaten = array();
 						for($x = 0; $x < count($spalte); $x++)
 						{
+							$spalte[$x] = trim($spalte[$x]);
 							switch($kopf[$x])
 							{
 								case 'mitgliednr':
@@ -95,20 +96,64 @@ class ImportSpieler extends \Backend
 									$set['vorname'] = $spalte[$x]; break;
 								case 'nachname':
 									$set['nachname'] = $spalte[$x]; break;
+								case 'geschlecht':
+									$set['sex'] = $spalte[$x]; break;
+								case 'anrede':
+									$set['anrede'] = $spalte[$x]; break;
+								case 'briefanrede':
+									$set['briefanrede'] = $spalte[$x]; break;
 								case 'strasse':
 									$set['strasse'] = $spalte[$x]; break;
+								case 'zusatz':
+									$set['adresszusatz'] = $spalte[$x]; break;
 								case 'plz':
 									$set['plz'] = $spalte[$x]; break;
 								case 'ort':
 									$set['ort'] = $spalte[$x]; break;
+								case 'geburtstag':
+									$set['birthday'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
+								case 'streichung':
+									$set['streichung'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
+								case 'zuzug':
+									$set['zuzug'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
+								case 'verein':
+									$set['verein'] = $spalte[$x]; break;
+								case 'status':
+									$set['status'] = $spalte[$x]; break;
 								case 'mitgliedbeginn':
 									$mitgliedsdaten[0]['from'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
 								case 'mitgliedende':
 									$mitgliedsdaten[0]['to'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
-								case 'status':
+								case 'mitgliedstatus':
 									$mitgliedsdaten[0]['status'] = $spalte[$x]; break;
+								case 'telefon':
+									$set['telefon1'] = $spalte[$x]; break;
+								case 'telefon1':
+									$set['telefon1'] = $spalte[$x]; break;
+								case 'telefon2':
+									$set['telefon2'] = $spalte[$x]; break;
+								case 'telefax':
+									$set['telefax1'] = $spalte[$x]; break;
+								case 'telefax1':
+									$set['telefax1'] = $spalte[$x]; break;
+								case 'telefax2':
+									$set['telefax2'] = $spalte[$x]; break;
 								case 'email':
 									$set['email1'] = $spalte[$x]; break;
+								case 'email1':
+									$set['email1'] = $spalte[$x]; break;
+								case 'email2':
+									$set['email2'] = $spalte[$x]; break;
+								case 'info':
+									$set['info'] = $spalte[$x]; break;
+								case 'klassenberechtigung':
+									$set['klassenberechtigung'] = $spalte[$x]; break;
+								case 'gast':
+									$set['gastNummer'] = $spalte[$x]; break;
+								case 'servertester':
+									$set['servertesterNummer'] = $spalte[$x]; break;
+								case 'fremdspieler':
+									$set['fremdspielerNummer'] = $spalte[$x]; break;
 								case 'gm_title':
 									$set['gm_title'] = $spalte[$x]; break;
 								case 'im_title':
@@ -175,24 +220,34 @@ class ImportSpieler extends \Backend
 							}
 						}
 
-						// Mitgliedsdaten konvertieren
-						if($mitgliedsdaten[0]['from'])
-						{
-							$set['memberships'] = serialize($mitgliedsdaten);
-						}
-
 						// Import/Update nur vornehmen, wenn Mitgliedsnummer vorhanden ist
 						if($set['memberId'])
 						{
 							// Nach Mitgliedsnummer suchen
 							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+							                                     ->limit(1)
 							                                     ->execute($set['memberId']);
 							
 							if($objResult->numRows)
 							{
+								// Mitglied bereits vorhanden, dann überschreiben
+								// Zuvor die Mitgliedschaften ergänzen bzw. überschreiben
+								if($mitgliedsdaten)
+								{
+									$mitgliedsdaten_alt = unserialize($objResult->memberships);
+									if($mitgliedsdaten_alt)
+									{
+										// Neue Mitgliedsdaten hinzufügen und doppelte Einträge löschen
+										$set['memberships'] = serialize(array_unique(array_merge($mitgliedsdaten_alt, $mitgliedsdaten)));
+									}
+									else
+									{
+										// Serialisierte neue Mitgliedsdaten zuweisen
+										$set['memberships'] = serialize($mitgliedsdaten);
+									}
+								}
 								log_message('Set-Array Update:','fernschach-verwaltung.log');
 								log_message(print_r($set,true),'fernschach-verwaltung.log');
-								// Mitglied bereits vorhanden, dann überschreiben
 								$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id = ?")
 								                                     ->set($set)
 								                                     ->execute($objResult->id);

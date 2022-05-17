@@ -10,6 +10,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['person_legend'] = 'Name';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nachname'] = array('Nachname', 'Geben Sie hier den Nachnamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['vorname'] = array('Vorname', 'Geben Sie hier den Vornamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['titel'] = array('Titel', 'Geben Sie hier den Titel ein, z.B. Dr. oder Prof.Dr.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede'] = array('Anrede', 'Wählen Sie hier die Anrede aus.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede'] = array('Briefanrede', 'Wählen Sie hier die Briefanrede aus.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['live_legend'] = 'Lebensdaten';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['birthday'] = array('Geburtstag', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
@@ -23,10 +25,15 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresse_legend'] = 'Adresse';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse'] = array('Straße', 'Geben Sie hier die Straße ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz'] = array('PLZ', 'Geben Sie hier die Postleitzahl ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort'] = array('Ort', 'Geben Sie hier den Ort ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz'] = array('Zusatz', 'Zusatz zur Adresse');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon_legend'] = 'Telefon';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon1'] = array('Telefon 1', 'Geben Sie hier die erste Telefonnummer ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon2'] = array('Telefon 2', 'Geben Sie hier die zweite Telefonnummer ein.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefax_legend'] = 'Telefax';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefax1'] = array('Telefax 1', 'Geben Sie hier die erste Telefaxnummer ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefax2'] = array('Telefax 2', 'Geben Sie hier die zweite Telefaxnummer ein.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email_legend'] = 'E-Mail';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email1'] = array('E-Mail 1', 'Geben Sie hier die erste E-Mail-Adresse ein.');
@@ -35,10 +42,26 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email2'] = array('E-Mail 2', 'Gebe
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships_legend'] = 'Mitgliedschaften';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberId'] = array('Mitgliedsnummer national', 'Mitgliedsnummer national');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberInternationalId'] = array('Mitgliedsnummer international', 'Mitgliedsnummer international');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'] = array('Streichung zum', 'Datum der Streichung des Mitgliedes im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships'] = array('Aktuelle und frühere Mitgliedschaften', '');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Status', 'Freies Textfeld');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['alternativ_legend'] = 'Alternative Spielernummern';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gastNummer'] = array('Gast-Nummer', 'Gast-Nummer');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['servertesterNummer'] = array('Servertester-Nummer', 'Servertester-Nummer');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fremdspielerNummer'] = array('Fremdspieler-Nummer', 'Fremdspieler-Nummer');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug_legend'] = 'Zuzug';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein_legend'] = 'Verein';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'] = array('Status', 'Status');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'] = array('GM', 'Spieler hat den GM-Titel');
@@ -132,11 +155,36 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'] = array('Import Sp
  * Select-Felder
  */
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede_options'] = array
+(
+	'Frau'  => 'Frau',
+	'Herr'  => 'Herr',
+	'Herrn' => 'Herrn',
+	'Mr.'   => 'Mr.',
+	'Mrs.'  => 'Mrs.',
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede_options'] = array
+(
+	'Lieber Fernschachfreund'  => 'Lieber Fernschachfreund',
+	'Liebe Fernschachfreundin' => 'Liebe Fernschachfreundin',
+	'Lieber Schachfreund'      => 'Lieber Schachfreund',
+	'Liebe Schachfreundin'     => 'Liebe Schachfreundin',
+	'Dear chessfriend'         => 'Dear chessfriend',
+);
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sex_options'] = array
 (
 	'm' => 'Männlich',
 	'w' => 'Weiblich',
 	'd' => 'Divers'
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung_options'] = array
+(
+	'M'  => 'Meisterklasse',
+	'H'  => 'Hauptturnierklasse',
+	'O'  => 'Offene Klasse',
 );
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_title_options'] = array

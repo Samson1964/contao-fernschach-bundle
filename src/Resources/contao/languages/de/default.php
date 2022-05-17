@@ -8,7 +8,7 @@ $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung_zusagen'] = array('Turnierzusag
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'] = 'Spielerdaten aus einer CSV-Datei importieren';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['format'] = 
 'Die hochgeladenen CSV-Dateien müssen im UTF-8-Format vorliegen. Je Zeile steht ein Datensatz in der Datei. 
-Die 1. Zeile ist die Kopfzeile mit der Definition der Spalten. Die Spalten werden mit einem Semikolon voneinander getrennt.
+Die 1. Zeile ist die Kopfzeile mit der Definition der Spalten. Die Spalten werden mit einem | voneinander getrennt.
 Die Reihenfolge der Spalten ist frei wählbar.<br><br>
 Eindeutiges Kriterium der Zuordnung zu vorhandenen Datensätzen ist die Spalte <b>mitgliednr</b>. Ist ein Datensatz mit <b>mitgliednr</b> bereits
 vorhanden, wird dieser mit den importierten Spalten überschrieben. Nichtimportierte Spalten bleiben erhalten. 
@@ -35,6 +35,18 @@ Folgende Spaltenarten werden unterstützt:
 	<td>Nachname des Spielers</td>
 </tr>
 <tr>
+	<td>geschlecht</td>
+	<td>Geschlecht. Folgende Werte sind möglich: m, w, d</td>
+</tr>
+<tr>
+	<td>anrede</td>
+	<td>Anrede. Erlaubt sind: Herr, Herrn, Frau, Mr., Mrs. oder das Feld leerlassen.</td>
+</tr>
+<tr>
+	<td>briefanrede</td>
+	<td>Briefanrede. Erlaubt sind: Lieber Fernschachfreund, Liebe Fernschachfreundin, Lieber Schachfreund, Liebe Schachfreundin, Dear chessfriend oder das Feld leerlassen.</td>
+</tr>
+<tr>
 	<td>strasse</td>
 	<td>Straße des Wohnortes</td>
 </tr>
@@ -47,16 +59,92 @@ Folgende Spaltenarten werden unterstützt:
 	<td>Name des Wohnortes</td>
 </tr>
 <tr>
-	<td>mitgliedbeginn</td>
-	<td>Beginn der Mitgliedschaft als Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ</td>
+	<td>zusatz</td>
+	<td>Adresszusatz</td>
 </tr>
 <tr>
-	<td>mitgliedende</td>
-	<td>Ende der Mitgliedschaft als Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ</td>
+	<td>telefon</td>
+	<td>1. Telefonnummer</td>
+</tr>
+<tr>
+	<td>telefon1</td>
+	<td>1. Telefonnummer</td>
+</tr>
+<tr>
+	<td>telefon2</td>
+	<td>2. Telefonnummer</td>
+</tr>
+<tr>
+	<td>telefax</td>
+	<td>1. Telefaxnummer</td>
+</tr>
+<tr>
+	<td>telefax1</td>
+	<td>1. Telefaxnummer</td>
+</tr>
+<tr>
+	<td>telefax2</td>
+	<td>2. Telefaxnummer</td>
+</tr>
+<tr>
+	<td>email</td>
+	<td>1. E-Mail-Adresse</td>
+</tr>
+<tr>
+	<td>email1</td>
+	<td>1. E-Mail-Adresse</td>
+</tr>
+<tr>
+	<td>email2</td>
+	<td>2. E-Mail-Adresse</td>
+</tr>
+<tr>
+	<td>verein</td>
+	<td>Verein</td>
 </tr>
 <tr>
 	<td>status</td>
-	<td>Status der Mitgliedschaft (beliebiger Text)</td>
+	<td>Status</td>
+</tr>
+<tr>
+	<td>mitgliedbeginn</td>
+	<td>Beginn der Mitgliedschaft als Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Eine vorhandene Mitgliedschaft wird ergänzt, ansonsten eine neue Mitgliedschaft angelegt.</td>
+</tr>
+<tr>
+	<td>mitgliedende</td>
+	<td>Ende der Mitgliedschaft als Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Eine vorhandene Mitgliedschaft wird ergänzt, ansonsten eine neue Mitgliedschaft angelegt.</td>
+</tr>
+<tr>
+	<td>mitgliedstatus</td>
+	<td>Status der Mitgliedschaft (beliebiger Text). Eine vorhandene Mitgliedschaft wird ergänzt, ansonsten eine neue Mitgliedschaft angelegt.</td>
+</tr>
+<tr>
+	<td>klassenberechtigung</td>
+	<td>Klassenberechtigung. Mögliche Werte sind: M, H, O oder das Feld leerlassen.</td>
+</tr>
+<tr>
+	<td>gast</td>
+	<td>Gast-Nummer</td>
+</tr>
+<tr>
+	<td>servertester</td>
+	<td>Servertester-Nummer</td>
+</tr>
+<tr>
+	<td>fremdspieler</td>
+	<td>Fremdspieler-Nummer</td>
+</tr>
+<tr>
+	<td>streichung</td>
+	<td>Streichungsdatum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ</td>
+</tr>
+<tr>
+	<td>zuzug</td>
+	<td>Zuzug als Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ</td>
+</tr>
+<tr>
+	<td>info</td>
+	<td>Interne Bemerkungen</td>
 </tr>
 <tr>
 	<td>aktiv</td>
