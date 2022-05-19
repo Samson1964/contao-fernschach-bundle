@@ -1,6 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
-## Version 0.3.4 (2022-05-13)
+## Version 0.3.5 (2022-05-19)
+
+* Add: tl_fernschach_spieler.titelinfo für den nachfolgenden Import
+* Change: ImportSpieler neue Felder titelhalter und iccftitel -> wird bei tl_fernschach_spieler.titelinfo hinzugefügt
+
+## Version 0.3.4 (2022-05-17)
 
 * Add: tl_fernschach_spieler zusätzliche Felder anhand Stammdaten-Datenbank angelegt -> anrede, klassenberechtigung, telefax1, telefax2, streichung, briefanrede, gastNummer, servertesterNummer, fremdspielerNummer, zuzug, adresszusatz, verein, status
 * Change: ImportSpieler mit neuen Feldern versehen und Überschreibfunktionen angepaßt

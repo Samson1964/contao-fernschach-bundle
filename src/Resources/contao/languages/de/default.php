@@ -147,6 +147,14 @@ Folgende Spaltenarten werden unterstützt:
 	<td>Interne Bemerkungen</td>
 </tr>
 <tr>
+	<td>titelhalter</td>
+	<td>Mit dem Inhalt wird das Feld <i>titelinfo</i> ergänzt.</td>
+</tr>
+<tr>
+	<td>iccftitel</td>
+	<td>Mit dem Inhalt wird das Feld <i>titelinfo</i> ergänzt.</td>
+</tr>
+<tr>
 	<td>aktiv</td>
 	<td>1, Mitglied aktivieren - leerlassen, wenn inaktiv (ausgetreten)</td>
 </tr>

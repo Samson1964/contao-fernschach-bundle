@@ -113,7 +113,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member'),
-		'default'                     => '{person_legend},nachname,vorname,titel,anrede,briefanrede;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{verein_legend:hide},verein,status;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{person_legend},nachname,vorname,titel,anrede,briefanrede;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{verein_legend:hide},verein,status;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Subpalettes
@@ -1245,6 +1245,19 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			),
 			'sql'                     => "int(8) unsigned NOT NULL default '0'"
 		),
+		'titelinfo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['titelinfo'],
+			'inputType'               => 'textarea',
+			'exclude'                 => true,
+			'search'                  => true,
+			'eval'                    => array
+			(
+				'mandatory'           => false, 
+				'tl_class'            => 'long clr'
+			),
+			'sql'                     => "text NULL"
+		),
 		'honor_25' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_25'],
@@ -1622,8 +1635,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'],
 			'inputType'               => 'textarea',
 			'exclude'                 => true,
-			'sorting'                 => true,
-			'flag'                    => 1,
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>false, 'tl_class'=>'long'),
 			'sql'                     => "text NULL"

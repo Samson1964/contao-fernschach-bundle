@@ -78,6 +78,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_title'] = array('CCE', 'Spiele
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_date'] = array('Datum', 'Verleihungsdatum des CCE-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_title'] = array('LIM', 'Spieler hat den LIM-Titel');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_date'] = array('Datum', 'Verleihungsdatum des LIM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['titelinfo'] = array('Titelinfo', 'Enthält die Inhalte der Felder titelhalter und iccftitel aus dem Stammdaten-Import. Für die interne Verwendung und spätere Zuordnung. Dieses Feld entfällt vielleicht in zukünftigen Versionen!');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fide_legend'] = 'FIDE-Titel';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_title'] = array('GM', 'Spieler hat den GM-Titel');

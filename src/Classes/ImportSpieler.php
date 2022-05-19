@@ -216,6 +216,10 @@ class ImportSpieler extends \Backend
 									$set['lim_date'] = \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($spalte[$x]); break;
 								case 'aktiv':
 									$set['published'] = $spalte[$x]; break;
+								case 'titelhalter':
+									$set['titelhalter'] = $spalte[$x]; break;
+								case 'iccftitel':
+									$set['iccftitel'] = $spalte[$x]; break;
 								default:
 							}
 						}
@@ -246,6 +250,20 @@ class ImportSpieler extends \Backend
 										$set['memberships'] = serialize($mitgliedsdaten);
 									}
 								}
+
+								// Titelhalter und ICCF-Titel hinzufügen
+								$set['titelinfo'] = $objResult->titelinfo;
+								if($set['titelhalter'])
+								{
+									$set['titelinfo'] .= "\nTitelhalter: ".$set['titelhalter'];
+								}
+								if($set['iccftitel'])
+								{
+									$set['titelinfo'] .= "\nICCF-Titel: ".$set['iccftitel'];
+								}
+								unset($set['titelhalter']);
+								unset($set['iccftitel']);
+
 								log_message('Set-Array Update:','fernschach-verwaltung.log');
 								log_message(print_r($set,true),'fernschach-verwaltung.log');
 								$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id = ?")
@@ -256,6 +274,18 @@ class ImportSpieler extends \Backend
 							}
 							else
 							{
+								// Titelhalter und ICCF-Titel hinzufügen
+								if($set['titelhalter'])
+								{
+									$set['titelinfo'] = "Titelhalter: ".$set['titelhalter']."\n";
+								}
+								if($set['iccftitel'])
+								{
+									$set['titelinfo'] .= "ICCF-Titel: ".$set['iccftitel'];
+								}
+								unset($set['titelhalter']);
+								unset($set['iccftitel']);
+
 								log_message('Set-Array Insert:','fernschach-verwaltung.log');
 								log_message(print_r($set,true),'fernschach-verwaltung.log');
 								// Neues Mitglied
