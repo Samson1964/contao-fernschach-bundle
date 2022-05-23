@@ -26,8 +26,8 @@ class Zusagen extends \ContentElement
 		}
 		else
 		{
-			// alle aktiven Einladungsturniere mit Startdatum in der Zukunft gewünscht
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate >= ? AND typ = ? ORDER BY startDate ASC")
+			// alle aktiven Einladungsturniere mit Startdatum in der Vergangenheit gewünscht
+			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate <= ? AND typ = ? ORDER BY startDate ASC")
 			                                      ->execute(1, time(), 'e');
 		}
 
@@ -40,7 +40,7 @@ class Zusagen extends \ContentElement
 			{
 				// Turnierzusagen einlesen
 				$zusagen = array();
-				$objSpieler = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.stateOrganizer as veranstalter, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.spielerId=? AND b.state=? AND b.stateOrganizer=? ORDER BY m.nachname ASC, m.vorname ASC")
+				$objSpieler = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.stateOrganizer as veranstalter, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=? AND b.state=? AND b.stateOrganizer=? ORDER BY m.nachname ASC, m.vorname ASC")
 				                                      ->execute($objTurnier->id, 1, 1);
 
 				if($objSpieler->numRows)

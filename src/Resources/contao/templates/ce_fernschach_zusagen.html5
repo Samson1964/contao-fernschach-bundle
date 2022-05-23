@@ -10,7 +10,7 @@
 		<?php if($turnier['spieler']): ?>
 			<table>
 			<tr>
-				<th>Zugesagte Teilnehmer</th>
+				<th>Bestätigte Teilnehmer</th>
 			</tr>
 			<?php foreach($turnier['spieler'] as $item): ?>
 				<tr>
@@ -19,7 +19,7 @@
 			<?php endforeach; ?>
 			</table>
 		<?php else: ?>
-			<p><i>Bisher noch ohne Zusagen</i></p>
+			<p><i>Bisher noch ohne Bestätigungen</i></p>
 		<?php endif; ?>
 	<?php endforeach; ?>
 <?php endif; ?>

@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.3.6 (2022-05-23)
+
+* Change: Inhaltselement Zusagen soll diese erst nach dem Start des Turniers anzeigen
+* Fix: Zusagen (BdF + Veranstalter) werden im FE nicht angezeigt
+* Change: Template ce_fernschach_zusagen.html5: Statt Zusagen heißt es jetzt Bestätigungen
+
 ## Version 0.3.5 (2022-05-19)
 
 * Add: tl_fernschach_spieler.titelinfo für den nachfolgenden Import
