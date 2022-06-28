@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+* Ausbau tl_fernschach_spieler_konto  
+* Fix: Sortierung Mitgliedsnummer falsch
+* Fix: Buchungsimport
+
 ## Version 0.3.6 (2022-05-23)
 
 * Change: Inhaltselement Zusagen soll diese erst nach dem Start des Turniers anzeigen

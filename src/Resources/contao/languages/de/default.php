@@ -242,14 +242,18 @@ Folgende Spaltenarten werden unterstützt:
 </tr>
 <tr>
 	<td>betrag</td>
-	<td>Betrag in Euro, z.B. -12,05 oder 13.23</td>
+	<td>Betrag in Euro (ggfs. mit Vorzeichen, siehe <i>typ</i>), z.B. -12,05 oder 13.23</td>
+</tr>
+<tr>
+	<td>typ</td>
+	<td>s = Sollbuchung (Ausgabe, Rechnungstellung Nenngeld), h = Habenbuchung (Zahlung vom Spieler). Wenn diese Spalte nicht angegeben ist, wird das Vorzeichen aus der Spalte <i>betrag</i> entsprechend als Soll oder Haben verwendet.</td>
 </tr>
 <tr>
 	<td>art</td>
 	<td>b = Mitgliedsbeitrag, g = Guthaben, n = BdF-Turnier, i = ICCF-Turnier</td>
 </tr>
 <tr>
-	<td>datum</td>
+	<td>datum*</td>
 	<td>Datum der Buchung im Format TT.MM.JJJJ</td>
 </tr>
 <tr>
@@ -265,7 +269,7 @@ Folgende Spaltenarten werden unterstützt:
 	<td>Kommentar zur Buchung</td>
 </tr>
 <tr>
-	<td>memberId*</td>
+	<td>memberid*</td>
 	<td>Mitgliedsnummer im BdF. Ist das Feld gesetzt, wird die Buchung diesem Spieler zugeordnet. Es wird ein neuer Spieler (deaktiviert) angelegt, wenn die Mitgliedsnummer noch nicht existiert.</td>
 </tr>
 <tr>
@@ -285,7 +289,7 @@ Folgende Spaltenarten werden unterstützt:
 	<td>ID des Datensatzes in der Datenbank. Eine bereits vorhandene Buchung wird überschrieben bzw. ergänzt. Ist das Feld <b>id</b> leer, wird eine neue Buchung angelegt.</td>
 </tr>
 </table>
-<p style="margin:18px">*Die Felder <b>memberId</b> oder/und <b>nachname</b> und <b>vorname</b> werden für die Zuordnung der Buchung zu einem Spieler benötigt. Ist <b>memberId</b> gesetzt, wird der entsprechende Spieler verwendet und ggfs. neu angelegt. Ist <b>memberId</b> nicht gesetzt, wird mit Hilfe der Felder <b>nachname</b> und <b>vorname</b> nach einem Spieler gesucht. Dem ersten gefundenen Spieler wird die Buchung zugeordnet. Wird kein Spieler gefunden, wird ein neuer Spieler (deaktiviert) angelegt.</p>
+<p style="margin:18px">*Pflichtfelder<br>Die Felder <b>memberid</b> oder/und <b>nachname</b> und <b>vorname</b> werden für die Zuordnung der Buchung zu einem Spieler benötigt. Ist <b>memberid</b> gesetzt, wird der entsprechende Spieler verwendet und ggfs. neu angelegt. Ist <b>memberId</b> nicht gesetzt, wird mit Hilfe der Felder <b>nachname</b> und <b>vorname</b> nach einem Spieler gesucht. Dem ersten gefundenen Spieler wird die Buchung zugeordnet. Wird kein Spieler gefunden, wird ein neuer Spieler (deaktiviert) angelegt.</p>
 ';
 
 $GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array

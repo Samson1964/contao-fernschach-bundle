@@ -22,7 +22,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'tables'            => array
 		(
 			'tl_fernschach_spieler',
-			'tl_fernschach_konto',
+			'tl_fernschach_spieler_konto',
 			'tl_fernschach_turnierbewerbungen',
 		),
 		'importSpieler'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),

@@ -11,7 +11,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	(
 		'dataContainer'               => 'Table',
 		'enableVersioning'            => true,
-		'ctable'                      => array('tl_fernschach_konto'),
+		'ctable'                      => array('tl_fernschach_spieler_konto'),
 		'sql' => array
 		(
 			'keys' => array
@@ -30,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'sorting' => array
 		(
 			'mode'                    => 2,
-			'fields'                  => array('nachname','vorname'),
+			'fields'                  => array('nachname','vorname','memberId'),
 			'flag'                    => 1,
 			'panelLayout'             => 'filter;sort,search,limit',
 		),
@@ -89,7 +89,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'konto' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'],
-				'href'                => 'table=tl_fernschach_konto',
+				'href'                => 'table=tl_fernschach_spieler_konto',
 				'icon'                => 'bundles/contaofernschach/images/euro.png'
 			),
 			'toggle' => array
@@ -428,14 +428,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => true,
-			'flag'                    => 1,
+			'flag'                    => 11,
 			'filter'                  => true,
 			'search'                  => true,
 			'eval'                    => array
 			(
 				'mandatory'           => true,
 				'maxlength'           => 20,
-				'tl_class'            => 'w50',
+				'tl_class'            => 'w50', 
 				'unique'              => true,
 			),
 			'sql'                     => "varchar(20) NOT NULL default ''"
