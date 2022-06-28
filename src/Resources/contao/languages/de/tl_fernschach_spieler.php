@@ -27,6 +27,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz'] = array('PLZ', 'Geben Sie hi
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort'] = array('Ort', 'Geben Sie hier den Ort ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz'] = array('Zusatz', 'Zusatz zur Adresse');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresse2_legend'] = 'Zweite Adresse';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse2'] = array('Straße', 'Geben Sie hier die Straße ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz2'] = array('PLZ', 'Geben Sie hier die Postleitzahl ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort2'] = array('Ort', 'Geben Sie hier den Ort ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz2'] = array('Zusatz', 'Zusatz zur Adresse');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon_legend'] = 'Telefon';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon1'] = array('Telefon 1', 'Geben Sie hier die erste Telefonnummer ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon2'] = array('Telefon 2', 'Geben Sie hier die zweite Telefonnummer ein.');

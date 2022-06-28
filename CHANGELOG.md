@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.4.1 (2022-06-28)
+
+* Add: Spieler-Modul - 2. Adresse
+* Change: Zu durchsuchende Felder minimiert
+* Change: Zu filternde Felder minimiert
+* Change: Zu sortierende Felder minimiert
+
+## Version 0.4.0 (2022-06-28)
+
 * Ausbau tl_fernschach_spieler_konto  
 * Fix: Sortierung Mitgliedsnummer falsch
 * Fix: Buchungsimport
