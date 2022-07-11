@@ -7,6 +7,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['buchung_legend'] = 'Buchung'
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['betrag'] = array('Betrag', 'Betrag ohne Vorzeichen eingeben.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['typ'] = array('Soll/Haben', 'Betrag als Soll- oder Haben-Buchung berechnen.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['datum'] = array('Datum', 'Buchungsdatum im Format TT.MM.JJJJ');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie'] = array('Kategorie', 'Kategorie der Buchung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art'] = array('Art', 'Art der Buchung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['verwendungszweck'] = array('Verwendungszweck', 'Verwendungszweck, Turniername oder Turnierkennzeichen');
 
@@ -41,10 +42,14 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['typ_options'] = array
 	's' => 'Soll-Buchung (Forderung an Spieler)'
 );
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'] = array
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie_options'] = array
 (
 	'b' => 'Beitrag',
 	'g' => 'Guthaben',
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'] = array
+(
 	'n' => 'BdF-Turnier',
 	'i' => 'ICCF-Turnier',
 );

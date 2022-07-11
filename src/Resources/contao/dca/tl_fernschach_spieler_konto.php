@@ -109,7 +109,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{buchung_legend},betrag,typ,datum,art,verwendungszweck;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{publish_legend},published'
+		'default'                     => '{buchung_legend},betrag,typ,datum,kategorie,art,verwendungszweck;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{publish_legend},published'
 	),
 
 	// Fields
@@ -128,6 +128,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'sorting'                 => true,
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'meldungId' => array
+		(
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		),
 		'betrag' => array
 		(
@@ -181,6 +185,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 				array('tl_fernschach_spieler_konto', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
+		),
+		'kategorie' => array(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'select',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie_options'],
+			'eval'                    => array
+			(                         
+				'tl_class'            => 'w50 clr', 
+				'multiple'            => false,
+				'includeBlankOption'  => true
+			),
+			'sql'                     => "varchar(1) NOT NULL default ''"
 		),
 		'art' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art'],

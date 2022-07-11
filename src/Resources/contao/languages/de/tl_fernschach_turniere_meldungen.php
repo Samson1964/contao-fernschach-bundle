@@ -4,6 +4,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['mainTitle'] = 'Turniere
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['hinweis_legend'] = 'Wichtiger Hinweis';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldInfo'] = array('', 'Beim Speichern dieser Meldung werden automatisch Buchungsdatensätze erzeugt und verwaltet, wenn ein Spieler zugeordnet oder eine Mitgliedsnummer eingetragen wurde:<br><br><b>[1] Sollbuchung</b>: In-Rechnung-Stellung des Nenngeldes mit optionaler Kategorie Guthaben.<br><b>[2] Habenbuchung (optional)</b>: Wenn ein Überweisungsdatum eingetragen wurde.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldedatum_legend'] = 'Meldedatum';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungDatum'] = array('Meldedatum und -uhrzeit', 'Meldedatum bzw. Versendedatum des Meldeformulars.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['person_legend'] = 'Vor - und Nachname';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nachname'] = array('Nachname', 'Geben Sie hier den Nachnamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['vorname'] = array('Vorname', 'Geben Sie hier den Vornamen ein.');
@@ -20,9 +26,6 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['memberships_legend'] = 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['memberId'] = array('Mitgliedsnummer national', 'Mitgliedsnummer national');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['turnier_legend'] = 'Turnier';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungDatum'] = array('Meldedatum', 'Meldedatum bzw. Versendedatum des Meldeformulars.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungTurnier'] = array('Turnier', 'Turnier, für das gemeldet wird.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungAnzahl'] = array('Anzahl', 'Anzahl der Meldungen für dieses Turnier.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['meldungNenngeld'] = array('Nenngeld', 'Nenngeld in Euro, welches überwiesen wird.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeld_legend'] = 'Nenngeld';

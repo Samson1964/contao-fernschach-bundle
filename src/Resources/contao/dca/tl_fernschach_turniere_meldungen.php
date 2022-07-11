@@ -14,6 +14,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'dataContainer'               => 'Table',
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_fernschach_turniere',
+		'onsubmit_callback'           => array
+		(
+			array('tl_fernschach_turniere_meldungen', 'AktualisiereBuchungen')
+		),
+		'ondelete_callback'           => array
+		(
+			array('tl_fernschach_turniere_meldungen', 'LoescheBuchungen')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -91,7 +99,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'default'                     => '{person_legend},vorname,nachname,spielerId;{contact_legend},plz,ort,strasse,email,fax;{memberships_legend},memberId;{turnier_legend},meldungDatum,meldungNenngeld;{nenngeld_legend},nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{publish_legend},published'
+		'default'                     => '{hinweis_legend},nenngeldInfo;{meldedatum_legend},meldungDatum;{person_legend},vorname,nachname;{memberships_legend},spielerId,memberId;{contact_legend:hide},plz,ort,strasse,email,fax;{turnier_legend};{nenngeld_legend},meldungNenngeld,nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{publish_legend},published'
 	),
 
 	// Felder
@@ -251,6 +259,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 				array('tl_fernschach_turniere_meldungen', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
+		),
+		'nenngeldInfo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldInfo'],
+			'input_field_callback'    => array('tl_fernschach_turniere_meldungen', 'getInfo'),
+			'exclude'                 => false,
 		),
 		'meldungNenngeld' => array
 		(
@@ -468,4 +482,168 @@ class tl_fernschach_turniere_meldungen extends \Backend
 
 	}
 
+	public function getInfo(\DataContainer $dc)
+	{
+
+		$string = '
+<div class="long clr widget">
+	<h3><label>'.$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldInfo'][0].'</label></h3><span style="color:green;">
+	'.$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldInfo'][1].'</span>
+</div>';
+
+		return $string;
+	}
+
+	public function AktualisiereBuchungen(\DataContainer $dc)
+	{
+		//log_message('dc->activeRecord:','fernschach.log');
+		//log_message(print_r($dc->activeRecord,true),'fernschach.log');
+
+		// ************************************************************
+		// Turnier laden
+		// ************************************************************
+		$turnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($dc->activeRecord->pid);
+
+		// ************************************************************
+		// ID des zugeordneten Spielers ermitteln
+		// ************************************************************
+		$pid = 0;
+		if($dc->activeRecord->spielerId)
+		{
+			// Spieler zugeordnet, das hat Priorität
+			$pid = $dc->activeRecord->spielerId;
+		}
+		elseif($dc->activeRecord->memberId)
+		{
+			// Kein Spieler zugeordnet, aber Mitgliedsnummer vorhanden - dann Spieler anhand Mitgliedsnummer suchen
+			$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(NULL, $dc->activeRecord->memberId);
+			if($spieler->numRows()) $pid = $spieler->memberId;
+		}
+		if(!$pid) return; // Nichts gefunden, keine Buchungen anlegen/aktualisieren
+
+		// ************************************************************
+		// Suche nach Sollbuchung für diese Meldung
+		// ************************************************************
+		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE meldungId = ? AND typ = ?")
+		                                  ->execute($dc->activeRecord->id, 's');
+		if($result->numRows)
+		{
+			// Buchung gefunden -> aktualisieren
+			$set = array
+			(
+				'tstamp'           => time(),
+				'betrag'           => $turnier->nenngeld,
+				'datum'            => $dc->activeRecord->meldungDatum,
+				'art'              => 'n', // nation. Turnier
+				'verwendungszweck' => 'Nenngeld-Forderung',
+				'turnier'          => $turnier->id,
+				'comment'          => $result->comment .= "\nDatensatz automatisch aktualisiert am ".date('d.m.Y H:i'),
+			);
+			//log_message('set (UPDATE):','fernschach.log');
+			//log_message(print_r($set,true),'fernschach.log');
+			$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+			                                     ->set($set)
+			                                     ->execute($result->id);
+			$this->createNewVersion('tl_fernschach_spieler_konto', $result->id);
+		}
+		else
+		{
+			// Buchung nicht gefunden -> anlegen
+			$set = array
+			(
+				'pid'              => $pid,
+				'tstamp'           => time(),
+				'meldungId'        => $dc->activeRecord->id,
+				'betrag'           => $turnier->nenngeld,
+				'typ'              => 's',
+				'datum'            => $dc->activeRecord->meldungDatum,
+				'kategorie'        => $dc->activeRecord->nenngeldGuthaben ? 'g' : '', // Guthabenbuchung oder nichts eintragen
+				'art'              => 'n', // nation. Turnier
+				'verwendungszweck' => 'Nenngeld-Forderung'.($dc->activeRecord->nenngeldGuthaben ? ' (Verrechnung mit Guthaben gewünscht)' : ''),
+				'turnier'          => $turnier->id,
+				'comment'          => 'Datensatz automatisch erzeugt am '.date('d.m.Y H:i'),
+				'published'        => 1,
+			);
+			//log_message('set (INSERT):','fernschach.log');
+			//log_message(print_r($set,true),'fernschach.log');
+			$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
+			                                     ->set($set)
+			                                     ->execute();
+		}
+
+		// ************************************************************
+		// Suche nach Habenbuchung für diese Meldung
+		// ************************************************************
+		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE meldungId = ? AND typ = ?")
+		                                  ->execute($dc->activeRecord->id, 'h');
+		if($result->numRows)
+		{
+			// Buchung gefunden -> aktualisieren, wenn Überweisungsdatum gesetzt ist
+			if($dc->activeRecord->nenngeldDate)
+			{
+				$set = array
+				(
+					'tstamp'           => time(),
+					'kategorie'        => $dc->activeRecord->nenngeldGuthaben ? 'g' : '', // Guthabenbuchung oder nichts eintragen
+					'betrag'           => $dc->activeRecord->meldungNenngeld,
+					'datum'            => $dc->activeRecord->nenngeldDate,
+					'art'              => 'n', // nation. Turnier
+					'turnier'          => $turnier->id,
+					'comment'          => $result->comment .= "\nDatensatz automatisch aktualisiert am ".date('d.m.Y H:i'),
+				);
+				//log_message('set (UPDATE):','fernschach.log');
+				//log_message(print_r($set,true),'fernschach.log');
+				$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+				                                     ->set($set)
+				                                     ->execute($result->id);
+				$this->createNewVersion('tl_fernschach_spieler_konto', $result->id);
+			}
+			// Buchung löschen, da kein Überweisungsdatum gesetzt ist
+			else
+			{
+				$answer = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
+				                                  ->execute($result->id);
+			}
+		}
+		else
+		{
+			// Buchung nicht gefunden -> anlegen, wenn Überweisungsdatum ausgefüllt ist
+			if($dc->activeRecord->nenngeldDate)
+			{
+				$set = array
+				(
+					'pid'              => $pid,
+					'tstamp'           => time(),
+					'meldungId'        => $dc->activeRecord->id,
+					'typ'              => 'h',
+					'kategorie'        => $dc->activeRecord->nenngeldGuthaben ? 'g' : '', // Guthabenbuchung oder nichts eintragen
+					'betrag'           => $dc->activeRecord->meldungNenngeld,
+					'datum'            => $dc->activeRecord->nenngeldDate,
+					'art'              => 'n', // nation. Turnier
+					'verwendungszweck' => 'Nenngeld-Zahlung',
+					'turnier'          => $turnier->id,
+					'comment'          => 'Datensatz automatisch erzeugt am '.date('d.m.Y H:i'),
+					'published'        => 1,
+				);
+				//log_message('set (INSERT):','fernschach.log');
+				//log_message(print_r($set,true),'fernschach.log');
+				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
+				                                     ->set($set)
+				                                     ->execute();
+			}
+		}
+
+		return;
+	}
+
+	/**
+	 * ondelete_callback: Wird ausgeführt bevor ein Datensatz aus der Datenbank entfernt wird.
+	 * @param $dc
+	 */
+	public function LoescheBuchungen(\DataContainer $dc)
+	{
+		// Löscht alle Buchungen zu dieser Meldung
+		$result = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE meldungId = ?")
+		                                  ->execute($dc->activeRecord->id);
+	}
 }

@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.0 (2022-07-11)
+
+* Change: tl_fernschach_turniere_meldungen -> Umbau des Meldeformulars
+* Add: tl_fernschach_spieler_konto.meldungId -> Enthält die ID des Datensatzes in tl_fernschach_turniere_meldungen
+* Add: Funktion in tl_fernschach_turniere_meldungen zum Aktualisieren von tl_fernschach_spieler_konto 
+* Add: tl_fernschach_spieler_konto.kategorie für Unterscheidung Beitrag oder Guthaben
+* Change: tl_fernschach_spieler_konto.art -> Beitrag und Guthaben in kategorie ausgelagert
+
 ## Version 0.4.1 (2022-06-28)
 
 * Add: Spieler-Modul - 2. Adresse

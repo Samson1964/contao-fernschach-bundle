@@ -64,6 +64,33 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * Spielerdatensatz anhand ID oder Mitgliedsnummer aus tl_fernschach_spieler laden
+	 * @param
+	 * @return    object
+	 */
+	public function getSpielerdatensatz($id = false, $member = false)
+	{
+		if($id)
+		{
+			// Suche anhand ID
+			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+			                                      ->execute($id);
+			return $objSpieler;
+		}
+
+		if($member)
+		{
+			// Suche anhand Mitgliedsnummer
+			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+			                                      ->limit(1)
+			                                      ->execute($member);
+			return $objSpieler;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Spielernamen (id = Index) aus tl_fernschach_spieler laden
 	 * @param
 	 * @return    array
@@ -87,6 +114,23 @@ class Helper extends \Backend
 			}
 		}
 		return $spieler;
+	}
+
+	/**
+	 * Turnierdatensatz anhand ID tl_fernschach_turniere laden
+	 * @param
+	 * @return    object
+	 */
+	public function getTurnierdatensatz($id)
+	{
+		if($id)
+		{
+			// Suche anhand ID
+			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			                                      ->execute($id);
+			return $objTurnier;
+		}
+		return false;
 	}
 
 }
