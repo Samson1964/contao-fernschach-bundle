@@ -106,6 +106,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'icon'                => 'show.gif',
 				'attributes'          => 'style="margin-right:3px"'
 			),
+			'fertigIcon' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'],
+				'attributes'          => 'onclick="Backend.getScrollOffset();"',
+				'haste_ajax_operation' => array
+				(
+					'field'           => 'fertig',
+					'options'         => array
+					(
+						array('value' => '', 'icon' => 'bundles/contaofernschach/images/unfertig.png'),
+						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/fertig.png'),
+					)
+				)
+			),
 		)
 	),
 
@@ -113,7 +127,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member'),
-		'default'                     => '{person_legend},nachname,vorname,titel,anrede,briefanrede;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{verein_legend:hide},verein,status;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{person_legend},nachname,vorname,titel,anrede,briefanrede;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{verein_legend:hide},verein,status;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published,fertig'
 	),
 
 	// Subpalettes
@@ -1695,7 +1709,26 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'filter'                  => true,
 			'default'                 => 1,
 			'inputType'               => 'checkbox',
-			'eval'                    => array('doNotCopy'=>false),
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
+				'doNotCopy'           => false
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'fertig' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => '',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 	)
@@ -1802,4 +1835,5 @@ class tl_fernschach_spieler extends \Backend
 		               ->execute($intId);
 		$this->createNewVersion('tl_fernschach_spieler', $intId);
 	}
+
 }

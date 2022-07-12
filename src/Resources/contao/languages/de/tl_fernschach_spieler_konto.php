@@ -17,6 +17,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['turnier'] = array('Turnier w
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['comment_legend'] = 'Kommentar';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['comment'] = array('Kommentar', 'Interner Kommentar');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['connection_legend'] = 'Verknüpfungen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['meldungId'] = array('Buchung &harr; ID Meldung', 'Wenn Sie diesen Wert ändern, geht die Verbindung zur ID der zur Buchung gehörenden Meldung verloren. Der Wert 0 hebt die Verbindung auf, jeder andere Wert verbindet die Buchung mit einem anderen, möglicherweise nichtexistenten Meldungs-Datensatz!');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['publish_legend'] = 'Aktivieren';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier die Buchung');
 

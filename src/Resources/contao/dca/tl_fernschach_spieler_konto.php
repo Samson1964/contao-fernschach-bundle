@@ -109,7 +109,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{buchung_legend},betrag,typ,datum,kategorie,art,verwendungszweck;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{publish_legend},published'
+		'default'                     => '{buchung_legend},betrag,typ,datum,kategorie,art,verwendungszweck;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{connection_legend},meldungId;{publish_legend},published'
 	),
 
 	// Fields
@@ -128,10 +128,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'sorting'                 => true,
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),
-		'meldungId' => array
-		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		),
 		'betrag' => array
 		(
@@ -247,6 +243,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 				'tl_class'            => 'w50 noresize',
 			),
 			'sql'                     => "text NULL"
+		),
+		'meldungId' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['meldungId'],
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 		),
 		'published' => array
 		(
@@ -408,23 +411,27 @@ class tl_fernschach_spieler_konto extends Backend
 		$sql = ''; // SQL-String Filter und Suche initialisieren
 		
 		// Filter laden
-		if($session['filter']['tl_fernschach_spieler_konto_900']['typ'])
+		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ'])
 		{
-			$sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_900']['typ']."'";
+			$sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']."'";
 		}
-		if($session['filter']['tl_fernschach_spieler_konto_900']['art'])
+		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['art'])
 		{
-			$sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_900']['art']."'";
+			$sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']."'";
+		}
+		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie'])
+		{
+			$sql .= " AND kategorie = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']."'";
 		}
 
 		//echo "<pre>";
 		// Filter laden
 		
-		//print_r($session['filter']['tl_fernschach_spieler_konto_900']); // typ =>, art =>
+		//print_r($session['filter']['tl_fernschach_spieler_konto_'.$pid]); // typ =>, art =>
 		//print_r($session['search']['tl_fernschach_spieler_konto']); // field => name, value =>
 		//print_r($session);
 		//echo "</pre>";
-
+		//echo $sql;
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql)
 		                                        ->execute($pid, 1);
 

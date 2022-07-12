@@ -135,8 +135,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['bic'] = array('BIC', 'BIC');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['info_legend'] = 'Bemerkungen/Hinweise';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'] = array('Bemerkungen', 'Geben Sie hier interne Bemerkungen zum Spieler ein.');
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Aktivieren';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Spieler.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeitet', 'Der Spieler wurde fertig bearbeitet.');
 
 /**
  * Buttons für Operationen
@@ -148,6 +149,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['copy'] = array('Spieler kopieren',
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'] = array('Spieler löschen', 'Spieler %s löschen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'] = array('Spieler aktivieren/deaktivieren', 'Spieler %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'] = array('Spielersdetails anzeigen', 'Details des Spielers %s anzeigen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'] = array('Spieler bearbeitet/nicht bearbeitet', 'Spieler %s fertig bearbeitet - aktivieren oder deaktivieren');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['applications'] = array('Turniere bearbeiten', 'Bewerbungen und Zusagen für Turniere des Spielers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bearbeiten', 'Buchungen (Zahlungsein- und ausgänge) des Spielers %s bearbeiten');

@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.1 (2022-07-12)
+
+* Add: tl_fernschach_spieler.fertig zur Markierung ob der Datensatz fertig bearbeitet wurde
+* Add: haste_ajax_operation in tl_fernschach_spieler für Toggler der Spalte fertig
+* Add: tl_fernschach_konto Filter für kategorie verbessert
+* Fix: Fehler in Filter-Abfrage bei Saldo-Ermittlung
+* Add: Die Verknüpfung einer Buchung zu einer Meldung kann manuell geändert werden.
+
 ## Version 0.5.0 (2022-07-11)
 
 * Change: tl_fernschach_turniere_meldungen -> Umbau des Meldeformulars
