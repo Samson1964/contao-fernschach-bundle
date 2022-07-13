@@ -11,6 +11,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie'] = array('Kategor
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art'] = array('Art', 'Art der Buchung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['verwendungszweck'] = array('Verwendungszweck', 'Verwendungszweck, Turniername oder Turnierkennzeichen');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['extras_legend'] = 'Besondere Einstellungen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markierung'] = array('Markieren', 'Buchung markieren');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['saldoReset'] = array('Saldo-Reset', 'Der Saldo wird ab dieser Buchung mit dem obigen Betrag weitergeführt.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['turnier_legend'] = 'Zugeordnetes Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['turnier'] = array('Turnier wählen', 'Die Buchung einem Turnier zuordnen, um das Nenngeld zu übernehmen.');
 

@@ -250,7 +250,11 @@ Folgende Spaltenarten werden unterstützt:
 </tr>
 <tr>
 	<td>art</td>
-	<td>b = Mitgliedsbeitrag, g = Guthaben, n = BdF-Turnier, i = ICCF-Turnier</td>
+	<td>n = BdF-Turnier, i = ICCF-Turnier</td>
+</tr>
+<tr>
+	<td>kategorie</td>
+	<td>b = Beitrag, g = Guthaben</td>
 </tr>
 <tr>
 	<td>datum*</td>
@@ -259,6 +263,14 @@ Folgende Spaltenarten werden unterstützt:
 <tr>
 	<td>verwendungszweck</td>
 	<td>Buchungstext (max. 255 Zeichen), kann auch für den Turniernamen verwendet werden, wenn das Feld <b>turnier</b> nicht gesetzt wurde.</td>
+</tr>
+<tr>
+	<td>markierung</td>
+	<td>1 = Buchung markieren, ansonsten leerlassen</td>
+</tr>
+<tr>
+	<td>reset</td>
+	<td>1 = Saldo vor der Buchung auf 0 setzen, ansonsten leerlassen</td>
 </tr>
 <tr>
 	<td>turnier</td>
@@ -289,7 +301,7 @@ Folgende Spaltenarten werden unterstützt:
 	<td>ID des Datensatzes in der Datenbank. Eine bereits vorhandene Buchung wird überschrieben bzw. ergänzt. Ist das Feld <b>id</b> leer, wird eine neue Buchung angelegt.</td>
 </tr>
 </table>
-<p style="margin:18px">*Pflichtfelder<br>Die Felder <b>memberid</b> oder/und <b>nachname</b> und <b>vorname</b> werden für die Zuordnung der Buchung zu einem Spieler benötigt. Ist <b>memberid</b> gesetzt, wird der entsprechende Spieler verwendet und ggfs. neu angelegt. Ist <b>memberId</b> nicht gesetzt, wird mit Hilfe der Felder <b>nachname</b> und <b>vorname</b> nach einem Spieler gesucht. Dem ersten gefundenen Spieler wird die Buchung zugeordnet. Wird kein Spieler gefunden, wird ein neuer Spieler (deaktiviert) angelegt.</p>
+<p style="margin:18px">*Pflichtfelder<br>Die Felder <b>memberid</b> oder/und <b>nachname</b> und <b>vorname</b> werden für die Zuordnung der Buchung zu einem Spieler benötigt. Ist <b>memberid</b> gesetzt, wird der entsprechende Spieler verwendet und ggfs. neu angelegt. Ist <b>memberid</b> nicht gesetzt, wird mit Hilfe der Felder <b>nachname</b> und <b>vorname</b> nach einem Spieler gesucht. Dem ersten gefundenen Spieler wird die Buchung zugeordnet. Wird kein Spieler gefunden, wird ein neuer Spieler (deaktiviert) angelegt.</p>
 ';
 
 $GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array

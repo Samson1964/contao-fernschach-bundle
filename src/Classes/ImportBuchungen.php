@@ -100,6 +100,12 @@ class ImportBuchungen extends \Backend
 										$set['typ'] = $spalte[$x]; break;
 									case 'art':
 										$set['art'] = $spalte[$x]; break;
+									case 'kategorie':
+										$set['kategorie'] = $spalte[$x]; break;
+									case 'markierung':
+										$set['markierung'] = $spalte[$x]; break;
+									case 'reset':
+										$set['resetSaldo'] = $spalte[$x]; break;
 									case 'datum':
 										$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
 									case 'verwendungszweck':

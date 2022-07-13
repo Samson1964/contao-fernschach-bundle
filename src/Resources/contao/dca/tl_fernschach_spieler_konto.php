@@ -109,7 +109,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{buchung_legend},betrag,typ,datum,kategorie,art,verwendungszweck;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{connection_legend},meldungId;{publish_legend},published'
+		'default'                     => '{buchung_legend},betrag,typ,datum,kategorie,art,verwendungszweck;{extras_legend},markierung,saldoReset;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{connection_legend},meldungId;{publish_legend},published'
 	),
 
 	// Fields
@@ -219,6 +219,32 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'text',
 			'eval'                    => array('mandatory'=>false, 'tl_class'=>'w50', 'maxlength'=>255),
 			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'markierung' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markierung'],
+			'inputType'               => 'checkbox',
+			'default'                 => '',
+			'filter'                  => true,
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'isBoolean'           => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'saldoReset' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['saldoReset'],
+			'inputType'               => 'checkbox',
+			'default'                 => '',
+			'filter'                  => true,
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'isBoolean'           => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'turnier' => array
 		(
@@ -358,7 +384,12 @@ class tl_fernschach_spieler_konto extends Backend
 	{
 		static $row;
 		// Buchung positiv oder negativ?
-		$css = $arrRow['typ'] == 'h' ? 'color:green;' : 'color:red';
+		switch($arrRow['typ'])
+		{
+			case 'h': $css = 'color:green;'; break;
+			case 's': $css = 'color:red;'; break;
+			default: $css = 'color:yellow;'; break;
+		}
 		// Buchung auflisten
 		$row++;
 		$temp = '';
@@ -370,9 +401,12 @@ class tl_fernschach_spieler_konto extends Backend
 			$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
 			$temp .= '</div>';
 		}
-		$temp .= '<div class="tl_content_left">';
+		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFD7C4;">';
+		else $temp .= '<div class="tl_content_left">';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.date('d.m.Y', $arrRow['datum']).'</span>';
 		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px; '.$css.'">'.self::getEuro($arrRow['betrag']).'</span>';
+		if($arrRow['saldoReset']) $temp .= ' <img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16">';
+		$temp .= '</span>';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
 		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';
 		if($arrRow['turnier'])
@@ -423,6 +457,10 @@ class tl_fernschach_spieler_konto extends Backend
 		{
 			$sql .= " AND kategorie = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']."'";
 		}
+		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren'])
+		{
+			$sql .= " AND markieren = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']."'";
+		}
 
 		//echo "<pre>";
 		// Filter laden
@@ -432,7 +470,7 @@ class tl_fernschach_spieler_konto extends Backend
 		//print_r($session);
 		//echo "</pre>";
 		//echo $sql;
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql)
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC')
 		                                        ->execute($pid, 1);
 
 		$saldo = 0;
@@ -441,6 +479,11 @@ class tl_fernschach_spieler_konto extends Backend
 			while($objBuchungen->next())
 			{
 				//echo "Betrag=".$objBuchungen->betrag." Saldo davor=".$saldo;
+				if($objBuchungen->saldoReset) 
+				{
+					$saldo = 0; // Saldo soll hier resettet werden
+					//echo " Saldo nach Reset=".$saldo;
+				}
 				switch($objBuchungen->typ)
 				{
 					case 'h':

@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.2 (2022-07-13)
+
+* Add: tl_fernschach_spieler_konto.saldoReset -> Setzt den Saldo auf 0 zurück und rechnet den neuen Saldo mit dem Buchungsbetrag weiter
+* Add: tl_fernschach_spieler_konto.markierung -> Markiert die Buchung mit anderer Farbe in der Buchungsliste
+* Fix: Saldoberechnung falsch, Sortierung nach Buchungsdatum fehlte
+* Add: Import Buchungen -> Feld kategorie (Feld art gefixt)
+* Add: Import Buchungen -> Feld resetSaldo (reset in CSV-Datei)
+* Add: Import Buchungen -> Feld markieren
+* Change: Buchungen ohne Typ (Soll/Haben) werden mit gelber Schrift dargestellt
+
 ## Version 0.5.1 (2022-07-12)
 
 * Add: tl_fernschach_spieler.fertig zur Markierung ob der Datensatz fertig bearbeitet wurde
