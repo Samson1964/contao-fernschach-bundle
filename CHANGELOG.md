@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.3 (2022-07-14)
+
+* Add: Markierungs-Icon in der Buchungsübersicht (als Toogler mit Haste) -> Hintergrundfarbe wird vom Toggler nicht gewechselt
+* Change: Saldo-Reset-Icon vor den Betrag gesetzt
+* Add: tl_fernschach_spieler_konto.importDate -> nichtbearbeitbares Feld mit dem Importzeitpunkt als Unixzeitstempel (wird gesetzt beim Import)
+* Change: Saldo wird in der Buchungsübersicht jetzt bei allen Buchungen angezeigt
+
 ## Version 0.5.2 (2022-07-13)
 
 * Add: tl_fernschach_spieler_konto.saldoReset -> Setzt den Saldo auf 0 zurück und rechnet den neuen Saldo mit dem Buchungsbetrag weiter

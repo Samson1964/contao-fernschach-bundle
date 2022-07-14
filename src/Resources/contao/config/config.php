@@ -44,6 +44,8 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 if(TL_MODE == 'BE')
 {
 	$GLOBALS['TL_CSS'][] = 'bundles/contaofernschach/css/backend.css';
+	//$GLOBALS['TL_JAVASCRIPT'][] = 'assets/jquery/js/jquery.min.js'; 
+	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaofernschach/js/backend.js'; 
 }
 
 /**

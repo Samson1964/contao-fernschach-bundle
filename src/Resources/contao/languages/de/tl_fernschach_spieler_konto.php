@@ -37,6 +37,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['copy'] = array('Buchung kopi
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['delete'] = array('Buchung löschen', 'Buchung %s löschen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['toggle'] = array('Buchung aktivieren/deaktivieren', 'Buchung %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['show'] = array('Buchungsdetails anzeigen', 'Details der Buchung %s anzeigen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markiertIcon'] = array('Spieler markiert/nicht markiert', 'Spieler %s markieren - aktivieren oder deaktivieren');
 
 /**
  * Buttons für globale Operationen

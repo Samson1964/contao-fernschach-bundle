@@ -94,7 +94,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['toggle'],
 				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
+				'attributes'          => 'onclick="Backend.getScrollOffset(); return AjaxRequest.toggleVisibility(this,%s)"',
 				'button_callback'     => array('tl_fernschach_spieler_konto', 'toggleIcon')
 			),
 			'show' => array
@@ -102,7 +102,21 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['show'],
 				'href'                => 'act=show',
 				'icon'                => 'show.gif'
-			)
+			),
+			'markiertIcon' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markiertIcon'],
+				'attributes'          => 'onclick="markiertSetzen(this, %s); javascript:alert(\'Hallo\'); Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'           => 'markierung',
+					'options'         => array
+					(
+						array('value' => '', 'icon' => 'bundles/contaofernschach/images/unfertig.png'),
+						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/fertig.png'),
+					)
+				),
+			),
 		)
 	),
 
@@ -126,6 +140,11 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'tstamp' => array
 		(
 			'sorting'                 => true,
+			'flag'                    => 6,
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'importDate' => array
+		(
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -302,6 +321,7 @@ class tl_fernschach_spieler_konto extends Backend
 {
 
 	var $turniere = array();
+	var $salden = array();
 
 	/**
 	 * Import the back end user object
@@ -395,18 +415,19 @@ class tl_fernschach_spieler_konto extends Backend
 		$temp = '';
 		if($row == 1)
 		{
-			// Saldo berechnen
-			$temp .= '<div class="tl_content_right">';
-			$saldo = self::getSaldo($arrRow['pid']);
-			$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
-			$temp .= '</div>';
+			// Salden berechnen
+			self::getSaldo($arrRow['pid']);
 		}
-		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFD7C4;">';
+		$temp .= '<div class="tl_content_right">';
+		$saldo = self::getEuro($this->salden[$arrRow['id']]);
+		$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
+		$temp .= '</div>';
+		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFE8DD;">';
 		else $temp .= '<div class="tl_content_left">';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.date('d.m.Y', $arrRow['datum']).'</span>';
-		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px; '.$css.'">'.self::getEuro($arrRow['betrag']).'</span>';
-		if($arrRow['saldoReset']) $temp .= ' <img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16">';
-		$temp .= '</span>';
+		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px;">';
+		if($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16"> ';
+		$temp .= self::getEuro($arrRow['betrag'], $arrRow['typ']).'</span>';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
 		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';
 		if($arrRow['turnier'])
@@ -425,11 +446,28 @@ class tl_fernschach_spieler_konto extends Backend
 	 *
 	 * @return string
 	 */
-	public function getEuro($value)
+	public function getEuro($value, $typ = false)
 	{
+		// Komma umwandeln in Punkt
 		$value = str_replace(',', '.', $value);
+
+		// Farbe bestimmen
+		if($typ)
+		{
+			if($typ == 'h') $html = '<span style="color:green;">';
+			elseif($typ == 's') $html = '<span style="color:red;">';
+			else $html = '<span>';
+		}
+		else
+		{
+			if($value > 0) $html = '<span style="color:green;">';
+			elseif($value < 0) $html = '<span style="color:red;">';
+			else $html = '<span>';
+		}
+
+		// Betrag formatieren und zurückgeben
 		$value = str_replace('.', ',', sprintf('%0.2f', $value));
-		return $value.' €';
+		return $html.$value.' €</span>';
 	}
 
 	/**
@@ -470,8 +508,8 @@ class tl_fernschach_spieler_konto extends Backend
 		//print_r($session);
 		//echo "</pre>";
 		//echo $sql;
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC')
-		                                        ->execute($pid, 1);
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=?".$sql.' ORDER BY datum ASC')
+		                                        ->execute($pid);
 
 		$saldo = 0;
 		if($objBuchungen->numRows)
@@ -495,6 +533,8 @@ class tl_fernschach_spieler_konto extends Backend
 					default:
 				}
 				//echo " Saldo danach=".$saldo."<br>";
+				// Saldo dem Salden-Array zuordnen
+				$this->salden[$objBuchungen->id] = $saldo;
 			}
 		}
 		
@@ -574,5 +614,4 @@ class tl_fernschach_spieler_konto extends Backend
 		$temp = str_replace('.', ',', $temp); // Punkt in Komma umwandeln
 		return $temp;
 	}
-
 }

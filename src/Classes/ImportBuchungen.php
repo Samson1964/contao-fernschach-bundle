@@ -48,6 +48,7 @@ class ImportBuchungen extends \Backend
 			}
 
 			$this->import('Database');
+			$importdatum = time(); // Importdatum setzen
 
 			foreach ($arrUploaded as $txtFile)
 			{
@@ -174,6 +175,7 @@ class ImportBuchungen extends \Backend
 							//}
 
 							$set['tstamp'] = time(); // Änderungsdatum setzen
+							$set['importDate'] = $importdatum; // Importzeitpunkt setzen
 
 							if($set['pid'])
 							{
