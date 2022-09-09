@@ -6,6 +6,9 @@
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['id'] = array('ID', 'ID dieses Spielers');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['tstamp'] = array('Letzte Änderung', 'Zeitstempel der letzten Änderung');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived_legend'] = 'Archivierung';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived'] = array('Archiviert', 'Der Spieler wird in der Übersicht in grauer Schrift angezeigt.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['person_legend'] = 'Name';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nachname'] = array('Nachname', 'Geben Sie hier den Nachnamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['vorname'] = array('Vorname', 'Geben Sie hier den Vornamen ein.');

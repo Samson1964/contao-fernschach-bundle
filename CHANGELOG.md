@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.4 (2022-09-09)
+
+* Add: tl_fernschach_spieler.archived -> Archiv-Checkbox für Markierung von archivierten Spielern. In der Übersicht werden archivierte Spieler in grauer Schrift dargestellt.
+* Add: tl_fernschach_spieler_konto.resetRecord -> Checkbox für Markierung der Buchung als Reset-Datensatz (Verwaltung Reset-Datensatz über tl_settings)
+* Add: tl_settings für die Einstellungen der Fernschach-Verwaltung
+* Add: tl_settings.fernschach_resetActive -> Aktiviert/Deaktiviert die globale Resetbuchung
+* Add: tl_settings.fernschach_resetDate -> Setzt das Datum für die globale Resetbuchung
+* Add: tl_settings.fernschach_resetSaldo -> Setzt den Saldo für die globale Resetbuchung
+* Add: Callback in tl_fernschach_spieler_konto für die Statusprüfung der globalen Resetbuchung
+
 ## Version 0.5.3 (2022-07-14)
 
 * Add: Markierungs-Icon in der Buchungsübersicht (als Toogler mit Haste) -> Hintergrundfarbe wird vom Toggler nicht gewechselt

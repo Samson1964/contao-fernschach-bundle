@@ -24,6 +24,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'ptable'                      => 'tl_fernschach_spieler',
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
+		'onload_callback'             => array
+		(
+			array('tl_fernschach_spieler_konto', 'checkResetbuchungen')
+		),
 		'sql' => array
 		(
 			'keys' => array
@@ -143,6 +147,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+		'resetRecord' => array
+		(
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
 		'importDate' => array
 		(
 			'flag'                    => 6,
@@ -156,9 +164,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'rgxp'                => 'digit', 
-				'mandatory'           => false, 
-				'tl_class'            => 'w50', 
+				'rgxp'                => 'digit',
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
 				'maxlength'           => 6
 			),
 			'load_callback'           => array
@@ -178,8 +186,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['typ_options'],
 			'eval'                    => array
-			(                         
-				'tl_class'            => 'w50', 
+			(
+				'tl_class'            => 'w50',
 				'multiple'            => false,
 				'mandatory'           => true,
 				'includeBlankOption'  => false
@@ -208,8 +216,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie_options'],
 			'eval'                    => array
-			(                         
-				'tl_class'            => 'w50 clr', 
+			(
+				'tl_class'            => 'w50 clr',
 				'multiple'            => false,
 				'includeBlankOption'  => true
 			),
@@ -222,8 +230,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'],
 			'eval'                    => array
-			(                         
-				'tl_class'            => 'w50', 
+			(
+				'tl_class'            => 'w50',
 				'multiple'            => false,
 				'includeBlankOption'  => true
 			),
@@ -333,6 +341,91 @@ class tl_fernschach_spieler_konto extends Backend
 
 	}
 
+	/**
+	 * onload_callback: Fuehrt eine Aktion bei der Initialisierung des DataContainer-Objekts aus.
+	 * @param $dc
+	 */
+	public function checkResetbuchungen(\DataContainer $dc)
+	{
+		$id = strlen(Input::get('id')) ? Input::get('id') : $dc->currentPid;
+
+		// Reset-Buchungen suchen
+		$objResets = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? AND resetRecord = ?")
+		                                     ->execute($id, 1);
+
+		// Reset-Buchungen aktualisieren
+		if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+		{
+			$typGlobal = $GLOBALS['TL_CONFIG']['fernschach_resetSaldo'] < 0 ? 's' : 'h';
+			$betragGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetSaldo']);
+			$datumGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetDate']);
+
+			if($objResets->numRows)
+			{
+				// Reset-Buchung ggfs. aktualisieren
+				while($objResets->next())
+				{
+					if($datumGlobal != $objResets->datum || $betragGlobal != $objResets->betrag || $typGlobal != $objResets->typ)
+					{
+						// Unterschied gefunden, dann aktualisieren
+						$set = array
+						(
+							'tstamp'           => time(),
+							'betrag'           => $betragGlobal,
+							'datum'            => $datumGlobal,
+							'typ'              => $typGlobal,
+						);
+						$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+						                                     ->set($set)
+						                                     ->execute($objResets->id);
+					}
+				}
+			}
+			else
+			{
+				// Reset-Buchung anlegen
+				$set = array
+				(
+					'pid'              => $id,
+					'tstamp'           => time(),
+					'resetRecord'      => 1,
+					'betrag'           => $betragGlobal,
+					'datum'            => $datumGlobal,
+					'saldoReset'       => 1,
+					'typ'              => $typGlobal,
+					'verwendungszweck' => 'Saldo global neu gesetzt',
+				);
+				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
+				                                     ->set($set)
+				                                     ->execute();
+			}
+			
+		}
+		else
+		{
+			// Reset-Buchungen löschen
+			if($objResets->numRows)
+			{
+				while($objResets->next())
+				{
+					$objDelete = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
+					                                     ->execute($objResets->id);
+				}
+			}
+		}
+
+	    //
+		//$arr = array();
+		//if($objTurniere->numRows)
+		//{
+		//	while($objTurniere->next())
+		//	{
+		//		$arr[$objTurniere->id] = $objTurniere->title.' (Nenngeld: '.self::getEuro($objTurniere->nenngeld).')';
+		//	}
+		//}
+		//return $arr;
+	}
+
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
 		$this->import('BackendUser', 'User');
@@ -426,7 +519,8 @@ class tl_fernschach_spieler_konto extends Backend
 		else $temp .= '<div class="tl_content_left">';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.date('d.m.Y', $arrRow['datum']).'</span>';
 		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px;">';
-		if($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16"> ';
+		if($arrRow['resetRecord']) $temp .= '<img title="Diese Saldoreset-Buchung wurde global festgelegt." src="bundles/contaofernschach/images/resetGlobal.svg" width="16"> ';
+		elseif($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16"> ';
 		$temp .= self::getEuro($arrRow['betrag'], $arrRow['typ']).'</span>';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
 		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';
@@ -481,7 +575,7 @@ class tl_fernschach_spieler_konto extends Backend
 	{
 		$session = $this->Session->getData(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
-		
+
 		// Filter laden
 		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ'])
 		{
@@ -502,7 +596,7 @@ class tl_fernschach_spieler_konto extends Backend
 
 		//echo "<pre>";
 		// Filter laden
-		
+
 		//print_r($session['filter']['tl_fernschach_spieler_konto_'.$pid]); // typ =>, art =>
 		//print_r($session['search']['tl_fernschach_spieler_konto']); // field => name, value =>
 		//print_r($session);
@@ -517,7 +611,7 @@ class tl_fernschach_spieler_konto extends Backend
 			while($objBuchungen->next())
 			{
 				//echo "Betrag=".$objBuchungen->betrag." Saldo davor=".$saldo;
-				if($objBuchungen->saldoReset) 
+				if($objBuchungen->saldoReset)
 				{
 					$saldo = 0; // Saldo soll hier resettet werden
 					//echo " Saldo nach Reset=".$saldo;
@@ -537,7 +631,7 @@ class tl_fernschach_spieler_konto extends Backend
 				$this->salden[$objBuchungen->id] = $saldo;
 			}
 		}
-		
+
 		// Saldo formatieren
 		//echo $saldo;
 		if((float)$saldo >= 0) return '<span style="color:green;">'.self::getEuro($saldo).'</span>';
