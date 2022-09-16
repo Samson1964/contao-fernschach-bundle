@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.5.5 (2022-09-16)
+
+* Fix: Buchungsimport -> 'INSERT INTO tl_fernschach_turniere (`tstamp`, `titel`, `published`) VALUES (1663096448, 'MS-317', '')': SQLSTATE[42S22]: Column not found: 1054 Unknown column 'titel' in 'field list' -> Richtig ist title
+* Change: Reset-Buchungen in Auflistung tl_fernschach_spieler_konto mit Grundlinie statt Icon gekennzeichnet
+
 ## Version 0.5.4 (2022-09-09)
 
 * Add: tl_fernschach_spieler.archived -> Archiv-Checkbox für Markierung von archivierten Spielern. In der Übersicht werden archivierte Spieler in grauer Schrift dargestellt.

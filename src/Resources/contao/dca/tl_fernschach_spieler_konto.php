@@ -503,6 +503,16 @@ class tl_fernschach_spieler_konto extends Backend
 			case 's': $css = 'color:red;'; break;
 			default: $css = 'color:yellow;'; break;
 		}
+		// Resetbuchung?
+		if($arrRow['resetRecord'])
+		{
+			$resetCss = 'border-bottom: 2px red solid; padding-bottom:1px;';
+		}
+		elseif($arrRow['saldoReset'])
+		{
+			$resetCss = 'border-bottom: 2px black solid; padding-bottom:1px;';
+		}
+
 		// Buchung auflisten
 		$row++;
 		$temp = '';
@@ -515,12 +525,12 @@ class tl_fernschach_spieler_konto extends Backend
 		$saldo = self::getEuro($this->salden[$arrRow['id']]);
 		$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
 		$temp .= '</div>';
-		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFE8DD;">';
-		else $temp .= '<div class="tl_content_left">';
+		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFE8DD; "'.$resetCss.'>';
+		else $temp .= '<div class="tl_content_left" style="'.$resetCss.'">';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.date('d.m.Y', $arrRow['datum']).'</span>';
 		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px;">';
-		if($arrRow['resetRecord']) $temp .= '<img title="Diese Saldoreset-Buchung wurde global festgelegt." src="bundles/contaofernschach/images/resetGlobal.svg" width="16"> ';
-		elseif($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="16"> ';
+		//if($arrRow['resetRecord']) $temp .= '<img title="Diese Saldoreset-Buchung wurde global festgelegt." src="bundles/contaofernschach/images/resetGlobal.svg" width="12" align="middle"> ';
+		//elseif($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="12" align="middle"> ';
 		$temp .= self::getEuro($arrRow['betrag'], $arrRow['typ']).'</span>';
 		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
 		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';

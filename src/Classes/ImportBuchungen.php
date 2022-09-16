@@ -299,7 +299,7 @@ class ImportBuchungen extends \Backend
 			$set = array
 			(
 				'tstamp'    => time(),
-				'titel'     => $string,
+				'title'     => $string,
 				'published' => '',
 			);
 			log_message('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
