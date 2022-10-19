@@ -14,7 +14,8 @@
         "contao/core-bundle": "^4",
         "codefog/contao-haste": "*",
         "schachbulle/contao-helper-bundle": "*",
-        "menatwork/contao-multicolumnwizard-bundle": "*"
+        "menatwork/contao-multicolumnwizard-bundle": "*",
+        "phpoffice/phpspreadsheet": "*"
     },
     "conflict": {
         "contao/core": "*",

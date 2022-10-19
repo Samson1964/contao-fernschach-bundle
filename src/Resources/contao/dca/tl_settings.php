@@ -67,6 +67,12 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetSaldo'] = array
 	),
 );
 
+// Speichert den Zeitpunkt der letzten Aktualisierung von tl_fernschach_spieler_konto
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate'] = array
+(
+	'inputType'               => 'text',
+);
+
 class tl_settings_fernschach extends Backend
 {
 

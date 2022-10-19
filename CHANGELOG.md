@@ -1,5 +1,20 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.0 (2022-10-19)
+
+* Change: tl_fernschach_spieler.status -> Bisher Textfeld, jetzt Select-Liste
+* Change: tl_fernschach_spieler -> Bereich Verein dem Bereich Mitgliedschaften zugeordnet
+* Change: tl_fernschach_spieler.streichung -> Bessere Beschreibung
+* Add: tl_fernschach_spieler_konto.sortierung -> Bis zu zweistelligen Wert angeben, um Buchungen bei gleichem Datum wie gewünscht zu sortieren
+* Change: Saldo-Ausgaben/Berechnungen in tl_fernschach_spieler_konto um Feld sortierung erweitert
+* Change: tl_fernschach_spieler.memberships.status -> Beschreibung von "Status" auf "Bemerkung" geändert
+* Add: Ausgabe des Saldos in Auflistung tl_fernschach_spieler
+* Add: Spezialfilter in Auflistung tl_fernschach_spieler -> Nur Mitglieder (Nicht archiviert, Status Mitglied, Veröffentlicht und mind. eine gültige Mitgliedschaft)
+* Change: Aktualisierung der globalen Reset-Buchungen ausgelagert in Helper-Klasse
+* Add: Export nach Excel für die angezeigten Spieler
+* Add: Abhängigkeit phpoffice/phpspreadsheet in composer.json
+* Add: Spezialfilter in Auflistung tl_fernschach_spieler für fehlendes Geburtsdatum
+ 
 ## Version 0.5.5 (2022-09-16)
 
 * Fix: Buchungsimport -> 'INSERT INTO tl_fernschach_turniere (`tstamp`, `titel`, `published`) VALUES (1663096448, 'MS-317', '')': SQLSTATE[42S22]: Column not found: 1054 Unknown column 'titel' in 'field list' -> Richtig ist title

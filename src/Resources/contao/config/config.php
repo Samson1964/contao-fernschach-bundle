@@ -25,6 +25,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 			'tl_fernschach_spieler_konto',
 			'tl_fernschach_turnierbewerbungen',
 		),
+		'exportXLS'         => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
 		'importSpieler'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),
 		'importBuchungen'   => array('Schachbulle\ContaoFernschachBundle\Classes\ImportBuchungen', 'run'),
 	),

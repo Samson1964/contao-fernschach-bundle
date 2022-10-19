@@ -51,11 +51,13 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email2'] = array('E-Mail 2', 'Gebe
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships_legend'] = 'Mitgliedschaften';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberId'] = array('Mitgliedsnummer national', 'Mitgliedsnummer national');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberInternationalId'] = array('Mitgliedsnummer international', 'Mitgliedsnummer international');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'] = array('Streichung zum', 'Datum der Streichung des Mitgliedes im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'] = array('Streichung zum', 'Datum der durch den BdF bestimmten Streichung des Mitgliedes im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships'] = array('Aktuelle und frühere Mitgliedschaften', '');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Status', 'Freies Textfeld');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Bemerkungen', 'Freies Textfeld für Bemerkungen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein in der DFMM oder im Pokal');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'] = array('Mitgliedsstatus', 'Mitgliedsstatus festlegen');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['alternativ_legend'] = 'Alternative Spielernummern';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['gastNummer'] = array('Gast-Nummer', 'Gast-Nummer');
@@ -67,10 +69,6 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
-
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein_legend'] = 'Verein';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'] = array('Status', 'Status');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'] = array('GM', 'Spieler hat den GM-Titel');
@@ -142,6 +140,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Spieler.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeitet', 'Der Spieler wurde fertig bearbeitet.');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Kontostand', 'Kontostand');
+
 /**
  * Buttons für Operationen
  */
@@ -162,6 +162,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bea
  */
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'] = array('Import Spieler', 'Neue Spieler importieren bzw. alte Spieler ergänzen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['exportXLS'] = array('Export Spieler', 'Excel-Export der ausgewählten Spieler');
 
 /**
  * Select-Felder
@@ -183,6 +184,18 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede_options'] = array
 	'Lieber Schachfreund'      => 'Lieber Schachfreund',
 	'Liebe Schachfreundin'     => 'Liebe Schachfreundin',
 	'Dear chessfriend'         => 'Dear chessfriend',
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status_options'] = array
+(
+	'1' => 'Mitglied',
+	'2' => 'Ausgetreten',
+	'3' => 'Verstorben',
+	'4' => 'Gastspieler',
+	'5' => 'Unbekannt verzogen / Ruhend',
+	'6' => 'Ausgeschlossen',
+	'7' => 'Unbekannt verzogen / Gestrichen',
+	'8' => 'Mitglied Scheiba',
 );
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sex_options'] = array
@@ -217,3 +230,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_title_options'] = array
 	'wfm' => 'FIDE-Meisterin (WFM)',
 	'wcm' => 'Kandidaten-Meisterin der FIDE (WCM)',
 );
+
+/**
+ * Filter
+ */
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] = 'Spezialfilter';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_extended'] = 'Spezialfilter';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Nur Mitglieder';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'] = 'Geburtsdatum fehlt';

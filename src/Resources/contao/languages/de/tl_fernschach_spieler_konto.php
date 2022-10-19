@@ -7,6 +7,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['buchung_legend'] = 'Buchung'
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['betrag'] = array('Betrag', 'Betrag ohne Vorzeichen eingeben.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['typ'] = array('Soll/Haben', 'Betrag als Soll- oder Haben-Buchung berechnen.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['datum'] = array('Datum', 'Buchungsdatum im Format TT.MM.JJJJ');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['sortierung'] = array('Sortierung', 'Hilfsfeld für eine benutzerdefinierte Sortierung bei gleichem Datum bei mehreren Buchungen. Geben Sie bis zu 5-stellige Zahlen ein. Eine höhere Zahl bedeutet eine jüngere Buchung. Standard ist 0.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie'] = array('Kategorie', 'Kategorie der Buchung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art'] = array('Art', 'Art der Buchung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['verwendungszweck'] = array('Verwendungszweck', 'Verwendungszweck, Turniername oder Turnierkennzeichen');
