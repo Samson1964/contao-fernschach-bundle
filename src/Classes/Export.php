@@ -264,7 +264,7 @@ class Export extends \Backend
 			default:
 		}
 
-		($sql) ? $sql .= " ORDER BY nachname,vorname ASC" : $sql = " ORDER BY name,vorname ASC";
+		($sql) ? $sql .= " ORDER BY nachname,vorname ASC" : $sql = " ORDER BY nachname,vorname ASC";
 
 		$sql = "SELECT * FROM tl_fernschach_spieler".$sql;
 

@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.1 (2022-10-19)
+
+* Fix: Export "ORDER BY name,vorname ASC': SQLSTATE[42S22]: Column not found: 1054 Unknown column 'name' in 'order clause'"
+
 ## Version 0.6.0 (2022-10-19)
 
 * Change: tl_fernschach_spieler.status -> Bisher Textfeld, jetzt Select-Liste
