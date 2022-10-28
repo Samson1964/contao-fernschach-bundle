@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.3 (2022-10-28)
+
+* Add: tl_settings.fernschach_resetUpdate editierbar gemacht, um Einfluß auf die Neuberechnung der Kontostände aller Spieler zu haben
+* Fix: Buchungsliste -> Bei Berechnung des Saldos für jede Buchung wurde der globale Reset nicht berücksichtigt -> Fehler in Helper.php:95
+
 ## Version 0.6.2 (2022-10-28)
 
 * Change: Zeitstempel-Steuerung für Aktualisierung der globalen Reset-Buchungen eingebaut

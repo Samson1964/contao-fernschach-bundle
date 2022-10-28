@@ -92,7 +92,7 @@ class Helper extends \Backend
 			while($objBuchungen->next())
 			{
 				//echo "Betrag=".$objBuchungen->betrag." Saldo davor=".$saldo;
-				if($objBuchungen->saldoReset)
+				if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
 				{
 					$saldo = 0; // Saldo soll hier resettet werden
 					//echo " Saldo nach Reset=".$saldo;

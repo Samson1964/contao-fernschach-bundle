@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
 
 /**
@@ -70,7 +70,14 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetSaldo'] = array
 // Speichert den Zeitpunkt der letzten Aktualisierung von tl_fernschach_spieler_konto
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate'] = array
 (
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate'],
 	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'datim', 
+		'datepicker'          => true, 
+		'tl_class'            => 'w50 wizard'
+	),
 );
 
 class tl_settings_fernschach extends Backend
