@@ -1924,6 +1924,8 @@ class tl_fernschach_spieler extends \Backend
 				(
 					'1'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'],
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
+					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
+					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
 				)
 			),
 		);
@@ -1991,8 +1993,8 @@ class tl_fernschach_spieler extends \Backend
 		switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 		{
 			case '1': // Alle Mitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? AND status = 1")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? AND status = ?")
+				                                      ->execute(1, '', 1);
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2003,10 +2005,23 @@ class tl_fernschach_spieler extends \Backend
 						if($aktiv) $arrPlayers[] = $objPlayers->id;
 					}
 				}
+				break;
 
 			case '2': // Geburtsdatum fehlt
 				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
 				                                      ->execute(0, '');
+				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+				break;
+
+			case '3': // ICCF-Nummer fehlt
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
+				                                      ->execute('');
+				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+				break;
+
+			case '4': // E-Mail fehlt
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
+				                                      ->execute('', '');
 				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 				break;
 

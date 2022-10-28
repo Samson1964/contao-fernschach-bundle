@@ -213,8 +213,7 @@ class Helper extends \Backend
 
 
 			// Ja, Konfiguration aktualisieren
-			//Contao\Config::getInstance()->set("\$GLOBALS['TL_CONFIG']['fernschach_resetUpdate']", time());
-			//$this->Config->update("\$GLOBALS['TL_CONFIG']['fernschach_resetUpdate']", time());
+			\Contao\Config::persist('fernschach_resetUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
 		
 	}

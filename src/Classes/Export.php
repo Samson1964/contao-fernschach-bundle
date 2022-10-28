@@ -237,6 +237,7 @@ class Export extends \Backend
 		//       )
 		$filter = $dc->Session->get('filter');
 		$filter = $filter[$dc->table]; // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
+		log_message(print_r($filter, true), 'fernschachverwaltung.log');
 		foreach($filter as $key => $value)
 		{
 			if($key != 'limit')
@@ -259,6 +260,16 @@ class Export extends \Backend
 			case '2': // Geburtsdatum fehlt
 				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
 				$sql .= " birthday = 0 OR birthday = ''";
+				break;
+
+			case '3': // ICCF-Nummer fehlt
+				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
+				$sql .= " memberInternationalId = ''";
+				break;
+
+			case '4': // E-Mail fehlt
+				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
+				$sql .= " email1 = '' AND email2 = ''";
 				break;
 
 			default:
@@ -286,7 +297,7 @@ class Export extends \Backend
 						// Mitgliedschaften prüfen (memberships)
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
 						break;
-        		
+
 					default:
 				}
 				if($exportieren)
@@ -337,7 +348,7 @@ class Export extends \Backend
 						'bic'                     => $records->bic,
 						'published'               => $records->published,
 						'fertig'                  => $records->fertig,
-					);  
+					);
 				}
 			}
 		}

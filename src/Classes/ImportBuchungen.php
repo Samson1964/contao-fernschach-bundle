@@ -126,6 +126,8 @@ class ImportBuchungen extends \Backend
 										$set['nachname'] = $spalte[$x]; break;
 									case 'vorname':
 										$set['vorname'] = $spalte[$x]; break;
+									case 'iccfid':
+										$set['memberInternationalId'] = $spalte[$x]; break;
 									default:
 								}
 							}
@@ -146,7 +148,7 @@ class ImportBuchungen extends \Backend
 									$set['typ'] = 's';
 								}
 							}
-							
+
 							// Datensatz-id prüfen
 							if(!$set['id'])
 							{
@@ -154,9 +156,11 @@ class ImportBuchungen extends \Backend
 								unset($set['id']);
 							}
 
-							// memberId, nachname, vorname in eine pid auflösen
-							$set['pid'] = self::getSpielerId($set['memberId'], $set['nachname'], $set['vorname']);
+							// memberId, nachname, vorname, memberInternationalId in eine pid auflösen
+							$set['pid'] = self::getSpielerId($set['memberId'], $set['nachname'], $set['vorname'], $set['memberInternationalId']);
+							// Felder löschen, da in tl_fernschach_spieler_konto unerwünscht
 							unset($set['memberId']);
+							unset($set['memberInternationalId']);
 							unset($set['nachname']);
 							unset($set['vorname']);
 
@@ -317,18 +321,19 @@ class ImportBuchungen extends \Backend
 	 * Funktion getSpielerId
 	 * =====================
 	 * Ermittelt zu einem Mitgliedsnummer, einem Vor- und Nachnamen die ID des Spielers. Existiert der Spieler noch nicht, wird er neu angelegt
-	 * @param memberId   integer - Mitgliedsnummer
-	 * @param nachname   string - Nachname
-	 * @param vorname    string - Vorname
-	 * @return           id des Spielers
+	 * @param memberId              integer - Mitgliedsnummer
+	 * @param nachname              string - Nachname
+	 * @param vorname               string - Vorname
+	 * @param memberInternationalId string - ICCF-Nummer
+	 * @return                      id des Spielers
 	 */
-	function getSpielerId($memberId, $nachname, $vorname)
+	function getSpielerId($memberId, $nachname, $vorname, $memberInternationalId)
 	{
-		if(!$memberId && !$nachname && !$vorname) return 0; // Kein Spieler zuordenbar
+		if(!$memberId && !$nachname && !$vorname && !$memberInternationalId) return 0; // Kein Spieler zuordenbar
 
 		if($memberId)
 		{
-			// Nach Mitgliedsnummer suchen
+			// Nach BdF-Mitgliedsnummer suchen
 			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
 			                                     ->limit(1)
 			                                     ->execute($memberId);
@@ -342,11 +347,12 @@ class ImportBuchungen extends \Backend
 				// Spieler nicht vorhanden, neu anlegen
 				$set = array
 				(
-					'tstamp'    => time(),
-					'memberId'  => $memberId,
-					'nachname'  => $nachname ? $nachname : '?',
-					'vorname'   => $vorname ? $vorname : '?',
-					'published' => '',
+					'tstamp'                => time(),
+					'memberId'              => $memberId,
+					'memberInternationalId' => $memberInternationalId,
+					'nachname'              => $nachname ? $nachname : '?',
+					'vorname'               => $vorname ? $vorname : '?',
+					'published'             => '',
 				);
 				log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
 				log_message(print_r($set,true),'fernschach-verwaltung.log');
@@ -359,36 +365,92 @@ class ImportBuchungen extends \Backend
 		}
 		else
 		{
-			// Mitgliedsnummer nicht vorhanden, deshalb nach Namen suchen (Vorhandensein des Namens wurde oben schon geprüft)
-			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE nachname = ? AND vorname = ?")
-			                                     ->limit(1)
-			                                     ->execute($nachname, $vorname);
-			if($objResult->numRows)
+			if($memberInternationalId)
 			{
-				// mind. 1 Spieler gefunden
-				return $objResult->id;
+				// Nach ICCF-Mitgliedsnummer suchen
+				$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
+				                                     ->limit(1)
+				                                     ->execute($memberInternationalId);
+				if($objResult->numRows)
+				{
+					// Spieler ist vorhanden
+					return $objResult->id;
+				}
+				else
+				{
+					// Spieler nicht vorhanden, neu anlegen
+					$set = array
+					(
+						'tstamp'                => time(),
+						'memberId'              => $memberId ? $memberId : self::setMemberId(),
+						'memberInternationalId' => $memberInternationalId,
+						'nachname'              => $nachname ? $nachname : '?',
+						'vorname'               => $vorname ? $vorname : '?',
+						'published'             => '',
+					);
+					log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+					log_message(print_r($set,true),'fernschach-verwaltung.log');
+					// Neues Turnier
+					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
+					                                     ->set($set)
+					                                     ->execute();
+					return $objInsert->insertId;
+				}
 			}
 			else
 			{
-				// Spieler nicht vorhanden, neu anlegen
-				$set = array
-				(
-					'tstamp'    => time(),
-					'memberId'  => $memberId,
-					'nachname'  => $nachname,
-					'vorname'   => $vorname,
-					'published' => '',
-				);
-				log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
-				log_message(print_r($set,true),'fernschach-verwaltung.log');
-				// Neues Turnier
-				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
-				                                     ->set($set)
-				                                     ->execute();
-				return $objInsert->insertId;
+				// Mitgliedsnummer nicht vorhanden, deshalb nach Namen suchen (Vorhandensein des Namens wurde oben schon geprüft)
+				$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE nachname = ? AND vorname = ?")
+				                                     ->limit(1)
+				                                     ->execute($nachname, $vorname);
+				if($objResult->numRows)
+				{
+					// mind. 1 Spieler gefunden
+					return $objResult->id;
+				}
+				else
+				{
+					// Spieler nicht vorhanden, neu anlegen
+					$set = array
+					(
+						'tstamp'    => time(),
+						'memberId'  => $memberId ? $memberId : self::setMemberId(),
+						'nachname'  => $nachname,
+						'vorname'   => $vorname,
+						'published' => '',
+					);
+					log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+					log_message(print_r($set,true),'fernschach-verwaltung.log');
+					// Neues Turnier
+					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
+					                                     ->set($set)
+					                                     ->execute();
+					return $objInsert->insertId;
+				}
 			}
 		}
 
+	}
+
+	/**
+	 * Funktion setMemberId
+	 * =====================
+	 * Ermittelt eine neue temporäre Mitgliedsnummer mit Prefix z
+	 * @return                      Nächste freie BdF-Mitgliedsnummer
+	 */
+	function setMemberId()
+	{
+		// Nächste freie BdF-Mitgliedsnummer mit z am Anfang suchen (maximal bis z9999 suchen)
+		for($x = 1; $x < 10000; $x++)
+		{
+			$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+			                                     ->execute('z'.$x);
+			if(!$objResult->numRows)
+			{
+				return 'z'.$x; // freie Nummer gefunden
+			}
+		}
+		return 'z10000';
 	}
 
 }

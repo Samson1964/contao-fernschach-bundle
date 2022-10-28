@@ -239,3 +239,5 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] = 'Spezialfilter';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_extended'] = 'Spezialfilter';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Nur Mitglieder';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'] = 'Geburtsdatum fehlt';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'] = 'Ohne ICCF-Nummer';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'] = 'Ohne E-Mail-Adresse';

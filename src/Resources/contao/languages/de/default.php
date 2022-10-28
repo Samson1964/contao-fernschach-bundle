@@ -285,8 +285,12 @@ Folgende Spaltenarten werden unterstützt:
 	<td>Mitgliedsnummer im BdF. Ist das Feld gesetzt, wird die Buchung diesem Spieler zugeordnet. Es wird ein neuer Spieler (deaktiviert) angelegt, wenn die Mitgliedsnummer noch nicht existiert.</td>
 </tr>
 <tr>
+	<td>iccfid</td>
+	<td>Mitgliedsnummer im ICCF. Ist das Feld <i>memberid</i> gesetzt, wird die Buchung diesem Spieler zugeordnet. Es wird ein neuer Spieler (deaktiviert) angelegt, wenn die Mitgliedsnummer noch nicht existiert.</td>
+</tr>
+<tr>
 	<td>nachname*</td>
-	<td>Nachname des Spielers</td>
+	<td>Nachname des Spielers. Sind die Felder <i>memberid</i> und <i>iccfid</i> nicht gesetzt, wird für die Buchung ein neuer Spieler mit <i>nachname</i> und <i>vorname</i> (deaktiviert) angelegt.</td>
 </tr>
 <tr>
 	<td>vorname*</td>

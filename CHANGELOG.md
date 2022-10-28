@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.2 (2022-10-28)
+
+* Change: Zeitstempel-Steuerung für Aktualisierung der globalen Reset-Buchungen eingebaut
+* Add: Spezialfilter in Auflistung tl_fernschach_spieler für fehlende ICCF-Nummer
+* Add: Buchungsimport anhand ICCF-Mitgliedsnummer
+* Fix: Spezialfilter "Alle Mitglieder" funktionierte nicht -> fehlendes break bei case
+* Add: Spezialfilter in Auflistung tl_fernschach_spieler für fehlende E-Mail-Adresse(n)
+
 ## Version 0.6.1 (2022-10-19)
 
 * Fix: Export "ORDER BY name,vorname ASC': SQLSTATE[42S22]: Column not found: 1054 Unknown column 'name' in 'order clause'"
