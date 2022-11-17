@@ -105,19 +105,20 @@ class Export extends \Backend
 		            ->setCellValue('AC1', 'BdF-Nummer')
 		            ->setCellValue('AD1', 'ICCF-Nummer')
 		            ->setCellValue('AE1', 'Streichdatum')
-		            ->setCellValue('AF1', 'Mitgliedschaften')
-		            ->setCellValue('AG1', 'Verein')
-		            ->setCellValue('AH1', 'Status')
-		            ->setCellValue('AI1', 'Zuzug')
-		            ->setCellValue('AJ1', 'Klassenberechtigung')
-		            ->setCellValue('AK1', 'Gast-Nr.')
-		            ->setCellValue('AL1', 'Servertester-Nr.')
-		            ->setCellValue('AM1', 'Fremdspieler-Nr.')
-		            ->setCellValue('AN1', 'Inhaber')
-		            ->setCellValue('AO1', 'IBAN')
-		            ->setCellValue('AP1', 'BIC')
-		            ->setCellValue('AQ1', 'Veröffentlicht')
-		            ->setCellValue('AR1', 'Fertig');
+		            ->setCellValue('AF1', 'Mitgliedschaft Beginn')
+		            ->setCellValue('AG1', 'Mitgliedschaft Ende')
+		            ->setCellValue('AH1', 'Verein')
+		            ->setCellValue('AI1', 'Status')
+		            ->setCellValue('AJ1', 'Zuzug')
+		            ->setCellValue('AK1', 'Klassenberechtigung')
+		            ->setCellValue('AL1', 'Gast-Nr.')
+		            ->setCellValue('AM1', 'Servertester-Nr.')
+		            ->setCellValue('AN1', 'Fremdspieler-Nr.')
+		            ->setCellValue('AO1', 'Inhaber')
+		            ->setCellValue('AP1', 'IBAN')
+		            ->setCellValue('AQ1', 'BIC')
+		            ->setCellValue('AR1', 'Veröffentlicht')
+		            ->setCellValue('AS1', 'Fertig');
 
 		// Daten schreiben
 		$zeile = 2;
@@ -155,19 +156,20 @@ class Export extends \Backend
 			            ->setCellValue('AC'.$zeile, $item['memberId'])
 			            ->setCellValue('AD'.$zeile, $item['memberInternationalId'])
 			            ->setCellValue('AE'.$zeile, $item['streichung'])
-			            ->setCellValue('AF'.$zeile, $item['memberships'])
-			            ->setCellValue('AG'.$zeile, $item['verein'])
-			            ->setCellValue('AH'.$zeile, $item['status'])
-			            ->setCellValue('AI'.$zeile, $item['zuzug'])
-			            ->setCellValue('AJ'.$zeile, $item['klassenberechtigung'])
-			            ->setCellValue('AK'.$zeile, $item['gastNummer'])
-			            ->setCellValue('AL'.$zeile, $item['servertesterNummer'])
-			            ->setCellValue('AM'.$zeile, $item['fremdspielerNummer'])
-			            ->setCellValue('AN'.$zeile, $item['inhaber'])
-			            ->setCellValue('AO'.$zeile, $item['iban'])
-			            ->setCellValue('AP'.$zeile, $item['bic'])
-			            ->setCellValue('AQ'.$zeile, $item['published'])
-			            ->setCellValue('AR'.$zeile, $item['fertig']);
+			            ->setCellValue('AF'.$zeile, $item['mitglied_beginn'])
+			            ->setCellValue('AG'.$zeile, $item['mitglied_ende'])
+			            ->setCellValue('AH'.$zeile, $item['verein'])
+			            ->setCellValue('AI'.$zeile, $item['status'])
+			            ->setCellValue('AJ'.$zeile, $item['zuzug'])
+			            ->setCellValue('AK'.$zeile, $item['klassenberechtigung'])
+			            ->setCellValue('AL'.$zeile, $item['gastNummer'])
+			            ->setCellValue('AM'.$zeile, $item['servertesterNummer'])
+			            ->setCellValue('AN'.$zeile, $item['fremdspielerNummer'])
+			            ->setCellValue('AO'.$zeile, $item['inhaber'])
+			            ->setCellValue('AP'.$zeile, $item['iban'])
+			            ->setCellValue('AQ'.$zeile, $item['bic'])
+			            ->setCellValue('AR'.$zeile, $item['published'])
+			            ->setCellValue('AS'.$zeile, $item['fertig']);
 			$zeile++;
 		}
 
@@ -335,7 +337,8 @@ class Export extends \Backend
 						'memberId'                => $records->memberId,
 						'memberInternationalId'   => $records->memberInternationalId,
 						'streichung'              => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->streichung),
-						'memberships'             => '', //$records->memberships,
+						'mitglied_beginn'         => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(\Schachbulle\ContaoFernschachBundle\Classes\Helper::Mitgliedschaft($records->memberships, 1)),
+						'mitglied_ende'           => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(\Schachbulle\ContaoFernschachBundle\Classes\Helper::Mitgliedschaft($records->memberships, 2)),
 						'verein'                  => $records->verein,
 						'status'                  => $records->status,
 						'zuzug'                   => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->zuzug),

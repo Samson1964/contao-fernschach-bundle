@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.4 (2022-11-17)
+
+* Fix: tl_fernschach_spieler.memberships (Mitgliedschaften-Array) ist maßgebend, aber Feld status ist oft falsch ("Mitglied" oder "Ausgetreten" paßt nicht zur Mitgliedschaft) -> Prüfung erfolgt über onload_callback Helper::updateMitgliedschaften
+* Add: tl_settings.fernschach_membershipUpdate editierbar gemacht, um Einfluß auf die Prüfung des Mitgliedsstatus aller Spieler zu haben
+* Change: Im Spieler-Export wurde die Spalte Mitgliedschaften durch die Spalten Mitgliedschaft Beginn und Ende ersetzt. Eine Ausgabe erfolgt ebenfalls.
+ 
 ## Version 0.6.3 (2022-10-28)
 
 * Add: tl_settings.fernschach_resetUpdate editierbar gemacht, um Einfluß auf die Neuberechnung der Kontostände aller Spieler zu haben

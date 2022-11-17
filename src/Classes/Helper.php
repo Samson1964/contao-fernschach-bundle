@@ -45,6 +45,36 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * Funktion Mitgliedschaft
+	 *
+	 * param $typ      1 = Beginn zurückgeben, 2 = Ende zurückgeben
+	 * @return string
+	 */
+	public function Mitgliedschaft($value, $typ)
+	{
+		$heute = date('Ymd');
+		$mitgliedschaften = unserialize($value); // String umwandeln
+		$return = false;
+		$beginn = 0;
+		$ende = 0;
+		if(is_array($mitgliedschaften))
+		{
+			foreach($mitgliedschaften as $mitgliedschaft)
+			{
+				if($mitgliedschaft['from'] > $beginn)
+				{
+					// Aktueller Mitgliedsbeginn ist größer als der ältere Mitgliedsbeginn, darum komplett übernehmen
+					$beginn = $mitgliedschaft['from'];
+					$ende = $mitgliedschaft['to'];
+				}
+			}
+		}
+		if($typ == 1) return $beginn;
+		elseif($typ == 2) return $ende;
+		else return false;
+	}
+
+	/**
 	 * Saldorechner
 	 *
 	 * @param integer $value
@@ -214,6 +244,67 @@ class Helper extends \Backend
 
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_resetUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
+		}
+		
+	}
+
+	/**
+	 * Funktion updateMitgliedschaften
+	 * ============================
+	 * Überprüft tl_fernschach_spieler auf die Gültigkeit des Mitgliedsstatus
+	 */
+	public function updateMitgliedschaften(\DataContainer $dc)
+	{
+		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_membershipUpdate'] + 86400; // Letztes Updatedatum + 1 Tag
+
+		// Aktualisierung notwendig
+		if($update < time())
+		{
+			// Spieler suchen mit Status 1 (Mitglied) oder 2 (Ausgetreten)
+			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE status = ? OR status = ?")
+			                                      ->execute(1, 2);
+			if($objSpieler->numRows)
+			{
+				// Spieler prüfen
+				while($objSpieler->next())
+				{
+					$mitglied = self::checkMembership($objSpieler->memberships);
+					if(($mitglied && $objSpieler->status == 2) || (!$mitglied && $objSpieler->status == 1))
+					{
+						// Mitgliedschaft und Status weichen voneinander ab
+						// Datensatz aktualisieren
+						if($objSpieler->status == 1)
+						{
+							$set = array
+							(
+								'status' => 2
+							);
+						}
+						elseif($objSpieler->status == 2)
+						{
+							$set = array
+							(
+								'status' => 1
+							);
+						}
+						\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+						                        ->set($set)
+						                        ->execute($objSpieler->id);
+						$this->createNewVersion('tl_fernschach_spieler', $objSpieler->id);
+						
+						// System-Log schreiben
+						$text = 'Fernschach-Verwaltung: Mitgliedsstatus '.$objSpieler->nachname.', '.$objSpieler->vorname.' automatisch korrigiert:';
+						if($objSpieler->status == 1) $text .= ' Mitglied -> Ausgetreten';
+						elseif($objSpieler->status == 2) $text .= ' Ausgetreten -> Mitglied';
+						\System::getContainer()->get('monolog.logger.contao')
+						                       ->log(\Psr\Log\LogLevel::INFO, $text, array('contao' => new \Contao\CoreBundle\Monolog\ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_GENERAL)));
+						
+					}
+				}
+			}
+
+			// Ja, Konfiguration aktualisieren
+			\Contao\Config::persist('fernschach_membershipUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
 		
 	}

@@ -16,6 +16,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			array('tl_fernschach_spieler', 'applyAdvancedFilter'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateResetbuchungen'),
+			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateMitgliedschaften'),
 		),
 		'sql'                         => array
 		(
