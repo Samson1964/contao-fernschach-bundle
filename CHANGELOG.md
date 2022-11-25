@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.6.5 (2022-11-25)
+
+* Add: Codenummer im Excel-Export der Spieler -> generiert aus Datensatz-ID, Geburtstag und BdF-Mitgliedsnummer -> Hash-Wert gekürzt auf 8 Stellen
+
 ## Version 0.6.4 (2022-11-17)
 
 * Fix: tl_fernschach_spieler.memberships (Mitgliedschaften-Array) ist maßgebend, aber Feld status ist oft falsch ("Mitglied" oder "Ausgetreten" paßt nicht zur Mitgliedschaft) -> Prüfung erfolgt über onload_callback Helper::updateMitgliedschaften
