@@ -9,12 +9,17 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['tstamp'] = array('Letzte Änderung
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived_legend'] = 'Archivierung';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived'] = array('Archiviert', 'Der Spieler wird in der Übersicht in grauer Schrift angezeigt.');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['assign_legend'] = 'Zuordnungen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign_Headline'] = array('Zugeordnetes Frontend-Mitglied:', 'Zugeordnetes Frontend-Mitglied');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign_Failed'] = array('- niemand zugeordnet -', '- niemand zugeordnet -');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['person_legend'] = 'Name';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nachname'] = array('Nachname', 'Geben Sie hier den Nachnamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['vorname'] = array('Vorname', 'Geben Sie hier den Vornamen ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['titel'] = array('Titel', 'Geben Sie hier den Titel ein, z.B. Dr. oder Prof.Dr.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede'] = array('Anrede', 'Wählen Sie hier die Anrede aus.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede'] = array('Briefanrede', 'Wählen Sie hier die Briefanrede aus.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'] = array('Status', 'Status festlegen');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['live_legend'] = 'Lebensdaten';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['birthday'] = array('Geburtstag', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
@@ -57,7 +62,6 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', '
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Bemerkungen', 'Freies Textfeld für Bemerkungen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein in der DFMM oder im Pokal');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'] = array('Mitgliedsstatus', 'Mitgliedsstatus festlegen');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['alternativ_legend'] = 'Alternative Spielernummern';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['gastNummer'] = array('Gast-Nummer', 'Gast-Nummer');
@@ -188,9 +192,6 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede_options'] = array
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['status_options'] = array
 (
-	'1' => 'Mitglied',
-	'2' => 'Ausgetreten',
-	'3' => 'Verstorben',
 	'4' => 'Gastspieler',
 	'5' => 'Unbekannt verzogen / Ruhend',
 	'6' => 'Ausgeschlossen',
@@ -238,6 +239,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_title_options'] = array
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] = 'Spezialfilter';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_extended'] = 'Spezialfilter';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Nur Mitglieder';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_lastYear'] = 'Mitgliedsende 31.12. letztes Jahr';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_thisYear'] = 'Mitgliedsende 31.12. aktuelles Jahr';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_nextYear'] = 'Mitgliedsende 31.12. nächstes Jahr';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'] = 'Geburtsdatum fehlt';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'] = 'Ohne ICCF-Nummer';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'] = 'Ohne E-Mail-Adresse';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'] = 'Nichtmitglieder';

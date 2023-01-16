@@ -1,5 +1,19 @@
 # Fernschach-Verwaltung Changelog
 
+* Add: Wartungsfunktion für Zuordnung tl_member <> tl_fernschach_spieler
+
+## Version 0.7.0 (2023-01-16)
+
+* Add: Verbindung tl_fernschach_spieler zu tl_member hergestellt
+* Add: tl_settings -> Benutzergruppen-Zuordnung für Verbindung zu tl_member
+* Change: tl_fernschach_spieler.status -> Mitgliedsstatus in Status umbenannt und mitgliedschaftsbezogene Einträge entfernt (1 = Mitglied, 2 = Ausgetreten, 3 = Verstorben); Palette geändert
+* Fix: Spezialfilter "Nur Mitglieder" -> berücksichtigt (fehlerhaft) auch beendete Mitgliedschaften
+* Add: Spezialfilter bei den Spielern: Austritte zum Jahresende (Vorjahr, akt. Jahr, Folgejahr)
+* Add: Buchung Kategorie: + Startgeld (tl_fernschach_spieler_konto.kategorie_options)
+* Add: Buchung Art: + Guthaben (tl_fernschach_spieler_konto.art_options)
+* Add: Spezialfilter bei den Spielern: Nichtmitglieder (Umkehrung von Mitgliedern)
+* Disabled: Onload-Callback updateMitgliedschaften deaktiviert, da tl_fernschach_spieler.status nicht mehr für Mitgliedschaft genutzt wird
+
 ## Version 0.6.5 (2022-11-25)
 
 * Add: Codenummer im Excel-Export der Spieler -> generiert aus Datensatz-ID, Geburtstag und BdF-Mitgliedsnummer -> Hash-Wert gekürzt auf 8 Stellen

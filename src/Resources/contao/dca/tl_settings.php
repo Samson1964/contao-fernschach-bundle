@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
 
 /**
@@ -91,6 +91,47 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_membershipUpdate'] = arr
 		'datepicker'          => true, 
 		'tl_class'            => 'w50 wizard'
 	),
+);
+
+// Speichert den Zeitpunkt der letzten Prüfung von tl_fernschach_spieler
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'datim', 
+		'datepicker'          => true, 
+		'tl_class'            => 'w50 wizard'
+	),
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberDefault'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_memberDefault'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_member_group.name',
+	'eval'                    => array
+	(
+		'includeBlankOption'  => true,
+		'tl_class'            => 'w50 clr'
+	),
+	'sql'                     => "int(10) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberFernschach'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_memberFernschach'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_member_group.name',
+	'eval'                    => array
+	(
+		'includeBlankOption'  => true,
+		'tl_class'            => 'w50'
+	),
+	'sql'                     => "int(10) NOT NULL default ''"
 );
 
 class tl_settings_fernschach extends Backend

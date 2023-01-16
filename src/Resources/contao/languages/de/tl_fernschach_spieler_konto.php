@@ -55,10 +55,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['kategorie_options'] = array
 (
 	'b' => 'Beitrag',
 	'g' => 'Guthaben',
+	's' => 'Startgeld',
 );
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'] = array
 (
 	'n' => 'BdF-Turnier',
 	'i' => 'ICCF-Turnier',
+	'g' => 'Guthaben',
 );

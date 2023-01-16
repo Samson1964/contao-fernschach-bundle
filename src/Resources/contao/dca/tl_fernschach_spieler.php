@@ -16,7 +16,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			array('tl_fernschach_spieler', 'applyAdvancedFilter'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateResetbuchungen'),
-			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateMitgliedschaften'),
+			//array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateMitgliedschaften'),
+			//array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
 		),
 		'sql'                         => array
 		(
@@ -140,7 +141,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member'),
-		'default'                     => '{archived_legend:hide},archived;{person_legend},nachname,vorname,titel,anrede,briefanrede;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein,status;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published,fertig'
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{info_legend:hide},info;{publish_legend},published,fertig'
 	),
 
 	// Subpalettes
@@ -200,6 +201,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'tl_class'            => 'w50',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		// Information anzeigen, welches FE-Mitglied dem Spieler zugeordnet ist
+		'memberAssign' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign'],
+			'input_field_callback'    => array('tl_fernschach_spieler', 'getMemberAssign'),
+			'exclude'                 => true
 		),
 		'nachname' => array
 		(
@@ -1924,9 +1932,13 @@ class tl_fernschach_spieler extends \Backend
 				'options' => array
 				(
 					'1'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'],
+					'5'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_lastYear'],
+					'6'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_thisYear'],
+					'7'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_nextYear'],
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
 					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
 					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
+					'8'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'],
 				)
 			),
 		);
@@ -1994,8 +2006,8 @@ class tl_fernschach_spieler extends \Backend
 		switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 		{
 			case '1': // Alle Mitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? AND status = ?")
-				                                      ->execute(1, '', 1);
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
+				                                      ->execute(1, '');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2026,6 +2038,69 @@ class tl_fernschach_spieler extends \Backend
 				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 				break;
 
+			case '5': // Mitgliedsende 31.12. letztes Jahr
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
+				                                      ->execute(1, '');
+				$arrPlayers = array();
+				if($objPlayers->numRows)
+				{
+					$datum = (date('Y') - 1).'1231';
+					while($objPlayers->next())
+					{
+						// Ende einer Mitgliedschaft suchen (memberships)
+						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+						if($aktiv) $arrPlayers[] = $objPlayers->id;
+					}
+				}
+				break;
+
+			case '6': // Mitgliedsende 31.12. dieses Jahr
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
+				                                      ->execute(1, '');
+				$arrPlayers = array();
+				if($objPlayers->numRows)
+				{
+					$datum = date('Y').'1231';
+					while($objPlayers->next())
+					{
+						// Ende einer Mitgliedschaft suchen (memberships)
+						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+						if($aktiv) $arrPlayers[] = $objPlayers->id;
+					}
+				}
+				break;
+
+			case '7': // Mitgliedsende 31.12. nächstes Jahr
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
+				                                      ->execute(1, '');
+				$arrPlayers = array();
+				if($objPlayers->numRows)
+				{
+					$datum = (date('Y') + 1).'1231';
+					while($objPlayers->next())
+					{
+						// Ende einer Mitgliedschaft suchen (memberships)
+						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+						if($aktiv) $arrPlayers[] = $objPlayers->id;
+					}
+				}
+				break;
+
+			case '8': // Alle Nichtmitglieder
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
+				                                      ->execute(1, '');
+				$arrPlayers = array();
+				if($objPlayers->numRows)
+				{
+					while($objPlayers->next())
+					{
+						// Mitgliedschaften prüfen (memberships)
+						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers->memberships);
+						if(!$aktiv) $arrPlayers[] = $objPlayers->id;
+					}
+				}
+				break;
+
 			default:
 
 		}
@@ -2039,6 +2114,41 @@ class tl_fernschach_spieler extends \Backend
 		log_message($log, 'fernschachverwaltung.log');
 
 		$GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['sorting']['root'] = $arrPlayers;
+
+	}
+
+	/**
+	 * Button zum PDF-Abruf im Karten-Format anzeigen
+	 * @param DataContainer $dc
+	 *
+	 * @return string HTML-Code
+	 */
+	public function getMemberAssign(DataContainer $dc)
+	{
+		if($dc->activeRecord->id)
+		{
+			// Spieler-ID in tl_member.fernschach_memberId suchen
+			$member = MemberModel::findOneBy('fernschach_memberId', $dc->activeRecord->id);
+			if($member)
+			{
+				$status = '<b>'.$member->username.'</b>';
+			}
+			else
+			{
+				$status = $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign_Failed'][0];
+			}
+			return '
+			<div class="tl_listing_container list_view" id="tl_listing">
+				<table class="tl_listing">
+					<tbody>
+						<tr class="even click2edit toggle_select hover-row">
+							<td class="tl_file_list" width="50%">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign_Headline'][0].'</td>
+							<td class="tl_file_list">'.$status.'</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>';
+		}
 
 	}
 

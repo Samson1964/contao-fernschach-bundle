@@ -257,8 +257,12 @@ class Export extends \Backend
 		switch($filter)
 		{
 			case '1': // Alle Mitglieder
+			case '5': // Mitgliedsende 31.12. letztes Jahr
+			case '6': // Mitgliedsende 31.12. dieses Jahr
+			case '7': // Mitgliedsende 31.12. nächstes Jahr
+			case '8': // Alle Nichtmitglieder
 				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
-				$sql .= " published = 1 AND archived = '' AND status = 1";
+				$sql .= " published = 1 AND archived = ''";
 				break;
 
 			case '2': // Geburtsdatum fehlt
@@ -300,6 +304,31 @@ class Export extends \Backend
 					case '1': // Alle Mitglieder
 						// Mitgliedschaften prüfen (memberships)
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
+						break;
+
+					case '5': // Mitgliedsende 31.12. letztes Jahr
+						// Mitgliedsende prüfen (memberships)
+						$datum = (date('Y') - 1).'1231';
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
+						break;
+
+					case '6': // Mitgliedsende 31.12. dieses Jahr
+						// Mitgliedsende prüfen (memberships)
+						$datum = date('Y').'1231';
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
+						break;
+
+					case '7': // Mitgliedsende 31.12. nächstes Jahr
+						// Mitgliedsende prüfen (memberships)
+						$datum = (date('Y') + 1).'1231';
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
+						break;
+
+					case '8': // Alle Nichtmitglieder
+						// Nichtmitgliedschaften prüfen (memberships)
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
+						if($exportieren) $exportieren = false;
+						else $exportieren = true;
 						break;
 
 					default:

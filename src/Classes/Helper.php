@@ -30,7 +30,11 @@ class Helper extends \Backend
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
+				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
+				{
+					// Leerer Datensatz (wird nicht berücksichtigt)
+				}
+				elseif($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
 				{
 					// Beginndatum nicht gesetzt oder kleiner/gleich aktuellem Tag, also möglicherweise Mitglied
 					if($mitgliedschaft['to'] == 0 || $mitgliedschaft['to'] > $heute)
@@ -42,6 +46,36 @@ class Helper extends \Backend
 			}
 		}
 		return $return;
+	}
+
+	/**
+	 * Funktion searchMembership
+	 *
+	 * @param integer $value
+	 * @param integer $datum     Datum des Mitgliedsendes
+	 *
+	 * @return string
+	 */
+	public function searchMembership($value, $datum)
+	{
+		$heute = date('Ymd');
+		$mitgliedschaften = unserialize($value); // String umwandeln
+		if(is_array($mitgliedschaften))
+		{
+			foreach($mitgliedschaften as $mitgliedschaft)
+			{
+				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
+				{
+					// Leerer Datensatz (wird nicht berücksichtigt)
+				}
+				elseif($mitgliedschaft['to'] == $datum)
+				{
+					// Datum gefunden
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	/**
