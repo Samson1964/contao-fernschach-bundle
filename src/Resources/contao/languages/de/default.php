@@ -318,3 +318,8 @@ $GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array
 	'cce' => 'CCE',
 	'lim' => 'LIM',
 );
+
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['headline'] = 'Mitgliederstatistik erstellen';
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['stichtag'] = array('Stichtag', 'Geben Sie einen Stichtag ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['altersstruktur'] = array('Altersstruktur auswählen', 'Wählen Sie die Altersstruktur für die Mitgliederstatistik aus.');
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start'] = 'Export starten';

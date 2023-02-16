@@ -1,6 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.8.0 (2023-02-16)
+
 * Add: Wartungsfunktion für Zuordnung tl_member <> tl_fernschach_spieler
+* Add: Statistikmodul für Mitgliederstatistik
 
 ## Version 0.7.0 (2023-01-16)
 

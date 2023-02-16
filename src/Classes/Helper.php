@@ -20,19 +20,31 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function checkMembership($value)
+	public function checkMembership($value, $heute = false)
 	{
-		$heute = date('Ymd');
+		if(!$heute) $heute = date('Ymd');
+		
 		$mitgliedschaften = unserialize($value); // String umwandeln
 		//print_r($mitgliedschaften);
 		$return = false;
 		if(is_array($mitgliedschaften))
 		{
+			//print_r($mitgliedschaften);
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
 				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
 				{
 					// Leerer Datensatz (wird nicht berücksichtigt)
+				}
+				elseif($mitgliedschaft['from'] > 0 && $mitgliedschaft['to'] > 0)
+				{
+					// Beendete Mitgliedschaft
+					if($mitgliedschaft['from'] <= $heute && $mitgliedschaft['to'] >= $heute)
+					{
+						// Mitgliedschaft zum Zeitpunkt von $heute gefunden
+						//echo 'OK '.$heute.'<br>';
+						return true;
+					}
 				}
 				elseif($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
 				{
@@ -40,12 +52,47 @@ class Helper extends \Backend
 					if($mitgliedschaft['to'] == 0 || $mitgliedschaft['to'] > $heute)
 					{
 						// Endedatum nicht gesetzt oder größer aktuellem Tag, also Mitglied
+						//echo 'OK '.$heute.'<br>';
 						return true;
 					}
 				}
 			}
 		}
+		//echo 'ERROR '.$heute.'<br>';
 		return $return;
+	}
+
+	/**
+	 * Funktion getAlter
+	 *
+	 * @param integer $birthday      Geburtsdatum im Format JJJJMMTT
+	 * @param integer $datum         Datum (für Ermittlung des Alters) im Format JJJJMMTT
+	 *
+	 * @return string
+	 */
+	public function getAlter($birthday, $datum = false)
+	{
+		if(!$datum) $datum = date('Ymd');
+		
+		try 
+		{
+			if($birthday)
+			{
+				$datum1 = new \DateTime(substr($birthday, 0, 4).'-'.substr($birthday, 4, 2).'-'.substr($birthday, 6, 2)); // Geburtsdatum im Format JJJJ-MM-TT
+				$datum2 = new \DateTime(substr($datum, 0, 4).'-'.substr($datum, 4, 2).'-'.substr($datum, 6, 2)); // Altersdatum im Format JJJJ-MM-TT
+				$interval = $datum2->diff($datum1);
+				return $interval->format("%Y");
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		catch(Exception $e)
+		{
+			return 0;
+		}
+
 	}
 
 	/**

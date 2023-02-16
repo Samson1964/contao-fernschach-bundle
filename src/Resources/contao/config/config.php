@@ -40,6 +40,14 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		),
 		'importTurniere'    => array('Schachbulle\ContaoFernschachBundle\Classes\ImportTurniere', 'run'),
 	),
+	'fernschach-mitgliederstatistik'   => array
+	(
+		'tables'            => array
+		(
+			'tl_fernschach_mitgliederstatistik',
+		),
+		'statistik'         => array('Schachbulle\ContaoFernschachBundle\Classes\Statistik', 'run'),
+	),
 );
 
 if(TL_MODE == 'BE')
