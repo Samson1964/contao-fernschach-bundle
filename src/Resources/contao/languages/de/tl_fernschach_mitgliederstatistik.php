@@ -32,4 +32,4 @@ $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['show'] = array('Alters
  * Buttons für globale Operationen
  */
 
-$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['statistik'] = array('Statistik ausgeben', 'Statistik als CSV, Excel oder direkt ausgeben');
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['statistik'] = array('Statistik ausgeben', 'Statistik als Excel ausgeben');

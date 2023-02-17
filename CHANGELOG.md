@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.8.1 (2023-02-17)
+
+* Change: Ausgabe Mitgliederstatistik -> Letztes Stichtagdatum aus Formularversand wird, wenn vorhanden, verwendet
+* Change: Dateiname der Mitgliederstatistik angepaßt auf Stichtag
+* Change: Ausgabe Mitgliederstatistik verbessert
+* Add: Mitgliederstatistik -> Logeintrag bei fehlendem Geschlecht
+* Add: Mitgliederstatistik -> Logeintrag bei fehlendem Geburtstag
+
 ## Version 0.8.0 (2023-02-16)
 
 * Add: Wartungsfunktion für Zuordnung tl_member <> tl_fernschach_spieler
