@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.9.0 (2023-02-22)
+
+* Change: tl_fernschach_spieler -> Toggle-Funktion durch Haste ersetzt
+* Add: tl_user und tl_user_group
+* Add: Zugriffsrechte-Prüfung tl_fernschach_spieler
+* Change: tl_fernschach_spieler_konto -> Toggle-Funktion durch Haste ersetzt
+* Add: Zugriffsrechte-Prüfung tl_fernschach_spieler_konto
+* Fix: Buchungen -> Wenn Markieren + Saldo-Reset aktiv sind, wird die Linie Saldo-Reset nicht angezeigt
+
 ## Version 0.8.1 (2023-02-17)
 
 * Change: Ausgabe Mitgliederstatistik -> Letztes Stichtagdatum aus Formularversand wird, wenn vorhanden, verwendet

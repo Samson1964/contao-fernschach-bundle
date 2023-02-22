@@ -86,3 +86,9 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['fernschach'] = array
  */
 
 $GLOBALS['TL_CTE']['fernschachverwaltung']['fernschachverwaltung_zusagen'] = 'Schachbulle\ContaoFernschachBundle\ContentElements\Zusagen';
+
+/**
+ * Add permissions
+ */
+$GLOBALS['TL_PERMISSIONS'][] = 'fernschach_spieler'; // Spieler-Rechte
+$GLOBALS['TL_PERMISSIONS'][] = 'fernschach_konto'; // Buchungen-Rechte

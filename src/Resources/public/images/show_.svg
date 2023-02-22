@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 500 500">
+
+ <g>
+  <title>Layer 1</title>
+  <circle id="svg_1" r="200" cy="250" cx="250" fill="#cccccc"/>
+  <g id="svg_2" fill="#FFF">
+   <circle id="svg_3" r="55.519" cy="157.873" cx="250"/>
+   <path id="svg_4" d="m162.178,386.553l175.644,0l0,-22.963l-40.927,0l0,-123.703l-93.79,0l0,123.703l-40.925,0l-0.002,22.963z"/>
+  </g>
+ </g>
+</svg>

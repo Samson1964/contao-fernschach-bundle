@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung ToDo
 
+## tl_fernschach_spieler und tl_fernschach_spieler_konto
+
+* Zugriffsrechte auf Infobox und eigene Buttons einbauen
+
 ## Migration von Mitgliederverwaltung nach Fernschach-Verwaltung
 
 * Alle 3 Tabellen exportieren und entsprechend ändern
