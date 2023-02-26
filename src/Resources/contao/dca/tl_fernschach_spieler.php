@@ -107,10 +107,17 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'],
-				'href'                => 'act=toggle&amp;field=published',
-				'icon'                => 'visible.svg',
-				'showInHeader'        => true,
-				'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
+				'attributes' => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'           => 'published',
+					'options'         => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
+				//'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
 			),
 			'show' => array
 			(
@@ -1749,7 +1756,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
-			'toggle'                  => true,
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(

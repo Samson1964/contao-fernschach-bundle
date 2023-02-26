@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.9.1 (2023-02-26)
+
+* Fix: Attempted to call an undefined method named "toggle" of class "Contao\DC_Table". (bei Aufruf des Togglers bei den Spielern/Buchungen)
+
 ## Version 0.9.0 (2023-02-22)
 
 * Change: tl_fernschach_spieler -> Toggle-Funktion durch Haste ersetzt
