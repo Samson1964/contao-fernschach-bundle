@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.9.3 (2023-03-11)
+
+* Fix: UTF8-Erkennung beim Buchungsimport verbessert
+
 ## Version 0.9.2 (2023-03-11)
 
 * Fix: An exception occurred while executing 'INSERT INTO tl_fernschach_spieler (`tstamp`, `memberId`, `memberInternationalId`, `nachname`, `vorname`, `published`) VALUES (1678530716, '22031', NULL, 'Fritsche', '?', '')': SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'memberInternationalId' cannot be null

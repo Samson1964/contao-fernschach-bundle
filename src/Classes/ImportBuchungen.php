@@ -70,7 +70,8 @@ class ImportBuchungen extends \Backend
 
 				while(!feof($resFile))
 				{
-					$zeile = trim(fgets($resFile));
+					//$zeile = trim(fgets($resFile));
+					$zeile = self::remove_utf8_bom(trim(fgets($resFile)));
 					if($zeile) // nur nichtleere Zeilen berücksichtigen
 					{
 						$spalte = explode(';', $zeile);
@@ -456,4 +457,10 @@ class ImportBuchungen extends \Backend
 		return 'z10000';
 	}
 
+	function remove_utf8_bom($text)
+	{
+		$bom = pack('H*','EFBBBF');
+		$text = preg_replace("/^$bom/", '', $text);
+		return $text;
+	}
 }
