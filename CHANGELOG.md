@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.9.2 (2023-03-11)
+
+* Fix: An exception occurred while executing 'INSERT INTO tl_fernschach_spieler (`tstamp`, `memberId`, `memberInternationalId`, `nachname`, `vorname`, `published`) VALUES (1678530716, '22031', NULL, 'Fritsche', '?', '')': SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'memberInternationalId' cannot be null
+* Add: Bei Buchungsimport werden neue Spieler in das System-Log geschrieben
+
 ## Version 0.9.1 (2023-02-26)
 
 * Fix: Attempted to call an undefined method named "toggle" of class "Contao\DC_Table". (bei Aufruf des Togglers bei den Spielern/Buchungen)

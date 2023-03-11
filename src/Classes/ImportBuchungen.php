@@ -348,8 +348,8 @@ class ImportBuchungen extends \Backend
 				$set = array
 				(
 					'tstamp'                => time(),
-					'memberId'              => $memberId,
-					'memberInternationalId' => $memberInternationalId,
+					'memberId'              => $memberId ? $memberId : '',
+					'memberInternationalId' => $memberInternationalId ? $memberInternationalId : '',
 					'nachname'              => $nachname ? $nachname : '?',
 					'vorname'               => $vorname ? $vorname : '?',
 					'published'             => '',
@@ -360,6 +360,7 @@ class ImportBuchungen extends \Backend
 				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 				                                     ->set($set)
 				                                     ->execute();
+				\System::log('Fernschach-Verwaltung: Neuer Spieler aus Buchungsimport -> '.$set['nachname'].','.$set['vorname'], __METHOD__, TL_GENERAL);
 				return $objInsert->insertId;
 			}
 		}
@@ -383,7 +384,7 @@ class ImportBuchungen extends \Backend
 					(
 						'tstamp'                => time(),
 						'memberId'              => $memberId ? $memberId : self::setMemberId(),
-						'memberInternationalId' => $memberInternationalId,
+						'memberInternationalId' => $memberInternationalId ? $memberInternationalId : '',
 						'nachname'              => $nachname ? $nachname : '?',
 						'vorname'               => $vorname ? $vorname : '?',
 						'published'             => '',
@@ -394,6 +395,7 @@ class ImportBuchungen extends \Backend
 					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 					                                     ->set($set)
 					                                     ->execute();
+					\System::log('Fernschach-Verwaltung: Neuer Spieler aus Buchungsimport -> '.$set['nachname'].','.$set['vorname'], __METHOD__, TL_GENERAL);
 					return $objInsert->insertId;
 				}
 			}
@@ -425,6 +427,7 @@ class ImportBuchungen extends \Backend
 					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 					                                     ->set($set)
 					                                     ->execute();
+					\System::log('Fernschach-Verwaltung: Neuer Spieler aus Buchungsimport -> '.$set['nachname'].','.$set['vorname'], __METHOD__, TL_GENERAL);
 					return $objInsert->insertId;
 				}
 			}
