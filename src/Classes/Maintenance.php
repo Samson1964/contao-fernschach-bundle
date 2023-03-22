@@ -45,7 +45,23 @@ class Maintenance extends \Backend
 								// Zuordnung bereits vorhanden, prüfen ob die zugeordnete ID paßt
 								if($objMember->fernschach_memberId == $objPlayer->id)
 								{
-									// ID's stimmen überein, fertig
+									// ID's stimmen überein, jetzt Mitgliedergruppen prüfen
+									$gruppen = self::setGroups($objMember->groups, true); // Mitgliedergruppen aktualisieren, BdF-Mitglied eintragen
+									if($gruppen != $objMember->groups)
+									{
+										// Aktualisierung tl_member.groups notwendig
+										$set = array
+										(
+											'groups'              => $gruppen
+										);
+										\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+										                        ->set($set)
+										                        ->execute($objMember->id);
+										$this->createNewVersion('tl_member', $objMember->id);
+
+										// Zuordnung entfernen
+										\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+									}
 								}
 								else
 								{

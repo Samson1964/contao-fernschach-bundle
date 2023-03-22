@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.10.1 (2023-03-22)
+
+* Fix: Maintenance -> bei übereinstimmender Zuordnung wurden die Mitgliedsgruppen nicht mehr geprüft
+
 ## Version 0.10.0 (2023-03-22)
 
 * Fix: tl_fernschach_spieler -> published in SQL Spezialfilter entfernt (published wird schon durch normalen Filter gewährleistet)
