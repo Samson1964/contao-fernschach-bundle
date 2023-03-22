@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.10.0 (2023-03-22)
+
+* Fix: tl_fernschach_spieler -> published in SQL Spezialfilter entfernt (published wird schon durch normalen Filter gewährleistet)
+* Add: tl_fernschach_spieler -> Spezialfilter Mitgliedsende 31.12. auf bis zu 9 Jahre rückwärts erweitert
+* Fix: Excel-Export Spieler -> Letzte Änderung 01.01.1970, dann kein Datum ausgeben
+* Fix: tl_fernschach_spieler -> Spezialfilter Mitgliedsende hat archived berücksichtigt, obwohl bereits normaler Filter
+* Fix: Excel-Export Spieler -> 1. Zeile Veröffentlicht, Fertig nicht in Fettschrift
+* Change: Ausbau der Wartungsfunktion zum Abgleich BdF-Mitglieder ./. Frontend-Mitglieder
+
 ## Version 0.9.3 (2023-03-11)
 
 * Fix: UTF8-Erkennung beim Buchungsimport verbessert

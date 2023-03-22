@@ -13,16 +13,15 @@ class Maintenance extends \Backend
 	}
 
 	/**
-	 * Funktion updateResetbuchungen
+	 * Funktion getMaintenance
 	 * ============================
-	 * Überprüft tl_fernschach_spieler_konto auf die Gültigkeit der globalen Resetbuchung
+	 * Wartungsfunktionen ausführen
 	 */
 	public function getMaintenance(\DataContainer $dc)
 	{
 		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + 43200; // Letztes Updatedatum + 12 Stunden
 
 		// Aktualisierung notwendig
-		//if($update < time())
 		if($update)
 		{
 			// Mitgliederkonten Frontend prüfen
@@ -50,9 +49,12 @@ class Maintenance extends \Backend
 								}
 								else
 								{
+									$gruppen = self::setGroups($objMember->groups, false); // Mitgliedergruppen aktualisieren, BdF-Mitglied austragen
+
 									// Datensatz aktualisieren
 									$set = array
 									(
+										'groups'              => $gruppen,
 										'fernschach_memberId' => $objPlayer->id
 									);
 									\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
@@ -64,7 +66,7 @@ class Maintenance extends \Backend
 							}
 							else
 							{
-								$gruppen = self::setGroups($objMember->groups, true); // Mitgliedergruppen aktualisieren
+								$gruppen = self::setGroups($objMember->groups, true); // Mitgliedergruppen aktualisieren, BdF-Mitglied eintragen
 
 								// Datensatz aktualisieren
 								$set = array
@@ -83,11 +85,46 @@ class Maintenance extends \Backend
 						}
 						else
 						{
+							// Spieler ist kein Mitglied mehr, Zuordnung ggfs. entfernen
+							$gruppen = self::setGroups($objMember->groups, false); // Mitgliedergruppen aktualisieren, BdF-Mitglied austragen
+							if($objMember->fernschach_memberId > 0 || $gruppen != $objMember->groups)
+							{
+								// Aktualisierung tl_member notwendig
+								$set = array
+								(
+									'groups'              => $gruppen,
+									'fernschach_memberId' => 0
+								);
+								\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+								                        ->set($set)
+								                        ->execute($objMember->id);
+								$this->createNewVersion('tl_member', $objMember->id);
+
+								// Zuordnung entfernen
+								\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+							}
 						}
 					}
 					else
 					{
-						// Kein passender Spielerdatensatz gefunden 
+						// Kein passender Spielerdatensatz gefunden, deshalb Zuordnung prüfen
+						$gruppen = self::setGroups($objMember->groups, false); // Mitgliedergruppen aktualisieren, BdF-Mitglied austragen
+						if($objMember->fernschach_memberId > 0 || $gruppen != $objMember->groups)
+						{
+							// Aktualisierung tl_member notwendig
+							$set = array
+							(
+								'groups'              => $gruppen,
+								'fernschach_memberId' => 0
+							);
+							\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+							                        ->set($set)
+							                        ->execute($objMember->id);
+							$this->createNewVersion('tl_member', $objMember->id);
+
+							// Zuordnung entfernen
+							\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+						}
 					}
 				}
 			}
@@ -98,7 +135,7 @@ class Maintenance extends \Backend
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
-		
+
 	}
 
 	/**
@@ -111,24 +148,24 @@ class Maintenance extends \Backend
 	public function setGroups($value, $status)
 	{
 		$gruppen = (array)unserialize($value); // Mitgliedergruppen in Array umwandeln
-		
+
 		if($status)
 		{
 			// BdF-Mitgliedschaft eintragen
 			if($GLOBALS['TL_CONFIG']['fernschach_memberFernschach']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberFernschach'];
 			// Standard-Mitgliedschaft entfernen
-			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberDefault'], $gruppen, true);
-			if($key !== false) unset($gruppen[$key]);
+			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberDefault'], $gruppen);
+			if(isset($key)) unset($gruppen[$key]);
 		}
 		else
 		{
 			// Standard-Mitgliedschaft eintragen
 			if($GLOBALS['TL_CONFIG']['fernschach_memberDefault']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberDefault'];
 			// BdF-Mitgliedschaft entfernen
-			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberFernschach'], $gruppen, true);
-			if($key !== false) unset($gruppen[$key]);
+			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberFernschach'], $gruppen);
+			if(isset($key)) unset($gruppen[$key]);
 		}
-		
+
 		return serialize(array_unique($gruppen));
 	}
 

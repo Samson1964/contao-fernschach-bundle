@@ -17,7 +17,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			array('tl_fernschach_spieler', 'checkPermission'),
 			array('tl_fernschach_spieler', 'applyAdvancedFilter'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateResetbuchungen'),
-			//array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
+			array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
 		),
 		'sql'                         => array
 		(
@@ -1969,13 +1969,21 @@ class tl_fernschach_spieler extends \Backend
 				'options' => array
 				(
 					'1'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'],
-					'5'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_lastYear'],
-					'6'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_thisYear'],
-					'7'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_nextYear'],
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
 					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
 					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
 					'8'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'],
+					'101' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearNext'],
+					'100' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearThis'],
+					'99'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus1'],
+					'98'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus2'],
+					'97'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus3'],
+					'96'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus4'],
+					'95'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus5'],
+					'94'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus6'],
+					'93'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus7'],
+					'92'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus8'],
+					'91'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus9'],
 				)
 			),
 		);
@@ -2043,8 +2051,8 @@ class tl_fernschach_spieler extends \Backend
 		switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 		{
 			case '1': // Alle Mitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+				                                      ->execute('');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2076,8 +2084,8 @@ class tl_fernschach_spieler extends \Backend
 				break;
 
 			case '5': // Mitgliedsende 31.12. letztes Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+				                                      ->execute('');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2092,8 +2100,8 @@ class tl_fernschach_spieler extends \Backend
 				break;
 
 			case '6': // Mitgliedsende 31.12. dieses Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+				                                      ->execute('');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2108,8 +2116,8 @@ class tl_fernschach_spieler extends \Backend
 				break;
 
 			case '7': // Mitgliedsende 31.12. nächstes Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+				                                      ->execute('');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{
@@ -2122,10 +2130,36 @@ class tl_fernschach_spieler extends \Backend
 					}
 				}
 				break;
+			
+			case '101': // Mitgliedsende 31.12. nächstes Jahr
+			case '100': // Mitgliedsende 31.12. dieses Jahr
+			case '99': // Mitgliedsende 31.12. letztes Jahr
+			case '98': // Mitgliedsende 31.12. minus 2 Jahre
+			case '97': // Mitgliedsende 31.12. minus 3 Jahre
+			case '96': // Mitgliedsende 31.12. minus 4 Jahre
+			case '95': // Mitgliedsende 31.12. minus 5 Jahre
+			case '94': // Mitgliedsende 31.12. minus 6 Jahre
+			case '93': // Mitgliedsende 31.12. minus 7 Jahre
+			case '92': // Mitgliedsende 31.12. minus 8 Jahre
+			case '91': // Mitgliedsende 31.12. minus 9 Jahre
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+				                                      ->execute();
+				$arrPlayers = array();
+				if($objPlayers->numRows)
+				{
+					$datum = (date('Y') + $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 100).'1231';
+					while($objPlayers->next())
+					{
+						// Ende einer Mitgliedschaft suchen (memberships)
+						$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+						if($found) $arrPlayers[] = $objPlayers->id;
+					}
+				}
+				break;
 
 			case '8': // Alle Nichtmitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ?")
-				                                      ->execute(1, '');
+				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+				                                      ->execute('');
 				$arrPlayers = array();
 				if($objPlayers->numRows)
 				{

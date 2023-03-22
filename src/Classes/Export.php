@@ -70,8 +70,8 @@ class Export extends \Backend
 		// Preise-Tabelle anlegen und füllen
 		$spreadsheet->createSheet();
 		$spreadsheet->setActiveSheetIndex(0);
-		$spreadsheet->getActiveSheet()->getStyle('A1:AR1')->applyFromArray($styleArray);
-		$spreadsheet->getActiveSheet()->getStyle('A2:AR'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
+		$spreadsheet->getActiveSheet()->getStyle('A1:AT1')->applyFromArray($styleArray);
+		$spreadsheet->getActiveSheet()->getStyle('A2:AT'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
 		$spreadsheet->getActiveSheet()->getStyle('A1:A1')->applyFromArray($styleArray); // Um Markierung zurückzusetzen
 		$spreadsheet->getActiveSheet()->setTitle('Spieler')
 		            ->setCellValue('A1', 'Datensatz')
@@ -256,15 +256,6 @@ class Export extends \Backend
 		$filter = $filter[$dc->table.'Filter']['tfs_filter']; // Wert aus Spezialfilter
 		switch($filter)
 		{
-			case '1': // Alle Mitglieder
-			case '5': // Mitgliedsende 31.12. letztes Jahr
-			case '6': // Mitgliedsende 31.12. dieses Jahr
-			case '7': // Mitgliedsende 31.12. nächstes Jahr
-			case '8': // Alle Nichtmitglieder
-				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
-				$sql .= " published = 1 AND archived = ''";
-				break;
-
 			case '2': // Geburtsdatum fehlt
 				($sql) ? $sql .= ' AND' : $sql = ' WHERE';
 				$sql .= " birthday = 0 OR birthday = ''";
@@ -306,29 +297,28 @@ class Export extends \Backend
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
 						break;
 
-					case '5': // Mitgliedsende 31.12. letztes Jahr
-						// Mitgliedsende prüfen (memberships)
-						$datum = (date('Y') - 1).'1231';
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
-						break;
-
-					case '6': // Mitgliedsende 31.12. dieses Jahr
-						// Mitgliedsende prüfen (memberships)
-						$datum = date('Y').'1231';
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
-						break;
-
-					case '7': // Mitgliedsende 31.12. nächstes Jahr
-						// Mitgliedsende prüfen (memberships)
-						$datum = (date('Y') + 1).'1231';
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
-						break;
-
 					case '8': // Alle Nichtmitglieder
 						// Nichtmitgliedschaften prüfen (memberships)
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
+						// Wahr/Falsch umdrehen
 						if($exportieren) $exportieren = false;
 						else $exportieren = true;
+						break;
+
+					case '101': // Mitgliedsende 31.12. nächstes Jahr
+					case '100': // Mitgliedsende 31.12. dieses Jahr
+					case '99': // Mitgliedsende 31.12. letztes Jahr
+					case '98': // Mitgliedsende 31.12. minus 2 Jahre
+					case '97': // Mitgliedsende 31.12. minus 3 Jahre
+					case '96': // Mitgliedsende 31.12. minus 4 Jahre
+					case '95': // Mitgliedsende 31.12. minus 5 Jahre
+					case '94': // Mitgliedsende 31.12. minus 6 Jahre
+					case '93': // Mitgliedsende 31.12. minus 7 Jahre
+					case '92': // Mitgliedsende 31.12. minus 8 Jahre
+					case '91': // Mitgliedsende 31.12. minus 9 Jahre
+						// Mitgliedsende prüfen (memberships)
+						$datum = (date('Y') + $filter - 100).'1231';
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
 						break;
 
 					default:
@@ -338,7 +328,7 @@ class Export extends \Backend
 					$arrExport[] = array
 					(
 						'id'                      => $records->id,
-						'tstamp'                  => date("d.m.Y H:i:s",$records->tstamp),
+						'tstamp'                  => $records->tstamp ? date("d.m.Y H:i:s",$records->tstamp) : '',
 						'archived'                => $records->archived,
 						'kenncode'                => self::getCode($records->id, \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->birthday), $records->memberId),
 						'nachname'                => $records->nachname,
