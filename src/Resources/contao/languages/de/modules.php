@@ -24,3 +24,4 @@ $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung'] = array('Fernschach-Verwaltun
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular'] = array('Meldeformular Turnieranmeldung', 'Meldeformular Turnieranmeldung anzeigen');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen'] = array('Titel und Normen ausgeben','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen_liste'] = array('Glückwunschliste Titel und Normen','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
+$GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_kontoauszug'] = array('Kontoauszug BdF-Mitglied', 'Kontoauszug des angemeldeten Mitglieds anzeigen.');

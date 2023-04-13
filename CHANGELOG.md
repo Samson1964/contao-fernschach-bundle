@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.11.0 (2023-04-13)
+
+* Add: FE-Modul für Anzeige von Buchungen im Mitgliederprofil
+
 ## Version 0.10.2 (2023-04-13)
 
 * Fix: ContentElements/Zusagen.php -> Startdatum in der Zukunft statt in der Vergangenheit
