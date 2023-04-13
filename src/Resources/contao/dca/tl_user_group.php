@@ -17,6 +17,13 @@ $GLOBALS['TL_DCA']['tl_user_group']['palettes']['default'] = str_replace('fop;',
 /**
  * Add fields to tl_user_group
  */
+$GLOBALS['TL_DCA']['tl_user_group']['fields']['fernschach_turnierzugriff'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_user_group']['fernschach_turnierzugriff'],
+	'inputType'               => 'tournamentTree',
+	'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox'),
+	'sql'                     => "blob NULL"
+);
 $GLOBALS['TL_DCA']['tl_user_group']['fields']['fernschach_spieler'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user_group']['fernschach_spieler'],

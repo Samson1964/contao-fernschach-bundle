@@ -144,7 +144,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Spieler.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeitet', 'Der Spieler wurde fertig bearbeitet.');
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Kontostand', 'Kontostand');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Saldo', 'Kontostand');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'] = array('Konto geprüft', 'Konto geprüft');
 
 /**
  * Buttons für Operationen

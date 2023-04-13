@@ -1,5 +1,18 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.10.2 (2023-04-13)
+
+* Fix: ContentElements/Zusagen.php -> Startdatum in der Zukunft statt in der Vergangenheit
+* Change: Bessere Hilfetexte beim Inhaltselement Zusagen und beim Turniertyp
+* Add: Zugriffsrechte Turniere versucht einzubauen (steht erst ganz am Anfang)
+* Fix: Verstorben (und andere Felder) bei Spielern wird nicht bei Rechten angezeigt -> exclude muß true sein beim Feld
+* Fix: Einige Buchungsfelder werden nicht bei Rechten angezeigt -> exclude muß true sein beim Feld
+* Change: tl_fernschach_turniere_bewerbungen -> Toggle-Funktion von Haste eingebaut
+* Fix: tl_fernschach_turniere_bewerbungen -> Automatisches Ausfüllen Vor- und Nachname korrigiert
+* Change: tl_fernschach_turniere_meldungen -> Toggle-Funktion von Haste eingebaut
+* Fix: tl_fernschach_turniere_meldungen -> Automatisches Ausfüllen Vor- und Nachname, Auflistung
+* Add: Spieler markieren, wenn Buchungen abgearbeitet sind (Resetbuchung ab 01.04.2023 enthalten) -> Ja/Nein-Icon wird angezeigt
+
 ## Version 0.10.1 (2023-03-22)
 
 * Fix: Maintenance -> bei übereinstimmender Zuordnung wurden die Mitgliedsgruppen nicht mehr geprüft

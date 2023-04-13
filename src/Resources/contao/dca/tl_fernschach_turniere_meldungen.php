@@ -16,6 +16,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'ptable'                      => 'tl_fernschach_turniere',
 		'onsubmit_callback'           => array
 		(
+			array('tl_fernschach_turniere_meldungen', 'setSpielername'),
 			array('tl_fernschach_turniere_meldungen', 'AktualisiereBuchungen')
 		),
 		'ondelete_callback'           => array
@@ -82,9 +83,16 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_fernschach_turniere_meldungen', 'toggleIcon')
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -111,7 +119,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		),
 		'pid' => array
 		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+			'foreignKey'              => 'tl_fernschach_turniere.id',
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
 		'tstamp' => array
 		(
@@ -129,7 +139,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			(
 				'includeBlankOption'  => true,
 				'chosen'              => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
+				'submitOnChange'      => true,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -353,7 +364,11 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			'filter'                  => true,
 			'default'                 => 1,
 			'inputType'               => 'checkbox',
-			'eval'                    => array('doNotCopy'=>false),
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'boolean'             => true
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 	)
@@ -372,75 +387,6 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-	}
-
-
-	/**
-	 * Ändert das Aussehen des Toggle-Buttons.
-	 * @param $row
-	 * @param $href
-	 * @param $label
-	 * @param $title
-	 * @param $icon
-	 * @param $attributes
-	 * @return string
-	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		$this->import('BackendUser', 'User');
-
-		if (strlen($this->Input->get('tid')))
-		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state') == 0));
-			$this->redirect($this->getReferer());
-		}
-
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_meldungen::published', 'alexf'))
-		{
-			return '';
-		}
-
-		$href .= '&amp;id='.$this->Input->get('id').'&amp;tid='.$row['id'].'&amp;state='.$row[''];
-
-		if (!$row['published'])
-		{
-			$icon = 'invisible.gif';
-		}
-
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
-	}
-
-	/**
-	 * Toggle the visibility of an element
-	 * @param integer
-	 * @param boolean
-	 */
-	public function toggleVisibility($intId, $blnPublished)
-	{
-		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_fernschach_turniere_meldungen::published', 'alexf'))
-		{
-			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_fernschach_turniere_meldungen toggleVisibility', TL_ERROR);
-			$this->redirect('contao/main.php?act=error');
-		}
-
-		$this->createInitialVersion('tl_fernschach_turniere_meldungen', $intId);
-
-		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen']['fields']['published']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen']['fields']['published']['save_callback'] as $callback)
-			{
-				$this->import($callback[0]);
-				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
-			}
-		}
-
-		// Update the database
-		$this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
-		               ->execute($intId);
-		$this->createNewVersion('tl_fernschach_turniere_meldungen', $intId);
 	}
 
 	/**
@@ -467,16 +413,22 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler();
 
 		$temp = '<div class="tl_content_left">';
+
 		// Vor- und Nachname
-		$temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		if($arrRow['state'] == 0) $temp = '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		elseif($arrRow['state'] == 1) $temp = '<b style="color:green">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		else $temp = '<b style="color:red">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+
 		// Zuordnung
-		if($arrRow['spielerId']) 
+		if($arrRow['spielerId'])
 		{
-			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']].'';
+			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'];
 		}
 		else $temp .= ' - nicht zugeordnet';
+
 		// Meldedatum
 		$temp .= ' - Anmeldung am: <b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b>';
+
 		$temp .= '</div>';
 		return $temp;
 
@@ -646,4 +598,35 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		$result = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE meldungId = ?")
 		                                  ->execute($dc->activeRecord->id);
 	}
+
+	/**
+	 * Setzt die Felder Vorname und Nachname, wenn diese nicht gefüllt sind
+	 * @param mixed
+	 * @param \DataContainer
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function setSpielername(\DataContainer $dc)
+	{
+		$nachname = $dc->activeRecord->nachname;
+		$vorname = $dc->activeRecord->vorname;
+
+		if(!$nachname && $dc->activeRecord->spielerId)
+		{
+			// Kein Nachname, dann Nachname aus Spielertabelle holen
+			$nachname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
+			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET nachname = ? WHERE id = ?")
+			                        ->execute($nachname, $dc->id);
+		}
+
+		if(!$vorname && $dc->activeRecord->spielerId)
+		{
+			// Kein Vorname, dann Vorname aus Spielertabelle holen
+			$vorname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
+			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET vorname = ? WHERE id = ?")
+			                        ->execute($vorname, $dc->id);
+		}
+
+	}
+
 }

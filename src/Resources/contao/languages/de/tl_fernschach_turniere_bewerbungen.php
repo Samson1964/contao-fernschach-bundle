@@ -4,12 +4,12 @@
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['application_legend'] = 'Bewerbung';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['vorname'] = array('Vorname', 'Vorname des Bewerbers. Falls leer, wird der Vorname automatisch anhand des unten ausgewählten Spielers eingetragen.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['nachname'] = array('Nachname', 'Nachname des Bewerbers. Falls leer, wird der Nachname automatisch anhand des unten ausgewählten Spielers eingetragen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['vorname'] = array('Vorname', 'Vorname des Bewerbers. Falls leer, wird der Vorname beim Speichern automatisch anhand des unten ausgewählten Spielers eingetragen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['nachname'] = array('Nachname', 'Nachname des Bewerbers. Falls leer, wird der Nachname beim Speichern automatisch anhand des unten ausgewählten Spielers eingetragen.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['applicationDate'] = array('Bewerbungsdatum', 'Bewerbungsdatum im Format TT.MM.JJJJ');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['player_legend'] = 'Zuordnung';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['spielerId'] = array('Spieler/Mitglied', 'Wählen Sie einen Spieler aus, dem diese Bewerbung zugeordnet wird.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['spielerId'] = array('Spieler/Mitglied', 'Wählen Sie einen Spieler aus, dem diese Bewerbung zugeordnet wird. Der ausgewählte Spieler wird automatisch in den obigen Feldern Vorname und Nachname gespeichert, wenn diese leer sind.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['promise_legend'] = 'Zu- oder Absage';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state'] = array('Status BdF', 'Status der Zu- oder Absage vom BdF');

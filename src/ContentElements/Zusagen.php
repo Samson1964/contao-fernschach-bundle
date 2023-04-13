@@ -26,8 +26,8 @@ class Zusagen extends \ContentElement
 		}
 		else
 		{
-			// alle aktiven Einladungsturniere mit Startdatum in der Vergangenheit gewünscht
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate <= ? AND typ = ? ORDER BY startDate ASC")
+			// Alle aktiven Einladungsturniere mit Startdatum in der Zukunft gewünscht
+			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate >= ? AND typ = ? ORDER BY startDate ASC")
 			                                      ->execute(1, time(), 'e');
 		}
 

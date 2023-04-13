@@ -45,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'label' => array
 		(
 			// Das Feld aktiv wird vom label_callback überschrieben
-			'fields'                  => array('memberId', 'nachname','vorname','birthday','plz','ort','saldo'),
+			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','kontoChecked'),
 			'showColumns'             => true,
 			'format'                  => '%s',
 			'label_callback'          => array('tl_fernschach_spieler', 'listMembers')
@@ -195,6 +195,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'],
 		),
+		'kontoChecked' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'],
+		),
 		'archived' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived'],
@@ -330,6 +334,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'death' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['death'],
+			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'filter'                  => true,
 			'eval'                    => array
@@ -790,6 +795,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -828,6 +834,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sim_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -866,6 +873,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fim_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -904,6 +912,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ccm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -942,6 +951,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lgm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -980,6 +990,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1018,6 +1029,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1056,6 +1068,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1094,6 +1107,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['im_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1132,6 +1146,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wgm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1170,6 +1185,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1208,6 +1224,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wim_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1246,6 +1263,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1284,6 +1302,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wfm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1322,6 +1341,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wcm_title'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => false,
 			'eval'                    => array
@@ -1373,6 +1393,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_25'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1411,6 +1432,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_40'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1449,6 +1471,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_50'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1487,6 +1510,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_60'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1525,6 +1549,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_70'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1563,6 +1588,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_president'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1601,6 +1627,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['honor_member'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1947,6 +1974,11 @@ class tl_fernschach_spieler extends \Backend
 			$args[6] = $html;
 		}
 		else $args[6] = '&nbsp;';
+
+		// Kontoprüfung ausgeben
+		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
+		if($checked) $args[7] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
+		else $args[7] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Datensatz komplett zurückgeben
 		return $args;

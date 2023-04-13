@@ -14,7 +14,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben S
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen', 'Kennzeichen bzw. Kennziffer des Turniers/der Turnierserie');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Meldedatum', 'Meldedatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ des Turniers');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ des Turniers. Wichtig: Nur Einladungsturniere werden vom Frontend-Modul Zusagen berücksichtigt!');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'Nenngeld in Euro');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldung_legend'] = 'Online-Anmeldung';

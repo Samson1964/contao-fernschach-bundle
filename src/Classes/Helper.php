@@ -234,6 +234,28 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * checkKonto
+	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück 
+	 *
+	 * @param integer $value
+	 *
+	 * @return string
+	 */
+	public function checkKonto($pid)
+	{
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
+		                                        ->execute($pid, 1, 1680300000, 1);
+
+		if($objBuchungen->numRows)
+		{
+			return true;
+		}
+		
+		return false;
+
+	}
+
+	/**
 	 * Funktion updateResetbuchungen
 	 * ============================
 	 * Überprüft tl_fernschach_spieler_konto auf die Gültigkeit der globalen Resetbuchung

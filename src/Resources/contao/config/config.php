@@ -92,3 +92,10 @@ $GLOBALS['TL_CTE']['fernschachverwaltung']['fernschachverwaltung_zusagen'] = 'Sc
  */
 $GLOBALS['TL_PERMISSIONS'][] = 'fernschach_spieler'; // Spieler-Rechte
 $GLOBALS['TL_PERMISSIONS'][] = 'fernschach_konto'; // Buchungen-Rechte
+
+/**
+ * -------------------------------------------------------------------------
+ * Eigener inputType
+ * -------------------------------------------------------------------------
+ */
+$GLOBALS['BE_FFL']['tournamentTree'] = 'Schachbulle\ContaoFernschachBundle\Widgets\TournamentTree';

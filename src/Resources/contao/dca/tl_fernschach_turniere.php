@@ -26,6 +26,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'enableVersioning'            => true,
 		'onload_callback'             => array
 		(
+			//array('tl_fernschach_turniere', 'checkPermission'),
 			array('tl_fernschach_turniere', 'addBreadcrumb')
 		),
 		'sql'                         => array
@@ -486,6 +487,233 @@ class tl_fernschach_turniere extends \Backend
 		}
 		//print_r($this->bewerbungen);
 
+	}
+
+	/**
+	 * Check permissions to edit table tl_page
+	 *
+	 * @throws AccessDeniedException
+	 */
+	public function checkPermission()
+	{
+		if ($this->User->isAdmin)
+		{
+			return;
+		}
+
+		$objSession = System::getContainer()->get('request_stack')->getSession();
+		$session = $objSession->all();
+
+		// Set the default page user and group
+		//$GLOBALS['TL_DCA']['tl_page']['fields']['cuser']['default'] = (int) Config::get('defaultUser') ?: $this->User->id;
+		//$GLOBALS['TL_DCA']['tl_page']['fields']['cgroup']['default'] = (int) Config::get('defaultGroup') ?: (int) $this->User->groups[0];
+
+		// Restrict the page tree
+		if (empty($this->User->fernschach_turnierzugriff) || !is_array($this->User->fernschach_turnierzugriff))
+		{
+			$root = array(0);
+		}
+		else
+		{
+			$root = $this->User->fernschach_turnierzugriff;
+		}
+
+		$GLOBALS['TL_DCA']['tl_fernschach_turniere']['list']['sorting']['rootPaste'] = false;
+		$GLOBALS['TL_DCA']['tl_fernschach_turniere']['list']['sorting']['root'] = $root;
+		$security = System::getContainer()->get('security.helper');
+
+		return;
+		
+		// Set allowed page IDs (edit multiple)
+		if (is_array($session['CURRENT']['IDS'] ?? null))
+		{
+			$edit_all = array();
+			$delete_all = array();
+
+			foreach ($session['CURRENT']['IDS'] as $id)
+			{
+				$objPage = $this->Database->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
+										  ->limit(1)
+										  ->execute($id);
+
+				if ($objPage->numRows < 1 || !$security->isGranted(ContaoCorePermissions::USER_CAN_ACCESS_PAGE_TYPE, $objPage->type))
+				{
+					continue;
+				}
+
+				$row = $objPage->row();
+
+				if ($security->isGranted(ContaoCorePermissions::USER_CAN_EDIT_PAGE, $row))
+				{
+					$edit_all[] = $id;
+				}
+
+				// Mounted pages cannot be deleted
+				if ($security->isGranted(ContaoCorePermissions::USER_CAN_DELETE_PAGE, $row) && !$this->User->hasAccess($id, 'pagemounts'))
+				{
+					$delete_all[] = $id;
+				}
+			}
+
+			$session['CURRENT']['IDS'] = (Input::get('act') == 'deleteAll') ? $delete_all : $edit_all;
+		}
+
+		// Set allowed clipboard IDs
+		if (is_array($session['CLIPBOARD']['tl_page']['id'] ?? null))
+		{
+			$clipboard = array();
+
+			foreach ($session['CLIPBOARD']['tl_page']['id'] as $id)
+			{
+				$objPage = $this->Database->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
+										  ->limit(1)
+										  ->execute($id);
+
+				if ($objPage->numRows < 1 || !$security->isGranted(ContaoCorePermissions::USER_CAN_ACCESS_PAGE_TYPE, $objPage->type))
+				{
+					continue;
+				}
+
+				if ($security->isGranted(ContaoCorePermissions::USER_CAN_EDIT_PAGE_HIERARCHY, $objPage->row()))
+				{
+					$clipboard[] = $id;
+				}
+			}
+
+			$session['CLIPBOARD']['tl_page']['id'] = $clipboard;
+		}
+
+		// Overwrite session
+		$objSession->replace($session);
+
+		// Check permissions to save and create new
+		if (Input::get('act') == 'edit')
+		{
+			$objPage = $this->Database->prepare("SELECT * FROM tl_page WHERE id=(SELECT pid FROM tl_page WHERE id=?)")
+									  ->limit(1)
+									  ->execute(Input::get('id'));
+
+			if ($objPage->numRows && !$security->isGranted(ContaoCorePermissions::USER_CAN_EDIT_PAGE_HIERARCHY, $objPage->row()))
+			{
+				$GLOBALS['TL_DCA']['tl_page']['config']['closed'] = true;
+			}
+		}
+
+		// Check current action
+		if (Input::get('act') && Input::get('act') != 'paste')
+		{
+			$permission = null;
+			$cid = Input::get('id');
+			$ids = $cid ? array($cid) : array();
+
+			// Set permission
+			switch (Input::get('act'))
+			{
+				case 'edit':
+				case 'toggle':
+					$permission = ContaoCorePermissions::USER_CAN_EDIT_PAGE;
+					break;
+
+				case 'create':
+				case 'copy':
+				case 'copyAll':
+				case 'cut':
+				case 'cutAll':
+					$permission = ContaoCorePermissions::USER_CAN_EDIT_PAGE_HIERARCHY;
+
+					// Check the parent page in "paste into" mode
+					if (Input::get('mode') == 2)
+					{
+						$ids[] = Input::get('pid');
+					}
+					// Check the parent's parent page in "paste after" mode
+					else
+					{
+						$objPage = $this->Database->prepare("SELECT pid FROM tl_page WHERE id=?")
+												  ->limit(1)
+												  ->execute(Input::get('pid'));
+
+						$ids[] = $objPage->pid;
+					}
+					break;
+
+				case 'delete':
+					$permission = ContaoCorePermissions::USER_CAN_DELETE_PAGE;
+					break;
+			}
+
+			// Check user permissions
+			$pagemounts = array();
+
+			// Get all allowed pages for the current user
+			foreach ($this->User->pagemounts as $root)
+			{
+				if (Input::get('act') != 'delete')
+				{
+					$pagemounts[] = array($root);
+				}
+
+				$pagemounts[] = $this->Database->getChildRecords($root, 'tl_page');
+			}
+
+			if (!empty($pagemounts))
+			{
+				$pagemounts = array_merge(...$pagemounts);
+			}
+
+			$pagemounts = array_unique($pagemounts);
+
+			// Do not allow pasting after pages on the root level (pagemounts)
+			if (Input::get('mode') == 1 && (Input::get('act') == 'cut' || Input::get('act') == 'cutAll') && in_array(Input::get('pid'), $this->eliminateNestedPages($this->User->pagemounts)))
+			{
+				throw new AccessDeniedException('Not enough permissions to paste page ID ' . Input::get('id') . ' after mounted page ID ' . Input::get('pid') . ' (root level).');
+			}
+
+			$error = false;
+
+			// Check each page
+			foreach ($ids as $i=>$id)
+			{
+				if (!in_array($id, $pagemounts))
+				{
+					System::getContainer()->get('monolog.logger.contao.error')->error('Page ID ' . $id . ' was not mounted');
+
+					$error = true;
+					break;
+				}
+
+				// Get the page object
+				$objPage = PageModel::findById($id);
+
+				if ($objPage === null)
+				{
+					continue;
+				}
+
+				// Check whether the current user is allowed to access the current page
+				if (Input::get('act') != 'show' && ($permission === null || !$security->isGranted($permission, $objPage->row())))
+				{
+					$error = true;
+					break;
+				}
+
+				// Check the type of the first page (not the following parent pages)
+				// In "edit multiple" mode, $ids contains only the parent ID, therefore check $id != $_GET['pid'] (see #5620)
+				if ($i == 0 && $id != Input::get('pid') && Input::get('act') != 'create' && !$security->isGranted(ContaoCorePermissions::USER_CAN_ACCESS_PAGE_TYPE, $objPage->type))
+				{
+					System::getContainer()->get('monolog.logger.contao.error')->error('Not enough permissions to  ' . Input::get('act') . ' ' . $objPage->type . ' pages');
+
+					$error = true;
+					break;
+				}
+			}
+
+			// Redirect if there is an error
+			if ($error)
+			{
+				throw new AccessDeniedException('Not enough permissions to ' . Input::get('act') . ' page ID ' . $cid . ' or paste after/into page ID ' . Input::get('pid') . '.');
+			}
+		}
 	}
 
 	/**

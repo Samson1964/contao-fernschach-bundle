@@ -22,7 +22,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	(
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_fernschach_spieler',
-		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'onload_callback'             => array
 		(
@@ -33,7 +32,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		(
 			'keys' => array
 			(
-				'id'            => 'primary',
+				'id'                  => 'primary',
+				'pid'                 => 'index',
 			)
 		)
 	),
@@ -151,7 +151,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		),
 		'pid' => array
 		(
+			'foreignKey'              => 'tl_fernschach_spieler.id',
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
 		'tstamp' => array
 		(
@@ -161,10 +163,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		),
 		'resetRecord' => array
 		(
+			'exclude'                 => true,
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'importDate' => array
 		(
+			'exclude'                 => true,
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -278,6 +282,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markierung'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -291,6 +296,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['saldoReset'],
 			'inputType'               => 'checkbox',
+			'exclude'                 => true,
 			'default'                 => '',
 			'filter'                  => true,
 			'eval'                    => array
@@ -327,6 +333,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'meldungId' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['meldungId'],
+			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
@@ -334,6 +341,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['published'],
+			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'default'                 => 1,
 			'filter'                  => true,
@@ -352,7 +360,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_fernschach_spieler_konto extends Backend
+class tl_fernschach_spieler_konto extends \Backend
 {
 
 	var $turniere = array();
@@ -476,7 +484,7 @@ class tl_fernschach_spieler_konto extends Backend
 			case 's': $css = 'color:red;'; break;
 			default: $css = 'color:yellow;'; break;
 		}
-		// Resetbuchung?
+		// Resetbuchung = true (schwarze Linie unten)
 		if($arrRow['resetRecord'])
 		{
 			$resetCss = 'border-bottom: 2px red solid; padding-bottom:1px;';
@@ -494,7 +502,7 @@ class tl_fernschach_spieler_konto extends Backend
 		$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
 		$temp .= '</div>';
 
-		// Markieren = true
+		// Markieren = true (rötliche Hintergrundfarbe)
 		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFE8DD;'.$resetCss.'">';
 		else $temp .= '<div class="tl_content_left" style="'.$resetCss.'">';
 
