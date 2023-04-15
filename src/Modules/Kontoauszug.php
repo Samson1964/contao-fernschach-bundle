@@ -61,13 +61,34 @@ class Kontoauszug extends \Module
 				if($objPlayer->numRows)
 				{
 					$kontoauszug = true;
-					// Saldo laden
+
+					// Salden laden
 					$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objPlayer->id);
-					if($salden) 
+
+					if($this->fernschachverwaltung_kontostand)
 					{
+						// Kontostand anzeigen
 						$value = end($salden);
 						$wert = str_replace('.', ',', sprintf('%0.2f', $value));
-						$kontostand = 'Kontostand: '.$wert.' €';
+						$kontostand = $wert.' €';
+
+						if($this->fernschachverwaltung_kontostandReset)
+						{
+							// Resetbuchung ab 01.04.2023 erforderlich
+							$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
+							if(!$checked) $kontostand = false;
+						}
+
+					}
+					else
+					{
+						// Kontostand nicht anzeigen
+						$kontostand = false;
+					}
+
+					// Buchungen einlesen
+					if($salden) 
+					{
 						// Buchungen ausgeben
 						$buchungen = array();
 						$nummer = 0;

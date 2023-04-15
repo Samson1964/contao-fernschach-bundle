@@ -5,25 +5,37 @@
 <?php if($this->kontoauszug): ?>
 
 	<div class="kontoauszug">
-		<?= $this->kontostand ?>
-		<table width="80%">
-			<tr>
-				<th width="10%">Nr.</th>
-				<th width="10%">Datum</th>
-				<th width="60%">Titel</th>
-				<th width="10%">Betrag</th>
-				<th width="10%">Saldo</th>
-			</tr>
-			<?php foreach($this->buchungen as $item): ?>
+		<?php if($this->kontostand): ?>
+			<div class="kontostand">Kontostand: <?= $this->kontostand ?></div>
+		<?php else: ?>
+			<div class="kontostand">Kontostand nicht verfügbar</div>
+		<?php endif ?>
+		<div class="buchungen">
+			<table width="80%">
 				<tr>
-					<td><?= $item['nummer'] ?></td>
-					<td><?= $item['datum'] ?></td>
-					<td><?= $item['titel'] ?></td>
-					<td align="right"><?= $item['betrag'] ?></td>
-					<td align="right"><?= $item['saldo'] ?></td>
+					<th width="10%">Nr.</th>
+					<th width="10%">Datum</th>
+					<th width="60%">Titel</th>
+					<th width="10%">Betrag</th>
+					<th width="10%">Saldo</th>
 				</tr>
-			<?php endforeach; ?>
-		</table>
+				<?php if(count($this->buchungen) > 0): ?>
+					<?php foreach($this->buchungen as $item): ?>
+						<tr>
+							<td><?= $item['nummer'] ?></td>
+							<td><?= $item['datum'] ?></td>
+							<td><?= $item['titel'] ?></td>
+							<td align="right"><?= $item['betrag'] ?></td>
+							<td align="right"><?= $item['saldo'] ?></td>
+						</tr>
+					<?php endforeach; ?>
+				<?php else: ?>
+					<tr>
+						<td colspan="5">Keine Buchungen vorhanden</td>
+					</tr>
+				<?php endif ?>
+			</table>
+		</div>
 	</div>
 
 <?php else: ?>

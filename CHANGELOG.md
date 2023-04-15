@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.11.1 (2023-04-16)
+
+* Add: tl_fernschach_konten -> Doppelte Buchführung (in der Entwicklung)
+* Change: Kontoauszug.php -> Ausgabe des Kontostandes im Modul jetzt steuerbar
+
 ## Version 0.11.0 (2023-04-13)
 
 * Add: FE-Modul für Anzeige von Buchungen im Mitgliederprofil

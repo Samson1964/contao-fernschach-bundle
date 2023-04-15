@@ -48,6 +48,13 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		),
 		'statistik'         => array('Schachbulle\ContaoFernschachBundle\Classes\Statistik', 'run'),
 	),
+	'fernschach-konten'   => array
+	(
+		'tables'            => array
+		(
+			'tl_fernschach_konten',
+		),
+	),
 );
 
 if(TL_MODE == 'BE')

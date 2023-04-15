@@ -234,6 +234,19 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * Set the timestamp to 00:00:00 (see #26)
+	 *
+	 * @param integer $value
+	 *
+	 * @return integer
+	 */
+	public function loadDate($value)
+	{
+		if($value) return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		else return '';
+	}
+
+	/**
 	 * checkKonto
 	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück 
 	 *
