@@ -278,7 +278,7 @@ class Helper extends \Backend
 				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($pid);
-				$this->createNewVersion('tl_fernschach_spieler', $pid);
+				//$this->createNewVersion('tl_fernschach_spieler', $pid);
 			}
 		}
 		

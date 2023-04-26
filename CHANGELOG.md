@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.12.2 (2023-04-26)
+
+* Fix: $this->createNewVersion in Helper Zeile 281 führt zu "Using $this when not in object context" -> Zeile auskommentiert
+
 ## Version 0.12.1 (2023-04-26)
 
 * Add: Ausbau Kontenverwaltung
