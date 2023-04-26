@@ -19,8 +19,7 @@ $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'] = arra
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_minBuchungen'] = array('Buchungen Minimum', 'Mindestanzahl der Buchungen, die angezeigt werden sollen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_maxBuchungen'] = array('Buchungen Maximum', 'Maximalanzahl der Buchungen, die angezeigt werden sollen. 0 = alle Buchungen anzeigen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_maxDatum'] = array('Ab Datum', 'Ab welchem Datum dürfen Buchungen angezeigt werden? Leerlassen, wenn es keine zeitliche Begrenzung gibt.');
-$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_resetStop'] = array('Bei Resetbuchung stoppen', 'Buchungen nur bis zur letzten Reset-Buchung anzeigen.');
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_isReset'] = array('Resetbuchung Pflicht', 'Kontostand und Kontoauszug nur anzeigen, wenn es eine Resetbuchung ab dem 01.04.2023 vorhanden ist.');
 
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltungKontostand_legend'] = 'Einstellungen Kontostand';
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_kontostand'] = array('Kontostand anzeigen', 'Kontostand anzeigen.');
-$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_kontostandReset'] = array('Nur bei vorhandener Resetbuchung ab 01.04.2023', 'Kontostand nur bei vorhandener Resetbuchung ab 01.04.2023 anzeigen.');

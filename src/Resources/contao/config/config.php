@@ -53,6 +53,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'tables'            => array
 		(
 			'tl_fernschach_konten',
+			'tl_fernschach_konten_buchungen',
 		),
 	),
 );

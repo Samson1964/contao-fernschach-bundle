@@ -259,12 +259,30 @@ class Helper extends \Backend
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
 		                                        ->execute($pid, 1, 1680300000, 1);
 
+		if($objBuchungen->numRows) $resetVorhanden = true;
+		else $resetVorhanden =  false;
+
+		// Spielerdatensatz prüfen, ob accountChecked richtig gesetzt ist
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
+		                                        ->execute($pid);
+
 		if($objBuchungen->numRows)
 		{
-			return true;
+			if($resetVorhanden != $objBuchungen->accountChecked)
+			{
+				// Status paßt nicht zueinander, jetzt aktualisieren
+				$set = array
+				(
+					'accountChecked'   => $resetVorhanden,
+				);
+				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				                                     ->set($set)
+				                                     ->execute($pid);
+				$this->createNewVersion('tl_fernschach_spieler', $pid);
+			}
 		}
 		
-		return false;
+		return $resetVorhanden;
 
 	}
 

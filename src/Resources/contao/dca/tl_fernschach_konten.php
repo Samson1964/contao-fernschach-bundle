@@ -22,7 +22,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_konten'] = array
 	(
 		'label'                       => $GLOBALS['TL_LANG']['tl_fernschach_konten']['mainTitle'],
 		'dataContainer'               => 'Table',
-		//'ctable'                      => array('tl_fernschach_konten_buchungen'),
+		'ctable'                      => array('tl_fernschach_konten_buchungen'),
 		'enableVersioning'            => true,
 		'onload_callback'             => array
 		(
@@ -129,9 +129,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_konten'] = array
 	(
 		'__selector__'                => array('type', 'bewerbungErlaubt'), 
 		'default'                     => '{title_legend},title,type,placeholder;{description_legend:hide},description;{balance_legend:hide},openingBalance;{publish_legend},published',
-		'category'                    => '{title_legend},title,type,placeholder;{description_legend:hide},description;{balance_legend:hide},openingBalance;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type,placeholder;{description_legend:hide},description;{balance_legend:hide},openingBalance;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld;{meldung_legend},onlineAnmeldung,spielerMax,art,artInfo;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},bewerbungErlaubt;{publish_legend},published',
-		'group'                       => '{title_legend},title,type,placeholder;{description_legend:hide},description;{balance_legend:hide},openingBalance;{tournament_legend},kennziffer;{publish_legend},published',
 	), 
 
 	// Subpalettes

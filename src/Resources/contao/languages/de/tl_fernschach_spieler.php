@@ -146,6 +146,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeite
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Saldo', 'Kontostand');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'] = array('Konto geprüft', 'Konto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'] = array('Konto geprüft', 'Konto geprüft');
 
 /**
  * Buttons für Operationen

@@ -1,6 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
-## Version 0.11.1 (2023-04-16)
+## Version 0.12.1 (2023-04-26)
+
+* Add: Ausbau Kontenverwaltung
+* Fix: Buchungen werden im Frontend angezeigt, auch wenn keine Resetbuchung erfolgt ist. -> Arbeitsweise FE-Modul geändert: Kontostand UND Kontoauszug werden nur angezeigt, wenn Resetbuchung ab 01.04.2023 vorhanden sind.
+* Fix: Darstellungsfehler Turnier-Anmeldungen (HTML-Container-Problem) -> öffnendes DIV wurde ignoriert
+* Add: tl_fernschach_spieler.accountChecked (Konto geprüft) -> Eigenes Feld angelegt um danach filtern zu können. Die Helper-Funktion checkKonto korrigiert das Feld entsprechend.
+* Change: Im Spielerdatensatz alle verbundenen Frontend-Konten anzeigen.
+* Add: Wartungsklasse Maintenance mit Abfrage Zeitstempel tl_member
+
+## Version 0.12.0 (2023-04-16)
 
 * Add: tl_fernschach_konten -> Doppelte Buchführung (in der Entwicklung)
 * Change: Kontoauszug.php -> Ausgabe des Kontostandes im Modul jetzt steuerbar

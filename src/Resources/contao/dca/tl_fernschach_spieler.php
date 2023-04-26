@@ -45,7 +45,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'label' => array
 		(
 			// Das Feld aktiv wird vom label_callback überschrieben
-			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','kontoChecked'),
+			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','accountChecked'),
 			'showColumns'             => true,
 			'format'                  => '%s',
 			'label_callback'          => array('tl_fernschach_spieler', 'listMembers')
@@ -195,9 +195,16 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'],
 		),
-		'kontoChecked' => array
+		//'kontoChecked' => array
+		//(
+		//	'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'],
+		//),
+		'accountChecked' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'],
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'archived' => array
 		(
@@ -2221,7 +2228,7 @@ class tl_fernschach_spieler extends \Backend
 	}
 
 	/**
-	 * Button zum PDF-Abruf im Karten-Format anzeigen
+	 * Zugeordnete Frontend-Mitglieder anzeigen
 	 * @param DataContainer $dc
 	 *
 	 * @return string HTML-Code
@@ -2231,15 +2238,22 @@ class tl_fernschach_spieler extends \Backend
 		if($dc->activeRecord->id)
 		{
 			// Spieler-ID in tl_member.fernschach_memberId suchen
-			$member = MemberModel::findOneBy('fernschach_memberId', $dc->activeRecord->id);
-			if($member)
+			$objMembers = \MemberModel::findBy('fernschach_memberId', $dc->activeRecord->id);
+			$status = '';
+			$zaehler = 0;
+			if($objMembers)
 			{
-				$status = '<b>'.$member->username.'</b>';
+				foreach($objMembers as $objMember)
+				{
+					$zaehler++;
+					$status .= '['.$zaehler.'] <b>'.$objMember->username.'</b><br>';
+				}
 			}
 			else
 			{
 				$status = $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberAssign_Failed'][0];
 			}
+
 			return '
 			<div class="tl_listing_container list_view" id="tl_listing">
 				<table class="tl_listing">

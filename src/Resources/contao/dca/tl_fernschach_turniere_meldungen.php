@@ -415,9 +415,9 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		$temp = '<div class="tl_content_left">';
 
 		// Vor- und Nachname
-		if($arrRow['state'] == 0) $temp = '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
-		elseif($arrRow['state'] == 1) $temp = '<b style="color:green">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
-		else $temp = '<b style="color:red">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		if($arrRow['state'] == 0) $temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		elseif($arrRow['state'] == 1) $temp .= '<b style="color:green">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
+		else $temp .= '<b style="color:red">'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
 
 		// Zuordnung
 		if($arrRow['spielerId'])

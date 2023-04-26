@@ -13,12 +13,10 @@
  * Add palette to tl_module
  */
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'fernschachverwaltung_kontostand';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen_liste'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum,fernschachverwaltung_anzahl;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_resetStop;{fernschachverwaltungKontostand_legend},fernschachverwaltung_kontostand;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['fernschachverwaltung_kontostand']= 'fernschachverwaltung_kontostandReset';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_kontostand,fernschachverwaltung_isReset;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_zeitraum'] = array
 (
@@ -102,19 +100,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_maxDatum'] = arr
 	'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_resetStop'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_resetStop'],
-	'exclude'                 => true,
-	'flag'                    => 1,
-	'inputType'               => 'checkbox',
-	'eval'                    => array
-	(
-		'tl_class'            =>'w50 m12',
-	),
-	'sql'                     => "char(1) NOT NULL default ''"
-);
-
 $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_kontostand'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_kontostand'],
@@ -123,15 +108,15 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_kontostand'] = a
 	'inputType'               => 'checkbox',
 	'eval'                    => array
 	(
-		'tl_class'            =>'long',
-		'submitOnChange'      => true,
+		'tl_class'            =>'w50 clr m12',
+		'submitOnChange'      => false,
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
 );
 
-$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_kontostandReset'] = array
+$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_isReset'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_kontostandReset'],
+	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_isReset'],
 	'exclude'                 => true,
 	'flag'                    => 1,
 	'inputType'               => 'checkbox',
@@ -141,3 +126,4 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_kontostandReset'
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
 );
+

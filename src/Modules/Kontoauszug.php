@@ -60,31 +60,42 @@ class Kontoauszug extends \Module
 				                                     ->execute(1, $this->User->fernschach_memberId);
 				if($objPlayer->numRows)
 				{
-					$kontoauszug = true;
+					// Muß Resetbuchung ab 01.04.2023 vorhanden sein? Falls Ja, dann danach suchen
+					if($this->fernschachverwaltung_isReset)
+					{
+						// Resetbuchung erforderlich
+						$resetGefunden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
+						if($resetGefunden)
+						{
+							// Resetbuchung gefunden, Kontostand und Kontoauszug darf angezeigt werden
+							$kontoauszug = true;
+							$kontostand = $this->fernschachverwaltung_kontostand ? true : false;
+						}
+						else
+						{
+							// Resetbuchung nicht gefunden, Kontostand und Kontoauszug darf nicht angezeigt werden
+							$kontoauszug = false;
+							$kontostand = false;
+						}
+					}
+					else
+					{
+						// Resetbuchung nicht erforderlich
+						$kontoauszug = true;
+						$kontostand = $this->fernschachverwaltung_kontostand ? true : false;
+					}
 
 					// Salden laden
 					$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objPlayer->id);
 
-					if($this->fernschachverwaltung_kontostand)
+					if($kontostand)
 					{
 						// Kontostand anzeigen
 						$value = end($salden);
 						$wert = str_replace('.', ',', sprintf('%0.2f', $value));
-						$kontostand = $wert.' €';
-
-						if($this->fernschachverwaltung_kontostandReset)
-						{
-							// Resetbuchung ab 01.04.2023 erforderlich
-							$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
-							if(!$checked) $kontostand = false;
-						}
-
+						$saldo = $wert.' €';
 					}
-					else
-					{
-						// Kontostand nicht anzeigen
-						$kontostand = false;
-					}
+					else $saldo = false; // Kontostand nicht anzeigen
 
 					// Buchungen einlesen
 					if($salden) 
@@ -107,9 +118,9 @@ class Kontoauszug extends \Module
 									'datum'  => date('d.m.Y', $objBuchung->datum),
 									'titel'  => $objBuchung->verwendungszweck,
 									'betrag' => self::getBetrag($objBuchung->betrag, $objBuchung->typ),
-									'saldo'  => self::getBetrag($value, false),
+									'saldo'  => $kontostand ? self::getBetrag($value, false) : '',
 								);
-								if($this->fernschachverwaltung_resetStop && $objBuchung->saldoReset) break; // Bei Saldo-Reset stoppen
+								if($this->fernschachverwaltung_isReset && $objBuchung->saldoReset) break; // Bei Saldo-Reset stoppen
 								if($this->fernschachverwaltung_maxBuchungen > 0 && $this->fernschachverwaltung_maxBuchungen <= $nummer) break; // Bei Maximalanzahl Buchungen stoppen
 							}
 						}
@@ -130,6 +141,7 @@ class Kontoauszug extends \Module
 		// Ausgabe
 		$this->Template->kontoauszug = $kontoauszug;
 		$this->Template->kontostand = $kontostand;
+		$this->Template->saldo = $saldo;
 		$this->Template->buchungen = is_array($buchungen) ? $buchungen : array();
 		$this->Template->fehler = $fehler;
 

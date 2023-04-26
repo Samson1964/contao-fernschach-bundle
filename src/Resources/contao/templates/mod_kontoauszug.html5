@@ -6,7 +6,7 @@
 
 	<div class="kontoauszug">
 		<?php if($this->kontostand): ?>
-			<div class="kontostand">Kontostand: <?= $this->kontostand ?></div>
+			<div class="kontostand">Kontostand: <?= $this->saldo ?></div>
 		<?php else: ?>
 			<div class="kontostand">Kontostand nicht verfügbar</div>
 		<?php endif ?>

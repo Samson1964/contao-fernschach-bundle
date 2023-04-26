@@ -19,14 +19,15 @@ class Maintenance extends \Backend
 	 */
 	public function getMaintenance(\DataContainer $dc)
 	{
-		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + 43200; // Letztes Updatedatum + 12 Stunden
+		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + 43200; // Letztes Updatedatum + 12 Stunden (43200)
 
 		// Aktualisierung notwendig
-		if($update)
+		if($update < time())
 		{
+			$beginn = microtime(true); 
 			// Mitgliederkonten Frontend prüfen
-			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member")
-			                                     ->execute();
+			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE tstamp <= ?")
+			                                     ->execute($GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate']);
 			if($objMember->numRows)
 			{
 				while($objMember->next())
@@ -150,6 +151,8 @@ class Maintenance extends \Backend
 
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
+			$dauer = microtime(true) - $beginn; 
+			//echo "Verarbeitung des Skripts: $dauer Sek.";
 		}
 
 	}
