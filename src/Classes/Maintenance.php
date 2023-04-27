@@ -24,14 +24,17 @@ class Maintenance extends \Backend
 		// Aktualisierung notwendig
 		if($update < time())
 		{
-			$beginn = microtime(true); 
+			//$zeitmessung = new \Schachbulle\ContaoHelperBundle\Classes\Zeitmessung();
+			//$zeitmessung->Start();
+
 			// Mitgliederkonten Frontend prüfen
-			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE tstamp <= ?")
+			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE tstamp >= ?")
 			                                     ->execute($GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate']);
 			if($objMember->numRows)
 			{
 				while($objMember->next())
 				{
+					//$zeitmessung->Zaehler();
 					// E-Mail-Adresse in Fernschach-Verwaltung suchen
 					$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? OR email2 = ?")
 					                                     ->execute($objMember->email, $objMember->email);
@@ -151,8 +154,8 @@ class Maintenance extends \Backend
 
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
-			$dauer = microtime(true) - $beginn; 
-			//echo "Verarbeitung des Skripts: $dauer Sek.";
+
+			//$zeitmessung->Stop();
 		}
 
 	}
