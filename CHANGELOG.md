@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.12.4 (2023-05-05)
+
+* Change: tl_fernschach_turniere -> Sprachänderung: Ordner statt Kategorie
+* Fix: Kontoauszug wird im Frontend nicht angezeigt, obwohl Reset-Buchung nach 01.04.2023 vorhanden ist -> Helper::checkKonto falsche Variable übergeben: $row['id'] statt $objPlayer->id
+
 ## Version 0.12.3 (2023-04-27)
 
 * Fix: Maintenance-Klasse -> Überprüfung der FE-Mitglieder anhand tstamp war mit falschem Vergleichsoperator

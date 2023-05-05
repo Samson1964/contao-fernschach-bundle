@@ -64,7 +64,7 @@ class Kontoauszug extends \Module
 					if($this->fernschachverwaltung_isReset)
 					{
 						// Resetbuchung erforderlich
-						$resetGefunden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
+						$resetGefunden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($objPlayer->id);
 						if($resetGefunden)
 						{
 							// Resetbuchung gefunden, Kontostand und Kontoauszug darf angezeigt werden

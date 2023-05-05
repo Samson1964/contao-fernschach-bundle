@@ -5,9 +5,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Kategorien & Turni
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Turnier/Kategorie';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Typ', 'Typ des Turniers bzw. der Kategorie. Es werden nur die an dieser Stelle möglichen Typen angezeigt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Art', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben Sie hier den Turniertitel ein');
@@ -68,7 +68,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['zusagen'] = array('Status', 'Anza
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'] = array
 (
-	'category'   => 'Kategorie',
+	'category'   => 'Ordner (nur Platzhalter für Turniere)',
 	'tournament' => 'Meldefähiges Turnier',
 	'group'      => 'Turniergruppe',
 );
