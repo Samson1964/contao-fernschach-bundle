@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.13.2 (2023-06-23)
+
+* Fix: tl_fernschach_spieler.accountChecked wurde nicht korrekt mit Benutzerrechten abgefragt
+
 ## Version 0.13.1 (2023-06-23)
 
 * Fix: Fehler bei Berechtigungen tl_fernschach_turniere.published und tl_fernschach_turniere.fertig

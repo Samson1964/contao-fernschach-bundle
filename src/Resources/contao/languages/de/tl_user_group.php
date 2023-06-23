@@ -21,18 +21,19 @@ $GLOBALS['TL_LANG']['tl_user_group']['fernschach_konto'] = array('Kontorechte', 
 
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_spieler_optionen'] = array
 (
-	'import'     => 'Spieler importieren',
-	'export'     => 'Spieler exportieren',
-	'create'     => 'Spieler anlegen',
-	'edit'       => 'Spieler bearbeiten',
-	'delete'     => 'Spieler löschen',
-	'copy'       => 'Spieler kopieren',
-	'toggle'     => 'Spieler Veröffentlichen-Status setzen',
-	'show'       => 'Spieler Infobox zeigen',
-	'fertig'     => 'Spieler Fertig-Status setzen',
-	'all'        => 'Mehrere Spieler bearbeiten',
-	'saldo'      => 'Saldo anzeigen',
-	'konto'      => 'Buchungen anzeigen',
+	'create'         => 'Global: Spieler neu anlegen',
+	'import'         => 'Global: Spieler importieren',
+	'export'         => 'Global: Spieler exportieren',
+	'all'            => 'Global: Mehrere Spieler bearbeiten',
+	'edit'           => 'Datensatz: Spieler bearbeiten',
+	'copy'           => 'Datensatz: Spieler kopieren',
+	'delete'         => 'Datensatz: Spieler löschen',
+	'konto'          => 'Datensatz: Buchungen anzeigen',
+	'toggle'         => 'Datensatz: Spieler Veröffentlichen-Status setzen',
+	'show'           => 'Datensatz: Spieler Infobox zeigen',
+	'fertig'         => 'Datensatz: Spieler Fertig-Status setzen',
+	'saldo'          => 'Auflistung: Saldo anzeigen',
+	'accountChecked' => 'Auflistung: Konto geprüft anzeigen',
 );
 
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_konto_optionen'] = array

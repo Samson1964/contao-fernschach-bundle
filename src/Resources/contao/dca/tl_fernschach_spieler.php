@@ -2015,7 +2015,7 @@ class tl_fernschach_spieler extends \Backend
 		if(!$this->User->hasAccess('tl_fernschach_spieler::plz', 'alexf')) $args[4] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 		if(!$this->User->hasAccess('tl_fernschach_spieler::ort', 'alexf')) $args[5] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 		if(!$this->User->hasAccess('saldo', 'fernschach_spieler')) $args[6] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
-		if(!$this->User->hasAccess('tl_fernschach_spieler::accountChecked', 'alexf')) $args[7] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('accountChecked', 'fernschach_spieler')) $args[7] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 
 		// Zugriffsrechte auf weitere Sortierfelder prüfen
 		$session = \Session::getInstance()->getData();
