@@ -105,18 +105,18 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'],
-				'attributes' => 'onclick="Backend.getScrollOffset()"',
+				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'],
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
 				'haste_ajax_operation' => array
 				(
-					'field'           => 'published',
-					'options'         => array
+					'field'            => 'published',
+					'options'          => array
 					(
 						array('value' => '', 'icon' => 'invisible.svg'),
 						array('value' => '1', 'icon' => 'visible.svg'),
 					),
 				),
-				'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
+				//'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
 			),
 			'show' => array
 			(
@@ -1935,6 +1935,18 @@ class tl_fernschach_spieler extends \Backend
 			{
 				// Benutzer Zugriff auf dieses Feld sperren
 				$GLOBALS['TL_DCA']['tl_fernschach_spieler']['fields'][$key]['eval']['doNotShow'] = true;
+
+				// Zusätzlich Toggle abschalten, wenn published nicht erlaubt ist
+				if($key == 'published')
+				{
+					unset($GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['operations']['toggle']);
+				}
+
+				// Zusätzlich FertigIcon abschalten, wenn fertig nicht erlaubt ist
+				if($key == 'fertig')
+				{
+					unset($GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['operations']['fertigIcon']);
+				}
 			}
 		}
 

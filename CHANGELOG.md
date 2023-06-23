@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.13.1 (2023-06-23)
+
+* Fix: Fehler bei Berechtigungen tl_fernschach_turniere.published und tl_fernschach_turniere.fertig
+
 ## Version 0.13.0 (2023-06-23)
 
 * Change: Dokumentation Turnieranmeldungen und Turnierarten
