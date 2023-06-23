@@ -1,5 +1,16 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.13.0 (2023-06-23)
+
+* Change: Dokumentation Turnieranmeldungen und Turnierarten
+* Fix: tl_fernschach_turniere -> Sprachänderungen
+* Add: tl_fernschach_turniere -> Felder für Anzeige der Meldestände
+* Change: tl_fernschach_turniere -> Anordnung der Felder in der tournament-Palette optimiert
+* Fix: tl_fernschach_spieler -> Rechte bei toggle und show korrigiert
+* Add: Auflistung Spieler -> Ausblenden von Feldern ohne Berechtigung
+* Fix: Infobox bei tl_fernschach_spieler verbessert
+* Add: Rechtesystem für die Felderanzeige in Infobox tl_fernschach_spieler
+
 ## Version 0.12.4 (2023-05-05)
 
 * Change: tl_fernschach_turniere -> Sprachänderung: Ordner statt Kategorie

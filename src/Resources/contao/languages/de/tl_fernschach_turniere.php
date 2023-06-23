@@ -1,13 +1,13 @@
 <?php
 
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Kategorien & Turniere';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Ordner & Turniere';
 
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Art', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Ordner/Turnier', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben Sie hier den Turniertitel ein');
@@ -16,13 +16,17 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Melde
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ des Turniers. Wichtig: Nur Einladungsturniere werden vom Frontend-Modul Zusagen berücksichtigt!');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'Nenngeld in Euro');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldung_legend'] = 'Online-Anmeldung';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'] = array('Online-Anmeldung', 'Turnier im Online-Meldeformular anzeigen.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungErlaubt'] = array('Bewerbungen erlaubt', 'Bewerbungen für das Turnier sind erlaubt. Aktiviert die dazugehörende Tabelle.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldestand_legend'] = 'Meldestandsanzeige';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineMeldestaende'] = array('Online-Meldestände', 'Turnier in den Meldeständen anzeigen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['versteckeNamen'] = array('Spielernamen verbergen', 'Die Namen der Spieler werden in den Meldeständen nicht angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiter_legend'] = 'Turnierleiter';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterName'] = array('Turnierleiter', 'Name des Turnierleiters');
@@ -69,7 +73,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['zusagen'] = array('Status', 'Anza
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'] = array
 (
 	'category'   => 'Ordner (nur Platzhalter für Turniere)',
-	'tournament' => 'Meldefähiges Turnier',
+	'tournament' => 'Meldefähiges Turnier / Turnierklasse',
 	'group'      => 'Turniergruppe',
 );
 

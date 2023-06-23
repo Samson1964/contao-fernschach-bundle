@@ -44,7 +44,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		),
 		'label' => array
 		(
-			// Das Feld aktiv wird vom label_callback überschrieben
 			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','accountChecked'),
 			'showColumns'             => true,
 			'format'                  => '%s',
@@ -117,7 +116,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 						array('value' => '1', 'icon' => 'visible.svg'),
 					),
 				),
-				//'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
+				'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
 			),
 			'show' => array
 			(
@@ -125,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'href'                => 'act=show',
 				'icon'                => 'bundles/contaofernschach/images/show.svg',
 				'attributes'          => 'style="margin-right:3px"',
-				//'button_callback'     => array('tl_fernschach_spieler', 'generateShowButton')
+				'button_callback'     => array('tl_fernschach_spieler', 'generateShowButton')
 			),
 			'fertigIcon' => array
 			(
@@ -271,7 +270,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'tl_class'            => 'w50 clr'
 			),
 			'sql'                     => "varchar(5) NOT NULL default ''"
@@ -285,7 +284,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(30) NOT NULL default ''"
@@ -333,7 +332,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(1) NOT NULL default ''"
@@ -555,7 +554,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'mandatory'           => true,
 				'maxlength'           => 20,
-				'tl_class'            => 'w50', 
+				'tl_class'            => 'w50',
 				'unique'              => true,
 			),
 			'sql'                     => "varchar(20) NOT NULL default ''"
@@ -742,7 +741,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(5) NOT NULL default ''"
@@ -1391,7 +1390,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'search'                  => false,
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'tl_class'            => 'long clr'
 			),
 			'sql'                     => "text NULL"
@@ -1861,7 +1860,7 @@ class tl_fernschach_spieler extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen neuen Spieler anzulegen.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'copy': // Spieler kopieren
 				if(!$this->User->hasAccess('copy', 'fernschach_spieler'))
@@ -1869,15 +1868,15 @@ class tl_fernschach_spieler extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu kopieren.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
-				
+				break;
+
 			case 'toggle': // Spieler aktivieren/deaktivieren
 				if(!$this->User->hasAccess('toggle', 'fernschach_spieler'))
 				{
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler zu (de)aktivieren.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'show': // Infobox
 				if(!$this->User->hasAccess('show', 'fernschach_spieler'))
@@ -1885,7 +1884,7 @@ class tl_fernschach_spieler extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler-Infobox anzuzeigen.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'edit': // Spieler bearbeiten
 				if(!$this->User->hasAccess('edit', 'fernschach_spieler'))
@@ -1893,7 +1892,7 @@ class tl_fernschach_spieler extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu bearbeiten.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			default:
 				// Aktuelle Aktion von key prüfen
@@ -1905,16 +1904,16 @@ class tl_fernschach_spieler extends \Backend
 							$this->log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu importieren.', __METHOD__, TL_ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
-						break; 
-        		
+						break;
+
 					case 'exportXLS': // Spieler exportieren
 						if(!$this->User->hasAccess('export', 'fernschach_spieler'))
 						{
 							$this->log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu exportieren.', __METHOD__, TL_ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
-						break; 
-        		
+						break;
+
 					default:
 				}
 
@@ -1927,11 +1926,20 @@ class tl_fernschach_spieler extends \Backend
 						$this->redirect('contao/main.php?act=error');
 					}
 				}
-
+		}
+		
+		// Berechtigungen Infobox setzen
+		foreach($GLOBALS['TL_DCA']['tl_fernschach_spieler']['fields'] as $key => $value)
+		{
+			if(!$this->User->hasAccess('tl_fernschach_spieler::'.$key, 'alexf'))
+			{
+				// Benutzer Zugriff auf dieses Feld sperren
+				$GLOBALS['TL_DCA']['tl_fernschach_spieler']['fields'][$key]['eval']['doNotShow'] = true;
+			}
 		}
 
 	}
-		
+
 	/**
 	 * Datensätze auflisten
 	 * @param array
@@ -1944,21 +1952,21 @@ class tl_fernschach_spieler extends \Backend
 		//echo "</pre>";
 		$args[3] = \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($args[3]); // Geburtstag von JJJJMMTT umwandeln in TT.MM.JJJJ
 
-		if($row['archived']) 
+		if($row['archived'])
 		{
 			for($x = 0; $x < count($args); $x++)
 			{
 				$args[$x] = '<span style="color:#B6B6B6;">'.$args[$x].'</span>';
 			}
 		}
-		
+
 		// Buchungen des Spielers prüfen
 		//\Schachbulle\ContaoFernschachBundle\Classes\Helper::checkResetbuchungen($row['id']);
 
 		// Kontostand ausgeben
 		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id']);
 		//print_r($salden);
-		if($salden) 
+		if($salden)
 		{
 			$value = end($salden);
 			$wert = str_replace('.', ',', sprintf('%0.2f', $value));
@@ -1986,6 +1994,29 @@ class tl_fernschach_spieler extends \Backend
 		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
 		if($checked) $args[7] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
 		else $args[7] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
+
+		// Zugriffsrechte auf Felder prüfen
+		if(!$this->User->hasAccess('tl_fernschach_spieler::memberId', 'alexf')) $args[0] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::nachname', 'alexf')) $args[1] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::vorname', 'alexf')) $args[2] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::birthday', 'alexf')) $args[3] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::plz', 'alexf')) $args[4] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::ort', 'alexf')) $args[5] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('saldo', 'fernschach_spieler')) $args[6] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('tl_fernschach_spieler::accountChecked', 'alexf')) $args[7] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+
+		// Zugriffsrechte auf weitere Sortierfelder prüfen
+		$session = \Session::getInstance()->getData();
+		switch($session['sorting']['tl_fernschach_spieler'])
+		{
+			case 'fremdspielerNummer':
+			case 'gastNummer':
+			case 'memberInternationalId':
+			case 'servertesterNummer':
+				if(!$this->User->hasAccess('tl_fernschach_spieler::'.$session['sorting']['tl_fernschach_spieler'], 'alexf')) $args[8] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+				break;
+			default:
+		}
 
 		// Datensatz komplett zurückgeben
 		return $args;
@@ -2169,7 +2200,7 @@ class tl_fernschach_spieler extends \Backend
 					}
 				}
 				break;
-			
+
 			case '101': // Mitgliedsende 31.12. nächstes Jahr
 			case '100': // Mitgliedsende 31.12. dieses Jahr
 			case '99': // Mitgliedsende 31.12. letztes Jahr
@@ -2326,7 +2357,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2341,7 +2372,9 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'&amp;popup=1" title="'.specialchars($title).'"'.$attributes.' onclick="Backend.openModalIframe({\'title\':\''.str_replace('%s', $row['id'], $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'][1]).'\',\'url\':this.href});return false" >'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+
+
 	}
 
 	/**

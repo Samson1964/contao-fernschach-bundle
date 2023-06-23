@@ -148,7 +148,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'__selector__'                => array('type', 'bewerbungErlaubt'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
 		'category'                    => '{title_legend},title,type;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld;{meldung_legend},onlineAnmeldung,spielerMax,art,artInfo;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},bewerbungErlaubt;{publish_legend},published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld,art,artInfo,spielerMax;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},bewerbungErlaubt;{publish_legend},published',
 		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{publish_legend},published',
 	), 
 
@@ -263,7 +263,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'],
 			'exclude'                 => true,
 			'filter'                  => true,
-			'inputType'               => 'radio',
+			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ_options'],
 			'eval'                    => array
 			(
@@ -281,41 +281,11 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			'eval'                    => array('rgxp'=>'digit', 'mandatory'=>false, 'tl_class'=>'w50', 'maxlength'=>6),
 			'sql'                     => "varchar(6) NOT NULL default ''"
 		),
-		'onlineAnmeldung' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'default'                 => 1,
-			'inputType'               => 'checkbox',
-			'eval'                    => array
-			(
-				'tl_class'            => 'w50', 
-				'isBoolean'           => true,
-			),
-			'sql'                     => "char(1) NOT NULL default '1'"
-		),
-		'spielerMax' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'],
-			'exclude'                 => true,
-			'sorting'                 => false,
-			'default'                 => 0,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'rgxp'                => 'digit', 
-				'mandatory'           => false, 
-				'tl_class'            => 'w50', 
-				'maxlength'           => 6
-			),
-			'sql'                     => "int(6) unsigned NOT NULL default 0"
-		),
 		'art' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'],
 			'exclude'                 => true,
 			'filter'                  => true,
-			'inputType'               => 'radio',
+			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'],
 			'eval'                    => array
 			(
@@ -339,6 +309,63 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
+		'spielerMax' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'],
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'default'                 => 0,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'digit', 
+				'mandatory'           => false, 
+				'tl_class'            => 'w50', 
+				'maxlength'           => 6
+			),
+			'sql'                     => "int(6) unsigned NOT NULL default 0"
+		),
+		'onlineAnmeldung' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => 1,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+			),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		),
+		'onlineMeldestaende' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineMeldestaende'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => 1,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+			),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		),
+		'versteckeNamen' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['versteckeNamen'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'turnierleiterName' => array
 		(

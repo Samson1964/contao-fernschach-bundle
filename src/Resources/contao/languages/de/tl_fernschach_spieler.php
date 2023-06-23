@@ -157,7 +157,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['edit'] = array('Spieler bearbeiten
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['copy'] = array('Spieler kopieren', 'Spieler %s kopieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'] = array('Spieler löschen', 'Spieler %s löschen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'] = array('Spieler aktivieren/deaktivieren', 'Spieler %s aktivieren/deaktivieren');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'] = array('Spielersdetails anzeigen', 'Details des Spielers %s anzeigen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'] = array('Spielerdetails anzeigen', 'Details des Spielers %s anzeigen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'] = array('Spieler bearbeitet/nicht bearbeitet', 'Spieler %s fertig bearbeitet - aktivieren oder deaktivieren');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['applications'] = array('Turniere bearbeiten', 'Bewerbungen und Zusagen für Turniere des Spielers %s bearbeiten');

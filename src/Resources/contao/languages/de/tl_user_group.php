@@ -28,9 +28,10 @@ $GLOBALS['TL_LANG']['tl_user_group']['fernschach_spieler_optionen'] = array
 	'delete'     => 'Spieler löschen',
 	'copy'       => 'Spieler kopieren',
 	'toggle'     => 'Spieler Veröffentlichen-Status setzen',
-	//'show'       => 'Spieler Infobox zeigen',
+	'show'       => 'Spieler Infobox zeigen',
 	'fertig'     => 'Spieler Fertig-Status setzen',
 	'all'        => 'Mehrere Spieler bearbeiten',
+	'saldo'      => 'Saldo anzeigen',
 	'konto'      => 'Buchungen anzeigen',
 );
 
@@ -42,7 +43,7 @@ $GLOBALS['TL_LANG']['tl_user_group']['fernschach_konto_optionen'] = array
 	'delete'     => 'Buchung löschen',
 	'copy'       => 'Buchung kopieren',
 	'toggle'     => 'Buchung Veröffentlichen-Status setzen',
-	//'show'       => 'Buchung Infobox zeigen',
+	'show'       => 'Buchung Infobox zeigen',
 	'fertig'     => 'Buchung Fertig-Status setzen',
 	'all'        => 'Mehrere Buchungen bearbeiten',
 );
