@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.13.3 (2023-07-03)
+
+* Add: tl_fernschach_spieler.downloads -> Dateien für den Spieler hochladen
+* Change: tl_fernschach_spieler.published -> deutsche Übersetzung geändert von "Aktiv" auf "Veröffentlicht"
+* Fix: Helper::getSaldo -> published = true hinzugefügt - unveröffentlichte Buchungen dürfen nicht berücksichtigt werden
+* Add: Ausgabe des Saldos im Spieler-Export
+
 ## Version 0.13.2 (2023-06-23)
 
 * Fix: tl_fernschach_spieler.accountChecked wurde nicht korrekt mit Benutzerrechten abgefragt

@@ -34,7 +34,7 @@ class Helper extends \Backend
 			{
 				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
 				{
-					// Leerer Datensatz (wird nicht berücksichtigt)
+					// Leerer Datensatz (wird nicht berÃ¼cksichtigt)
 				}
 				elseif($mitgliedschaft['from'] > 0 && $mitgliedschaft['to'] > 0)
 				{
@@ -48,10 +48,10 @@ class Helper extends \Backend
 				}
 				elseif($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
 				{
-					// Beginndatum nicht gesetzt oder kleiner/gleich aktuellem Tag, also möglicherweise Mitglied
+					// Beginndatum nicht gesetzt oder kleiner/gleich aktuellem Tag, also mÃ¶glicherweise Mitglied
 					if($mitgliedschaft['to'] == 0 || $mitgliedschaft['to'] > $heute)
 					{
-						// Endedatum nicht gesetzt oder größer aktuellem Tag, also Mitglied
+						// Endedatum nicht gesetzt oder grÃ¶ÃŸer aktuellem Tag, also Mitglied
 						//echo 'OK '.$heute.'<br>';
 						return true;
 					}
@@ -66,7 +66,7 @@ class Helper extends \Backend
 	 * Funktion getAlter
 	 *
 	 * @param integer $birthday      Geburtsdatum im Format JJJJMMTT
-	 * @param integer $datum         Datum (für Ermittlung des Alters) im Format JJJJMMTT
+	 * @param integer $datum         Datum (fÃ¼r Ermittlung des Alters) im Format JJJJMMTT
 	 *
 	 * @return string
 	 */
@@ -113,7 +113,7 @@ class Helper extends \Backend
 			{
 				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
 				{
-					// Leerer Datensatz (wird nicht berücksichtigt)
+					// Leerer Datensatz (wird nicht berÃ¼cksichtigt)
 				}
 				elseif($mitgliedschaft['to'] == $datum)
 				{
@@ -128,7 +128,7 @@ class Helper extends \Backend
 	/**
 	 * Funktion Mitgliedschaft
 	 *
-	 * param $typ      1 = Beginn zurückgeben, 2 = Ende zurückgeben
+	 * param $typ      1 = Beginn zurÃ¼ckgeben, 2 = Ende zurÃ¼ckgeben
 	 * @return string
 	 */
 	public function Mitgliedschaft($value, $typ)
@@ -144,7 +144,7 @@ class Helper extends \Backend
 			{
 				if($mitgliedschaft['from'] > $beginn)
 				{
-					// Aktueller Mitgliedsbeginn ist größer als der ältere Mitgliedsbeginn, darum komplett übernehmen
+					// Aktueller Mitgliedsbeginn ist grÃ¶ÃŸer als der Ã¤ltere Mitgliedsbeginn, darum komplett Ã¼bernehmen
 					$beginn = $mitgliedschaft['from'];
 					$ende = $mitgliedschaft['to'];
 				}
@@ -194,8 +194,8 @@ class Helper extends \Backend
 		//print_r($session);
 		//echo "</pre>";
 		//echo $sql;
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=?".$sql.' ORDER BY datum ASC, sortierung ASC')
-		                                        ->execute($pid);
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
+		                                        ->execute($pid, 1);
 
 		$saldo = 0;
 		if($objBuchungen->numRows)
@@ -248,7 +248,7 @@ class Helper extends \Backend
 
 	/**
 	 * checkKonto
-	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück 
+	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurÃ¼ck 
 	 *
 	 * @param integer $value
 	 *
@@ -262,7 +262,7 @@ class Helper extends \Backend
 		if($objBuchungen->numRows) $resetVorhanden = true;
 		else $resetVorhanden =  false;
 
-		// Spielerdatensatz prüfen, ob accountChecked richtig gesetzt ist
+		// Spielerdatensatz prÃ¼fen, ob accountChecked richtig gesetzt ist
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
 		                                        ->execute($pid);
 
@@ -270,7 +270,7 @@ class Helper extends \Backend
 		{
 			if($resetVorhanden != $objBuchungen->accountChecked)
 			{
-				// Status paßt nicht zueinander, jetzt aktualisieren
+				// Status paÃŸt nicht zueinander, jetzt aktualisieren
 				$set = array
 				(
 					'accountChecked'   => $resetVorhanden,
@@ -289,7 +289,7 @@ class Helper extends \Backend
 	/**
 	 * Funktion updateResetbuchungen
 	 * ============================
-	 * Überprüft tl_fernschach_spieler_konto auf die Gültigkeit der globalen Resetbuchung
+	 * ÃœberprÃ¼ft tl_fernschach_spieler_konto auf die GÃ¼ltigkeit der globalen Resetbuchung
 	 */
 	public function updateResetbuchungen(\DataContainer $dc)
 	{
@@ -298,7 +298,7 @@ class Helper extends \Backend
 		// Aktualisierung notwendig
 		if($update < time())
 		{
-			// Buchungen prüfen
+			// Buchungen prÃ¼fen
 			if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
 			{
 				// Globaler Reset-Datensatz ist aktiviert
@@ -306,7 +306,7 @@ class Helper extends \Backend
 				$betragGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetSaldo']);
 				$datumGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetDate']);
 
-				// Alle Buchungen vom ältesten bis zum jüngsten Datensatz sortiert einlesen
+				// Alle Buchungen vom Ã¤ltesten bis zum jÃ¼ngsten Datensatz sortiert einlesen
 				$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto ORDER BY pid ASC, datum ASC, sortierung ASC")
 				                                        ->execute($playerId);
 				if($objBuchungen->numRows)
@@ -316,10 +316,10 @@ class Helper extends \Backend
 					{
 						if($objBuchungen->pid != $pid)
 						{
-							// Neuer Spieler, deshalb zuerst Variablen zurücksetzen
-							$resetDatensaetze = 0; // Bisher gefundene Datensätze speichern
-							$juengereBuchungen = false; // Jüngere Buchungen vorhanden
-							$aeltereBuchungen = false; // Ältere Buchungen vorhanden
+							// Neuer Spieler, deshalb zuerst Variablen zurÃ¼cksetzen
+							$resetDatensaetze = 0; // Bisher gefundene DatensÃ¤tze speichern
+							$juengereBuchungen = false; // JÃ¼ngere Buchungen vorhanden
+							$aeltereBuchungen = false; // Ã„ltere Buchungen vorhanden
 							$pid = $objBuchungen->pid; // Neuen Spieler der pid zuordnen
 						}
 						// Datensatz untersuchen
@@ -329,13 +329,13 @@ class Helper extends \Backend
 							$resetDatensaetze++;
 							if($resetDatensaetze == 1 && !$juengereBuchungen && !$aeltereBuchungen)
 							{
-								// Reset-Datensatz löschen, da keine Buchungen davor oder danach existieren
+								// Reset-Datensatz lÃ¶schen, da keine Buchungen davor oder danach existieren
 								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 								                                       ->execute($objBuchungen->id);
 							}
 							elseif($resetDatensaetze > 1)
 							{
-								// Überflüssigen Reset-Datensatz löschen
+								// ÃœberflÃ¼ssigen Reset-Datensatz lÃ¶schen
 								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 								                                       ->execute($objBuchungen->id);
 							}
@@ -370,7 +370,7 @@ class Helper extends \Backend
 			}
 			else
 			{
-				// Globaler Reset-Datensatz ist nicht aktiviert, deshalb alle Reset-Buchungen löschen
+				// Globaler Reset-Datensatz ist nicht aktiviert, deshalb alle Reset-Buchungen lÃ¶schen
 				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE resetRecord = ?")
 				                                       ->execute(1);
 			}
@@ -385,7 +385,7 @@ class Helper extends \Backend
 	/**
 	 * Funktion updateMitgliedschaften
 	 * ============================
-	 * Überprüft tl_fernschach_spieler auf die Gültigkeit des Mitgliedsstatus
+	 * ÃœberprÃ¼ft tl_fernschach_spieler auf die GÃ¼ltigkeit des Mitgliedsstatus
 	 */
 	public function updateMitgliedschaften(\DataContainer $dc)
 	{
@@ -399,7 +399,7 @@ class Helper extends \Backend
 			                                      ->execute(1, 2);
 			if($objSpieler->numRows)
 			{
-				// Spieler prüfen
+				// Spieler prÃ¼fen
 				while($objSpieler->next())
 				{
 					$mitglied = self::checkMembership($objSpieler->memberships);
@@ -446,15 +446,15 @@ class Helper extends \Backend
 	/**
 	 * Funktion checkResetbuchungen
 	 * ============================
-	 * Sucht in den Buchungen eines Spielers nach globalen Reset-Buchungen, prüft und aktualisiert diese
+	 * Sucht in den Buchungen eines Spielers nach globalen Reset-Buchungen, prÃ¼ft und aktualisiert diese
 	 * @param $id        ID des Spielers
-	 * @return           Keine Rückgabe. Es wird direkt in die Datenbank geschrieben
+	 * @return           Keine RÃ¼ckgabe. Es wird direkt in die Datenbank geschrieben
 	 */
 	public function checkResetbuchungen($playerId)
 	{
-		$BuchungenJuenger = false; // Boolean, um festzustellen das es jüngere Buchungen als Reset gibt
-		$BuchungenAelter = false; // Boolean, um festzustellen das es ältere Buchungen als Reset gibt
-		$resetDatensaetze = 0; // Zähler, um festzustellen wieviel Reset-Datensätze existieren. Erlaubt ist max. 1
+		$BuchungenJuenger = false; // Boolean, um festzustellen das es jÃ¼ngere Buchungen als Reset gibt
+		$BuchungenAelter = false; // Boolean, um festzustellen das es Ã¤ltere Buchungen als Reset gibt
+		$resetDatensaetze = 0; // ZÃ¤hler, um festzustellen wieviel Reset-DatensÃ¤tze existieren. Erlaubt ist max. 1
 		
 		// Reset-Datensatz-Werte setzen
 		if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
@@ -489,7 +489,7 @@ class Helper extends \Backend
 					}
 					elseif($resetDatensaetze > 1)
 					{
-						// Überflüssige Reset-Buchung löschen
+						// ÃœberflÃ¼ssige Reset-Buchung lÃ¶schen
 						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objResets->id);
 					}
@@ -497,7 +497,7 @@ class Helper extends \Backend
 			}
 		}
 
-		// Alle Buchungen des Spielers vom ältesten bis zum jüngsten Datensatz sortiert einlesen
+		// Alle Buchungen des Spielers vom Ã¤ltesten bis zum jÃ¼ngsten Datensatz sortiert einlesen
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? ORDER BY datum ASC, sortierung ASC")
 		                                        ->execute($playerId);
 		if($objBuchungen->numRows)
@@ -507,14 +507,14 @@ class Helper extends \Backend
 			{
 				if($objBuchungen->resetRecord && !$BuchungenJuenger && !$BuchungenAelter)
 				{
-					// Reset-Datensatz hier unnötig, da es keine jüngeren oder älteren Buchungen gibt -> also löschen
+					// Reset-Datensatz hier unnÃ¶tig, da es keine jÃ¼ngeren oder Ã¤lteren Buchungen gibt -> also lÃ¶schen
 					$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 					                                       ->execute($objBuchungen->id);
 				}
 				elseif($objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter)
 				{
 					$resetDatensaetze++;
-					// Reset-Datensatz gefunden, und es gibt jüngeren oder älteren Buchungen -> also aktualisieren/löschen
+					// Reset-Datensatz gefunden, und es gibt jÃ¼ngeren oder Ã¤lteren Buchungen -> also aktualisieren/lÃ¶schen
 					if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
 					{
 						if($datumGlobal != $objBuchungen->datum || $betragGlobal != $objBuchungen->betrag || $typGlobal != $objBuchungen->typ)
@@ -534,7 +534,7 @@ class Helper extends \Backend
 					}
 					else
 					{
-						// Reset-Datensatz löschen, da unerwünscht
+						// Reset-Datensatz lÃ¶schen, da unerwÃ¼nscht
 						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objBuchungen->id);
 					}
@@ -607,21 +607,21 @@ class Helper extends \Backend
 		
 		if($id)
 		{
-			// Bestimmten Spieler zurückgeben
+			// Bestimmten Spieler zurÃ¼ckgeben
 			if($feld)
 			{
-				// Bestimmtes Feld zurückgeben
+				// Bestimmtes Feld zurÃ¼ckgeben
 				return $spieler[$id][$feld];
 			}
 			else
 			{
-				// Alle Felder zurückgeben
+				// Alle Felder zurÃ¼ckgeben
 				return $spieler[$id];
 			}
 		}
 		else
 		{
-			// Alle Spieler zurückgeben
+			// Alle Spieler zurÃ¼ckgeben
 			return $spieler;
 		}
 	}

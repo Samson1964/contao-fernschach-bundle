@@ -137,11 +137,14 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['inhaber'] = array('Kontoinhaber', 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iban'] = array('IBAN', 'IBAN');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['bic'] = array('BIC', 'BIC');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['download_legend'] = 'Dateien';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['downloads'] = array('Dateien', 'Dateien des Spielers');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['info_legend'] = 'Bemerkungen/Hinweise';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'] = array('Bemerkungen', 'Geben Sie hier interne Bemerkungen zum Spieler ein.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Status';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Spieler.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Veröffentlicht', 'Wenn gesetzt, ist der Spieler im Frontend bei Meldeständen u.ä. sichtbar.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeitet', 'Der Spieler wurde fertig bearbeitet.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Saldo', 'Kontostand');

@@ -56,7 +56,7 @@ class Kontoauszug extends \Module
 		{
 			if($this->User->fernschach_memberId)
 			{
-				$objPlayer = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ? AND id = ?')
+				$objPlayer = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published=? AND id=?')
 				                                     ->execute(1, $this->User->fernschach_memberId);
 				if($objPlayer->numRows)
 				{
@@ -106,8 +106,8 @@ class Kontoauszug extends \Module
 						//print_r($salden);
 						foreach(array_reverse($salden, true) as $id => $value)
 						{
-							$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto WHERE id = ?')
-							                                      ->execute($id);
+							$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto WHERE id=? AND published=?')
+							                                      ->execute($id, 1);
 							if($objBuchung->numRows)
 							{
 								if($this->fernschachverwaltung_maxDatum > $objBuchung->datum) break; // Bei Ab-Datum stoppen

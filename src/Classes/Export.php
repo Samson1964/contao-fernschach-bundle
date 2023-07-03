@@ -118,13 +118,16 @@ class Export extends \Backend
 		            ->setCellValue('AP1', 'Inhaber')
 		            ->setCellValue('AQ1', 'IBAN')
 		            ->setCellValue('AR1', 'BIC')
-		            ->setCellValue('AS1', 'Veröffentlicht')
-		            ->setCellValue('AT1', 'Fertig');
+		            ->setCellValue('AS1', 'Saldo')
+		            ->setCellValue('AT1', 'Veröffentlicht')
+		            ->setCellValue('AU1', 'Fertig');
 
 		// Daten schreiben
 		$zeile = 2;
 		foreach($arrExport as $item)
 		{
+			$spreadsheet->getActiveSheet()
+			            ->getStyle('AS'.$zeile, $item['saldo'])->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE);
 			$spreadsheet->getActiveSheet()
 			            ->setCellValue('A'.$zeile, $item['id'])
 			            ->setCellValue('B'.$zeile, $item['tstamp'])
@@ -170,8 +173,9 @@ class Export extends \Backend
 			            ->setCellValue('AP'.$zeile, $item['inhaber'])
 			            ->setCellValue('AQ'.$zeile, $item['iban'])
 			            ->setCellValue('AR'.$zeile, $item['bic'])
-			            ->setCellValue('AS'.$zeile, $item['published'])
-			            ->setCellValue('AT'.$zeile, $item['fertig']);
+			            ->setCellValue('AS'.$zeile, $item['saldo'])
+			            ->setCellValue('AT'.$zeile, $item['published'])
+			            ->setCellValue('AU'.$zeile, $item['fertig']);
 			$zeile++;
 		}
 
@@ -325,6 +329,7 @@ class Export extends \Backend
 				}
 				if($exportieren)
 				{
+					$saldo = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id));
 					$arrExport[] = array
 					(
 						'id'                      => $records->id,
@@ -371,6 +376,7 @@ class Export extends \Backend
 						'inhaber'                 => $records->inhaber,
 						'iban'                    => $records->iban,
 						'bic'                     => $records->bic,
+						'saldo'                   => $saldo ? sprintf("%01.2f", $saldo) : '',
 						'published'               => $records->published,
 						'fertig'                  => $records->fertig,
 					);
