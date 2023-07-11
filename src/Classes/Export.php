@@ -398,7 +398,8 @@ class Export extends \Backend
 
 	public function getCode($id, $birthday, $memberid)
 	{
-		$temp = (string)$id.(string)$birthday.(string)$memberid;
+		$zeit = time();
+		$temp = (string)$id.(string)$birthday.(string)$memberid.(string)$zeit;
 		$hash = substr(hash('md5', $temp), 0, 8);
 		return $hash;
 	}

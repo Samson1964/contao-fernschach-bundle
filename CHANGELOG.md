@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.13.4 (2023-07-11)
+
+* Change: Funktion Export::getCode -> aktuelle Zeit zum Hashwert hinzugefügt
+
 ## Version 0.13.3 (2023-07-03)
 
 * Add: tl_fernschach_spieler.downloads -> Dateien für den Spieler hochladen
