@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.14.1 (2023-07-11)
+
+* Änderung Versionsnummer, da GitHub immer noch die ungültige 0.14.0 ausliefert
+
 ## Version 0.13.4 (2023-07-11)
 
 * Change: Funktion Export::getCode -> aktuelle Zeit zum Hashwert hinzugefügt
