@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.14.2 (2023-07-22)
+
+* Add: Felder für Upload SEPA-Mandate Nenngelder und Beiträge
+* Add: tl_fernschach_spieler.checkBeitrag für Beitrag bezahlt
+* Change: tl_fernschach_turniere.published -> Toggle-Funktion von Haste eingebaut
+* Change: Überarbeitung Meldeformular für Turniere
+
 ## Version 0.14.1 (2023-07-11)
 
 * Änderung Versionsnummer, da GitHub immer noch die ungültige 0.14.0 ausliefert

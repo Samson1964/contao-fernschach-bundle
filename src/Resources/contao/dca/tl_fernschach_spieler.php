@@ -146,8 +146,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published,fertig'
+		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published,fertig'
 	),
 
 	// Subpalettes
@@ -176,6 +176,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'honor_70'                    => 'honor_70_date',
 		'honor_president'             => 'honor_president_date',
 		'honor_member'                => 'honor_member_date',
+		'sepaNenngeld'                => 'sepaNenngeldDatei,sepaNenngeldbox',
+		'sepaBeitrag'                 => 'sepaBeitragDatei,sepaBeitragbox',
 	),
 
 	// Felder
@@ -1774,6 +1776,72 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array('mandatory'=>false, 'maxlength'=>11, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(11) NOT NULL default ''"
 		),
+		'sepaBeitrag' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'],
+			'inputType'               => 'checkbox',
+			'filter'                  => true,
+			'eval'                    => array
+			(
+				'submitOnChange'      => true, 
+				'tl_class'            => 'clr m12'
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'sepaBeitragDatei' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragDatei'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'fileTree',
+			'eval'                    => array
+			(
+				'filesOnly'           => true, 
+				'fieldType'           => 'radio', 
+				'mandatory'           => true, 
+				'tl_class'            => 'clr'
+			),
+			'sql'                     => "binary(16) NULL",
+		),
+		'sepaBeitragbox' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'],
+			'exclude'                 => true,
+			'input_field_callback'    => array('tl_fernschach_spieler', 'getBeitragbox')
+		),
+		'sepaNenngeld' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'],
+			'inputType'               => 'checkbox',
+			'filter'                  => true,
+			'eval'                    => array
+			(
+				'submitOnChange'      => true, 
+				'tl_class'            => 'clr m12'
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'sepaNenngeldDatei' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldDatei'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'fileTree',
+			'eval'                    => array
+			(
+				'filesOnly'           => true, 
+				'fieldType'           => 'radio', 
+				'mandatory'           => true, 
+				'tl_class'            => 'clr'
+			),
+			'sql'                     => "binary(16) NULL",
+		),
+		'sepaNenngeldbox' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'],
+			'exclude'                 => true,
+			'input_field_callback'    => array('tl_fernschach_spieler', 'getNenngeldbox')
+		),
 		'downloads' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['downloads'],
@@ -1796,6 +1864,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>false, 'tl_class'=>'long'),
 			'sql'                     => "text NULL"
+		),
+		'checkBeitrag' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
+				'doNotCopy'           => false
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'published' => array
 		(
@@ -2416,6 +2498,119 @@ class tl_fernschach_spieler extends \Backend
 	public function generateKontoButton($row, $href, $label, $title, $icon, $attributes)
 	{
 		return($this->User->isAdmin || $this->User->hasAccess('konto', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon)).' ';
+	}
+
+	/**
+	 * Vorschau und Link auf die Datei mit dem Sepa-Mandat Beiträge
+	 * @param array
+	 * @return string
+	 */
+	public function getBeitragbox(DataContainer $dc)
+	{
+
+		$ausgabe = '';
+		if($dc->activeRecord->sepaBeitragDatei)
+		{
+			$file = \FilesModel::findByUuid($dc->activeRecord->sepaBeitragDatei);
+			// Vorschau anzeigen
+			if($file->extension == 'pdf')
+			{
+				$ausgabe .= self::PDFtoJPG($file->path);
+			}
+			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
+			{
+				$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
+				$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
+				$ausgabe .= '</a><br>';
+			}
+			// Link anzeigen
+			$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
+		}
+				
+		$string = '
+<div class="widget long clr">
+  <h3 style="margin-bottom:10px;"><label for="ctrl_sepaBeitragbox">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'][0].'</label></h3>
+  <p><b>'.$ausgabe.'</b></p>
+  <p class="tl_help tl_tip" title="">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'][1].'</p>
+</div>';
+
+		return $string;
+	}
+
+	/**
+	 * Vorschau und Link auf die Datei mit dem Sepa-Mandat Nenngelder
+	 * @param array
+	 * @return string
+	 */
+	public function getNenngeldbox(DataContainer $dc)
+	{
+
+		$ausgabe = '';
+		if($dc->activeRecord->sepaNenngeldDatei)
+		{
+			$file = \FilesModel::findByUuid($dc->activeRecord->sepaNenngeldDatei);
+			// Vorschau anzeigen
+			if($file->extension == 'pdf')
+			{
+				$ausgabe .= self::PDFtoJPG($file->path);
+			}
+			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
+			{
+				$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
+				$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
+				$ausgabe .= '</a><br>';
+			}
+			// Link anzeigen
+			$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
+		}
+				
+		$string = '
+<div class="widget long clr">
+  <h3 style="margin-bottom:10px;"><label for="ctrl_sepaNenngeldbox">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'][0].'</label></h3>
+  <p><b>'.$ausgabe.'</b></p>
+  <p class="tl_help tl_tip" title="">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'][1].'</p>
+</div>';
+
+		return $string;
+	}
+
+	function PDFtoJPG($file)
+	{
+		$content = '';
+
+		if (!extension_loaded('imagick'))
+		{
+			$content = $GLOBALS['TL_LANG']['tl_fernschach_spieler']['imagickNotInstalled'];
+			return $content;
+		}
+
+		$pdf = new \Imagick($file);
+		$anzahlDerSeiten = $pdf->getNumberImages();
+		
+		for ($i = 0; $i < $anzahlDerSeiten; $i++) {
+		
+			$image = new \Imagick();
+			
+			$image->setResolution(400,400);
+			$image->readImage($file."[".$i."]" );
+			
+			$image->setBackgroundColor('white');
+			$image->setImageAlphaChannel(imagick::ALPHACHANNEL_DEACTIVATE );
+			$image->setImageFormat('jpg');
+			$image->scaleImage(1200, 1200, true);
+			
+			
+			$thumbnail = base64_encode($image->getImage());
+			$content .= 'Seite '.($i+1).'<br>';
+			$content .= '<a href="'.$file.'" target="_blank">';
+			$content .= '<img src="data:image/jpg;base64,'.$thumbnail.'">';
+			$content .= '</a><br>';
+
+			$image->clear();
+			$image->destroy();
+			
+		}
+		return $content;
 	}
 
 }

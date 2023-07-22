@@ -6,11 +6,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Ordner & Turniere'
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Ordner/Turnier', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['titel'] = array('Titel', 'Geben Sie hier den Turniertitel ein');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen', 'Kennzeichen bzw. Kennziffer des Turniers/der Turnierserie');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Meldedatum', 'Meldedatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');

@@ -405,13 +405,14 @@ class Meldeformular extends \Module
 	public function getTournaments()
 	{
 		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY titel")
+		$objForms = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY art AND title")
 		                           ->execute(time(), 0, 1, 1);
 
 		while ($objForms->next())
 		{
-			$meldedatum = $objForms->registrationDate ? ' (Meldedatum: '.date('d.m.Y', $objForms->registrationDate).')' : ' (ohne Meldedatum)';
-			$arrForms[$objForms->id] = $objForms->titel.$meldedatum;
+			$meldedatum = $objForms->registrationDate ? '  | Meldedatum: '.date('d.m.Y', $objForms->registrationDate) : '  | ohne Meldedatum';
+			$nenngeld = ' | Nenngeld: '.str_replace('.', ',', sprintf('%0.2f', $objForms->nenngeld)).' € ';
+			$arrForms[$objForms->id] = $objForms->title.$nenngeld.$meldedatum;
 		}
 
 		return $arrForms;

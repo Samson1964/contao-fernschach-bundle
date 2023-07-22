@@ -128,10 +128,17 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'toggle' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'],
-				'icon'                => 'visible.svg',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_fernschach_turniere', 'toggleIcon') 
+				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'],
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -847,153 +854,6 @@ class tl_fernschach_turniere extends \Backend
 
 		// Rückgabe der Zeile
 		return \Image::getHtml($image, '', $imageAttribute) . '<a href="' . \Controller::addToUrl('node='.$row['id']) . '" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'"> ' . $label . '</a>'; 
-
-	}
-
-	/**
-	 * Return the "toggle visibility" button
-	 *
-	 * @param array  $row
-	 * @param string $href
-	 * @param string $label
-	 * @param string $title
-	 * @param string $icon
-	 * @param string $attributes
-	 *
-	 * @return string
-	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		if (\Input::get('tid'))
-		{
-			$this->toggleVisibility(Contao\Input::get('tid'), (\Input::get('state') == 1), (func_num_args() <= 12 ? null : func_get_arg(12)));
-			$this->redirect($this->getReferer());
-		}
-
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->hasAccess('tl_fernschach_turniere::published', 'alexf'))
-		{
-			return '';
-		}
-
-		$href .= '&amp;tid=' . $row['id'] . '&amp;state=' . ($row['published'] ? '' : 1);
-
-		if (!$row['published'])
-		{
-			$icon = 'invisible.svg';
-		}
-
-		return '<a href="' . $this->addToUrl($href) . '" title="' . \StringUtil::specialchars($title) . '"' . $attributes . '>' . Contao\Image::getHtml($icon, $label, 'data-state="' . ($row['published'] ? 1 : 0) . '"') . '</a> ';
-	}
-
-	/**
-	 * Disable/enable a user group
-	 *
-	 * @param integer              $intId
-	 * @param boolean              $blnVisible
-	 * @param Contao\DataContainer $dc
-	 *
-	 * @throws Contao\CoreBundle\Exception\AccessDeniedException
-	 */
-	public function toggleVisibility($intId, $blnVisible, \DataContainer $dc=null)
-	{
-		// Set the ID and action
-		\Input::setGet('id', $intId);
-		\Input::setGet('act', 'toggle');
-
-		if ($dc)
-		{
-			$dc->id = $intId; // see #8043
-		}
-
-		// Trigger the onload_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere']['config']['onload_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere']['config']['onload_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$this->{$callback[0]}->{$callback[1]}($dc);
-				}
-				elseif (is_callable($callback))
-				{
-					$callback($dc);
-				}
-			}
-		}
-
-		// Check the field access
-		if (!$this->User->hasAccess('tl_fernschach_turniere::published', 'alexf'))
-		{
-			throw new \CoreBundle\Exception\AccessDeniedException('Not enough permissions to publish/unpublish page ID ' . $intId . '.');
-		}
-
-		$objRow = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE id=?")
-		                         ->limit(1)
-		                         ->execute($intId);
-
-		if ($objRow->numRows < 1)
-		{
-			throw new \CoreBundle\Exception\AccessDeniedException('Invalid page ID ' . $intId . '.');
-		}
-
-		// Set the current record
-		if ($dc)
-		{
-			$dc->activeRecord = $objRow;
-		}
-
-		$objVersions = new \Versions('tl_fernschach_turniere', $intId);
-		$objVersions->initialize();
-
-		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere']['fields']['published']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere']['fields']['published']['save_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$blnVisible = $this->{$callback[0]}->{$callback[1]}($blnVisible, $dc);
-				}
-				elseif (is_callable($callback))
-				{
-					$blnVisible = $callback($blnVisible, $dc);
-				}
-			}
-		}
-
-		$time = time();
-
-		// Update the database
-		$this->Database->prepare("UPDATE tl_fernschach_turniere SET tstamp=$time, published='" . ($blnVisible ? '1' : '') . "' WHERE id=?")
-		               ->execute($intId);
-
-		if ($dc)
-		{
-			$dc->activeRecord->tstamp = $time;
-			$dc->activeRecord->published = ($blnVisible ? '1' : '');
-		}
-
-		// Trigger the onsubmit_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_fernschach_turniere']['config']['onsubmit_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_fernschach_turniere']['config']['onsubmit_callback'] as $callback)
-			{
-				if (is_array($callback))
-				{
-					$this->import($callback[0]);
-					$this->{$callback[0]}->{$callback[1]}($dc);
-				}
-				elseif (is_callable($callback))
-				{
-					$callback($dc);
-				}
-			}
-		}
-
-		$objVersions->create();
 
 	}
 

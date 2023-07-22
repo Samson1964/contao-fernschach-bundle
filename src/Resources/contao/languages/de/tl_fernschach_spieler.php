@@ -137,6 +137,19 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['inhaber'] = array('Kontoinhaber', 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iban'] = array('IBAN', 'IBAN');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['bic'] = array('BIC', 'BIC');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag_legend'] = 'Beitragszahlung';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'] = array('Beitrag bezahlt', 'Der Beitrag wurde bezahlt.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag_legend'] = 'SEPA-Mandat Beiträge';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'] = array('SEPA-Mandat vorhanden', 'Das SEPA-Mandat für den Beitragseinzug liegt vor.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragDatei'] = array('Datei', 'Datei auswählen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'] = array('Vorschau', 'Vorschau und Link zur Datei');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld_legend'] = 'SEPA-Mandat Nenngelder';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'] = array('SEPA-Mandat vorhanden', 'Das SEPA-Mandat für den Nenngeldeinzug liegt vor.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldDatei'] = array('Datei', 'Datei auswählen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'] = array('Vorschau', 'Vorschau und Link zur Datei');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['download_legend'] = 'Dateien';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['downloads'] = array('Dateien', 'Dateien des Spielers');
 
@@ -261,3 +274,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus6']
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus7'] = 'Mitgliedsende 31.12.'.($jahr-7);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus8'] = 'Mitgliedsende 31.12.'.($jahr-8);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus9'] = 'Mitgliedsende 31.12.'.($jahr-9);
+
+/**
+ * Sonstige Übersetzungen
+ */
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['imagickNotInstalled'] = 'PDF-Vorschau nicht möglich. Imagick nicht installiert.';
