@@ -2515,7 +2515,7 @@ class tl_fernschach_spieler extends \Backend
 			// Vorschau anzeigen
 			if($file->extension == 'pdf')
 			{
-				$ausgabe .= self::PDFtoJPG($file->path);
+				//$ausgabe .= self::PDFtoJPG($file->path);
 			}
 			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
 			{
@@ -2552,7 +2552,7 @@ class tl_fernschach_spieler extends \Backend
 			// Vorschau anzeigen
 			if($file->extension == 'pdf')
 			{
-				$ausgabe .= self::PDFtoJPG($file->path);
+				//$ausgabe .= self::PDFtoJPG($file->path);
 			}
 			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
 			{

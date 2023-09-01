@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.14.3 (2023-09-01)
+
+* tl_fernschach_spieler: Aufruf pdftojpg-Funktion deaktiviert wegen "not authorized"-Fehler
+
 ## Version 0.14.2 (2023-07-22)
 
 * Add: Felder für Upload SEPA-Mandate Nenngelder und Beiträge
