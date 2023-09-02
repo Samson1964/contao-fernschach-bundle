@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.15.1 (2023-09-02)
+
+* Anpassungen wegen PHP 8
+
 ## Version 0.15.0 (2023-09-02)
 
 * Abhängigkeit PHP 8 hinzugefügt

@@ -502,8 +502,14 @@ class tl_fernschach_turniere extends \Backend
 		                                          ->execute(1);
 		if($objBewerbungen->numRows)
 		{
+			$this->bewerbungen[$objBewerbungen->pid] = array();
+			$this->bewerbungen[$objBewerbungen->pid]['anzahl'] = 0;
+			$this->bewerbungen[$objBewerbungen->pid]['unklar'] = 0;
+			$this->bewerbungen[$objBewerbungen->pid]['zusagen'] = 0;
+			$this->bewerbungen[$objBewerbungen->pid]['absagen'] = 0;
 			while($objBewerbungen->next())
 			{
+				echo $objBewerbungen->pid."-";
 				$this->bewerbungen[$objBewerbungen->pid]['anzahl']++;
 				switch($objBewerbungen->state)
 				{

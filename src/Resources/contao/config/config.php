@@ -3,7 +3,7 @@
 /**
  * Backend-Bereich fernschach (an erster Stelle) anlegen
  */
-if(!$GLOBALS['BE_MOD']['fernschach']) 
+if(!isset($GLOBALS['BE_MOD']['fernschach'])) 
 {
 	$fernschach = array(
 		'fernschach' => array()

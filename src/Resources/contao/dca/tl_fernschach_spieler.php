@@ -2177,18 +2177,18 @@ class tl_fernschach_spieler extends \Backend
   <option value="' . $arrFilter['name'] . '">' . $arrFilter['label'] . '</option>
   <option value="' . $arrFilter['name'] . '">---</option>' . "\n";
 
-            // Generate options
-            foreach ($arrFilter['options'] as $k => $v)
-            {
-                $strOptions .= '  <option value="' . $k . '"' . (($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']] === (string) $k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
-            }
+			// Generate options
+			foreach($arrFilter['options'] as $k => $v)
+			{
+				if(isset($session['filter'])) $strOptions .= '  <option value="' . $k . '"' . (($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']] === (string) $k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
+			}
 
-            $strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">
+			$strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">
 ' . $strOptions . '
 </select>' . "\n";
-        }
-
-        return $strBuffer . '</div>';
+		}
+		
+		return $strBuffer . '</div>';
 
 	}
 
