@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.14.4 (2023-09-02)
+
+* tl_fernschach_spieler: Auf Funktion log_message deaktiviert. Führt im Debug-Modus zu "Warning: error_log() has been disabled for security reasons"
+
 ## Version 0.14.3 (2023-09-01)
 
 * tl_fernschach_spieler: Aufruf pdftojpg-Funktion deaktiviert wegen "not authorized"-Fehler

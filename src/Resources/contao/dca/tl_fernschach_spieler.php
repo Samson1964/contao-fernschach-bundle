@@ -2360,7 +2360,7 @@ class tl_fernschach_spieler extends \Backend
 		}
 
 		$log = print_r($arrPlayers, true);
-		log_message($log, 'fernschachverwaltung.log');
+		//log_message($log, 'fernschachverwaltung.log');
 
 		$GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['sorting']['root'] = $arrPlayers;
 
