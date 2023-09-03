@@ -502,14 +502,11 @@ class tl_fernschach_turniere extends \Backend
 		                                          ->execute(1);
 		if($objBewerbungen->numRows)
 		{
-			$this->bewerbungen[$objBewerbungen->pid] = array();
-			$this->bewerbungen[$objBewerbungen->pid]['anzahl'] = 0;
-			$this->bewerbungen[$objBewerbungen->pid]['unklar'] = 0;
-			$this->bewerbungen[$objBewerbungen->pid]['zusagen'] = 0;
-			$this->bewerbungen[$objBewerbungen->pid]['absagen'] = 0;
 			while($objBewerbungen->next())
 			{
-				echo $objBewerbungen->pid."-";
+				// Zähler-Array anlegen, wenn noch nicht vorhanden
+				if(!isset($this->bewerbungen[$objBewerbungen->pid])) $this->bewerbungen[$objBewerbungen->pid] = array('anzahl' => 0, 'unklar' => 0, 'zusagen' => 0, 'absagen' => 0);
+				// Zähler inkrementieren
 				$this->bewerbungen[$objBewerbungen->pid]['anzahl']++;
 				switch($objBewerbungen->state)
 				{
@@ -944,13 +941,13 @@ class tl_fernschach_turniere extends \Backend
 	 */
 	public function getTypen(DataContainer $dc)
 	{
-		if($dc->activeRecord->pid == 0)
+		if(isset($dc->activeRecord->pid) && $dc->activeRecord->pid == 0)
 		{
 			// 1. Ebene, nur Kategorien erlaubt
 			unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['tournament']);
 			unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['group']);
 		}
-		else
+		elseif(isset($dc->activeRecord->pid) && $dc->activeRecord->pid > 0)
 		{
 			// 2. - x. Ebene, dann Eltern-Typ prüfen
 			$objTyp = \Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")

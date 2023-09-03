@@ -162,26 +162,26 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function getSaldo($pid)
+	public static function getSaldo($pid)
 	{
 		$salden = array();
 		$session = \Contao\Session::getInstance()->getData(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
 
 		// Filter laden
-		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ'])
+		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']))
 		{
 			$sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']."'";
 		}
-		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['art'])
+		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']))
 		{
 			$sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']."'";
 		}
-		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie'])
+		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']))
 		{
 			$sql .= " AND kategorie = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']."'";
 		}
-		if($session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren'])
+		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']))
 		{
 			$sql .= " AND markieren = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']."'";
 		}
@@ -254,7 +254,7 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function checkKonto($pid)
+	public static function checkKonto($pid)
 	{
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
 		                                        ->execute($pid, 1, 1680300000, 1);

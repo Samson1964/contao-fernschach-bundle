@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.15.2 (2023-09-03)
+
+* Anpassungen für PHP 8
+* tl_fernschach_mitgliederstatistik: Toogle-Funktion auf Haste-Toggler umgebaut
+* Fix: Invalid UTF8-String beim Zugriff auf Spieler-Modul -> Fehler in den SEPA-Downloads -> Nach mehreren Tests hat es plötzlich funktioniert
+
 ## Version 0.15.1 (2023-09-02)
 
 * Anpassungen wegen PHP 8

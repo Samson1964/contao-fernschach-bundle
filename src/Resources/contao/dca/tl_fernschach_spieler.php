@@ -1792,7 +1792,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragDatei'],
 			'exclude'                 => true,
-			'filter'                  => true,
 			'inputType'               => 'fileTree',
 			'eval'                    => array
 			(
@@ -1801,7 +1800,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'mandatory'           => true, 
 				'tl_class'            => 'clr'
 			),
-			'sql'                     => "binary(16) NULL",
+			'sql'                     => "binary(16) NULL"
 		),
 		'sepaBeitragbox' => array
 		(
@@ -1825,7 +1824,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldDatei'],
 			'exclude'                 => true,
-			'filter'                  => true,
 			'inputType'               => 'fileTree',
 			'eval'                    => array
 			(
@@ -1834,7 +1832,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'mandatory'           => true, 
 				'tl_class'            => 'clr'
 			),
-			'sql'                     => "binary(16) NULL",
+			'sql'                     => "binary(16) NULL"
 		),
 		'sepaNenngeldbox' => array
 		(
@@ -2115,7 +2113,7 @@ class tl_fernschach_spieler extends \Backend
 
 		// Zugriffsrechte auf weitere Sortierfelder prüfen
 		$session = \Session::getInstance()->getData();
-		switch($session['sorting']['tl_fernschach_spieler'])
+		switch(isset($session['sorting']['tl_fernschach_spieler']))
 		{
 			case 'fremdspielerNummer':
 			case 'gastNummer':
@@ -2180,7 +2178,7 @@ class tl_fernschach_spieler extends \Backend
 			// Generate options
 			foreach($arrFilter['options'] as $k => $v)
 			{
-				if(isset($session['filter'])) $strOptions .= '  <option value="' . $k . '"' . (($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']] === (string) $k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
+				if(isset($session['filter'])) $strOptions .= '  <option value="' . $k . '"' . ((isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) === (string) $k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
 			}
 
 			$strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">
@@ -2513,18 +2511,21 @@ class tl_fernschach_spieler extends \Backend
 		{
 			$file = \FilesModel::findByUuid($dc->activeRecord->sepaBeitragDatei);
 			// Vorschau anzeigen
-			if($file->extension == 'pdf')
+			if($file)
 			{
-				//$ausgabe .= self::PDFtoJPG($file->path);
+				if($file->extension == 'pdf')
+				{
+					//$ausgabe .= self::PDFtoJPG($file->path);
+				}
+				elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
+				{
+					$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
+					$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
+					$ausgabe .= '</a><br>';
+				}
+				// Link anzeigen
+				$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 			}
-			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
-			{
-				$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
-				$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
-				$ausgabe .= '</a><br>';
-			}
-			// Link anzeigen
-			$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 		}
 				
 		$string = '
