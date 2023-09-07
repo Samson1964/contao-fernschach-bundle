@@ -3,14 +3,17 @@
 /**
  * Contao Open Source CMS
  *
- * Copyright (c) 2005-2017 Leo Feyer
+ * Copyright (c) 2021-2023 Frank Hoppe
  *
- * @package   Linkscollection
+ * @package   Fernschach-Verwaltung
  * @author    Frank Hoppe
  * @license   GNU/LGPL
- * @copyright Frank Hoppe 2016 - 2017
+ * @copyright Frank Hoppe 2021-2023
  */
+
 namespace Schachbulle\ContaoFernschachBundle\Modules;
+
+use Codefog\HasteBundle\Form\Form;
 
 class Meldeformular extends \Module
 {
@@ -58,7 +61,7 @@ class Meldeformular extends \Module
 		// Der 3. Parameter ist eine Funktion, die entscheidet wann das Formular gesendet wird (Third is a callable that decides when your form is submitted)
 		// Der optionale 4. Parameter legt fest, ob das ausgegebene Formular auf Tabellen basiert (true)
 		// oder nicht (false) (You can pass an optional fourth parameter (true by default) to turn the form into a table based one)
-		$objForm = new \Haste\Form\Form('meldeform', 'POST', function($objHaste)
+		$objForm = new Form('meldeform', 'POST', function($objHaste)
 		{
 			return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
 		});

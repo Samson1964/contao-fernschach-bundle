@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.0 (2023-09-07)
+
+* Anpassungen für PHP 8
+* Add: tl.settings.fernschach_newsletter -> Auswahl eines Newsletter-Archivs für die Serienmailfunktion
+* Add: tl_newsletter -> Hinweis im Newsletter-Archiv plus zusätzliches feld mit der ID des Spielers in der Fernschach-Verwaltung
+* Add: Klasse Newsletter zum Übertragen der E-Mail-Adressen der aktuellen Spielerliste in den Newsletter-Verteiler
+* Add: Platzhalter in der Serienmail
+* Add: Backend-Modul Dokumentation
+* Add: Mitgliederstatistik -> optional published-Feld berücksichtigen
+
 ## Version 0.15.2 (2023-09-03)
 
 * Anpassungen für PHP 8

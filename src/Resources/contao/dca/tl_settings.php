@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
 
 /**
@@ -117,7 +117,6 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberDefault'] = array
 		'includeBlankOption'  => true,
 		'tl_class'            => 'w50 clr'
 	),
-	'sql'                     => "int(10) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberFernschach'] = array
@@ -131,7 +130,20 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberFernschach'] = arr
 		'includeBlankOption'  => true,
 		'tl_class'            => 'w50'
 	),
-	'sql'                     => "int(10) NOT NULL default ''"
+);
+
+// Auswahl eines Newsletter-Archivs für die Serienmailfunktion
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_newsletter'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_newsletter'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_newsletter_channel.title',
+	'eval'                    => array
+	(
+		'includeBlankOption'  => true,
+		'tl_class'            => 'w50'
+	),
 );
 
 class tl_settings_fernschach extends Backend

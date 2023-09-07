@@ -20,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	// Config
 	'config' => array
 	(
-		'label'                       => $GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'],
+		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'],
 		'dataContainer'               => 'Table',
 		'ctable'                      => array('tl_fernschach_turniere_meldungen', 'tl_fernschach_turniere_spieler', 'tl_fernschach_turniere_bewerbungen'),
 		'enableVersioning'            => true,

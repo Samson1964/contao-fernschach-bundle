@@ -20,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_konten'] = array
 	// Config
 	'config' => array
 	(
-		'label'                       => $GLOBALS['TL_LANG']['tl_fernschach_konten']['mainTitle'],
+		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_konten']['mainTitle'],
 		'dataContainer'               => 'Table',
 		'ctable'                      => array('tl_fernschach_konten_buchungen'),
 		'enableVersioning'            => true,

@@ -185,6 +185,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bea
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'] = array('Import Spieler', 'Neue Spieler importieren bzw. alte Spieler ergänzen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['exportXLS'] = array('Export Spieler', 'Excel-Export der ausgewählten Spieler');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter'] = array('Serienmail', 'Aktuelle Spielerliste in Serienmail-Newsletter-Archiv exportieren.');
 
 /**
  * Select-Felder

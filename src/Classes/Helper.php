@@ -20,7 +20,7 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function checkMembership($value, $heute = false)
+	public static function checkMembership($value, $heute = false)
 	{
 		if(!$heute) $heute = date('Ymd');
 		
@@ -70,7 +70,7 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function getAlter($birthday, $datum = false)
+	public static function getAlter($birthday, $datum = false)
 	{
 		if(!$datum) $datum = date('Ymd');
 		
@@ -299,7 +299,7 @@ class Helper extends \Backend
 		if($update < time())
 		{
 			// Buchungen prüfen
-			if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+			if(isset($GLOBALS['TL_CONFIG']['fernschach_resetActive']))
 			{
 				// Globaler Reset-Datensatz ist aktiviert
 				$typGlobal = $GLOBALS['TL_CONFIG']['fernschach_resetSaldo'] < 0 ? 's' : 'h';

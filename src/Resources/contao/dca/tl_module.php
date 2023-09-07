@@ -24,7 +24,8 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_zeitraum'] = arr
 	'exclude'                 => true,
 	'default'                 => '-2 months',
 	'inputType'               => 'select',
-	'options'                 => $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'],
+	'options'                 => array('-1 month' ,'-2 months', '-3 months', '-4 months', '-5 months', '-6 months', '-1 year', '-100 years'), 
+	'reference'               => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'],
 	'eval'                    => array
 	(
 		'mandatory'           => false, 

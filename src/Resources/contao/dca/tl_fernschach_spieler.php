@@ -64,6 +64,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'icon'                => 'bundles/contaofernschach/images/exportEXCEL.gif',
 				'attributes'          => 'onclick="Backend.getScrollOffset();"'
 			),
+			'setNewsletter' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter'],
+				'icon'                => 'bundles/contaofernschach/images/serienmail.png',
+				'href'                => 'key=setNewsletter',
+				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] . '\'))return false;Backend.getScrollOffset()"',
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -268,7 +275,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options'                 => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede_options'],
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['anrede_options'],
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
@@ -282,7 +289,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options'                 => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede_options'],
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['briefanrede_options'],
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
@@ -330,7 +337,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
-			'options'                 => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sex_options'],
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sex_options'],
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
@@ -694,7 +701,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'],
 			'inputType'               => 'select',
-			'options'                 => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['status_options'],
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status_options'],
 			'exclude'                 => true,
 			'sorting'                 => false,
 			'flag'                    => 1,
@@ -739,7 +746,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'exclude'                 => true,
 			'inputType'               => 'select',
 			'filter'                  => true,
-			'options'                 => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung_options'],
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung_options'],
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,

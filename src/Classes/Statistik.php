@@ -31,6 +31,7 @@ class Statistik extends \Backend
 		if(\Input::post('FORM_SUBMIT') == 'tl_fernschach_mitgliederstatistik')
 		{
 			$statistik = self::getStatistik(\Input::post('stichtag'), \Input::post('altersstruktur')); // Statistik ermitteln
+			$recordCount = '';
 
 			//print_r($statistik);
 
@@ -100,7 +101,7 @@ class Statistik extends \Backend
 
 			// Daten schreiben
 			$zeile = 4;
-			$summe = array();
+			$summe = array('alle' => 0, 'm' => 0, 'w' => 0);
 			foreach($statistik as $item)
 			{
 				$spreadsheet->getActiveSheet()
@@ -167,7 +168,7 @@ class Statistik extends \Backend
 
 		// Formularfelder generieren
 		$liste = '<select name="altersstruktur">';
-		$objListe = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE published = ?")
+		$objListe = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE published=?")
 		                                    ->execute(1);
 		$arrPlayers = array();
 		if($objListe->numRows)
@@ -213,6 +214,11 @@ class Statistik extends \Backend
 			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['altersstruktur'][0].'</h3>
 			'.$liste.'
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['altersstruktur'][1].'</p>
+		</div>
+		<div class="widget">
+			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['aktiviert'][0].'</h3>
+			<input type="checkbox" name="aktiviert" checked>
+			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['aktiviert'][1].'</p>
 		</div>
 	</div>
 </div>
@@ -260,10 +266,20 @@ class Statistik extends \Backend
 		}
 
 		// Mitgliederdatenbank durchsuchen
-		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ?")
-		                                     ->execute(1);
+		if(\Input::post('aktiviert'))
+		{
+			$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published=?")
+			                                     ->execute(1);
+		}
+		else
+		{
+			$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+			                                     ->execute();
+		}
+
 		if($objPlayer->numRows)
 		{
+			$anzahl = 0;
 			while($objPlayer->next())
 			{
 				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer->memberships, $datum);

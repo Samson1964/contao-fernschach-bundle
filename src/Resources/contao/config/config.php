@@ -28,6 +28,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'exportXLS'         => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
 		'importSpieler'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),
 		'importBuchungen'   => array('Schachbulle\ContaoFernschachBundle\Classes\ImportBuchungen', 'run'),
+		'setNewsletter'     => array('Schachbulle\ContaoFernschachBundle\Classes\Newsletter', 'setNewsletter'),
 	),
 	'fernschach-turniere'   => array
 	(
@@ -55,6 +56,10 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 			'tl_fernschach_konten',
 			'tl_fernschach_konten_buchungen',
 		),
+	),
+	'fernschach-dokumentation'   => array
+	(
+		'callback'            => Schachbulle\ContaoFernschachBundle\Modules\Dokumentation::class,
 	),
 );
 
@@ -108,3 +113,9 @@ $GLOBALS['TL_PERMISSIONS'][] = 'fernschach_konto'; // Buchungen-Rechte
  * -------------------------------------------------------------------------
  */
 $GLOBALS['BE_FFL']['tournamentTree'] = 'Schachbulle\ContaoFernschachBundle\Widgets\TournamentTree';
+
+/**
+ * Hooks
+ */
+// Newsletter modifizieren, falls Serienmail Fernschach-Verwaltung
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');

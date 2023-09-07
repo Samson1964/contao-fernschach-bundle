@@ -257,7 +257,7 @@ class Export extends \Backend
 
 		// Spezialfilter berücksichtigen
 		$filter = $dc->Session->get('filter');
-		$filter = $filter[$dc->table.'Filter']['tfs_filter']; // Wert aus Spezialfilter
+		$filter = $filter[$dc->table.'Filter'] = array('tfs_filter'); // Wert aus Spezialfilter
 		switch($filter)
 		{
 			case '2': // Geburtsdatum fehlt

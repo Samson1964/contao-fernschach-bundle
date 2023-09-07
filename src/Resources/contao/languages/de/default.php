@@ -1,5 +1,8 @@
 <?php
 
+// Bestätigungen in Popups
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] = 'Wollen Sie die E-Mail-Adressen der aktuellen Spielerliste wirklich in das Serienmail-Newsletter-Archiv importieren?';
+
 $GLOBALS['TL_LANG']['CTE']['correspondence_chess'] = 'Fernschach-Elemente';
 $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung'] = array('Fernschach-Verwaltung', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung_zusagen'] = array('Turnierzusagen anzeigen', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
@@ -322,4 +325,5 @@ $GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['headline'] = 'Mitgliederstatistik erstellen';
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['stichtag'] = array('Stichtag', 'Geben Sie einen Stichtag ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['altersstruktur'] = array('Altersstruktur auswählen', 'Wählen Sie die Altersstruktur für die Mitgliederstatistik aus.');
+$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['aktiviert'] = array('Nur aktivierte Spieler', 'Statistik nur mit den aktivierten Spielern erstellen. Entfernen Sie das Häkchen, wenn Sie alle Spieler berücksichtigen möchten.');
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start'] = 'Export starten';

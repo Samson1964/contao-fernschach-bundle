@@ -37,3 +37,46 @@ table.tl_fernschach_tabelle td {
 	border: 1px solid #DFDFDF;
 	vertical-align: top;
 }
+
+#main .fernschach-doku {
+	border: 0;
+	padding: 20px;
+}
+
+#main .fernschach-doku h1 {
+	padding-bottom: 0.3em;
+	font-size: 2em;
+	margin-bottom: 10px;
+}
+
+#main .fernschach-doku h2 {
+	padding-bottom: 0.3em;
+	font-size: 1.5em;
+	margin-bottom: 10px;
+}
+
+#main .fernschach-doku h3 {
+	padding-bottom: 0.3em;
+	font-size: 1.2em;
+	margin-bottom: 10px;
+}
+
+#main .fernschach-doku h4 {
+	padding-bottom: 0.3em;
+	font-size: 1em;
+	margin-bottom: 10px;
+}
+
+#main .fernschach-doku p,
+#main .fernschach-doku li {
+	font-size: 15px;
+}
+
+#main .fernschach-doku a {
+	color: blue;
+}
+
+#main .fernschach-doku ol li {
+	list-style-type: decimal;
+	margin-left: 20px;
+}
