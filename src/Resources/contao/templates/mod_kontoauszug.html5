@@ -37,14 +37,14 @@
 			</table>
 		</div>
 		<?php if($this->sepaBeitrag): ?>
-			<p>SEPA-Lastschriftmandat Beitrag liegt vor.</div>
+			<p>Das SEPA-Lastschriftmandat Beitrag liegt vor.</p>
 		<?php else: ?>
-			<p style="color:red;">SEPA-Lastschriftmandat Beitrag liegt nicht vor.</div>
+			<p style="color:red;">Das SEPA-Lastschriftmandat Beitrag liegt nicht vor.</p>
 		<?php endif ?>
 		<?php if($this->sepaNenngeld): ?>
-			<p>SEPA-Lastschriftmandat Nenngeld liegt vor.</div>
+			<p>Das SEPA-Lastschriftmandat Nenngeld liegt vor.</p>
 		<?php else: ?>
-			<p style="color:red;">SEPA-Lastschriftmandat Nenngeld liegt nicht vor.</div>
+			<p style="color:red;">Das SEPA-Lastschriftmandat Nenngeld liegt nicht vor.</p>
 		<?php endif ?>
 	</div>
 

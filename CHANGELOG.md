@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.2 (2023-10-30)
+
+* Fix: Template mod_kontoauszug -> HTML-Fehler bei SEPA-Hinweis
+
 ## Version 0.16.1 (2023-10-29)
 
 * Add: Formular Turnieranmeldung mit Option das Formular an ein angemeldetes Mitglied zu knüpfen.
