@@ -73,6 +73,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'] = array('Anmeldungen und Bewerbungen', 'Übersicht der Turnieranmeldungen und -bewerbungen absteigend sortiert nach Datum. Es werden max. die 30 letzten Datensätze angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'] = array('GM', 'Spieler hat den GM-Titel');

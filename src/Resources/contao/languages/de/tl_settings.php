@@ -17,3 +17,5 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate'] = array('Upda
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_memberDefault'] = array('Standard-Mitgliedergruppe','Mitgliedergruppe, die normalen Mitgliederkonten zugeordnet werden soll (kein Mitglied im BdF). Leerlassen, wenn das nicht gewünscht ist.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_memberFernschach'] = array('BdF-Mitgliedergruppe','Mitgliedergruppe, die Mitgliederkonten von BdF-Mitgliedern zugeordnet werden soll. Leerlassen, wenn das nicht gewünscht ist.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_newsletter'] = array('Serienmail-Verteiler', 'Newsletter-Archiv auswählen, dessen Empfänger für Serienmails verwendet werden sollen.');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_emailVon'] = array('E-Mail-Absender','Globaler E-Mail-Absendername, z.B. Deutscher Fernschachbund');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'] = array('E-Mail-Adresse','Globale E-Mail-Absenderadresse, z.B. info@bdf-fernschachbund.de');

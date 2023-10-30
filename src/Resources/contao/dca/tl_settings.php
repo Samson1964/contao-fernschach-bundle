@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
 
 /**
@@ -143,6 +143,31 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_newsletter'] = array
 	(
 		'includeBlankOption'  => true,
 		'tl_class'            => 'w50'
+	),
+);
+
+// Globaler E-Mail-Absendername
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_emailVon'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_emailVon'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'mandatory'           => true, 
+		'tl_class'            => 'w50 clr', 
+	),
+);
+
+// Globale E-Mail-Absenderadresse
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_emailAdresse'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'email', 
+		'mandatory'           => true, 
+		'tl_class'            => 'w50', 
 	),
 );
 

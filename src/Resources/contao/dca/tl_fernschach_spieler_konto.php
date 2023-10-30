@@ -484,7 +484,9 @@ class tl_fernschach_spieler_konto extends \Backend
 			case 's': $css = 'color:red;'; break;
 			default: $css = 'color:yellow;'; break;
 		}
+		
 		// Resetbuchung = true (schwarze Linie unten)
+		$resetCss = '';
 		if($arrRow['resetRecord'])
 		{
 			$resetCss = 'border-bottom: 2px red solid; padding-bottom:1px;';

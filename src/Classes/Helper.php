@@ -580,7 +580,7 @@ class Helper extends \Backend
 	 * @param
 	 * @return    array
 	 */
-	public function getSpieler($id = false, $feld = false)
+	public static function getSpieler($id = false, $feld = false)
 	{
 		static $spieler;
 
@@ -684,7 +684,7 @@ class Helper extends \Backend
 	 * @param
 	 * @return    object
 	 */
-	public function getTurnierdatensatz($id)
+	public static function getTurnierdatensatz($id)
 	{
 		if($id)
 		{

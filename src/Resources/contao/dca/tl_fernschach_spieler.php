@@ -154,7 +154,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published,fertig'
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published,fertig'
 	),
 
 	// Subpalettes
@@ -751,9 +751,19 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'includeBlankOption'  => true,
 				'mandatory'           => false,
-				'tl_class'            => 'w50'
+				'tl_class'            => 'long'
 			),
 			'sql'                     => "varchar(5) NOT NULL default ''"
+		),
+		// Gibt die Anmeldungen und Bewerbungen zu Turnieren aus
+		'turnierAnmeldungenBewerbungen' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'],
+			'input_field_callback'    => array('tl_fernschach_spieler', 'getTournaments'),
+			'eval'                    => array
+			(
+				'tl_class'            => 'long',
+			),
 		),
 		'gastNummer' => array
 		(
@@ -2619,6 +2629,104 @@ class tl_fernschach_spieler extends \Backend
 			
 		}
 		return $content;
+	}
+
+	public function getTournaments(\DataContainer $dc)
+	{
+
+		// Link-Prefixe generieren, ab C4 ist das ein symbolischer Link zu "contao"
+		if(version_compare(VERSION, '4.0', '>='))
+		{
+			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
+			$imageEdit = \Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
+		}
+		else
+		{
+			$linkprefix = 'contao/main.php';
+			$imageEdit = \Image::getHtml('edit.gif', 'Bewerbung des Mitglieds bearbeiten');
+		}
+
+		$spieler_id = $dc->activeRecord->id;
+
+		$objAnmeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
+		                                          ->execute($spieler_id);
+		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
+		                                          ->execute($spieler_id);
+
+		$ausgabe = '<div class="long widget" style="margin-top:10px;">'; // Wichtig damit das Auf- und Zuklappen funktioniert
+		$ausgabe .= '<h3><label>'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'][0].'</label></h3>';
+		$ausgabe .= '<table class="tl_listing showColumns" style="margin-top:5px;">';
+		$ausgabe .= '<tbody><tr>';
+		$ausgabe .= '<th class="tl_folder_tlist">Typ</th>';
+		$ausgabe .= '<th class="tl_folder_tlist">Turnier</th>';
+		$ausgabe .= '<th class="tl_folder_tlist">Datum</th>';
+		//$ausgabe .= '<th class="tl_folder_tlist">Status</th>';
+		$ausgabe .= '<th class="tl_folder_tlist tl_right_nowrap">&nbsp;</th>';
+		$ausgabe .= '</tr>';
+		$oddeven = 'odd';
+		
+		// Datensätze zusammenfassen
+		$records = array();
+		if($objAnmeldungen->numRows)
+		{
+			while($objAnmeldungen->next())
+			{
+				$objTurnier = \Schachbulle\ContaoFernschachbundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$records[] = array
+				(
+					'typ'        => 'Anmeldung',
+					'datum'      => $objAnmeldungen->meldungDatum,
+					'turnier'    => $objTurnier ? $objTurnier->title : '',
+					'status'     => 0,
+					'id'         => $objAnmeldungen->id,
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+				);
+			}
+		}
+		if($objBewerbungen->numRows)
+		{
+			while($objBewerbungen->next())
+			{
+				$objTurnier = \Schachbulle\ContaoFernschachbundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$records[] = array
+				(
+					'typ'        => 'Bewerbung',
+					'datum'      => $objBewerbungen->applicationDate,
+					'turnier'    => $objTurnier ? $objTurnier->title : '',
+					'status'     => 0,
+					'id'         => $objBewerbungen->id,
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+				);
+			}
+		}
+		
+		// Liste sortieren
+		if($records) $records = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($records, array('datum' => SORT_DESC));
+
+		$row = 0;
+		foreach($records as $item)
+		{
+			$row++;
+			if($row == 31) break;
+			// Farbmarkierung festlegen
+			if($item['status'] == 0) $style = '';
+			elseif($item['status'] == 1) $style = ' style="color:green"';
+			else $style = ' style="color:red"';
+			$oddeven = $oddeven == 'odd' ? 'even' : 'odd';
+			$ausgabe .= '<tr class="'.$oddeven.'" onmouseover="Theme.hoverRow(this,1)" onmouseout="Theme.hoverRow(this,0)">';
+			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$item['typ'].'</td>';
+			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$item['turnier'].'</td>';
+			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.date('d.m.Y', $item['datum']).'</td>';
+			//$ausgabe .= '<td class="tl_file_list"'.$style.'>'.$item['status'].'</td>';
+			$ausgabe .= '<td class="tl_file_list tl_right_nowrap">'.$item['link'].'</td>';
+			$ausgabe .= '</tr>';
+		}
+		$ausgabe .= '</tbody></table>';
+		$ausgabe .= '<p style="margin: 18px 0 10px 5px;">'.count($records).' Datensätze gefunden</p>';
+		$ausgabe .= '<p class="tl_help tl_tip" title="">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'][1].'</p>';
+		$ausgabe .= '</div>';
+		return $ausgabe;
+
 	}
 
 }

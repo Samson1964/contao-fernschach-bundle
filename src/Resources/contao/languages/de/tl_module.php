@@ -16,6 +16,9 @@ $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'] = arra
 	'-100 years'          => 'Unbegrenzt',
 );
 
+$GLOBALS['TL_LANG']['tl_module']['options_legend'] = 'Einstellungen';
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_linkingMembers'] = array('Formular an Mitglied binden', 'Im Formular werden die Daten des angemeldeten Mitglieds mit übertragen.');
+
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_minBuchungen'] = array('Buchungen Minimum', 'Mindestanzahl der Buchungen, die angezeigt werden sollen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_maxBuchungen'] = array('Buchungen Maximum', 'Maximalanzahl der Buchungen, die angezeigt werden sollen. 0 = alle Buchungen anzeigen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_maxDatum'] = array('Ab Datum', 'Ab welchem Datum dürfen Buchungen angezeigt werden? Leerlassen, wenn es keine zeitliche Begrenzung gibt.');

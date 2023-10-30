@@ -154,9 +154,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	(
 		'__selector__'                => array('type', 'bewerbungErlaubt'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
-		'category'                    => '{title_legend},title,type;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld,art,artInfo,spielerMax;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId;{applications_legend},bewerbungErlaubt;{publish_legend},published',
-		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{publish_legend},published',
+		'category'                    => '{title_legend},title,type;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld,art,artInfo,spielerMax;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},published',
+		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},published',
 	), 
 
 	// Subpalettes
@@ -423,6 +423,19 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+		'turnierleiterInfo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterInfo'],
+			'exclude'                 => true,
+			'default'                 => 1,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'boolean'             => true,
+				'tl_class'            => 'w50 m12'
+			),
+			'sql'                     => "char(1) NOT NULL default '1'"
+		), 
 		'bewerbungErlaubt' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['bewerbungErlaubt'],

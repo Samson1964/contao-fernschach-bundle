@@ -36,6 +36,16 @@
 				<?php endif ?>
 			</table>
 		</div>
+		<?php if($this->sepaBeitrag): ?>
+			<p>SEPA-Lastschriftmandat Beitrag liegt vor.</div>
+		<?php else: ?>
+			<p style="color:red;">SEPA-Lastschriftmandat Beitrag liegt nicht vor.</div>
+		<?php endif ?>
+		<?php if($this->sepaNenngeld): ?>
+			<p>SEPA-Lastschriftmandat Nenngeld liegt vor.</div>
+		<?php else: ?>
+			<p style="color:red;">SEPA-Lastschriftmandat Nenngeld liegt nicht vor.</div>
+		<?php endif ?>
 	</div>
 
 <?php else: ?>

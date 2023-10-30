@@ -1,5 +1,17 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.1 (2023-10-29)
+
+* Add: Formular Turnieranmeldung mit Option das Formular an ein angemeldetes Mitglied zu knüpfen.
+* Fix: Korrekturen wegen PHP 8
+* Change: Meldeformular gekürzt auf ein Turnier
+* Fix: Meldeverfahren
+* Add: tl_fernschach_spieler.turnierAnmeldungenBewerbungen -> Anzeige der Turnieranmeldungen und -bewerbungen in der Spielerbearbeitung
+* Add: tl_fernschach_turniere.turnierleiterInfo -> Checkbox das der Turnierleiter per E-Mail zu informieren ist
+* Add: tl_settings.fernschach_emailAdresse und tl_settings.fernschach_emailVon -> Globaler Absender für Systemmails
+* Add: E-Mail-Funktion bei Turnieranmeldung
+* Add: Ausgabe von Status der SEPA-Mandate im Kontoauszug
+
 ## Version 0.16.0 (2023-09-07)
 
 * Anpassungen für PHP 8

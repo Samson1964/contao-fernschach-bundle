@@ -143,6 +143,8 @@ class Kontoauszug extends \Module
 		$this->Template->kontostand = $kontostand;
 		$this->Template->saldo = $saldo;
 		$this->Template->buchungen = is_array($buchungen) ? $buchungen : array();
+		$this->Template->sepaNenngeld = $objPlayer->sepaNenngeld;
+		$this->Template->sepaBeitrag = $objPlayer->sepaBeitrag;
 		$this->Template->fehler = $fehler;
 
 	}

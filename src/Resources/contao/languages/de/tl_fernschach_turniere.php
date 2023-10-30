@@ -31,6 +31,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiter_legend'] = 'Turnier
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterName'] = array('Turnierleiter', 'Name des Turnierleiters');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterEmail'] = array('E-Mail', 'E-Mail-Adresse des Turnierleiters');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterUserId'] = array('Benutzer', 'Zugeordneter Backend-Benutzer, der das Turnier bearbeiten darf.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterInfo'] = array('Informieren', 'Turnierleiter bei Änderungen informieren');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['applications_legend'] = 'Bewerbungen';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['name'] = array('Spieler', 'Name des Spielers');
