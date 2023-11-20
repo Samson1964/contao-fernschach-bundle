@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.3 (2023-11-20)
+
+* Change: Meldeformular ausgearbeitet
+* Fix: Spezialfilter in Spielerliste wurde nicht korrekt angezeigt
+* Fix: Helper::Mitgliedschaft nicht als static deklariert
+* Fix: Spezialfilter wurde im Export nicht berücksichtigt
+* Fix: Leichte Designkorrektur im Excel-Export
+
 ## Version 0.16.2 (2023-10-30)
 
 * Fix: Template mod_kontoauszug -> HTML-Fehler bei SEPA-Hinweis

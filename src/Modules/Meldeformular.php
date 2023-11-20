@@ -329,6 +329,7 @@ class Meldeformular extends \Module
 				$spielerId = $objInsert->insertId;
 			}
 			
+			// Meldung erzeugen
 			$set = array
 			(
 				'pid'               => $data['turnier'],
@@ -354,6 +355,33 @@ class Meldeformular extends \Module
 			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_meldungen %s')
 			                                     ->set($set)
 			                                     ->execute();
+			$meldungId = $objInsert->insertId;
+			
+			// Turnier laden
+			$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+
+			// Nenngeldbuchung Haben erzeugen, wenn Guthaben nutzen nicht aktiv ist
+			if(!$data['guthaben'])
+			{
+				$set = array
+				(
+					'pid'               => $spielerId,
+					'tstamp'            => $zeit,
+					'betrag'            => $data['nenngeld'],
+					'typ'               => 'h',
+					'datum'             => self::DatumToZeitstempel($data['ueberweisung']),
+					'kategorie'         => 's',
+					'art'               => 'n',
+					'verwendungszweck'  => 'Nenngeld-Zahlung',
+					'turnier'           => $data['turnier'],
+					'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
+					'meldungId'         => $meldungId,
+					'published'         => '1'
+				);
+				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto %s')
+				                                     ->set($set)
+				                                     ->execute();
+			}
 		}
 
         //
@@ -363,7 +391,7 @@ class Meldeformular extends \Module
 		
 		// E-Mail für Turnierleiter zusammenbauen
 		$turnierleiter = self::getTurnierleiter($data['turnier']);
-		
+
 		if(isset($turnierleiter[0]))
 		{
 			// Email verschicken
@@ -396,14 +424,14 @@ class Meldeformular extends \Module
 			$text .= '<ul>';
 			$text .= '<li>Datum und Uhrzeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
 			$text .= '<li>Vor- und Nachname: <b>'.$data['vorname'].' '.$data['nachname'].'</b></li>';
-			$text .= '<li>BdF_mitgliedsnummer: <b>'.$data['memberId'].'</b></li>';
+			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$data['memberId'].'</b></li>';
 			$text .= '<li>Adresse: <b>'.$data['plz'].' '.$data['ort'].', '.$data['strasse'].'</b></li>';
 			$text .= '<li>Fax: <b>'.$data['fax'].'</b></li>';
 			$text .= '<li>E-Mail: <b>'.$data['email'].'</b></li>';
 			$text .= '</ul>';
 			$text .= '<h3>Angaben zum Nenngeld</h3>';
 			$text .= '<ul>';
-			$text .= '<li>Nenngeld: <b>'.$data['nenngeld'].'</b></li>';
+			$text .= '<li>Nenngeld: <b>'.number_format($data['nenngeld'], 2, ',', '.').' €</b></li>';
 			$text .= '<li>Überwiesen am: <b>'.$data['ueberweisung'].'</b></li>';
 			$text .= '<li>Abbuchen vom Guthaben: <b>'.$data['guthaben'].'</b></li>';
 			$text .= '</ul>';
@@ -421,12 +449,8 @@ class Meldeformular extends \Module
 			$objEmail->html = $text;
 			$objEmail->sendTo(array($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>'));
 		}
-		//$objEmail->text = sprintf($GLOBALS['TL_LANG']['MSC']['linkscollection_message'],
-		//                          $data['name'] . ' (' . $data['email'] . ')',
-		//                          $strComment,
-		//                          \Idna::decode(\Environment::get('base')) . \Environment::get('request'),
-		//                          \Idna::decode(\Environment::get('base')) . 'contao/main.php?do=linkscollection&table=tl_linkscollection_links&act=edit&id=' . $objLink->insertId);
-        
+
+		// E-Mail für Anmelder erstellen        
 	}
 
 	/**

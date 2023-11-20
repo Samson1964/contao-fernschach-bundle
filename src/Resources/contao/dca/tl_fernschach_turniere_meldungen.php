@@ -40,7 +40,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		(
 			'mode'                    => 4,
 			'headerFields'            => array('title', 'registrationDate', 'startDate'),
-			'flag'                    => 1,
+			'flag'                    => 12,
+			'fields'                  => array('tstamp DESC'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_fernschach_turniere_meldungen', 'listMeldungen'),
 			'disableGrouping'         => true
@@ -409,10 +410,12 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	 */
 	public function listMeldungen($arrRow)
 	{
-
 		$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler();
 
 		$temp = '<div class="tl_content_left">';
+
+		// Meldedatum
+		$temp .= '<span style="display:inline-block; width:120px;"><b title="Anmeldedatum">'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b></span>';
 
 		// Vor- und Nachname
 		if(isset($arrRow['state']))
@@ -429,12 +432,9 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		// Zuordnung
 		if($arrRow['spielerId'])
 		{
-			$temp .= ' - zugeordnet: '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'];
+			$temp .= ' (zugeordnet: '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].')';
 		}
-		else $temp .= ' - nicht zugeordnet';
-
-		// Meldedatum
-		$temp .= ' - Anmeldung am: <b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b>';
+		else $temp .= ' (nicht zugeordnet)';
 
 		$temp .= '</div>';
 		return $temp;

@@ -70,8 +70,8 @@ class Export extends \Backend
 		// Preise-Tabelle anlegen und füllen
 		$spreadsheet->createSheet();
 		$spreadsheet->setActiveSheetIndex(0);
-		$spreadsheet->getActiveSheet()->getStyle('A1:AT1')->applyFromArray($styleArray);
-		$spreadsheet->getActiveSheet()->getStyle('A2:AT'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
+		$spreadsheet->getActiveSheet()->getStyle('A1:AU1')->applyFromArray($styleArray);
+		$spreadsheet->getActiveSheet()->getStyle('A2:AU'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
 		$spreadsheet->getActiveSheet()->getStyle('A1:A1')->applyFromArray($styleArray); // Um Markierung zurückzusetzen
 		$spreadsheet->getActiveSheet()->setTitle('Spieler')
 		            ->setCellValue('A1', 'Datensatz')
@@ -185,7 +185,7 @@ class Export extends \Backend
 			$spreadsheet->getActiveSheet()->getColumnDimension($column->getColumnIndex())->setAutoSize(true);
 		}
 
-		$spreadsheet->getActiveSheet()->freezePane('F2'); // Bereich einfrieren/fixieren
+		$spreadsheet->getActiveSheet()->freezePane('G2'); // Bereich einfrieren/fixieren
 		$spreadsheet->setActiveSheetIndex(0);
 
 		// Überflüssiges Tabellenblatt 'Worksheet 1' löschen
@@ -245,7 +245,6 @@ class Export extends \Backend
 		//       )
 		$filter = $dc->Session->get('filter');
 		$filter = $filter[$dc->table]; // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
-		log_message(print_r($filter, true), 'fernschachverwaltung.log');
 		foreach($filter as $key => $value)
 		{
 			if($key != 'limit')
@@ -257,7 +256,7 @@ class Export extends \Backend
 
 		// Spezialfilter berücksichtigen
 		$filter = $dc->Session->get('filter');
-		$filter = $filter[$dc->table.'Filter'] = array('tfs_filter'); // Wert aus Spezialfilter
+		$filter = isset($filter[$dc->table.'Filter']['tfs_filter']) ? $filter[$dc->table.'Filter']['tfs_filter'] : ''; // Wert aus Spezialfilter
 		switch($filter)
 		{
 			case '2': // Geburtsdatum fehlt

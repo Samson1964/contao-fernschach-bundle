@@ -2181,31 +2181,35 @@ class tl_fernschach_spieler extends \Backend
 			),
 		);
 
-        $strBuffer = '
-<div class="tl_filter tfs_filter tl_subpanel">
-<strong>' . $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] . ':</strong> ' . "\n";
+		$strBuffer = '<div class="tl_filter tfs_filter tl_subpanel"><strong>' . $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] . ':</strong> ' . "\n";
 
-        // Generate filters
-        foreach ($arrFilters as $arrFilter)
-        {
-            $strOptions = '
-  <option value="' . $arrFilter['name'] . '">' . $arrFilter['label'] . '</option>
-  <option value="' . $arrFilter['name'] . '">---</option>' . "\n";
+		// Generate filters
+		foreach ($arrFilters as $arrFilter)
+		{
+			$strOptions = '<option value="' . $arrFilter['name'] . '">' . $arrFilter['label'] . '</option>' . "\n";
+			$strOptions .= '<option value="' . $arrFilter['name'] . '">---</option>' . "\n";
+
+			// Prüfen ob ein Filter gesetzt ist
+			if(isset($session['filter']['tl_fernschach_spielerFilter']['tfs_filter']))
+			{
+				$filterwert = $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'];
+			}
+			else $filterwert = '';
 
 			// Generate options
 			foreach($arrFilter['options'] as $k => $v)
 			{
-				if(isset($session['filter'])) $strOptions .= '  <option value="' . $k . '"' . ((isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) === (string) $k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
+				$strOptions .= '<option value="' . $k . '"' . (((string)$filterwert === (string)$k) ? ' selected' : '') . '>' . $v . '</option>' . "\n";
 			}
 
-			$strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">
-' . $strOptions . '
-</select>' . "\n";
 		}
+
+		$strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">'.$strOptions.'</select>' . "\n";
 		
 		return $strBuffer . '</div>';
 
 	}
+
 
 	public function applyAdvancedFilter()
 	{
@@ -2241,132 +2245,87 @@ class tl_fernschach_spieler extends \Backend
 
 		$arrPlayers = null;
 
-		switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
+		if(isset($session['filter']['tl_fernschach_spielerFilter']['tfs_filter']))
 		{
-			case '1': // Alle Mitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-				                                      ->execute('');
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					while($objPlayers->next())
+			switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
+			{
+				case '1': // Alle Mitglieder
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+					                                      ->execute('');
+					$arrPlayers = array();
+					if($objPlayers->numRows)
 					{
-						// Mitgliedschaften prüfen (memberships)
-						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers->memberships);
-						if($aktiv) $arrPlayers[] = $objPlayers->id;
+						while($objPlayers->next())
+						{
+							// Mitgliedschaften prüfen (memberships)
+							$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers->memberships);
+							if($aktiv) $arrPlayers[] = $objPlayers->id;
+						}
 					}
-				}
-				break;
-
-			case '2': // Geburtsdatum fehlt
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
-				                                      ->execute(0, '');
-				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
-				break;
-
-			case '3': // ICCF-Nummer fehlt
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
-				                                      ->execute('');
-				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
-				break;
-
-			case '4': // E-Mail fehlt
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
-				                                      ->execute('', '');
-				$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
-				break;
-
-			case '5': // Mitgliedsende 31.12. letztes Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-				                                      ->execute('');
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					$datum = (date('Y') - 1).'1231';
-					while($objPlayers->next())
+					break;
+        	
+				case '2': // Geburtsdatum fehlt
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
+					                                      ->execute(0, '');
+					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+					break;
+        	
+				case '3': // ICCF-Nummer fehlt
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
+					                                      ->execute('');
+					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+					break;
+        	
+				case '4': // E-Mail fehlt
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
+					                                      ->execute('', '');
+					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+					break;
+        	
+				case '101': // Mitgliedsende 31.12. nächstes Jahr
+				case '100': // Mitgliedsende 31.12. dieses Jahr
+				case '99': // Mitgliedsende 31.12. letztes Jahr
+				case '98': // Mitgliedsende 31.12. minus 2 Jahre
+				case '97': // Mitgliedsende 31.12. minus 3 Jahre
+				case '96': // Mitgliedsende 31.12. minus 4 Jahre
+				case '95': // Mitgliedsende 31.12. minus 5 Jahre
+				case '94': // Mitgliedsende 31.12. minus 6 Jahre
+				case '93': // Mitgliedsende 31.12. minus 7 Jahre
+				case '92': // Mitgliedsende 31.12. minus 8 Jahre
+				case '91': // Mitgliedsende 31.12. minus 9 Jahre
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
+					$arrPlayers = array();
+					if($objPlayers->numRows)
 					{
-						// Ende einer Mitgliedschaft suchen (memberships)
-						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
-						if($aktiv) $arrPlayers[] = $objPlayers->id;
+						$datum = (date('Y') + $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 100).'1231';
+						while($objPlayers->next())
+						{
+							// Ende einer Mitgliedschaft suchen (memberships)
+							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+							if($found) $arrPlayers[] = $objPlayers->id;
+						}
 					}
-				}
-				break;
-
-			case '6': // Mitgliedsende 31.12. dieses Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-				                                      ->execute('');
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					$datum = date('Y').'1231';
-					while($objPlayers->next())
+					break;
+        	
+				case '8': // Alle Nichtmitglieder
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+					                                      ->execute('');
+					$arrPlayers = array();
+					if($objPlayers->numRows)
 					{
-						// Ende einer Mitgliedschaft suchen (memberships)
-						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
-						if($aktiv) $arrPlayers[] = $objPlayers->id;
+						while($objPlayers->next())
+						{
+							// Mitgliedschaften prüfen (memberships)
+							$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers->memberships);
+							if(!$aktiv) $arrPlayers[] = $objPlayers->id;
+						}
 					}
-				}
-				break;
-
-			case '7': // Mitgliedsende 31.12. nächstes Jahr
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-				                                      ->execute('');
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					$datum = (date('Y') + 1).'1231';
-					while($objPlayers->next())
-					{
-						// Ende einer Mitgliedschaft suchen (memberships)
-						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
-						if($aktiv) $arrPlayers[] = $objPlayers->id;
-					}
-				}
-				break;
-
-			case '101': // Mitgliedsende 31.12. nächstes Jahr
-			case '100': // Mitgliedsende 31.12. dieses Jahr
-			case '99': // Mitgliedsende 31.12. letztes Jahr
-			case '98': // Mitgliedsende 31.12. minus 2 Jahre
-			case '97': // Mitgliedsende 31.12. minus 3 Jahre
-			case '96': // Mitgliedsende 31.12. minus 4 Jahre
-			case '95': // Mitgliedsende 31.12. minus 5 Jahre
-			case '94': // Mitgliedsende 31.12. minus 6 Jahre
-			case '93': // Mitgliedsende 31.12. minus 7 Jahre
-			case '92': // Mitgliedsende 31.12. minus 8 Jahre
-			case '91': // Mitgliedsende 31.12. minus 9 Jahre
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
-				                                      ->execute();
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					$datum = (date('Y') + $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 100).'1231';
-					while($objPlayers->next())
-					{
-						// Ende einer Mitgliedschaft suchen (memberships)
-						$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
-						if($found) $arrPlayers[] = $objPlayers->id;
-					}
-				}
-				break;
-
-			case '8': // Alle Nichtmitglieder
-				$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-				                                      ->execute('');
-				$arrPlayers = array();
-				if($objPlayers->numRows)
-				{
-					while($objPlayers->next())
-					{
-						// Mitgliedschaften prüfen (memberships)
-						$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers->memberships);
-						if(!$aktiv) $arrPlayers[] = $objPlayers->id;
-					}
-				}
-				break;
-
-			default:
-
+					break;
+        	
+				default:
+        	
+			}
 		}
 
 		if(is_array($arrPlayers) && empty($arrPlayers))

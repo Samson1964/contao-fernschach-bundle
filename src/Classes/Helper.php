@@ -131,7 +131,7 @@ class Helper extends \Backend
 	 * param $typ      1 = Beginn zurückgeben, 2 = Ende zurückgeben
 	 * @return string
 	 */
-	public function Mitgliedschaft($value, $typ)
+	public static function Mitgliedschaft($value, $typ)
 	{
 		$heute = date('Ymd');
 		$mitgliedschaften = unserialize($value); // String umwandeln
