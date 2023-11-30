@@ -120,9 +120,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_spieler'] = array
 			'options_callback'        => array('tl_fernschach_turniere_spieler', 'getGemeldeteSpieler'),
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
-				'chosen'              => true, 
-				'includeBlankOption'  => true, 
+				'mandatory'           => true,
+				'chosen'              => true,
+				'includeBlankOption'  => true,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
@@ -300,10 +300,10 @@ class tl_fernschach_turniere_spieler extends \Backend
 		log_message('tl_fernschach_turniere_spieler.id = '.$this->Input->get('id'),'fernschach.log');
     	$row = $this->Database->prepare("SELECT meldungId FROM tl_fernschach_turniere_spieler WHERE id=?")
     	                      ->execute($this->Input->get('id'));
-    	 
+
 		log_message('meldungId = '.$row->meldungId,'fernschach.log');
     	$this->Session->set('tl_fernschach_turniere_spieler.meldungId', $row->meldungId);
-    		
+
 	}
 
 	/**
@@ -329,10 +329,10 @@ class tl_fernschach_turniere_spieler extends \Backend
 			$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 			                            ->set($set)
 			                            ->execute($this->Session->get('tl_fernschach_turniere_spieler.meldungId'));
-        	
+
 			$this->createNewVersion('tl_fernschach_turniere_meldungen', $this->Session->get('tl_fernschach_turniere_spieler.meldungId'));
     	}
-    	
+
 		$this->createInitialVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
 		$set = array
 		(
@@ -342,8 +342,7 @@ class tl_fernschach_turniere_spieler extends \Backend
 		$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 		                            ->set($set)
 		                            ->execute($dc->activeRecord->meldungId);
-
 		$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
-		
+
 	}
 }

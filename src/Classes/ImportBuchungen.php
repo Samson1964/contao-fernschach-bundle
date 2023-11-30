@@ -193,6 +193,7 @@ class ImportBuchungen extends \Backend
 									$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
 									                                     ->set($set)
 									                                     ->execute($set['id']);
+									$this->createNewVersion('tl_fernschach_spieler_konto', $set['id']);
 									$neu_count++;
 								}
 								else

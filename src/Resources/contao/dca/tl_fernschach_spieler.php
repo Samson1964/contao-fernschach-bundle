@@ -1800,7 +1800,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'filter'                  => true,
 			'eval'                    => array
 			(
-				'submitOnChange'      => true, 
+				'submitOnChange'      => true,
 				'tl_class'            => 'clr m12'
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
@@ -1812,9 +1812,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'inputType'               => 'fileTree',
 			'eval'                    => array
 			(
-				'filesOnly'           => true, 
-				'fieldType'           => 'radio', 
-				'mandatory'           => true, 
+				'filesOnly'           => true,
+				'fieldType'           => 'radio',
+				'mandatory'           => true,
 				'tl_class'            => 'clr'
 			),
 			'sql'                     => "binary(16) NULL"
@@ -1832,7 +1832,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'filter'                  => true,
 			'eval'                    => array
 			(
-				'submitOnChange'      => true, 
+				'submitOnChange'      => true,
 				'tl_class'            => 'clr m12'
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
@@ -1844,9 +1844,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'inputType'               => 'fileTree',
 			'eval'                    => array
 			(
-				'filesOnly'           => true, 
-				'fieldType'           => 'radio', 
-				'mandatory'           => true, 
+				'filesOnly'           => true,
+				'fieldType'           => 'radio',
+				'mandatory'           => true,
 				'tl_class'            => 'clr'
 			),
 			'sql'                     => "binary(16) NULL"
@@ -1864,9 +1864,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'inputType'               => 'fileTree',
 			'eval'                    => array
 			(
-				'multiple'            => true, 
-				'fieldType'           => 'checkbox', 
-				'files'               => true, 
+				'multiple'            => true,
+				'fieldType'           => 'checkbox',
+				'files'               => true,
 				'mandatory'           => false
 			),
 			'sql'                     => "blob NULL",
@@ -2038,7 +2038,7 @@ class tl_fernschach_spieler extends \Backend
 					}
 				}
 		}
-		
+
 		// Berechtigungen Infobox setzen
 		foreach($GLOBALS['TL_DCA']['tl_fernschach_spieler']['fields'] as $key => $value)
 		{
@@ -2205,7 +2205,7 @@ class tl_fernschach_spieler extends \Backend
 		}
 
 		$strBuffer .= '<select name="' . $arrFilter['name'] . '" id="' . $arrFilter['name'] . '" class="tl_select' . (isset($session['filter']['tl_fernschach_spielerFilter'][$arrFilter['name']]) ? ' active' : '') . '">'.$strOptions.'</select>' . "\n";
-		
+
 		return $strBuffer . '</div>';
 
 	}
@@ -2250,8 +2250,8 @@ class tl_fernschach_spieler extends \Backend
 			switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 			{
 				case '1': // Alle Mitglieder
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
-					                                      ->execute('');
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
 					{
@@ -2263,25 +2263,25 @@ class tl_fernschach_spieler extends \Backend
 						}
 					}
 					break;
-        	
+
 				case '2': // Geburtsdatum fehlt
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
 					                                      ->execute(0, '');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
-        	
+
 				case '3': // ICCF-Nummer fehlt
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
 					                                      ->execute('');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
-        	
+
 				case '4': // E-Mail fehlt
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
 					                                      ->execute('', '');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
-        	
+
 				case '101': // Mitgliedsende 31.12. nächstes Jahr
 				case '100': // Mitgliedsende 31.12. dieses Jahr
 				case '99': // Mitgliedsende 31.12. letztes Jahr
@@ -2307,7 +2307,7 @@ class tl_fernschach_spieler extends \Backend
 						}
 					}
 					break;
-        	
+
 				case '8': // Alle Nichtmitglieder
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
 					                                      ->execute('');
@@ -2322,9 +2322,9 @@ class tl_fernschach_spieler extends \Backend
 						}
 					}
 					break;
-        	
+
 				default:
-        	
+
 			}
 		}
 
@@ -2503,7 +2503,7 @@ class tl_fernschach_spieler extends \Backend
 				$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 			}
 		}
-				
+
 		$string = '
 <div class="widget long clr">
   <h3 style="margin-bottom:10px;"><label for="ctrl_sepaBeitragbox">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'][0].'</label></h3>
@@ -2540,7 +2540,7 @@ class tl_fernschach_spieler extends \Backend
 			// Link anzeigen
 			$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 		}
-				
+
 		$string = '
 <div class="widget long clr">
   <h3 style="margin-bottom:10px;"><label for="ctrl_sepaNenngeldbox">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'][0].'</label></h3>
@@ -2563,20 +2563,20 @@ class tl_fernschach_spieler extends \Backend
 
 		$pdf = new \Imagick($file);
 		$anzahlDerSeiten = $pdf->getNumberImages();
-		
+
 		for ($i = 0; $i < $anzahlDerSeiten; $i++) {
-		
+
 			$image = new \Imagick();
-			
+
 			$image->setResolution(400,400);
 			$image->readImage($file."[".$i."]" );
-			
+
 			$image->setBackgroundColor('white');
 			$image->setImageAlphaChannel(imagick::ALPHACHANNEL_DEACTIVATE );
 			$image->setImageFormat('jpg');
 			$image->scaleImage(1200, 1200, true);
-			
-			
+
+
 			$thumbnail = base64_encode($image->getImage());
 			$content .= 'Seite '.($i+1).'<br>';
 			$content .= '<a href="'.$file.'" target="_blank">';
@@ -2585,7 +2585,7 @@ class tl_fernschach_spieler extends \Backend
 
 			$image->clear();
 			$image->destroy();
-			
+
 		}
 		return $content;
 	}
@@ -2623,7 +2623,7 @@ class tl_fernschach_spieler extends \Backend
 		$ausgabe .= '<th class="tl_folder_tlist tl_right_nowrap">&nbsp;</th>';
 		$ausgabe .= '</tr>';
 		$oddeven = 'odd';
-		
+
 		// Datensätze zusammenfassen
 		$records = array();
 		if($objAnmeldungen->numRows)
@@ -2658,7 +2658,7 @@ class tl_fernschach_spieler extends \Backend
 				);
 			}
 		}
-		
+
 		// Liste sortieren
 		if($records) $records = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($records, array('datum' => SORT_DESC));
 

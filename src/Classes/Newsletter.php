@@ -51,6 +51,7 @@ class Newsletter extends \Backend
 					\Database::getInstance()->prepare("UPDATE tl_newsletter_recipients %s WHERE id=?")
 					                        ->set($set)
 					                        ->execute($result->id);
+					$this->createNewVersion('tl_newsletter_recipients', $result->id);
 				}
 			}
 

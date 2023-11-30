@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.4 (2023-11-30)
+
+* Fix: Im Excel-Export sind bei gesetztem Filter "Nur Mitglieder" + "Veröffentlicht" auch 2 Archivierte drin -> In Backendliste war bei "Alle Mitglieder" archived auf '' gesetzt
+* Add: Imaginärer Bot in Maintenance-Klasse
+* Check: Prüfung ob bei UPDATE-Befehlen überall createNewVersion aufgerufen wird
+
 ## Version 0.16.3 (2023-11-20)
 
 * Change: Meldeformular ausgearbeitet

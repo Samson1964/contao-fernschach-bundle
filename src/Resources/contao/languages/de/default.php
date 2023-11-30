@@ -1,5 +1,8 @@
 <?php
 
+// Globale Variablen
+$GLOBALS['TL_LANG']['fernschachverwaltung']['botname'] = 'Fernschach-Bot';
+
 // Bestätigungen in Popups
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] = 'Wollen Sie die E-Mail-Adressen der aktuellen Spielerliste wirklich in das Serienmail-Newsletter-Archiv importieren?';
 

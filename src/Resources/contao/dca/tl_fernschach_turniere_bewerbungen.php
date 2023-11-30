@@ -345,6 +345,7 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 			$nachname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
 			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET nachname = ? WHERE id = ?")
 			                        ->execute($nachname, $dc->id);
+			$this->createNewVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
 		}
 
 		if(!$vorname && $dc->activeRecord->spielerId)
@@ -353,6 +354,7 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 			$vorname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
 			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET vorname = ? WHERE id = ?")
 			                        ->execute($vorname, $dc->id);
+			$this->createNewVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
 		}
 
 	}

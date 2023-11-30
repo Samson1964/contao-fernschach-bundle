@@ -278,7 +278,7 @@ class Helper extends \Backend
 				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($pid);
-				//$this->createNewVersion('tl_fernschach_spieler', $pid);
+				$this->createNewVersion('tl_fernschach_spieler', $pid);
 			}
 		}
 		
@@ -332,12 +332,14 @@ class Helper extends \Backend
 								// Reset-Datensatz löschen, da keine Buchungen davor oder danach existieren
 								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 								                                       ->execute($objBuchungen->id);
+								$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 							}
 							elseif($resetDatensaetze > 1)
 							{
 								// Überflüssigen Reset-Datensatz löschen
 								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 								                                       ->execute($objBuchungen->id);
+								$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 							}
 						}
 						else
@@ -485,6 +487,7 @@ class Helper extends \Backend
 						$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
 						                                     ->set($set)
 						                                     ->execute($objResets->id);
+						$this->createNewVersion('tl_fernschach_spieler_konto', $objResets->id);
 						$resetDatensaetze++;
 					}
 					elseif($resetDatensaetze > 1)
@@ -492,6 +495,7 @@ class Helper extends \Backend
 						// Überflüssige Reset-Buchung löschen
 						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objResets->id);
+						$this->createNewVersion('tl_fernschach_spieler_konto', $objResets->id);
 					}
 				}
 			}
@@ -510,6 +514,7 @@ class Helper extends \Backend
 					// Reset-Datensatz hier unnötig, da es keine jüngeren oder älteren Buchungen gibt -> also löschen
 					$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 					                                       ->execute($objBuchungen->id);
+					$this->createNewVersion('tl_fernschach_spieler', $objBuchungen->id);
 				}
 				elseif($objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter)
 				{
@@ -530,6 +535,7 @@ class Helper extends \Backend
 							$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
 							                                     ->set($set)
 							                                     ->execute($objBuchungen->id);
+							$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 						}
 					}
 					else
@@ -537,6 +543,7 @@ class Helper extends \Backend
 						// Reset-Datensatz löschen, da unerwünscht
 						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objBuchungen->id);
+						$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 					}
 				}
 				elseif(!$objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter && !$resetDatensaetze && $GLOBALS['TL_CONFIG']['fernschach_resetActive'])

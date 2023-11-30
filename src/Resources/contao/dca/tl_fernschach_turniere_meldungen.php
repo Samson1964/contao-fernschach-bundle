@@ -562,6 +562,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			{
 				$answer = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 				                                  ->execute($result->id);
+				$this->createNewVersion('tl_fernschach_spieler_konto', $result->id);
 			}
 		}
 		else
@@ -624,6 +625,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$nachname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
 			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET nachname = ? WHERE id = ?")
 			                        ->execute($nachname, $dc->id);
+			$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->id);
 		}
 
 		if(!$vorname && $dc->activeRecord->spielerId)
@@ -632,6 +634,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$vorname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
 			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET vorname = ? WHERE id = ?")
 			                        ->execute($vorname, $dc->id);
+			$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->id);
 		}
 
 	}

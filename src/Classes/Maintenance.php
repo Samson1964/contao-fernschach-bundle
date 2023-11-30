@@ -61,7 +61,9 @@ class Maintenance extends \Backend
 										\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 										                        ->set($set)
 										                        ->execute($objMember->id);
-										$this->createNewVersion('tl_member', $objMember->id);
+										$version = new \Versions('tl_member', $objMember->id);
+										$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+										$version->create();
 
 										// Zuordnung entfernen
 										\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
@@ -80,7 +82,9 @@ class Maintenance extends \Backend
 									\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 									                        ->set($set)
 									                        ->execute($objMember->id);
-									$this->createNewVersion('tl_member', $objMember->id);
+									$version = new \Versions('tl_member', $objMember->id);
+									$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+									$version->create();
 									\System::log('[Fernschach-Wartung] tl_member.fernschach_memberId ('.$objMember->fernschach_memberId.') <> tl_fernschach_spieler.id ('.$objPlayer->id.'). Geändert von '.$objMember->fernschach_memberId.' auf '.$objPlayer->id.'.', __CLASS__.'::'.__FUNCTION__, TL_ERROR);
 								}
 							}
@@ -97,7 +101,9 @@ class Maintenance extends \Backend
 								\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 								                        ->set($set)
 								                        ->execute($objMember->id);
-								$this->createNewVersion('tl_member', $objMember->id);
+								$version = new \Versions('tl_member', $objMember->id);
+								$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+								$version->create();
 
 								// Zuordnung noch nicht vorhanden, jetzt vornehmen
 								\System::log('[Fernschach-Wartung] Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.') vorgenommen.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
@@ -118,7 +124,9 @@ class Maintenance extends \Backend
 								\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 								                        ->set($set)
 								                        ->execute($objMember->id);
-								$this->createNewVersion('tl_member', $objMember->id);
+								$version = new \Versions('tl_member', $objMember->id);
+								$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+								$version->create();
 
 								// Zuordnung entfernen
 								\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
@@ -140,7 +148,9 @@ class Maintenance extends \Backend
 							\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 							                        ->set($set)
 							                        ->execute($objMember->id);
-							$this->createNewVersion('tl_member', $objMember->id);
+							$version = new \Versions('tl_member', $objMember->id);
+							$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+							$version->create();
 
 							// Zuordnung entfernen
 							\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
