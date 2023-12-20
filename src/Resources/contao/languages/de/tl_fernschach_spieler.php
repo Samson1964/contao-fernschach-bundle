@@ -142,12 +142,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag_legend'] = 'Beitragszahlun
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'] = array('Beitrag bezahlt', 'Der Beitrag wurde bezahlt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag_legend'] = 'SEPA-Mandat Beiträge';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'] = array('SEPA-Mandat vorhanden', 'Das SEPA-Mandat für den Beitragseinzug liegt vor.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'] = array('SEPA-Mandat Beitrag', 'Das SEPA-Mandat für den Beitragseinzug liegt vor.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragDatei'] = array('Datei', 'Datei auswählen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragbox'] = array('Vorschau', 'Vorschau und Link zur Datei');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld_legend'] = 'SEPA-Mandat Nenngelder';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'] = array('SEPA-Mandat vorhanden', 'Das SEPA-Mandat für den Nenngeldeinzug liegt vor.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'] = array('SEPA-Mandat Nenngeld', 'Das SEPA-Mandat für den Nenngeldeinzug liegt vor.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldDatei'] = array('Datei', 'Datei auswählen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldbox'] = array('Vorschau', 'Vorschau und Link zur Datei');
 
@@ -176,6 +176,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'] = array('Spieler löschen
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'] = array('Spieler aktivieren/deaktivieren', 'Spieler %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'] = array('Spielerdetails anzeigen', 'Details des Spielers %s anzeigen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'] = array('Spieler bearbeitet/nicht bearbeitet', 'Spieler %s fertig bearbeitet - aktivieren oder deaktivieren');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragIcon'] = array('SEPA-Mandat Beitrag erteilt/nicht erteilt', 'Spieler %s hat das SEPA-Mandat Beitrag erteilt/nicht erteilt');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldIcon'] = array('SEPA-Mandat Nenngeld erteilt/nicht erteilt', 'Spieler %s hat das SEPA-Mandat Nenngeld erteilt/nicht erteilt');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['applications'] = array('Turniere bearbeiten', 'Bewerbungen und Zusagen für Turniere des Spielers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bearbeiten', 'Buchungen (Zahlungsein- und ausgänge) des Spielers %s bearbeiten');

@@ -39,12 +39,12 @@
 		<?php if($this->sepaBeitrag): ?>
 			<p>Das SEPA-Lastschriftmandat Beitrag liegt vor.</p>
 		<?php else: ?>
-			<p style="color:red;">Das SEPA-Lastschriftmandat Beitrag liegt nicht vor.</p>
+			<p style="color:red;">Das SEPA-Lastschriftmandat Beitrag ist nicht gewünscht.</p>
 		<?php endif ?>
 		<?php if($this->sepaNenngeld): ?>
 			<p>Das SEPA-Lastschriftmandat Nenngeld liegt vor.</p>
 		<?php else: ?>
-			<p style="color:red;">Das SEPA-Lastschriftmandat Nenngeld liegt nicht vor.</p>
+			<p style="color:red;">Das SEPA-Lastschriftmandat Nenngeld ist nicht gewünscht.</p>
 		<?php endif ?>
 	</div>
 

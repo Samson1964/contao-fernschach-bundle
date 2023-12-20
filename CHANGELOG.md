@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.16.5 (2023-12-20)
+
+* Change: Übersetzung SEPA-Mandate wegen Filter geändert
+* Change: tl_fernschach_spieler.fertig in Palette und Übersicht ausgeblendet, da nicht mehr benötigt
+* Change: tl_fernschach_spieler.sepaBeitragDatei und sepaNenngeldDatei -> mandatory von true auf false, da störend für Bearbeiter
+* Add: Toggler für SEPA-Mandate in tl_fernschach_spieler (statt Anzeige fertig)
+* Change: Template mod_kontoauszug -> SEPA nicht gewünscht statt nicht vorhanden
+
 ## Version 0.16.4 (2023-11-30)
 
 * Fix: Im Excel-Export sind bei gesetztem Filter "Nur Mitglieder" + "Veröffentlicht" auch 2 Archivierte drin -> In Backendliste war bei "Alle Mitglieder" archived auf '' gesetzt

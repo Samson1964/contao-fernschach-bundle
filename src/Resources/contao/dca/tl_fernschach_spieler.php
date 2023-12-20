@@ -133,20 +133,48 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'attributes'          => 'style="margin-right:3px"',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateShowButton')
 			),
-			'fertigIcon' => array
+			'sepaBeitragIcon' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragIcon'],
 				'attributes'          => 'onclick="Backend.getScrollOffset();"',
 				'haste_ajax_operation' => array
 				(
-					'field'           => 'fertig',
+					'field'           => 'sepaBeitrag',
 					'options'         => array
 					(
-						array('value' => '', 'icon' => 'bundles/contaofernschach/images/unfertig.png'),
-						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/fertig.png'),
+						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/sepa_on.png'),
+						array('value' => '', 'icon' => 'bundles/contaofernschach/images/sepa_off.png'),
 					)
 				)
 			),
+			'sepaNenngeldIcon' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldIcon'],
+				'attributes'          => 'onclick="Backend.getScrollOffset();"',
+				'haste_ajax_operation' => array
+				(
+					'field'           => 'sepaNenngeld',
+					'options'         => array
+					(
+						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/sepa_on.png'),
+						array('value' => '', 'icon' => 'bundles/contaofernschach/images/sepa_off.png'),
+					)
+				)
+			),
+			//'fertigIcon' => array
+			//(
+			//	'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertigIcon'],
+			//	'attributes'          => 'onclick="Backend.getScrollOffset();"',
+			//	'haste_ajax_operation' => array
+			//	(
+			//		'field'           => 'fertig',
+			//		'options'         => array
+			//		(
+			//			array('value' => '', 'icon' => 'bundles/contaofernschach/images/unfertig.png'),
+			//			array('value' => '1', 'icon' => 'bundles/contaofernschach/images/fertig.png'),
+			//		)
+			//	)
+			//),
 		)
 	),
 
@@ -1801,7 +1829,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'submitOnChange'      => true,
-				'tl_class'            => 'clr m12'
+				'tl_class'            => 'clr m12',
+				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -1814,7 +1843,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'filesOnly'           => true,
 				'fieldType'           => 'radio',
-				'mandatory'           => true,
+				'mandatory'           => false,
 				'tl_class'            => 'clr'
 			),
 			'sql'                     => "binary(16) NULL"
@@ -1833,7 +1862,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'submitOnChange'      => true,
-				'tl_class'            => 'clr m12'
+				'tl_class'            => 'clr m12',
+				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
@@ -1846,7 +1876,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'filesOnly'           => true,
 				'fieldType'           => 'radio',
-				'mandatory'           => true,
+				'mandatory'           => false,
 				'tl_class'            => 'clr'
 			),
 			'sql'                     => "binary(16) NULL"
@@ -1905,7 +1935,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'mandatory'           => false,
 				'tl_class'            => 'w50',
-				'doNotCopy'           => false
+				'doNotCopy'           => false,
+				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
