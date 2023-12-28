@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.17.0 (2023-12-28)
+
+* Change: tl_fernschach_spieler.fertig war noch nicht komplett deaktiviert
+* Change: Turniermeldeformular umgebaut auf (nur) BdF-Mitglieder
+* Add: Turniere -> Anmeldungen -> SEPA-Status Nenngeld anzeigen
+* Add: Nenngeld-Anzeige bei den Anmeldungen
+* Add: Backend-Modul (versteckt in Navigation) in tl_fernschach_turniere_meldungen, um die Anmeldungen und Bewerbungen eines Spielers anzuzeigen
+
 ## Version 0.16.5 (2023-12-20)
 
 * Change: Übersetzung SEPA-Mandate wegen Filter geändert

@@ -46,11 +46,39 @@ class Meldeformular extends \Module
 	protected function compile()
 	{
 		global $objPage;
+		$fehler = false;
 
-
-		// Template füllen
-		$this->Template->daten = self::Formular();
-		//if($this->currentCategory) $this->Template->form = $this->SendlinkForm();
+		if($this->fernschachverwaltung_linkingMembers)
+		{
+			// Das Formular darf nur BdF-Mitgliedern angezeigt werden
+			// Jetzt auf BdF-Mitglied prüfen
+			$this->import('FrontendUser','User'); // Frontend-Mitglied laden
+			if($this->User)
+			{
+				if(!$this->User->isMemberOf($GLOBALS['TL_CONFIG']['fernschach_memberFernschach']))
+				{
+					// Frontend-Mitglied gehört nicht zur Gruppe BdF-Mitglied
+					$fehler = true;
+					$fehlertext = 'Zugriff auf das Formular nicht erlaubt, da kein verifiziertes BdF-Mitglied.';
+				}
+			}
+			else
+			{
+				// Nicht im Frontend angemeldet
+				$fehler = true;
+				$fehlertext = 'Zugriff auf das Formular nicht erlaubt, da nicht angemeldet.';
+			}
+		}
+		
+		if($fehler)
+		{
+			echo $fehlertext;
+		}
+		else
+		{
+			// Template füllen
+			$this->Template->daten = self::Formular();
+		}
 	}
 
 	protected function Formular()
@@ -66,8 +94,35 @@ class Meldeformular extends \Module
 			return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
 		});
 		
-		// URL für action festlegen. Standard ist die Seite auf der das Formular eingebunden ist.
-		// $objForm->setFormActionFromUri();
+		// BdF-Mitgliedsdaten laden
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId);
+		$mitgliedsdaten = '<h4>Angemeldeter Benutzer</h4>';
+		$mitgliedsdaten .= '<ul>';
+		$mitgliedsdaten .= '<li>Anmeldename: <b>'.\FrontendUser::getInstance()->username.'</b></li>';
+		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.\FrontendUser::getInstance()->firstname.' '.\FrontendUser::getInstance()->lastname.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse: <b>'.\FrontendUser::getInstance()->email.'</b></li>';
+		$mitgliedsdaten .= '</ul>';
+		$mitgliedsdaten .= '<h4>Zugeordnetes BdF-Mitglied</h4>';
+		$mitgliedsdaten .= '<ul>';
+		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
+		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
+		$value = end($salden);
+		if($value > 0)
+		{
+			$html_start = '<span style="color:green;">';
+			$html_ende = ' €<span>';
+		}
+		else
+		{
+			$html_start = '<span style="color:red;">';
+			$html_ende = ' €<span>';
+		}
+		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
+		$mitgliedsdaten .= '<li>Kontostand: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		$mitgliedsdaten .= '</ul>';
 		
 		$objForm->addFormField('fieldset1_start', array(
 			'inputType' => 'html',
@@ -76,42 +131,12 @@ class Meldeformular extends \Module
 				'html' => '<fieldset><legend>Persönliche Daten</legend>'
 			)
 		)); 
-		$objForm->addFormField('memberId', array(
-			'label'         => 'Mitgliedsnummer',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false)
-		));
-		$objForm->addFormField('memberId_info', array(
-			'inputType' => 'html',
+		$objForm->addFormField('mitgliedsdaten', array(
+			'inputType'     => 'html',
 			'eval' => array
 			(
-				'html' => '<i>oder Spielnummer (falls bekannt)</i>'
+				'html' => $mitgliedsdaten
 			)
-		)); 
-		$objForm->addFormField('vorname', array(
-			'label'         => 'Vorname',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>true)
-		));
-		$objForm->addFormField('nachname', array(
-			'label'         => 'Nachname',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>true)
-		));
-		$objForm->addFormField('strasse', array(
-			'label'         => 'Straße, Nr.',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false)
-		));
-		$objForm->addFormField('plz', array(
-			'label'         => 'PLZ',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false)
-		));
-		$objForm->addFormField('ort', array(
-			'label'         => 'Ort',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false)
 		));
 		$objForm->addFormField('fieldset1_ende', array(
 			'inputType' => 'html',
@@ -141,11 +166,6 @@ class Meldeformular extends \Module
 			'options'       => self::getTournaments(),
 			'eval'          => array('mandatory'=>false, 'choosen'=>true, 'includeBlankOption' => true)
 		));
-		$objForm->addFormField('nenngeld', array(
-			'label'         => 'Nenngeld in EUR',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false,'rgxp'=> 'digit')
-		));
 		$objForm->addFormField('turnierbox_ende', array(
 			'inputType' => 'html',
 			'eval' => array
@@ -154,56 +174,6 @@ class Meldeformular extends \Module
 			)
 		)); 
 		$objForm->addFormField('fieldset2_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		)); 
-
-		$objForm->addFormField('fieldset3_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Das Nenngeld...</legend>'
-			)
-		)); 
-		$objForm->addFormField('ueberweisung', array(
-			'label'         => 'wurde überwiesen am',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false, 'rgxp'=>'date')
-		));
-		$objForm->addFormField('guthaben', array(
-			'label'         => array('', 'soll von meinem Guthaben beim BdF abgebucht werden'),
-			'inputType'     => 'checkbox',
-			'eval'          => array('mandatory'=>false)
-		));
-		$objForm->addFormField('fieldset3_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		)); 
-
-		$objForm->addFormField('fieldset4_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Weitere Angaben</legend>'
-			)
-		)); 
-		$objForm->addFormField('email', array(
-			'label'         => 'E-Mail',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>true, 'rgxp'=>'email')
-		));
-		$objForm->addFormField('fax', array(
-			'label'         => 'Fax',
-			'inputType'     => 'text',
-			'eval'          => array('mandatory'=>false, 'rgxp'=>'phone')
-		));
-		$objForm->addFormField('fieldset4_ende', array(
 			'inputType' => 'html',
 			'eval' => array
 			(
@@ -243,13 +213,6 @@ class Meldeformular extends \Module
 			'inputType'     => 'textarea',
 			'eval'          => array('mandatory'=>false, 'rte'=>'tinyMCE')
 		));
-		$objForm->addFormField('bemerkungen_info', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<strong>(Zahlungswege - siehe <a href="zahlungsverkehr.html" target="_blank" rel="noopener">Hinweise unter "Offizielles"</a>)</strong>'
-			)
-		)); 
 		$objForm->addFormField('fieldset6_ende', array(
 			'inputType' => 'html',
 			'eval' => array
@@ -257,12 +220,6 @@ class Meldeformular extends \Module
 				'html' => '</fieldset>'
 			)
 		)); 
-
-		$objForm->addFormField('datenschutz', array(
-			'label'         => array('', '<span>Ich willige ein, dass der Deutsche Fernschachbund die von mir übermittelten Informationen und Daten dazu verwendet, um mit mir in Kontakt zu treten, hierüber zu kommunizieren und meine Anfrage abzuwickeln. Dies gilt insbesondere für die Verwendung der E-Mail-Adresse zum vorgenannten Zweck. Die Datenschutzerklärung kann <a href="datenschutz.html" target="_blank">hier</a> eingesehen werden.</span>'),
-			'inputType'     => 'checkbox',
-			'eval'          => array('mandatory'=>true)
-		));
 
 		// Submit-Button hinzufügen
 		$objForm->addFormField('submit', array(
@@ -282,8 +239,8 @@ class Meldeformular extends \Module
 			$arrData = $objForm->fetchAll();
 			self::saveMeldung($arrData); // Daten sichern
 			// Seite neu laden
-			//\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
-			//\Controller::reload(); 
+			\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
+			\Controller::reload(); 
 		}
 		
 		// Formular als String zurückgeben
@@ -295,58 +252,30 @@ class Meldeformular extends \Module
 	{
 		//print_r($data);
 		// Datenbank aktualisieren
+
 		$zeit = time();
+
+		// Mitgliedsdaten laden
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
 		
 		// Turnier prüfen
 		if($data['turnier'])
 		{
-			// Spieler in tl_fernschach_spieler suchen
-			$objSuche = \Database::getInstance()->prepare('SELECT id FROM tl_fernschach_spieler WHERE nachname=? AND vorname=? AND memberId=?')
-			                                    ->limit(1)
-			                                    ->execute($data['nachname'], $data['vorname'], $data['memberId']);
-			if($objSuche->numRows)
-			{
-				// Spieler gefunden
-				$spielerId = $objSuche->id;
-			}
-			else
-			{
-				$set = array
-				(
-					'tstamp'      => $zeit,
-					'nachname'    => $data['nachname'],
-					'vorname'     => $data['vorname'],
-					'plz'         => $data['plz'],
-					'ort'         => $data['ort'],
-					'strasse'     => $data['strasse'],
-					'email'       => $data['email'],
-					'memberId'    => $data['memberId'],
-				);
-				// Spieler nicht gefunden, dann neu eintragen
-				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler %s')
-				                                     ->set($set)
-				                                     ->execute();
-				$spielerId = $objInsert->insertId;
-			}
-			
 			// Meldung erzeugen
 			$set = array
 			(
 				'pid'               => $data['turnier'],
 				'tstamp'            => $zeit,
-				'spielerId'         => $spielerId,
-				'vorname'           => $data['vorname'],
-				'nachname'          => $data['nachname'],
-				'plz'               => $data['plz'],
-				'ort'               => $data['ort'],
-				'strasse'           => $data['strasse'],
-				'email'             => $data['email'],
-				'fax'               => $data['fax'],
-				'memberId'          => $data['memberId'],
+				'spielerId'         => $mitglied->id,
+				'vorname'           => $mitglied->vorname,
+				'nachname'          => $mitglied->nachname,
+				'plz'               => $mitglied->plz,
+				'ort'               => $mitglied->ort,
+				'strasse'           => $mitglied->strasse,
+				'email'             => $mitglied->email1,
+				'fax'               => $mitglied->fax ? $mitglied->fax : '',
+				'memberId'          => $mitglied->memberId,
 				'meldungDatum'      => $zeit,
-				'meldungNenngeld'   => $data['nenngeld'],
-				'nenngeldDate'      => self::DatumToZeitstempel($data['ueberweisung']),
-				'nenngeldGuthaben'  => $data['guthaben'],
 				'infoQualifikation' => $data['qualifikation'],
 				'bemerkungen'       => $data['bemerkungen'],
 				'published'         => 1
@@ -360,28 +289,25 @@ class Meldeformular extends \Module
 			// Turnier laden
 			$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
-			// Nenngeldbuchung Haben erzeugen, wenn Guthaben nutzen nicht aktiv ist
-			if(!$data['guthaben'])
-			{
-				$set = array
-				(
-					'pid'               => $spielerId,
-					'tstamp'            => $zeit,
-					'betrag'            => $data['nenngeld'],
-					'typ'               => 'h',
-					'datum'             => self::DatumToZeitstempel($data['ueberweisung']),
-					'kategorie'         => 's',
-					'art'               => 'n',
-					'verwendungszweck'  => 'Nenngeld-Zahlung',
-					'turnier'           => $data['turnier'],
-					'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
-					'meldungId'         => $meldungId,
-					'published'         => '1'
-				);
-				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto %s')
-				                                     ->set($set)
-				                                     ->execute();
-			}
+			// Nenngeldbuchung Soll erzeugen
+			$set = array
+			(
+				'pid'               => $mitglied->id,
+				'tstamp'            => $zeit,
+				'betrag'            => $objTurnier->nenngeld,
+				'typ'               => 's',
+				'datum'             => $zeit,
+				'kategorie'         => 's',
+				'art'               => 'n',
+				'verwendungszweck'  => 'Nenngeld-Forderung',
+				'turnier'           => $data['turnier'],
+				'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
+				'meldungId'         => $meldungId,
+				'published'         => '1'
+			);
+			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto %s')
+			                                     ->set($set)
+			                                     ->execute();
 		}
 
         //
@@ -417,23 +343,18 @@ class Meldeformular extends \Module
 			$text .= '<p>Eine neue Turnieranmeldung wurde vorgenommen:</p>';
 			$text .= '<h3>Angaben zum Turnier</h3>';
 			$text .= '<ul>';
+			$text .= '<li>Meldezeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
 			$text .= '<li>Turnier: <b>'.$objTurnier->title.'</b></li>';
 			$text .= '<li>Meldeschluss: <b>'.($objTurnier->registrationDate ? date('d.m.Y', $objTurnier->registrationDate) : '-').'</b></li>';
+			$text .= '<li>Nenngeld: <b>'.str_replace('.', ',', sprintf('%0.2f',$objTurnier->nenngeld)).'</b></li>';
 			$text .= '</ul>';
 			$text .= '<h3>Angaben zum Spieler</h3>';
 			$text .= '<ul>';
-			$text .= '<li>Datum und Uhrzeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
-			$text .= '<li>Vor- und Nachname: <b>'.$data['vorname'].' '.$data['nachname'].'</b></li>';
-			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$data['memberId'].'</b></li>';
-			$text .= '<li>Adresse: <b>'.$data['plz'].' '.$data['ort'].', '.$data['strasse'].'</b></li>';
-			$text .= '<li>Fax: <b>'.$data['fax'].'</b></li>';
-			$text .= '<li>E-Mail: <b>'.$data['email'].'</b></li>';
-			$text .= '</ul>';
-			$text .= '<h3>Angaben zum Nenngeld</h3>';
-			$text .= '<ul>';
-			$text .= '<li>Nenngeld: <b>'.number_format($data['nenngeld'], 2, ',', '.').' €</b></li>';
-			$text .= '<li>Überwiesen am: <b>'.$data['ueberweisung'].'</b></li>';
-			$text .= '<li>Abbuchen vom Guthaben: <b>'.$data['guthaben'].'</b></li>';
+			$text .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
+			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+			$text .= '<li>Adresse: <b>'.$mitglied->plz.' '.$mitglied->ort.', '.$mitglied->strasse.'</b></li>';
+			$text .= '<li>Fax: <b>'.$mitglied->fax.'</b></li>';
+			$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
 			$text .= '</ul>';
 			$text .= '<h3>Sonstiges</h3>';
 			$text .= '<ul>';

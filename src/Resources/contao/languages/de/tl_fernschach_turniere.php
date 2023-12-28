@@ -4,8 +4,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Ordner & Turniere'
 
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
- */
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
+ */$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Ordner/Turnier', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';

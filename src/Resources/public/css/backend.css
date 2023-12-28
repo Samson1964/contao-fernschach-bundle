@@ -80,3 +80,17 @@ table.tl_fernschach_tabelle td {
 	list-style-type: decimal;
 	margin-left: 20px;
 }
+
+table.fernschach_kopf th {
+	padding: 10px;
+	border: 1px solid black;
+}
+
+table.fernschach_kopf td {
+	padding: 4px;
+	border: 1px solid #C8C8C8;
+}
+
+.farbe_markiert {
+	background-color: #9DFF9D;
+}

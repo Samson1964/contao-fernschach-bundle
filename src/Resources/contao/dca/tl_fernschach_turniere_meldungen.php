@@ -39,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'sorting' => array
 		(
 			'mode'                    => 4,
-			'headerFields'            => array('title', 'registrationDate', 'startDate'),
+			'headerFields'            => array('title', 'nenngeld', 'registrationDate', 'startDate'),
 			'flag'                    => 12,
 			'fields'                  => array('tstamp DESC'),
 			'panelLayout'             => 'filter;sort,search,limit',
@@ -48,7 +48,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('vorname'),
+			'fields'                  => array('nachname', 'vorname'),
+			'showColumns'             => true,
 		),
 		'global_operations' => array
 		(
@@ -102,6 +103,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 				'icon'                => 'show.gif',
 				'attributes'          => 'style="margin-right:3px"'
 			),
+			'tournaments' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['tournaments'],
+				'href'                => 'do=fernschach-turniere-spieler',
+				'icon'                => 'bundles/contaofernschach/images/tournament.png',
+			),
 		)
 	),
 
@@ -126,6 +133,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		),
 		'tstamp' => array
 		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['tstamp'],
+			'flag'                    => 5,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		// Hier wird die id aus tl_fernschach_spieler eingetragen
@@ -411,13 +420,13 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	public function listMeldungen($arrRow)
 	{
 		$spieler = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler();
-
 		$temp = '<div class="tl_content_left">';
 
 		// Meldedatum
-		$temp .= '<span style="display:inline-block; width:120px;"><b title="Anmeldedatum">'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b></span>';
+		$temp .= '<span style="display:inline-block; width:110px;" title="Anmeldedatum"><b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b></span>';
 
 		// Vor- und Nachname
+		$temp .= '<span style="display:inline-block; width:200px;" title="Anmeldename">';
 		if(isset($arrRow['state']))
 		{
 			if($arrRow['state'] == 0) $temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
@@ -428,13 +437,24 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		{
 			$temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
 		}
+		$temp .= '</span>';
 		
 		// Zuordnung
+		$temp .= '<span style="display:inline-block;" title="Zugeordnet">Zugeordnet:';
 		if($arrRow['spielerId'])
 		{
-			$temp .= ' (zugeordnet: '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].')';
+			$temp .= ' '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'];
+			if($spieler[$arrRow['spielerId']]['sepaNenngeld'])
+			{
+				$temp .= ', (SEPA-Mandat: Ja)';
+			}
+			else
+			{
+				$temp .= ', (SEPA-Mandat: Nein)';
+			}
 		}
-		else $temp .= ' (nicht zugeordnet)';
+		else $temp .= ' -';
+		$temp .= '</span>';
 
 		$temp .= '</div>';
 		return $temp;

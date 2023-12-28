@@ -1,0 +1,81 @@
+<div id="tl_buttons">
+	<a href="<?= $this->href ?>" class="header_back" title="<?= $this->title ?>" accesskey="b" onclick="Backend.getScrollOffset()"><?= $this->button ?></a>
+</div>
+<div class="tl_listing_container">
+	<h2 style="margin-bottom:10px;">Aktuelle Anmeldung</h2>
+	<div class="tl_header">
+		<table class="tl_header_table fernschach_kopf" width="100%">
+			<tbody>
+			<tr>
+				<th colspan="2" width="33%"><h2>Meldung</h2></th>
+				<th colspan="2" width="33%"><h2>Turnier</h2></th>
+				<th colspan="2" width="33%"><h2>Spieler</h2></th>
+			</tr>
+			<tr>
+				<td><span class="tl_label">Name:</span></td>
+				<td><?= $this->Meldung->nachname ?>, <?= $this->Meldung->vorname ?></td>
+				<td><span class="tl_label">Name:</span></td>
+				<td><?= $this->Turnier->title ?></td>
+				<td><span class="tl_label">Name:</span></td>
+				<td><?= $this->Spieler->nachname ?>, <?= $this->Spieler->vorname ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label">BdF-Nummer:</span></td>
+				<td><?= $this->Spieler->memberId ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label">SEPA Nenngeld:</span></td>
+				<td><?= $this->Spieler->sepaNenngeld ? 'Ja' : 'Nein' ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label">SEPA Beitrag:</span></td>
+				<td><?= $this->Spieler->sepaBeitrag ? 'Ja' : 'Nein' ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+				<td><span class="tl_label">Kontostand:</span></td>
+				<td><?= $this->Saldo ?></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="tl_listing">
+		<h2 style="margin-bottom:3px;">Alle bisherigen Anmeldungen des Spielers</h2><p class="tl_help tl_tip" style="margin-bottom:10px;">Die aktuelle Anmeldung wird hervorgehoben.</p>
+		<table class="tl_listing">
+			<tbody>
+			<tr>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">#</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Datum</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Typ</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Turnier</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist"></th>
+			</tr>
+			<?php foreach($this->Turniere as $item): ?>
+			<tr>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['nummer'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= date('d.m.Y H:i', $item['datum']) ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['typ'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['turnier'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['link'] ?></td>
+			</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+</div>

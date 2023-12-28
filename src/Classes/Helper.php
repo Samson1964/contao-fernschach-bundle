@@ -604,9 +604,10 @@ class Helper extends \Backend
 				{
 					$spieler[$objSpieler->id] = array
 					(
-						'vorname'  => $objSpieler->vorname,
-						'nachname' => $objSpieler->nachname,
-						'memberId' => $objSpieler->memberId,
+						'vorname'      => $objSpieler->vorname,
+						'nachname'     => $objSpieler->nachname,
+						'memberId'     => $objSpieler->memberId,
+						'sepaNenngeld' => $objSpieler->sepaNenngeld,
 					);
 				}
 			}
@@ -638,7 +639,7 @@ class Helper extends \Backend
 	 * @param
 	 * @return    object
 	 */
-	public function getSpielerdatensatz($id = false, $member = false)
+	public static function getSpielerdatensatz($id = false, $member = false)
 	{
 		if($id)
 		{
@@ -701,6 +702,80 @@ class Helper extends \Backend
 			return $objTurnier;
 		}
 		return false;
+	}
+
+	/**
+	 * Sucht für eine Spieler-ID alle Anmeldungen und Bewerbungen und gibt diese absteigend sortiert nach Meldedatum zurück
+	 * @param
+	 * @return    object
+	 */
+	public static function getAnmeldungenBewerbungen($id)
+	{
+		// Link-Prefixe generieren, ab C4 ist das ein symbolischer Link zu "contao"
+		if(version_compare(VERSION, '4.0', '>='))
+		{
+			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
+			$imageEdit = \Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
+		}
+		else
+		{
+			$linkprefix = 'contao/main.php';
+			$imageEdit = \Image::getHtml('edit.gif', 'Bewerbung des Mitglieds bearbeiten');
+		}
+
+		$objAnmeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
+		                                          ->execute($id);
+		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
+		                                          ->execute($id);
+
+		// Datensätze zusammenfassen
+		$records = array();
+		if($objAnmeldungen->numRows)
+		{
+			while($objAnmeldungen->next())
+			{
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$records[] = array
+				(
+					'typ'        => 'Anmeldung',
+					'datum'      => $objAnmeldungen->meldungDatum,
+					'turnier'    => $objTurnier ? $objTurnier->title : '',
+					'status'     => 0,
+					'id'         => $objAnmeldungen->id,
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+				);
+			}
+		}
+		if($objBewerbungen->numRows)
+		{
+			while($objBewerbungen->next())
+			{
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$records[] = array
+				(
+					'typ'        => 'Bewerbung',
+					'datum'      => $objBewerbungen->applicationDate,
+					'turnier'    => $objTurnier ? $objTurnier->title : '',
+					'status'     => 0,
+					'id'         => $objBewerbungen->id,
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+				);
+			}
+		}
+
+		// Liste sortieren
+		if($records) $records = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($records, array('datum' => SORT_DESC));
+
+		// Laufende Nummer hinzufügen
+		$max = count($records);
+		$akt = $max;
+		for($x = 0; $x < $max; $x++)
+		{
+			$records[$x]['nummer'] = $akt;
+			$akt--;
+		}
+		
+		return $records;
 	}
 
 }

@@ -4,6 +4,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['mainTitle'] = 'Turniere
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['tstamp'] = array('Zeistempel', 'Bearbeitungsdatum');
+
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['hinweis_legend'] = 'Wichtiger Hinweis';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['nenngeldInfo'] = array('', 'Beim Speichern dieser Meldung werden automatisch Buchungsdatensätze erzeugt und verwaltet, wenn ein Spieler zugeordnet oder eine Mitgliedsnummer eingetragen wurde:<br><br><b>[1] Sollbuchung</b>: In-Rechnung-Stellung des Nenngeldes mit optionaler Kategorie Guthaben.<br><b>[2] Habenbuchung (optional)</b>: Wenn ein Überweisungsdatum eingetragen wurde.');
 
@@ -49,3 +51,4 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['copy'] = array('Meldung
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['delete'] = array('Meldung löschen', 'Meldung %s löschen');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['toggle'] = array('Meldung aktivieren/deaktivieren', 'Meldung %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['show'] = array('Meldungsdetails anzeigen', 'Details der Meldung %s anzeigen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['tournaments'] = array('Turnieranmeldungen anzeigen', 'Turnieranmeldungen des gemeldeten Spielers %s anzeigen');

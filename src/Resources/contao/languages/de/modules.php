@@ -18,6 +18,7 @@ $GLOBALS['TL_LANG']['MOD']['fernschach-mitgliederstatistik'] = array('Mitglieder
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere'] = array('Turniere (Alpha-Version)', 'Turniere verwalten (Alpha-Version: nur bedingt einsetzbar)');
 $GLOBALS['TL_LANG']['MOD']['fernschach-konten'] = array('Konten (Dev-Version)', 'Konten verwalten (Development-Version: noch nicht einsetzbar, da in der Entwicklung)');
 $GLOBALS['TL_LANG']['MOD']['fernschach-dokumentation'] = array('Dokumentation', 'Dokumentation der Fernschach-Verwaltung');
+$GLOBALS['TL_LANG']['MOD']['fernschach-turniere-spieler'] = array('Anmeldungen eines Spielers', 'Anmeldungen eines Spielers');
 
 /**
  * Frontend-Module
