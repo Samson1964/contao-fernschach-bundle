@@ -66,6 +66,10 @@ class ZeigeTurniere extends \BackendModule
 				$saldo .= $wert.' €';
 				$saldo .= '<span>';
 			}
+
+			// Spieler verlinken
+			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
+			$spielerlink = ' <a style="color:blue;" href="'.$linkprefix.'?do=fernschach-spieler&amp;act=edit&amp;id='.$objSpieler->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.' " onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Spieler bearbeiten\',\'url\':this.href});return false">'.$objSpieler->nachname.', '.$objSpieler->vorname.'</a>';
 			
 			// Template füllen
 			$this->Template->href = $this->getReferer(true);
@@ -74,6 +78,7 @@ class ZeigeTurniere extends \BackendModule
 			$this->Template->Meldung = $objMeldung;
 			$this->Template->Turnier = $objTurnier;
 			$this->Template->Spieler = $objSpieler;
+			$this->Template->Spielerlink = $spielerlink;
 			$this->Template->Turniere = $anmeldungen_bewerbungen;
 			$this->Template->Saldo = $saldo;
 		}

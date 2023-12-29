@@ -88,6 +88,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'icon'                => 'edit.svg',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateEditButton')
 			),
+			'titel_normen' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['titel_normen'],
+				'href'                => 'table=tl_fernschach_spieler_titel',
+				'icon'                => 'bundles/contaofernschach/images/titel.png',
+			),
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['copy'],
@@ -123,7 +129,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 						array('value' => '1', 'icon' => 'visible.svg'),
 					),
 				),
-				//'button_callback'     => array('tl_fernschach_spieler', 'generateToggleButton')
 			),
 			'show' => array
 			(

@@ -518,7 +518,7 @@ class tl_fernschach_spieler_konto extends \Backend
 		//if($arrRow['resetRecord']) $temp .= '<img title="Diese Saldoreset-Buchung wurde global festgelegt." src="bundles/contaofernschach/images/resetGlobal.svg" width="12" align="middle"> ';
 		//elseif($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="12" align="middle"> ';
 		$temp .= self::getEuro($arrRow['betrag'], $arrRow['typ']).'</span>';
-		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
+		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.@$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
 		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';
 		if($arrRow['turnier'])
 		{

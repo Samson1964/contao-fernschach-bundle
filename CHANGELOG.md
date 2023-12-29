@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.17.1 (2023-12-29)
+
+* Fix: Warning: Undefined array key "" in dca/tl_fernschach_spieler_konto.php (line 521) -> Sprachvariable mit @ als Prefix, um Warnung zu unterdrücken
+* Add: Turniere -> Anmeldungen -> Spielername mit Popup Bearbeitung Spieler verlinkt
+* Add: tl_fernschach_spieler_titel -> um die Titel aus dem normalen Spielerdatensatz auszulagern
+
 ## Version 0.17.0 (2023-12-28)
 
 * Change: tl_fernschach_spieler.fertig war noch nicht komplett deaktiviert

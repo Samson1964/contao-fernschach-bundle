@@ -438,12 +438,15 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
 		}
 		$temp .= '</span>';
+
+		// Verlinkung des zugeordneten Spielers vorbereiten
+		$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
 		
 		// Zuordnung
 		$temp .= '<span style="display:inline-block;" title="Zugeordnet">Zugeordnet:';
 		if($arrRow['spielerId'])
 		{
-			$temp .= ' '.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'];
+			$temp .= ' <a style="color:blue;" href="'.$linkprefix.'?do=fernschach-spieler&amp;act=edit&amp;id='.$arrRow['spielerId'].'&amp;popup=1&amp;rt='.REQUEST_TOKEN.' " onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Spieler bearbeiten\',\'url\':this.href});return false">'.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].'</a>';
 			if($spieler[$arrRow['spielerId']]['sepaNenngeld'])
 			{
 				$temp .= ', (SEPA-Mandat: Ja)';

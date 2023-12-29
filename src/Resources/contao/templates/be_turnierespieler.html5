@@ -17,7 +17,7 @@
 				<td><span class="tl_label">Name:</span></td>
 				<td><?= $this->Turnier->title ?></td>
 				<td><span class="tl_label">Name:</span></td>
-				<td><?= $this->Spieler->nachname ?>, <?= $this->Spieler->vorname ?></td>
+				<td><?= $this->Spielerlink ?></td>
 			</tr>
 			<tr>
 				<td><span class="tl_label"></span></td>
