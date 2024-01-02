@@ -186,29 +186,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'__selector__'                => array('death', 'fgm_title', 'sim_title', 'fim_title', 'ccm_title', 'lgm_title', 'cce_title', 'lim_title', 'gm_title', 'im_title', 'wgm_title', 'fm_title', 'wim_title', 'cm_title', 'wfm_title', 'wcm_title', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},fgm_title,sim_title,fim_title,ccm_title,lgm_title,cce_title,lim_title,titelinfo;{fide_legend:hide},gm_title,im_title,wgm_title,fm_title,wim_title,cm_title,wfm_title,wcm_title;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
+		'__selector__'                => array('death', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Subpalettes
 	'subpalettes' => array
 	(
 		'death'                       => 'deathday,deathplace',
-		'fgm_title'                   => 'fgm_date',
-		'sim_title'                   => 'sim_date',
-		'fim_title'                   => 'fim_date',
-		'ccm_title'                   => 'ccm_date',
-		'lgm_title'                   => 'lgm_date',
-		'cce_title'                   => 'cce_date',
-		'lim_title'                   => 'lim_date',
-		'gm_title'                    => 'gm_date',
-		'im_title'                    => 'im_date',
-		'wgm_title'                   => 'wgm_date',
-		'fm_title'                    => 'fm_date',
-		'wim_title'                   => 'wim_date',
-		'cm_title'                    => 'cm_date',
-		'wfm_title'                   => 'wfm_date',
-		'wcm_title'                   => 'wcm_date',
 		'honor_25'                    => 'honor_25_date',
 		'honor_40'                    => 'honor_40_date',
 		'honor_50'                    => 'honor_50_date',
@@ -848,591 +833,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'tl_class'            => 'w50',
 			),
 			'sql'                     => "varchar(20) NOT NULL default ''"
-		),
-		'fgm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'fgm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'sim_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sim_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'sim_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sim_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'fim_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fim_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'fim_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fim_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'ccm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ccm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'ccm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ccm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'lgm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lgm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'lgm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lgm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'cce_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'cce_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'lim_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => true,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'lim_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'gm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'gm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'im_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['im_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'im_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['im_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'wgm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wgm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'wgm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wgm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'fm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'fm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'wim_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wim_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'wim_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wim_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'cm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'cm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'wfm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wfm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'wfm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wfm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'wcm_title' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wcm_title'],
-			'inputType'               => 'checkbox',
-			'exclude'                 => true,
-			'default'                 => '',
-			'filter'                  => false,
-			'eval'                    => array
-			(
-				'submitOnChange'      => true,
-				'tl_class'            => 'w50 clr',
-				'isBoolean'           => true
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'wcm_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wcm_date'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'sorting'                 => false,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50 clr',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
 		),
 		'titelinfo' => array
 		(
@@ -2213,6 +1613,17 @@ class tl_fernschach_spieler extends \Backend
 					'93'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus7'],
 					'92'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus8'],
 					'91'  => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus9'],
+					'201' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearNext'],
+					'200' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearThis'],
+					'199' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus1'],
+					'198' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus2'],
+					'197' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus3'],
+					'196' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus4'],
+					'195' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus5'],
+					'194' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus6'],
+					'193' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus7'],
+					'192' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus8'],
+					'191' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus9'],
 				)
 			),
 		);
@@ -2339,6 +1750,32 @@ class tl_fernschach_spieler extends \Backend
 						{
 							// Ende einer Mitgliedschaft suchen (memberships)
 							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($objPlayers->memberships, $datum);
+							if($found) $arrPlayers[] = $objPlayers->id;
+						}
+					}
+					break;
+
+				case '201': // Nicht Mitglied nach 31.12. nächstes Jahr
+				case '200': // Nicht Mitglied nach 31.12. dieses Jahr
+				case '199': // Nicht Mitglied nach 31.12. letztes Jahr
+				case '198': // Nicht Mitglied nach 31.12. minus 2 Jahre
+				case '197': // Nicht Mitglied nach 31.12. minus 3 Jahre
+				case '196': // Nicht Mitglied nach 31.12. minus 4 Jahre
+				case '195': // Nicht Mitglied nach 31.12. minus 5 Jahre
+				case '194': // Nicht Mitglied nach 31.12. minus 6 Jahre
+				case '193': // Nicht Mitglied nach 31.12. minus 7 Jahre
+				case '192': // Nicht Mitglied nach 31.12. minus 8 Jahre
+				case '191': // Nicht Mitglied nach 31.12. minus 9 Jahre
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
+					$arrPlayers = array();
+					if($objPlayers->numRows)
+					{
+						$datum = (date('Y') + $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 200).'1231';
+						while($objPlayers->next())
+						{
+							// Ende einer Mitgliedschaft suchen (memberships)
+							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchNoMembership($objPlayers->memberships, $datum);
 							if($found) $arrPlayers[] = $objPlayers->id;
 						}
 					}

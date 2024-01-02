@@ -324,6 +324,22 @@ class Export extends \Backend
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchMembership($records->memberships, $datum);
 						break;
 
+					case '201': // Nicht Mitglied nach dem 31.12. nächstes Jahr
+					case '200': // Nicht Mitglied nach dem 31.12. dieses Jahr
+					case '199': // Nicht Mitglied nach dem 31.12. letztes Jahr
+					case '198': // Nicht Mitglied nach dem 31.12. minus 2 Jahre
+					case '197': // Nicht Mitglied nach dem 31.12. minus 3 Jahre
+					case '196': // Nicht Mitglied nach dem 31.12. minus 4 Jahre
+					case '195': // Nicht Mitglied nach dem 31.12. minus 5 Jahre
+					case '194': // Nicht Mitglied nach dem 31.12. minus 6 Jahre
+					case '193': // Nicht Mitglied nach dem 31.12. minus 7 Jahre
+					case '192': // Nicht Mitglied nach dem 31.12. minus 8 Jahre
+					case '191': // Nicht Mitglied nach dem 31.12. minus 9 Jahre
+						// Mitgliedsende prüfen (memberships)
+						$datum = (date('Y') + $filter - 200).'1231';
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchNoMembership($records->memberships, $datum);
+						break;
+
 					default:
 				}
 				if($exportieren)

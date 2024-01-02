@@ -103,7 +103,7 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public function searchMembership($value, $datum)
+	public static function searchMembership($value, $datum)
 	{
 		$heute = date('Ymd');
 		$mitgliedschaften = unserialize($value); // String umwandeln
@@ -123,6 +123,47 @@ class Helper extends \Backend
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Funktion searchNoMembership
+	 * ===========================
+	 * Sucht in den Mitgliedschaften nach der letzten Mitgliedschaft
+	 *
+	 * @param (ser)array $value     Serialisiertes Array mit den Mitgliedschaften
+	 * @param integer    $datum     Datum des gesuchten Mitgliedsendes
+	 *
+	 * @return boolean   true = Letzte Mitgliedschaft endet am Datum / false = Nach dem Datum gibt es noch Mitgliedschaften
+	 */
+	public static function searchNoMembership($value, $datum)
+	{
+		$heute = date('Ymd');
+		$from = 0; // Von-Datum speichern
+		$to = 0; // Bis-Datum speichern
+		$datum_gefunden = false; // Speichert true, wenn das gesuchte $datum gefunden wurde
+
+		$mitgliedschaften = unserialize($value); // String umwandeln
+		if(is_array($mitgliedschaften))
+		{
+			foreach($mitgliedschaften as $mitgliedschaft)
+			{
+				if($mitgliedschaft['from'] > $from) $from = $mitgliedschaft['from'];
+				if($mitgliedschaft['to'] > $to) $to = $mitgliedschaft['to'];
+				if($mitgliedschaft['to'] == $datum) $datum_gefunden = true;
+			}
+		}
+		
+		// Suchergebnis auswerten
+		if($datum_gefunden)
+		{
+			if($from > $datum) return false; // Mitgliedschaft nach dem Datum gefunden
+			else return true; // Keine Mitgliedschaft nach dem Datum
+		}
+		else
+		{
+			// Datum paßt nicht
+			return false;
+		}
 	}
 
 	/**

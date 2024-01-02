@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.17.2 (2024-01-02)
+
+* Delete: tl_fernschach_spieler -> Titelfelder entfernt (GM, IM usw.)
+* Add: tl_fernschach_spieler -> neue Spezialfilter als Ergänzung zu "Mitgliedsende TT.MM.JJJJ": "Nicht Mitglied nach TT.MM.JJJJ"
+* Add: Export mit dem neuen Spezialfilter ergänzt
+
 ## Version 0.17.1 (2023-12-29)
 
 * Fix: Warning: Undefined array key "" in dca/tl_fernschach_spieler_konto.php (line 521) -> Sprachvariable mit @ als Prefix, um Warnung zu unterdrücken

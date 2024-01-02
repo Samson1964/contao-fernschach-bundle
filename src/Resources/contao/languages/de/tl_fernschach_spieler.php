@@ -280,6 +280,18 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus7']
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus8'] = 'Mitgliedsende 31.12.'.($jahr-8);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus9'] = 'Mitgliedsende 31.12.'.($jahr-9);
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearNext'] = 'Nicht Mitglied nach 31.12.'.($jahr+1);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearThis'] = 'Nicht Mitglied nach 31.12.'.$jahr;
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus1'] = 'Nicht Mitglied nach 31.12.'.($jahr-1);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus2'] = 'Nicht Mitglied nach 31.12.'.($jahr-2);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus3'] = 'Nicht Mitglied nach 31.12.'.($jahr-3);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus4'] = 'Nicht Mitglied nach 31.12.'.($jahr-4);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus5'] = 'Nicht Mitglied nach 31.12.'.($jahr-5);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus6'] = 'Nicht Mitglied nach 31.12.'.($jahr-6);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus7'] = 'Nicht Mitglied nach 31.12.'.($jahr-7);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus8'] = 'Nicht Mitglied nach 31.12.'.($jahr-8);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus9'] = 'Nicht Mitglied nach 31.12.'.($jahr-9);
+
 /**
  * Sonstige Übersetzungen
  */
