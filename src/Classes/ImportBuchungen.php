@@ -107,7 +107,7 @@ class ImportBuchungen extends \Backend
 									case 'markierung':
 										$set['markierung'] = $spalte[$x]; break;
 									case 'reset':
-										$set['resetSaldo'] = $spalte[$x]; break;
+										$set['saldoReset'] = $spalte[$x]; break;
 									case 'datum':
 										$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
 									case 'verwendungszweck':

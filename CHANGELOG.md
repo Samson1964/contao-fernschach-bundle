@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.17.3 (2024-01-06)
+
+* Fix: Column not found: 1054 Unknown column 'resetSaldo' in 'field list' -> bei Buchungsimport mit Feld reset -> Feld heißt saldoReset
+
 ## Version 0.17.2 (2024-01-02)
 
 * Delete: tl_fernschach_spieler -> Titelfelder entfernt (GM, IM usw.)
