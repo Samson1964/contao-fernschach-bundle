@@ -11,7 +11,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	(
 		'dataContainer'               => 'Table',
 		'enableVersioning'            => true,
-		'ctable'                      => array('tl_fernschach_spieler_konto'),
+		'ctable'                      => array('tl_fernschach_spieler_konto_beitrag', 'tl_fernschach_spieler_konto_nenngeld'),
 		'onload_callback'             => array
 		(
 			array('tl_fernschach_spieler', 'checkPermission'),
@@ -44,7 +44,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','accountChecked'),
+			'fields'                  => array('memberId','nachname','vorname','birthday','plz','ort','saldo','accountChecked','beitrag','beitragChecked','nenngeld','nenngeldChecked'),
 			'showColumns'             => true,
 			'format'                  => '%s',
 			'label_callback'          => array('tl_fernschach_spieler', 'listMembers')
@@ -114,6 +114,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'],
 				'href'                => 'table=tl_fernschach_spieler_konto',
 				'icon'                => 'bundles/contaofernschach/images/euro.png',
+				'button_callback'     => array('tl_fernschach_spieler', 'generateKontoButton')
+			),
+			'beitragskonto' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragskonto'],
+				'href'                => 'table=tl_fernschach_spieler_konto_beitrag',
+				'icon'                => 'bundles/contaofernschach/images/beitrag.png',
+				'button_callback'     => array('tl_fernschach_spieler', 'generateKontoButton')
+			),
+			'nenngeldkonto' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldkonto'],
+				'href'                => 'table=tl_fernschach_spieler_konto_nenngeld',
+				'icon'                => 'bundles/contaofernschach/images/nenngeld.png',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateKontoButton')
 			),
 			'toggle' => array
@@ -221,13 +235,31 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'],
 		),
-		//'kontoChecked' => array
-		//(
-		//	'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'],
-		//),
+		'beitrag' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag'],
+		),
+		'nenngeld' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeld'],
+		),
 		'accountChecked' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'],
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'beitragChecked' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragChecked'],
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'nenngeldChecked' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'],
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
 			'sql'                     => "char(1) NOT NULL default ''"
@@ -1519,12 +1551,8 @@ class tl_fernschach_spieler extends \Backend
 			}
 		}
 
-		// Buchungen des Spielers prüfen
-		//\Schachbulle\ContaoFernschachBundle\Classes\Helper::checkResetbuchungen($row['id']);
-
-		// Kontostand ausgeben
+		// Kontostand (tl_fernschach_spieler_konto, was bald gelöscht wird) ausgeben
 		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id']);
-		//print_r($salden);
 		if($salden)
 		{
 			$value = end($salden);
@@ -1532,27 +1560,89 @@ class tl_fernschach_spieler extends \Backend
 			if($value > 0)
 			{
 				$html = '<span style="color:green;">';
-				$html .= $wert.' €';
+				$html .= $wert.'&nbsp;€';
 				$html .= '<span>';
 			}
 			elseif($value < 0)
 			{
 				$html = '<span style="color:red;">';
-				$html .= $wert.' €';
+				$html .= $wert.'&nbsp;€';
 				$html .= '<span>';
 			}
 			else
 			{
-				$html = $wert.' €';
+				$html = $wert.'&nbsp;€';
 			}
 			$args[6] = $html;
 		}
-		else $args[6] = '&nbsp;';
+		else $args[6] = '0,00&nbsp;€';
 
 		// Kontoprüfung ausgeben
 		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
 		if($checked) $args[7] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
 		else $args[7] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
+
+		// Kontostand (tl_fernschach_spieler_konto_beitrag) ausgeben
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], 'beitrag');
+		if($salden)
+		{
+			$value = end($salden);
+			$wert = str_replace('.', ',', sprintf('%0.2f', $value));
+			if($value > 0)
+			{
+				$html = '<span style="color:green;">';
+				$html .= $wert.'&nbsp;€';
+				$html .= '<span>';
+			}
+			elseif($value < 0)
+			{
+				$html = '<span style="color:red;">';
+				$html .= $wert.'&nbsp;€';
+				$html .= '<span>';
+			}
+			else
+			{
+				$html = $wert.'&nbsp;€';
+			}
+			$args[8] = $html;
+		}
+		else $args[8] = '0,00&nbsp;€';
+
+		// Kontoprüfung ausgeben
+		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'beitrag');
+		if($checked) $args[9] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
+		else $args[9] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
+
+		// Kontostand (tl_fernschach_spieler_konto_nenngeld) ausgeben
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], 'nenngeld');
+		if($salden)
+		{
+			$value = end($salden);
+			$wert = str_replace('.', ',', sprintf('%0.2f', $value));
+			if($value > 0)
+			{
+				$html = '<span style="color:green;">';
+				$html .= $wert.'&nbsp;€';
+				$html .= '<span>';
+			}
+			elseif($value < 0)
+			{
+				$html = '<span style="color:red;">';
+				$html .= $wert.'&nbsp;€';
+				$html .= '<span>';
+			}
+			else
+			{
+				$html = $wert.'&nbsp;€';
+			}
+			$args[10] = $html;
+		}
+		else $args[10] = '0,00&nbsp;€';
+
+		// Kontoprüfung ausgeben
+		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'nenngeld');
+		if($checked) $args[11] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
+		else $args[11] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Zugriffsrechte auf Felder prüfen
 		if(!$this->User->hasAccess('tl_fernschach_spieler::memberId', 'alexf')) $args[0] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
@@ -1563,6 +1653,10 @@ class tl_fernschach_spieler extends \Backend
 		if(!$this->User->hasAccess('tl_fernschach_spieler::ort', 'alexf')) $args[5] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 		if(!$this->User->hasAccess('saldo', 'fernschach_spieler')) $args[6] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 		if(!$this->User->hasAccess('accountChecked', 'fernschach_spieler')) $args[7] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('saldo', 'fernschach_spieler')) $args[8] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('accountChecked', 'fernschach_spieler')) $args[9] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('saldo', 'fernschach_spieler')) $args[10] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
+		if(!$this->User->hasAccess('accountChecked', 'fernschach_spieler')) $args[11] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 
 		// Zugriffsrechte auf weitere Sortierfelder prüfen
 		$session = \Session::getInstance()->getData();

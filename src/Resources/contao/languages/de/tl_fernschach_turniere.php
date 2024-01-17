@@ -13,10 +13,14 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Meldedatum', 'Meldedatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ des Turniers. Wichtig: Nur Einladungsturniere werden vom Frontend-Modul Zusagen berücksichtigt!');
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'Nenngeld in Euro');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld_legend'] = 'Nenngeld';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldView'] = array('Nenngeld übergeordnet', 'Nenngeld im übergeordneten Turnier festgelegt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldActive'] = array('Nenngeld festlegen', 'Nenngeld für dieses Turnier festlegen. Wird nichts festgelegt, gilt das Nenngeld des übergeordneten Turniers.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld'] = array('Nenngeld', 'Nenngeld in Euro');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['meldung_legend'] = 'Online-Anmeldung';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['onlineAnmeldung'] = array('Online-Anmeldung', 'Turnier im Online-Meldeformular anzeigen.');

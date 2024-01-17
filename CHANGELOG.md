@@ -1,5 +1,18 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.0 (2024-01-17)
+
+* Add: tl_fernschach_spieler_konto_beitrag -> enthält die Beitragsgelder aus ehemaliger tl_fernschach_spieler_konto (kategorie = b)
+* Add: tl_fernschach_spieler_konto_nenngeld -> enthält die Nenngelder/Guthaben aus ehemaliger tl_fernschach_spieler_konto (kategorie = s/g)
+* Change: Helper-Funktion getSaldo umgebaut auf 2. Parameter für die Kontotabelle
+* Change: Übersetzungen tl_fernschach_spieler verkürzt/überarbeitet
+* Fix: Using $this when not in object context beim Aufruf der checkKonto-Funktion der Helper-Klasse -> $this->createNewVersion ersetzen nicht möglich, da "Non-static method Contao\Controller::createNewVersion() cannot be called statically" -> Zeile auskommentiert
+* Change: tl_fernschach_turniere -> Nenngeld-Feld verfeinert miit true/false 
+* Add: Klasse Turnier für Nenngeldabfrage u.a.
+* Add: tl_fernschach_turniere -> bei Typ Ordner kann ein Nenngeld angegeben werden
+* Fix: Warning: Undefined array key "breadcrumb" bei Auswahl einer Ordnerstruktur bei Turnieren
+* Add: tl_fernschach_turniere.nenngeldView für die Anzeige des Nenngeldes aus übergeordnetem Turnier
+ 
 ## Version 0.17.3 (2024-01-06)
 
 * Fix: Column not found: 1054 Unknown column 'resetSaldo' in 'field list' -> bei Buchungsimport mit Feld reset -> Feld heißt saldoReset

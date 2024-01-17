@@ -197,13 +197,16 @@ class Helper extends \Backend
 	}
 
 	/**
-	 * Saldorechner
+	 * function getSaldo
+	 * =================================================================
+	 * Saldorechner für tl_fernschach_spieler_konto, tl_fernschach_spieler_konto_beitrag und tl_fernschach_spieler_konto_nenngeld
 	 *
-	 * @param integer $value
+	 * @param integer $pid        ID des Spielers
+	 * @param string  $konto      beitrag, nenngeld oder leer
 	 *
-	 * @return string
+	 * @return array              Salden nach jeder Buchung nach Datum absteigend sortiert
 	 */
-	public static function getSaldo($pid)
+	public static function getSaldo($pid, $konto = '')
 	{
 		$salden = array();
 		$session = \Contao\Session::getInstance()->getData(); // Sitzung laden
@@ -212,42 +215,57 @@ class Helper extends \Backend
 		// Filter laden
 		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']))
 		{
-			$sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']."'";
+			if($konto)
+			{
+				$sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_'.$konto.'_'.$pid]['typ']."'";
+			}
+			else $sql .= " AND typ = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']."'";
 		}
 		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']))
 		{
-			$sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']."'";
+			if($konto)
+			{
+				$sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_'.$konto.'_'.$pid]['art']."'";
+			}
+			else $sql .= " AND art = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['art']."'";
 		}
 		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']))
 		{
-			$sql .= " AND kategorie = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']."'";
+			if(!$konto)
+			{
+				$sql .= " AND kategorie = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['kategorie']."'";
+			}
 		}
 		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']))
 		{
-			$sql .= " AND markieren = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']."'";
+			if($konto)
+			{
+				$sql .= " AND markieren = '".$session['filter']['tl_fernschach_spieler_konto_'.$konto.'_'.$pid]['markieren']."'";
+			}
+			else $sql .= " AND markieren = '".$session['filter']['tl_fernschach_spieler_konto_'.$pid]['markieren']."'";
 		}
 
-		//echo "<pre>";
-		// Filter laden
-
-		//print_r($session['filter']['tl_fernschach_spieler_konto_'.$pid]); // typ =>, art =>
-		//print_r($session['search']['tl_fernschach_spieler_konto']); // field => name, value =>
-		//print_r($session);
-		//echo "</pre>";
-		//echo $sql;
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
-		                                        ->execute($pid, 1);
-
+		// Buchungen des Spielers laden
+		if($konto)
+		{
+			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
+			                                        ->execute($pid, 1);
+		}
+		else
+		{
+			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
+			                                        ->execute($pid, 1);
+		}
+		
+		// Buchungen auswerten
 		$saldo = 0;
 		if($objBuchungen->numRows)
 		{
 			while($objBuchungen->next())
 			{
-				//echo "Betrag=".$objBuchungen->betrag." Saldo davor=".$saldo;
 				if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
 				{
 					$saldo = 0; // Saldo soll hier resettet werden
-					//echo " Saldo nach Reset=".$saldo;
 				}
 				switch($objBuchungen->typ)
 				{
@@ -259,20 +277,15 @@ class Helper extends \Backend
 						break;
 					default:
 				}
-				//echo " Saldo danach=".$saldo."<br>";
 				// Saldo dem Salden-Array zuordnen
 				$salden[$objBuchungen->id] = $saldo;
 			}
 		}
 
-		//print_r($salden);
 		return $salden;
-		// Saldo formatieren
-		//echo $saldo;
-		//if((float)$saldo >= 0) return '<span style="color:green;">'.self::getEuro($saldo).'</span>';
-		//else return '<span style="color:red;">'.self::getEuro($saldo).'</span>';
 
 	}
+
 
 	/**
 	 * Set the timestamp to 00:00:00 (see #26)
@@ -288,18 +301,28 @@ class Helper extends \Backend
 	}
 
 	/**
-	 * checkKonto
+	 * function checkKonto
+	 * =================================================================
 	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück 
 	 *
-	 * @param integer $value
+	 * @param integer $pid        ID des Spielers
+	 * @param string  $konto      beitrag, nenngeld oder leer
 	 *
-	 * @return string
+	 * @return boolean            true/false
 	 */
-	public static function checkKonto($pid)
+	public static function checkKonto($pid, $konto = '')
 	{
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
-		                                        ->execute($pid, 1, 1680300000, 1);
-
+		if($konto)
+		{
+			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_".$konto." WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
+			                                        ->execute($pid, 1, 1680300000, 1);
+		}
+		else
+		{
+			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
+			                                        ->execute($pid, 1, 1680300000, 1);
+		}
+		
 		if($objBuchungen->numRows) $resetVorhanden = true;
 		else $resetVorhanden =  false;
 
@@ -309,7 +332,31 @@ class Helper extends \Backend
 
 		if($objBuchungen->numRows)
 		{
-			if($resetVorhanden != $objBuchungen->accountChecked)
+			if($konto == 'beitrag' && ($resetVorhanden != $objBuchungen->beitragChecked))
+			{
+				// Status paßt nicht zueinander, jetzt aktualisieren
+				$set = array
+				(
+					'beitragChecked'   => $resetVorhanden,
+				);
+				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				                                     ->set($set)
+				                                     ->execute($pid);
+				//$this->createNewVersion('tl_fernschach_spieler', $pid);
+			}
+			elseif($konto == 'nenngeld' && ($resetVorhanden != $objBuchungen->nenngeldChecked))
+			{
+				// Status paßt nicht zueinander, jetzt aktualisieren
+				$set = array
+				(
+					'nenngeldChecked'   => $resetVorhanden,
+				);
+				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				                                     ->set($set)
+				                                     ->execute($pid);
+				//$this->createNewVersion('tl_fernschach_spieler', $pid);
+			}
+			elseif($resetVorhanden != $objBuchungen->accountChecked)
 			{
 				// Status paßt nicht zueinander, jetzt aktualisieren
 				$set = array
@@ -319,7 +366,7 @@ class Helper extends \Backend
 				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($pid);
-				$this->createNewVersion('tl_fernschach_spieler', $pid);
+				//\Controller::createNewVersion('tl_fernschach_spieler', $pid);
 			}
 		}
 		

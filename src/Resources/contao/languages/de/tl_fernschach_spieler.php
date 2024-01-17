@@ -54,8 +54,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email1'] = array('E-Mail 1', 'Gebe
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['email2'] = array('E-Mail 2', 'Geben Sie hier die zweite E-Mail-Adresse ein.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships_legend'] = 'Mitgliedschaften';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberId'] = array('Mitgliedsnummer national', 'Mitgliedsnummer national');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberInternationalId'] = array('Mitgliedsnummer international', 'Mitgliedsnummer international');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberId'] = array('BdF-Nr.', 'Mitgliedsnummer national');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberInternationalId'] = array('ICCF-Nr.', 'Mitgliedsnummer international');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'] = array('Streichung zum', 'Datum der durch den BdF bestimmten Streichung des Mitgliedes im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships'] = array('Aktuelle und frühere Mitgliedschaften', '');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
@@ -74,41 +74,6 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'] = array('Anmeldungen und Bewerbungen', 'Übersicht der Turnieranmeldungen und -bewerbungen absteigend sortiert nach Datum. Es werden max. die 30 letzten Datensätze angezeigt.');
-
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_title'] = array('GM', 'Spieler hat den GM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fgm_date'] = array('Datum', 'Verleihungsdatum des GM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sim_title'] = array('SIM', 'Spieler hat den SIM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sim_date'] = array('Datum', 'Verleihungsdatum des SIM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fim_title'] = array('IM', 'Spieler hat den IM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fim_date'] = array('Datum', 'Verleihungsdatum des IM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ccm_title'] = array('CCM', 'Spieler hat den CCM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ccm_date'] = array('Datum', 'Verleihungsdatum des CCM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lgm_title'] = array('LGM', 'Spieler hat den LGM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lgm_date'] = array('Datum', 'Verleihungsdatum des LGM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_title'] = array('CCE', 'Spieler hat den CCE-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cce_date'] = array('Datum', 'Verleihungsdatum des CCE-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_title'] = array('LIM', 'Spieler hat den LIM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['lim_date'] = array('Datum', 'Verleihungsdatum des LIM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['titelinfo'] = array('Titelinfo', 'Enthält die Inhalte der Felder titelhalter und iccftitel aus dem Stammdaten-Import. Für die interne Verwendung und spätere Zuordnung. Dieses Feld entfällt vielleicht in zukünftigen Versionen!');
-
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fide_legend'] = 'FIDE-Titel';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_title'] = array('GM', 'Spieler hat den GM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['gm_date'] = array('Datum', 'Verleihungsdatum des GM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['im_title'] = array('IM', 'Spieler hat den IM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['im_date'] = array('Datum', 'Verleihungsdatum des IM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wgm_title'] = array('WGM', 'Spieler hat den WGM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wgm_date'] = array('Datum', 'Verleihungsdatum des WGM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fm_title'] = array('FM', 'Spieler hat den FM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['fm_date'] = array('Datum', 'Verleihungsdatum des FM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wim_title'] = array('WIM', 'Spieler hat den WIM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wim_date'] = array('Datum', 'Verleihungsdatum des WIM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cm_title'] = array('CM', 'Spieler hat den CM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['cm_date'] = array('Datum', 'Verleihungsdatum des CM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wfm_title'] = array('WFM', 'Spieler hat den WFM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wfm_date'] = array('Datum', 'Verleihungsdatum des WFM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wcm_title'] = array('WCM', 'Spieler hat den WCM-Titel');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['wcm_date'] = array('Datum', 'Verleihungsdatum des WCM-Titels im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ. Bitte tragen Sie unten die entsprechende Norm ein!');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_legend'] = 'Titelnormen';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen'] = array('Vorhandene Normen', '');
@@ -162,8 +127,11 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Veröffentlic
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeitet', 'Der Spieler wurde fertig bearbeitet.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Saldo', 'Kontostand');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['kontoChecked'] = array('Konto geprüft', 'Konto geprüft');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'] = array('Konto geprüft', 'Konto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag'] = array('Beitrag', 'Kontostand');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeld'] = array('Nenngeld', 'Kontostand');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'] = array('Geprüft', 'Konto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragChecked'] = array('Geprüft', 'Beitragskonto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'] = array('Geprüft', 'Nenngeldkonto geprüft');
 
 /**
  * Buttons für Operationen
@@ -182,6 +150,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldIcon'] = array('SEPA-M
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['applications'] = array('Turniere bearbeiten', 'Bewerbungen und Zusagen für Turniere des Spielers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['konto'] = array('Buchungskonto bearbeiten', 'Buchungen (Zahlungsein- und ausgänge) des Spielers %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragskonto'] = array('Beitragskonto bearbeiten', 'Mitgliedsbeiträge (Zahlungsein- und ausgänge) des Spielers %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldkonto'] = array('Nenngeldkonto bearbeiten', 'Nenngelder (Zahlungsein- und ausgänge) des Spielers %s bearbeiten');
 
 /**
  * Buttons für globale Operationen

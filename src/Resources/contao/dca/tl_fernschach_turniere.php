@@ -152,10 +152,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type', 'bewerbungErlaubt'), 
+		'__selector__'                => array('type', 'bewerbungErlaubt', 'nenngeldActive'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
-		'category'                    => '{title_legend},title,type;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,nenngeld,art,artInfo,spielerMax;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},published',
+		'category'                    => '{title_legend},title,type;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{nenngeld_legend},nenngeldView,nenngeldActive;{publish_legend},published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,art,artInfo,spielerMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},published',
 		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},published',
 	), 
 
@@ -163,7 +163,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	'subpalettes' => array
 	(
 		'protected'                   => 'groups',
-		'bewerbungErlaubt'            => 'applications,applicationText'
+		'bewerbungErlaubt'            => 'applications,applicationText',
+		'nenngeldActive'              => 'nenngeld'
 	), 
 	
 	// Fields
@@ -278,6 +279,28 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'includeBlankOption'  => true
 			),
 			'sql'                     => "varchar(1) NOT NULL default ''"
+		),
+		// Information anzeigen, welches FE-Mitglied dem Spieler zugeordnet ist
+		'nenngeldView' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldView'],
+			'input_field_callback'    => array('tl_fernschach_turniere', 'getNenngeld'),
+			'exclude'                 => true
+		),
+		'nenngeldActive' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldActive'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => '1',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50', 
+				'isBoolean'           => true,
+				'submitOnChange'      => true
+			),
+			'sql'                     => "char(1) NOT NULL default '1'"
 		),
 		'nenngeld' => array
 		(
@@ -808,7 +831,7 @@ class tl_fernschach_turniere extends \Backend
 		// Insert breadcrumb menu
 		if($breadcrumb)
 		{
-			$GLOBALS['TL_DCA']['tl_fernschach_turniere']['list']['sorting']['breadcrumb'] .= '
+			@$GLOBALS['TL_DCA']['tl_fernschach_turniere']['list']['sorting']['breadcrumb'] .= '
 			<ul id="tl_breadcrumb">
 				<li>' . implode(' &gt; </li><li>', $breadcrumb) . '</li>
 			</ul>';
@@ -1142,6 +1165,45 @@ class tl_fernschach_turniere extends \Backend
 		{
 			// Spieler können bearbeitet werden
 			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> '; 
+		}
+
+	}
+
+	/**
+	 * Zugeordnetes Nenngeld anzeigen
+	 * @param DataContainer $dc
+	 *
+	 * @return string HTML-Code
+	 */
+	public function getNenngeld(DataContainer $dc)
+	{
+		if($dc->activeRecord->id)
+		{
+			$daten = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getNenngeld($dc->activeRecord->id);
+
+			if($daten && $daten['parent'])
+			{
+				return '
+				<div class="tl_listing_container list_view" id="tl_listing">
+					<table class="tl_listing">
+						<tbody>
+							<tr class="even click2edit toggle_select hover-row">
+								<td class="tl_file_list" width="50%">Nenngeld übergeordnet festgelegt:</td>
+								<td class="tl_file_list">'.$daten['amount'].' €</td>
+							</tr>
+							<tr class="even click2edit toggle_select hover-row">
+								<td class="tl_file_list" width="50%">im Turnier:</td>
+								<td class="tl_file_list">'.$daten['name'].'</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>';
+			}
+			else
+			{
+				return '';
+			}
+			
 		}
 
 	}

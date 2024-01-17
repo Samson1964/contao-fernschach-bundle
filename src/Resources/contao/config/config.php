@@ -23,6 +23,8 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		(
 			'tl_fernschach_spieler',
 			'tl_fernschach_spieler_konto',
+			'tl_fernschach_spieler_konto_beitrag',
+			'tl_fernschach_spieler_konto_nenngeld',
 			'tl_fernschach_spieler_titel',
 		),
 		'exportXLS'         => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
