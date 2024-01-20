@@ -1718,6 +1718,17 @@ class tl_fernschach_spieler extends \Backend
 					'193' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus7'],
 					'192' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus8'],
 					'191' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus9'],
+					'301' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearNext'],
+					'300' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearThis'],
+					'299' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus1'],
+					'298' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus2'],
+					'297' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus3'],
+					'296' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus4'],
+					'295' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus5'],
+					'294' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus6'],
+					'293' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus7'],
+					'292' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus8'],
+					'291' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus9'],
 				)
 			),
 		);
@@ -1870,6 +1881,32 @@ class tl_fernschach_spieler extends \Backend
 						{
 							// Ende einer Mitgliedschaft suchen (memberships)
 							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::searchNoMembership($objPlayers->memberships, $datum);
+							if($found) $arrPlayers[] = $objPlayers->id;
+						}
+					}
+					break;
+
+				case '301': // Mitgliedsbeginn nächstes Jahr
+				case '300': // Mitgliedsbeginn dieses Jahr
+				case '299': // Mitgliedsbeginn letztes Jahr
+				case '298': // Mitgliedsbeginn minus 2 Jahre
+				case '297': // Mitgliedsbeginn minus 3 Jahre
+				case '296': // Mitgliedsbeginn minus 4 Jahre
+				case '295': // Mitgliedsbeginn minus 5 Jahre
+				case '294': // Mitgliedsbeginn minus 6 Jahre
+				case '293': // Mitgliedsbeginn minus 7 Jahre
+				case '292': // Mitgliedsbeginn minus 8 Jahre
+				case '291': // Mitgliedsbeginn minus 9 Jahre
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
+					$arrPlayers = array();
+					if($objPlayers->numRows)
+					{
+						$jahr = (date('Y') + $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 300);
+						while($objPlayers->next())
+						{
+							// Beginn einer Mitgliedschaft suchen (memberships)
+							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::isMemberBegin($objPlayers->memberships, $jahr);
 							if($found) $arrPlayers[] = $objPlayers->id;
 						}
 					}

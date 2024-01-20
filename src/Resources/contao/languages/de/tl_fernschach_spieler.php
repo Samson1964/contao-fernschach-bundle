@@ -250,6 +250,18 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus7']
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus8'] = 'Mitgliedsende 31.12.'.($jahr-8);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearMinus9'] = 'Mitgliedsende 31.12.'.($jahr-9);
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearNext'] = 'Mitgliedsbeginn '.($jahr+1);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearThis'] = 'Mitgliedsbeginn '.$jahr;
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus1'] = 'Mitgliedsbeginn '.($jahr-1);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus2'] = 'Mitgliedsbeginn '.($jahr-2);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus3'] = 'Mitgliedsbeginn '.($jahr-3);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus4'] = 'Mitgliedsbeginn '.($jahr-4);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus5'] = 'Mitgliedsbeginn '.($jahr-5);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus6'] = 'Mitgliedsbeginn '.($jahr-6);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus7'] = 'Mitgliedsbeginn '.($jahr-7);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus8'] = 'Mitgliedsbeginn '.($jahr-8);
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus9'] = 'Mitgliedsbeginn '.($jahr-9);
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearNext'] = 'Nicht Mitglied nach 31.12.'.($jahr+1);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearThis'] = 'Nicht Mitglied nach 31.12.'.$jahr;
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus1'] = 'Nicht Mitglied nach 31.12.'.($jahr-1);

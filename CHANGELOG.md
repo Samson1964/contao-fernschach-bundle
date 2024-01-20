@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.1 (2024-01-20)
+
+* Add: Filter in tl_fernschach_spieler -> "Mitglieder neu in 2024", der Beitritte in 2024 wiedergibt (ega ob Neu- oder Wiedereintritt)
+* Add: Helper-Funktion isMember zur Ermittlung einer Mitgliedschaft an einem bestimmten Datum oder in einem bestimmten Jahr
+
 ## Version 0.18.0 (2024-01-17)
 
 * Add: tl_fernschach_spieler_konto_beitrag -> enthält die Beitragsgelder aus ehemaliger tl_fernschach_spieler_konto (kategorie = b)

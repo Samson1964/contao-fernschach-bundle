@@ -126,6 +126,35 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * Funktion isMemberBegin
+	 * ======================
+	 * Sucht in den Mitgliedschaften nach einem Mitgliedschaftsbeginn im übergebenen Jahr
+	 *
+	 * @param (ser)array $value     Serialisiertes Array mit den Mitgliedschaften
+	 * @param integer    $jahr      Jahr des gesuchten Mitgliedschaftsbeginn
+	 *
+	 * @return boolean   true = Mitgliedschaftsbeginn gefunden / false = kein Mitgliedschaftsbeginn gefunden
+	 */
+	public static function isMemberBegin($value, $jahr)
+	{
+		$mitgliedschaften = unserialize($value); // String umwandeln
+
+		// Mitgliedschaft in diesem Jahr suchen
+		if(is_array($mitgliedschaften))
+		{
+			foreach($mitgliedschaften as $mitgliedschaft)
+			{
+				if(substr($mitgliedschaft['from'],0,4) == $jahr)
+				{
+					// Jahr gefunden
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Funktion searchNoMembership
 	 * ===========================
 	 * Sucht in den Mitgliedschaften nach der letzten Mitgliedschaft
