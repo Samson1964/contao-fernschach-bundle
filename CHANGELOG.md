@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.2 (2024-01-27)
+
+* Change: Drei Filter mit Namen "Geprüft" -> geändert auf "Geprüft K", "Geprüft B", "Geprüft N" (Konto, Beitrag, Nenngeld)
+
 ## Version 0.18.1 (2024-01-20)
 
 * Add: Filter in tl_fernschach_spieler -> "Mitglieder neu in 2024", der Beitritte in 2024 wiedergibt (ega ob Neu- oder Wiedereintritt)

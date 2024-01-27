@@ -129,9 +129,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fertig'] = array('Fertig bearbeite
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'] = array('Saldo', 'Kontostand');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag'] = array('Beitrag', 'Kontostand');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeld'] = array('Nenngeld', 'Kontostand');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'] = array('Geprüft', 'Konto geprüft');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragChecked'] = array('Geprüft', 'Beitragskonto geprüft');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'] = array('Geprüft', 'Nenngeldkonto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'] = array('Geprüft&nbsp;K', 'Konto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragChecked'] = array('Geprüft&nbsp;B', 'Beitragskonto geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'] = array('Geprüft&nbsp;N', 'Nenngeldkonto geprüft');
 
 /**
  * Buttons für Operationen
