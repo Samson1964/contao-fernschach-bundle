@@ -1718,6 +1718,13 @@ class tl_fernschach_spieler extends \Backend
 					'193' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus7'],
 					'192' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus8'],
 					'191' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus9'],
+					'190' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus10'],
+					'189' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus11'],
+					'188' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus12'],
+					'187' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus13'],
+					'186' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus14'],
+					'185' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus15'],
+					'184' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus16'],
 					'301' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearNext'],
 					'300' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearThis'],
 					'299' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus1'],
@@ -1871,6 +1878,13 @@ class tl_fernschach_spieler extends \Backend
 				case '193': // Nicht Mitglied nach 31.12. minus 7 Jahre
 				case '192': // Nicht Mitglied nach 31.12. minus 8 Jahre
 				case '191': // Nicht Mitglied nach 31.12. minus 9 Jahre
+				case '190': // Nicht Mitglied nach 31.12. minus 10 Jahre
+				case '189': // Nicht Mitglied nach 31.12. minus 11 Jahre
+				case '188': // Nicht Mitglied nach 31.12. minus 12 Jahre
+				case '187': // Nicht Mitglied nach 31.12. minus 13 Jahre
+				case '186': // Nicht Mitglied nach 31.12. minus 14 Jahre
+				case '185': // Nicht Mitglied nach 31.12. minus 15 Jahre
+				case '184': // Nicht Mitglied nach 31.12. minus 16 Jahre
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
