@@ -201,7 +201,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,patron,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},checkBeitrag;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Subpalettes
@@ -634,6 +634,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'tl_class'            => 'w50',
 			),
 			'sql'                     => "varchar(20) NOT NULL default ''"
+		),
+		'patron' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['patron'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'streichung' => array
 		(
@@ -2145,18 +2159,21 @@ class tl_fernschach_spieler extends \Backend
 		{
 			$file = \FilesModel::findByUuid($dc->activeRecord->sepaNenngeldDatei);
 			// Vorschau anzeigen
-			if($file->extension == 'pdf')
+			if($file)
 			{
-				//$ausgabe .= self::PDFtoJPG($file->path);
+				if($file->extension == 'pdf')
+				{
+					//$ausgabe .= self::PDFtoJPG($file->path);
+				}
+				elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
+				{
+					$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
+					$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
+					$ausgabe .= '</a><br>';
+				}
+				// Link anzeigen
+				$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 			}
-			elseif($file->extension == 'jpg' || $file->extension == 'png' || $file->extension == 'gif')
-			{
-				$ausgabe .= '<a href="'.$file->path.'" target="_blank">';
-				$ausgabe .= '<img src="'.$file->path.'" style="max-width:800px;">';
-				$ausgabe .= '</a><br>';
-			}
-			// Link anzeigen
-			$ausgabe .= 'Download: <a href="'.$file->path.'" target="_blank">'.$file->name.'</a>';
 		}
 
 		$string = '
@@ -2264,7 +2281,7 @@ class tl_fernschach_spieler extends \Backend
 		{
 			while($objBewerbungen->next())
 			{
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objBewerbungen->pid);
 				$records[] = array
 				(
 					'typ'        => 'Bewerbung',

@@ -330,3 +330,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['stichtag'] = array('St
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['altersstruktur'] = array('Altersstruktur auswählen', 'Wählen Sie die Altersstruktur für die Mitgliederstatistik aus.');
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['aktiviert'] = array('Nur aktivierte Spieler', 'Statistik nur mit den aktivierten Spielern erstellen. Entfernen Sie das Häkchen, wenn Sie alle Spieler berücksichtigen möchten.');
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start'] = 'Export starten';
+
+$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'] = 'Spieler nach Excel exportieren';
+$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'] = array('Stichtag Saldo', 'Geben Sie den Stichtag für den Saldo ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'] = array('Export starten', 'Der Download des Exports erfolgt im Hintergrund. Klicken Sie danach auf den Zurück-Link.');

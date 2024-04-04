@@ -23,7 +23,7 @@ class Helper extends \Backend
 	public static function checkMembership($value, $heute = false)
 	{
 		if(!$heute) $heute = date('Ymd');
-		
+
 		$mitgliedschaften = unserialize($value); // String umwandeln
 		//print_r($mitgliedschaften);
 		$return = false;
@@ -73,8 +73,8 @@ class Helper extends \Backend
 	public static function getAlter($birthday, $datum = false)
 	{
 		if(!$datum) $datum = date('Ymd');
-		
-		try 
+
+		try
 		{
 			if($birthday)
 			{
@@ -181,7 +181,7 @@ class Helper extends \Backend
 				if($mitgliedschaft['to'] == $datum) $datum_gefunden = true;
 			}
 		}
-		
+
 		// Suchergebnis auswerten
 		if($datum_gefunden)
 		{
@@ -232,10 +232,11 @@ class Helper extends \Backend
 	 *
 	 * @param integer $pid        ID des Spielers
 	 * @param string  $konto      beitrag, nenngeld oder leer
+	 * @param string  $datum      Saldo eines Datums zurückgeben, Standard (false) = aktueller Saldo
 	 *
 	 * @return array              Salden nach jeder Buchung nach Datum absteigend sortiert
 	 */
-	public static function getSaldo($pid, $konto = '')
+	public static function getSaldo($pid, $konto = '', $datum = false)
 	{
 		$salden = array();
 		$session = \Contao\Session::getInstance()->getData(); // Sitzung laden
@@ -285,29 +286,43 @@ class Helper extends \Backend
 			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
 			                                        ->execute($pid, 1);
 		}
-		
+
+		// Datum umwandeln
+		if(!$datum)
+		{
+			$datum = date('d.m.Y');
+		}
+		$tag = substr($datum, 0, 2);
+		$monat = substr($datum, 3, 2);
+		$jahr = substr($datum, 6, 4);
+		$datum_neu = mktime(23, 59, 59, $monat, $tag, $jahr);
+
 		// Buchungen auswerten
 		$saldo = 0;
 		if($objBuchungen->numRows)
 		{
 			while($objBuchungen->next())
 			{
-				if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
+				// Nur Buchungen verwenden, die jünger oder gleich dem gewünschten Datum sind
+				if($objBuchungen->datum <= $datum_neu)
 				{
-					$saldo = 0; // Saldo soll hier resettet werden
+					if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
+					{
+						$saldo = 0; // Saldo soll hier resettet werden
+					}
+					switch($objBuchungen->typ)
+					{
+						case 'h':
+							$saldo += (float)$objBuchungen->betrag;
+							break;
+						case 's':
+							$saldo -= (float)$objBuchungen->betrag;
+							break;
+						default:
+					}
+					// Saldo dem Salden-Array zuordnen
+					$salden[$objBuchungen->id] = $saldo;
 				}
-				switch($objBuchungen->typ)
-				{
-					case 'h':
-						$saldo += (float)$objBuchungen->betrag;
-						break;
-					case 's':
-						$saldo -= (float)$objBuchungen->betrag;
-						break;
-					default:
-				}
-				// Saldo dem Salden-Array zuordnen
-				$salden[$objBuchungen->id] = $saldo;
 			}
 		}
 
@@ -332,7 +347,7 @@ class Helper extends \Backend
 	/**
 	 * function checkKonto
 	 * =================================================================
-	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück 
+	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück
 	 *
 	 * @param integer $pid        ID des Spielers
 	 * @param string  $konto      beitrag, nenngeld oder leer
@@ -351,7 +366,7 @@ class Helper extends \Backend
 			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND saldoReset=? AND datum>=? AND published=?")
 			                                        ->execute($pid, 1, 1680300000, 1);
 		}
-		
+
 		if($objBuchungen->numRows) $resetVorhanden = true;
 		else $resetVorhanden =  false;
 
@@ -398,7 +413,7 @@ class Helper extends \Backend
 				//\Controller::createNewVersion('tl_fernschach_spieler', $pid);
 			}
 		}
-		
+
 		return $resetVorhanden;
 
 	}
@@ -498,7 +513,7 @@ class Helper extends \Backend
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_resetUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
-		
+
 	}
 
 	/**
@@ -544,14 +559,14 @@ class Helper extends \Backend
 						                        ->set($set)
 						                        ->execute($objSpieler->id);
 						$this->createNewVersion('tl_fernschach_spieler', $objSpieler->id);
-						
+
 						// System-Log schreiben
 						$text = 'Fernschach-Verwaltung: Mitgliedsstatus '.$objSpieler->nachname.', '.$objSpieler->vorname.' automatisch korrigiert:';
 						if($objSpieler->status == 1) $text .= ' Mitglied -> Ausgetreten';
 						elseif($objSpieler->status == 2) $text .= ' Ausgetreten -> Mitglied';
 						\System::getContainer()->get('monolog.logger.contao')
 						                       ->log(\Psr\Log\LogLevel::INFO, $text, array('contao' => new \Contao\CoreBundle\Monolog\ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_GENERAL)));
-						
+
 					}
 				}
 			}
@@ -559,7 +574,7 @@ class Helper extends \Backend
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_membershipUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
-		
+
 	}
 
 	/**
@@ -574,7 +589,7 @@ class Helper extends \Backend
 		$BuchungenJuenger = false; // Boolean, um festzustellen das es jüngere Buchungen als Reset gibt
 		$BuchungenAelter = false; // Boolean, um festzustellen das es ältere Buchungen als Reset gibt
 		$resetDatensaetze = 0; // Zähler, um festzustellen wieviel Reset-Datensätze existieren. Erlaubt ist max. 1
-		
+
 		// Reset-Datensatz-Werte setzen
 		if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
 		{
@@ -729,7 +744,7 @@ class Helper extends \Backend
 				}
 			}
 		}
-		
+
 		if($id)
 		{
 			// Bestimmten Spieler zurückgeben
@@ -891,7 +906,7 @@ class Helper extends \Backend
 			$records[$x]['nummer'] = $akt;
 			$akt--;
 		}
-		
+
 		return $records;
 	}
 

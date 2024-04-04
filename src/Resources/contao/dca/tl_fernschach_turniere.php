@@ -1096,7 +1096,8 @@ class tl_fernschach_turniere extends \Backend
 		if($row['bewerbungErlaubt'] && $row['type'] == 'tournament')
 		{
 			// Bewerbungen können bearbeitet werden, deshalb Anzahl Bewerbungen anzeigen
-			if($this->bewerbungen[$row['id']])
+			$temp = '';
+			if(isset($this->bewerbungen[$row['id']]))
 			{
 				$temp = '<span style="color:#9F9F9F;">Bewerbungen: <b>'.$this->bewerbungen[$row['id']]['anzahl'].'</b> [';
 				if($this->bewerbungen[$row['id']]['unklar']) $temp .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->bewerbungen[$row['id']]['unklar'].$this->generateImage($this->getImage('bundles/contaofernschach/images/fragezeichen.png', 12, 12, 'proportional'), 'ohne Entscheidung').'</span> ';

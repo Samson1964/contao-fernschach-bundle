@@ -1,5 +1,17 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.4 (2024-04-04)
+
+* Fix: TitelNormenLast gab keine Titel mehr aus nach der Umstellung auf die tl_fernschach_spieler_titel
+* Add: tl_fernschach_spieler.patron -> Checkbox um einen Gönner zu markieren (im Bereich Mitgliedschaften)
+* Add: Spieler-Export nach Excel mit Angabe eines Saldodatums
+* Add: Helper::getSaldo mit 3. Parameter, um ein Datum übergeben zu können
+* Fix: Warning: Undefined array key 93 bei Zugriff auf Turniere - tl_fernschach_turniere.php (line 1099) 
+* Fix: Warning: Undefined variable $temp in tl_fernschach_turniere.php (line 1107) 
+* Fix: Warning: Attempt to read property "extension" on null in tl_fernschach_spieler.php (line 2162) 
+* Fix: Bewerbungen/Anmeldungen zu Turnieren werden unter Spieler falsch angezeigt (Hinweis: Wunderlich) -> falsche Variable verwendet
+* Fix: Fehlende Übersetzungen tl_fernschach_spieler
+
 ## Version 0.18.3 (2024-03-08)
 
 * Change: Filter in tl_fernschach_spieler "Nicht Mitglied nach 31.12.JJJJ" von -9 auf -16 Jahre erhöht

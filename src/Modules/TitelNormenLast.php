@@ -48,9 +48,17 @@ class TitelNormenLast extends \Module
 	protected function compile()
 	{
 
-		// Aktive Mitglieder laden
-		$objMembers = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
-		                                      ->execute(1);
+		// Kompatibilität mit $GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'] herstellen
+		$titelnamen = array
+		(
+			'FSGM' => 'fgm',
+			'SIM'  => 'sim',
+			'FSIM' => 'fim',
+			'CCM'  => 'ccm',
+			'LGM'  => 'lgm',
+			'CCE'  => 'cce',
+			'LIM'  => 'lim',
+		);
 
 		$daten = array();
 		$titel = array();
@@ -58,31 +66,15 @@ class TitelNormenLast extends \Module
 		$mindate = date('Ymd', strtotime($this->fernschachverwaltung_zeitraum)); // Nur Normen/Titel eines bestimmten Zeitraums
 		$maxdate = date('Ymd'); // Heutiges Datum setzen
 		
-		// Titel und Normen auslesen
+		// Aktive Mitglieder laden
+		$objMembers = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
+		                                      ->execute(1);
+
+		// Normen auslesen
 		if($objMembers->numRows)
 		{
 			while($objMembers->next())
 			{
-
-				// Titel der Reihe nach abfragen
-				foreach($GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] as $titelkey => $titelname)
-				{
-					if($objMembers->{$titelkey.'_title'})
-					{
-						// Titel gefunden, Daten übernehmen
-						$titel[] = array
-						(
-							'id'          => $objMembers->id,
-							'nachname'    => $objMembers->nachname,
-							'vorname'     => $objMembers->vorname,
-							'titel'       => $titelkey,
-							'datum'       => $objMembers->{$titelkey.'_date'},
-							'turnier'     => '',
-							'link'        => '',
-						);
-					}
-				}
-					
 				// Normen suchen
 				$normenMember = unserialize($objMembers->normen); // Normen extrahieren
 				if(is_array($normenMember))
@@ -104,6 +96,35 @@ class TitelNormenLast extends \Module
 							);
 						}
 					}	
+				}
+			}
+		}
+
+		// Aktive Titel-Datensätze laden
+		$objTitel = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE published = ?')
+		                                    ->execute(1);
+
+		// Titel auslesen
+		if($objTitel->numRows)
+		{
+			while($objTitel->next())
+			{
+				// Spielerdatensatz laden
+				$objMember = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
+				                                     ->execute($objTitel->pid);
+				// Nur Titel von veröffentlichten Spielern berücksichtigen
+				if($objMember->published)
+				{
+					$titel[] = array
+					(
+						'id'          => $objMember->id,
+						'nachname'    => $objMember->nachname,
+						'vorname'     => $objMember->vorname,
+						'titel'       => isset($titelnamen[$objTitel->titel]) ? $titelnamen[$objTitel->titel] : $objTitel->titel,
+						'datum'       => $objTitel->datum,
+						'turnier'     => '',
+						'link'        => '',
+					);
 				}
 			}
 		}
@@ -130,8 +151,11 @@ class TitelNormenLast extends \Module
 			}
 		}
 
+		//print_r($normen);
+		//print_r($titel);
+		
 		// Titel sortieren nach Datum absteigend
-		$titel = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($titel, array('datum' => SORT_DESC));
+		if($titel) $titel = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($titel, array('datum' => SORT_DESC));
 
 		// Markierte Normen entfernen, da bereits in Titeln verwendet
 		$neu = array();

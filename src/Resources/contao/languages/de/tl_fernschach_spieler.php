@@ -57,6 +57,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships_legend'] = 'Mitgliedsc
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberId'] = array('BdF-Nr.', 'Mitgliedsnummer national');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberInternationalId'] = array('ICCF-Nr.', 'Mitgliedsnummer international');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'] = array('Streichung zum', 'Datum der durch den BdF bestimmten Streichung des Mitgliedes im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['patron'] = array('Gönner', 'Gönner werden beim BdF beitragsfrei geführt.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberships'] = array('Aktuelle und frühere Mitgliedschaften', '');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
@@ -74,6 +75,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'] = array('Anmeldungen und Bewerbungen', 'Übersicht der Turnieranmeldungen und -bewerbungen absteigend sortiert nach Datum. Es werden max. die 30 letzten Datensätze angezeigt.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['titelinfo'] = array('Titelinfo', 'Enthält die Inhalte der Felder titelhalter und iccftitel aus dem Stammdaten-Import. Für die interne Verwendung und spätere Zuordnung. Dieses Feld entfällt vielleicht in zukünftigen Versionen!');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_legend'] = 'Titelnormen';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen'] = array('Vorhandene Normen', '');
