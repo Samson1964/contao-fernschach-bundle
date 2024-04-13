@@ -58,31 +58,13 @@ class TitelNormen extends \Module
 		$mindate = date('Ymd', strtotime($this->fernschachverwaltung_zeitraum)); // Nur Normen/Titel eines bestimmten Zeitraums
 		$maxdate = date('Ymd'); // Heutiges Datum setzen
 		
+		$titel = \Schachbulle\ContaoFernschachBundle\Classes\Titel::get(); // Titel der veröffentlichten Spieler laden
+		
 		// Titel und Normen auslesen
 		if($objMembers->numRows)
 		{
 			while($objMembers->next())
 			{
-
-				// Titel der Reihe nach abfragen
-				foreach($GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] as $titelkey => $titelname)
-				{
-					if($objMembers->{$titelkey.'_title'})
-					{
-						// Titel gefunden, Daten übernehmen
-						$titel[] = array
-						(
-							'id'          => $objMembers->id,
-							'nachname'    => $objMembers->nachname,
-							'vorname'     => $objMembers->vorname,
-							'titel'       => $titelkey,
-							'datum'       => $objMembers->{$titelkey.'_date'},
-							'turnier'     => '',
-							'link'        => '',
-						);
-					}
-				}
-					
 				// Normen suchen
 				$normenMember = unserialize($objMembers->normen); // Normen extrahieren
 				if(is_array($normenMember))

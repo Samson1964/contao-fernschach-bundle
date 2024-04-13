@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.5 (2024-04-13)
+
+* Fix: Haste/Form nicht gefunden in Meldeformular-Klasse
+* Add: Hilfsklasse Titel -> für den Zugriff auf tl_fernschach_spieler_titel
+* Fix: TitelNormen gab keine Titel mehr aus nach der Umstellung auf die tl_fernschach_spieler_titel
+
 ## Version 0.18.4 (2024-04-04)
 
 * Fix: TitelNormenLast gab keine Titel mehr aus nach der Umstellung auf die tl_fernschach_spieler_titel

@@ -2,7 +2,7 @@
 
 <?php $this->block('content'); ?>
 
-<?php if($this->daten['fgm']['titel']): ?>
+<?php if(isset($this->daten['fgm']['titel'])): ?>
 	<h2>Großmeister (Titelverleihungen)</h2>
 	<table class="titel">
 		<tr>
@@ -20,7 +20,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['fgm']['norm']): ?>
+<?php if(isset($this->daten['fgm']['norm'])): ?>
 	<h2>Großmeister (Normen)</h2>
 	<table class="normen">
 		<tr>
@@ -38,7 +38,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['sim']['titel']): ?>
+<?php if(isset($this->daten['sim']['titel'])): ?>
 	<h2>Verdiente Internationale Meister - SIM (Titelverleihungen)</h2>
 	<table class="titel">
 		<tr>
@@ -56,7 +56,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['sim']['norm']): ?>
+<?php if(isset($this->daten['sim']['norm'])): ?>
 	<h2>Verdiente Internationale Meister - SIM (Normen)</h2>
 	<table class="normen">
 		<tr>
@@ -74,7 +74,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['fim']['titel']): ?>
+<?php if(isset($this->daten['fim']['titel'])): ?>
 	<h2>Internationale Meister (Titelverleihungen)</h2>
 	<table class="titel">
 		<tr>
@@ -92,7 +92,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['fim']['norm']): ?>
+<?php if(isset($this->daten['fim']['norm'])): ?>
 	<h2>Internationale Meister (Normen)</h2>
 	<table class="normen">
 		<tr>
@@ -110,7 +110,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['ccm']['titel']): ?>
+<?php if(isset($this->daten['ccm']['titel'])): ?>
 	<h2>Fernschach-Meister - CCM (Titelverleihungen)</h2>
 	<table class="titel">
 		<tr>
@@ -128,7 +128,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['ccm']['norm']): ?>
+<?php if(isset($this->daten['ccm']['norm'])): ?>
 	<h2>Fernschach-Meister - CCM (Normen)</h2>
 	<table class="normen">
 		<tr>
@@ -146,7 +146,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['cce']['titel']): ?>
+<?php if(isset($this->daten['cce']['titel'])): ?>
 	<h2>Fernschach-Experten - CCE (Titelverleihungen)</h2>
 	<table class="titel">
 		<tr>
@@ -164,7 +164,7 @@
 	</table>
 <?php endif; ?>
 
-<?php if($this->daten['cce']['norm']): ?>
+<?php if(isset($this->daten['cce']['norm'])): ?>
 	<h2>Fernschach-Experten - CCE (Normen)</h2>
 	<table class="normen">
 		<tr>
