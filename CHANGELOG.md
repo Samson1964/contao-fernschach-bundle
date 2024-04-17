@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.6 (2024-04-17)
+
+* Add: Haste-Toggler in tl_fernschach_turniere_spieler.php
+
 ## Version 0.18.5 (2024-04-13)
 
 * Fix: Haste/Form nicht gefunden in Meldeformular-Klasse
