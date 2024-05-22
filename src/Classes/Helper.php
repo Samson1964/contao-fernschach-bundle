@@ -295,7 +295,9 @@ class Helper extends \Backend
 		$tag = substr($datum, 0, 2);
 		$monat = substr($datum, 3, 2);
 		$jahr = substr($datum, 6, 4);
-		$datum_neu = mktime(23, 59, 59, $monat, $tag, $jahr);
+		// Bugfix: $jahr+10 statt $jahr
+		// Da auch Buchungen in der Zukunft eingetragen werden, werden bei $jahr nicht die Salden in der Zukunft berechnet.
+		$datum_neu = mktime(23, 59, 59, $monat, $tag, $jahr+10);
 
 		// Buchungen auswerten
 		$saldo = 0;
@@ -326,6 +328,7 @@ class Helper extends \Backend
 			}
 		}
 
+		print_r($salden);
 		return $salden;
 
 	}

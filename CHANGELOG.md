@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.18.7 (2024-05-22)
+
+* Fix: Saldo wird bei Buchungen in der Zukunft nicht geändert -> Warning: Undefined array key 168689 in dca/tl_fernschach_spieler_konto.php (line 503) -> hat die Ursache nicht in nichtberücksichtigten Buchungen bei der Saldenberechnung
+
 ## Version 0.18.6 (2024-04-17)
 
 * Add: Haste-Toggler in tl_fernschach_turniere_spieler.php
