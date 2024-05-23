@@ -328,7 +328,6 @@ class Helper extends \Backend
 			}
 		}
 
-		print_r($salden);
 		return $salden;
 
 	}
