@@ -334,3 +334,29 @@ $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start'] = 'Export star
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'] = 'Spieler nach Excel exportieren';
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'] = array('Stichtag Saldo', 'Geben Sie den Stichtag für den Saldo ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'] = array('Export starten', 'Der Download des Exports erfolgt im Hintergrund. Klicken Sie danach auf den Zurück-Link.');
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['hinweis'] = '
+<ul>
+<li>&bull; grüne Schrift = Habenbuchung (Beitragszahlung, Guthabenzahlung, Nenngeldzahlung u.a.)</li>
+<li>&bull; rote Schrift = Sollbuchung (Rechnung an Spieler, Nenngeldforderung u.a.)</li>
+<li>&bull; rot unterstrichen = globale Resetbuchung für alle Konten (setzt den Saldo auf 0,00 €)</li>
+<li>&bull; schwarz unterstrichen = Resetbuchung nur in diesem Konto (setzt den Saldo auf 0,00 €)</li>
+<li>&bull; rötlicher Hintergrund = markierte Buchung</li>
+</ul>
+';
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['verschieben'] = '
+<ul>
+<li>&bull; Buchungen der Kategorie Beitrag werden verschoben in das Beitragskonto.</li>
+<li>&bull; Buchungen der Kategorie Nenngeld werden verschoben in das Nenngeldkonto.</li>
+<li>&bull; Buchungen anderer Kategorien werden verschoben in das Hauptkonto.</li>
+</ul>
+';
+
+
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'] = array
+(
+	'h'           => 'Hauptkonto',
+	'b'           => 'Beitragskonto',
+	'n'           => 'Nenngeldkonto'
+);

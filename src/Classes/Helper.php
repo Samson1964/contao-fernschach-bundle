@@ -427,13 +427,13 @@ class Helper extends \Backend
 	 */
 	public function updateResetbuchungen(\DataContainer $dc)
 	{
-		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_resetUpdate'] + 86400; // Letztes Updatedatum + 1 Tag
+		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_resetUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_resetUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
 
 		// Aktualisierung notwendig
 		if($update < time())
 		{
 			// Buchungen prüfen
-			if(isset($GLOBALS['TL_CONFIG']['fernschach_resetActive']))
+			if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
 			{
 				// Globaler Reset-Datensatz ist aktiviert
 				$typGlobal = $GLOBALS['TL_CONFIG']['fernschach_resetSaldo'] < 0 ? 's' : 'h';
@@ -525,7 +525,7 @@ class Helper extends \Backend
 	 */
 	public function updateMitgliedschaften(\DataContainer $dc)
 	{
-		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_membershipUpdate'] + 86400; // Letztes Updatedatum + 1 Tag
+		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_membershipUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_membershipUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
 
 		// Aktualisierung notwendig
 		if($update < time())

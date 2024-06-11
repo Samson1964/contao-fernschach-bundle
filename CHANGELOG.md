@@ -1,5 +1,26 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.19.0 (2024-06-11)
+
+* Change: Ausgabe von Geldbeträgen und Salden im Kontoauszug ohne Umbrüche
+* Change: Icons zu den Buchungskonten ausgetauscht -> jetzt mit Anzeige der Buchungszahl und ausgegraut, wenn keine Buchungen vorhanden sind
+* Add: tl_settings.fernschach_hinweis_kontoauszug -> Hinweistext im Kontoauszug, wenn Benutzer kein BdF-Mitglied ist (war vorher hardcodiert)
+* Add: tl_settings.*_time -> Der Rhythmus der 3 Wartungsfunktionen läßt sich jetzt im Backend festlegen (war vorher hardcodiert)
+* Add: tl_fernschach_spieler_konto Anzeige der Kategorie (Guthaben, Beitrag, Nenngeld) in der Auflistung
+* Change: tl_fernschach_spieler_konto Auflistung umgebaut von mode 4 auf 2, um Spalten zu haben.
+* Add: Hook parseBackendTemplate für Modifizierung der Überschrift und des Headers im Backend
+* Fix: Warning: Undefined array key "fernschach_resetSaldo" in Classes/Helper.php (line 439) -> isset($GLOBALS['TL_CONFIG']['fernschach_resetActive']) führt zu einem true, was falsch wäre -> Standardvariable definiert
+* Change: tl_fernschach_spieler_konto_beitrag Auflistung umgebaut von mode 4 auf 2, um Spalten zu haben.
+* Change: tl_fernschach_spieler_konto_nenngeld Auflistung umgebaut von mode 4 auf 2, um Spalten zu haben.
+* Add: Verschiebefunktion von Buchungen
+* Add: tl_module.fernschachverwaltung_konten -> Auswahl der Konten (Haupt, Beitrag, Nenngeld), die angezeigt werden sollen im Kontoauszug
+* Fix: Warning: Undefined variable $kontoauszug in Modules/Kontoauszug.php (line 142) 
+* Fix: Warning: Undefined variable $saldo in Modules/Kontoauszug.php (line 141) 
+* Fix: Warning: Undefined variable $buchungen in Modules/Kontoauszug.php (line 143) 
+* Fix: Warning: Undefined variable $objPlayer in Modules/Kontoauszug.php (line 145) 
+* Fix: Warning: Undefined variable $html in Modules/Kontoauszug.php (line 173) 
+* Fix: Warning: Undefined variable $fehler in Modules/Kontoauszug.php (line 148) 
+
 ## Version 0.18.8 (2024-05-23)
 
 * Fix: print_r in Helper-Klasse entfernt

@@ -19,7 +19,7 @@ class Maintenance extends \Backend
 	 */
 	public function getMaintenance(\DataContainer $dc)
 	{
-		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + 43200; // Letztes Updatedatum + 12 Stunden (43200)
+		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
 
 		// Aktualisierung notwendig
 		if($update < time())

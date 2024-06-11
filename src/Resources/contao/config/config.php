@@ -30,6 +30,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'exportXLS'         => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
 		'importSpieler'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),
 		'importBuchungen'   => array('Schachbulle\ContaoFernschachBundle\Classes\ImportBuchungen', 'run'),
+		'move'              => array('Schachbulle\ContaoFernschachBundle\Classes\VerschiebeBuchungen', 'run'),
 		'setNewsletter'     => array('Schachbulle\ContaoFernschachBundle\Classes\Newsletter', 'setNewsletter'),
 	),
 	'fernschach-turniere'   => array
@@ -129,3 +130,16 @@ $GLOBALS['BE_FFL']['tournamentTree'] = 'Schachbulle\ContaoFernschachBundle\Widge
  */
 // Newsletter modifizieren, falls Serienmail Fernschach-Verwaltung
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
+$GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Template', 'BackendTemplate');
+
+/**
+ * -------------------------------------------------------------------------
+ * Voreinstellungen
+ * -------------------------------------------------------------------------
+ */
+
+$GLOBALS['TL_CONFIG']['fernschach_resetActive'] = false;
+$GLOBALS['TL_CONFIG']['fernschach_hinweis_kontoauszug'] = 'Kein BdF-Mitglied';
+$GLOBALS['TL_CONFIG']['fernschach_resetUpdate_time'] = 86400;
+$GLOBALS['TL_CONFIG']['fernschach_membershipUpdate_time'] = 86400;
+$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time'] = 43200;

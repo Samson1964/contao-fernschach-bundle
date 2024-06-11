@@ -4,9 +4,11 @@
 
 <?php if($this->kontoauszug): ?>
 
+	<?php foreach($this->kontoauszug as $key => $konto): ?>
 	<div class="kontoauszug">
+		<h2><?= $key ?></h2>
 		<?php if($this->kontostand): ?>
-			<div class="kontostand">Kontostand: <?= $this->saldo ?></div>
+			<div class="kontostand">Kontostand: <?= $konto['saldo'] ?></div>
 		<?php else: ?>
 			<div class="kontostand">Kontostand nicht verfügbar</div>
 		<?php endif ?>
@@ -19,8 +21,8 @@
 					<th width="10%">Betrag</th>
 					<th width="10%">Saldo</th>
 				</tr>
-				<?php if(count($this->buchungen) > 0): ?>
-					<?php foreach($this->buchungen as $item): ?>
+				<?php if(count($konto['buchungen']) > 0): ?>
+					<?php foreach($konto['buchungen'] as $item): ?>
 						<tr>
 							<td><?= $item['nummer'] ?></td>
 							<td><?= $item['datum'] ?></td>
@@ -36,17 +38,18 @@
 				<?php endif ?>
 			</table>
 		</div>
-		<?php if($this->sepaBeitrag): ?>
-			<p>Das SEPA-Lastschriftmandat Beitrag liegt vor.</p>
-		<?php else: ?>
-			<p style="color:red;">Das SEPA-Lastschriftmandat Beitrag ist nicht gewünscht.</p>
-		<?php endif ?>
-		<?php if($this->sepaNenngeld): ?>
-			<p>Das SEPA-Lastschriftmandat Nenngeld liegt vor.</p>
-		<?php else: ?>
-			<p style="color:red;">Das SEPA-Lastschriftmandat Nenngeld ist nicht gewünscht.</p>
-		<?php endif ?>
 	</div>
+	<?php endforeach; ?>
+	<?php if($this->sepaBeitrag): ?>
+		<p>Das SEPA-Lastschriftmandat Beitrag liegt vor.</p>
+	<?php else: ?>
+		<p style="color:red;">Das SEPA-Lastschriftmandat Beitrag ist nicht gewünscht.</p>
+	<?php endif ?>
+	<?php if($this->sepaNenngeld): ?>
+		<p>Das SEPA-Lastschriftmandat Nenngeld liegt vor.</p>
+	<?php else: ?>
+		<p style="color:red;">Das SEPA-Lastschriftmandat Nenngeld ist nicht gewünscht.</p>
+	<?php endif ?>
 
 <?php else: ?>
 

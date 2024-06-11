@@ -51,6 +51,11 @@ class Kontoauszug extends \Module
 		// Objekt FrontendUser importieren
 		$this->import('FrontendUser','User');
 
+		$kontoauszug = false;
+		$kontostand = false;
+		$saldo = false;
+		$fehler = '';
+
 		// FE-Mitglied in Fernschach-Verwaltung suchen, wenn ein FE-Mitglied angemeldet ist
 		if($this->User->id)
 		{
@@ -71,12 +76,6 @@ class Kontoauszug extends \Module
 							$kontoauszug = true;
 							$kontostand = $this->fernschachverwaltung_kontostand ? true : false;
 						}
-						else
-						{
-							// Resetbuchung nicht gefunden, Kontostand und Kontoauszug darf nicht angezeigt werden
-							$kontoauszug = false;
-							$kontostand = false;
-						}
 					}
 					else
 					{
@@ -85,51 +84,24 @@ class Kontoauszug extends \Module
 						$kontostand = $this->fernschachverwaltung_kontostand ? true : false;
 					}
 
-					// Salden laden
-					$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objPlayer->id);
+					$konten = (array)unserialize($this->fernschachverwaltung_konten);
 
-					if($kontostand)
+					$kontoauszug = array();
+					foreach($konten as $konto)
 					{
-						// Kontostand anzeigen
-						$value = end($salden);
-						$wert = str_replace('.', ',', sprintf('%0.2f', $value));
-						$saldo = $wert.' €';
-					}
-					else $saldo = false; // Kontostand nicht anzeigen
-
-					// Buchungen einlesen
-					if($salden) 
-					{
-						// Buchungen ausgeben
-						$buchungen = array();
-						$nummer = 0;
-						//print_r($salden);
-						foreach(array_reverse($salden, true) as $id => $value)
-						{
-							$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto WHERE id=? AND published=?')
-							                                      ->execute($id, 1);
-							if($objBuchung->numRows)
-							{
-								if($this->fernschachverwaltung_maxDatum > $objBuchung->datum) break; // Bei Ab-Datum stoppen
-								$nummer++;
-								$buchungen[] = array
-								(
-									'nummer' => $nummer,
-									'datum'  => date('d.m.Y', $objBuchung->datum),
-									'titel'  => $objBuchung->verwendungszweck,
-									'betrag' => self::getBetrag($objBuchung->betrag, $objBuchung->typ),
-									'saldo'  => $kontostand ? self::getBetrag($value, false) : '',
-								);
-								if($this->fernschachverwaltung_isReset && $objBuchung->saldoReset) break; // Bei Saldo-Reset stoppen
-								if($this->fernschachverwaltung_maxBuchungen > 0 && $this->fernschachverwaltung_maxBuchungen <= $nummer) break; // Bei Maximalanzahl Buchungen stoppen
-							}
-						}
+						$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = self::getKonto($konto, $objPlayer, $kontostand);
+						$kontoauszug = array_merge($kontoauszug, $arrReturn);
 					}
 				}
+				// Ausgabe
+				$this->Template->kontoauszug = $kontoauszug;
+				$this->Template->kontostand = $kontostand;
+				$this->Template->sepaNenngeld = $objPlayer->sepaNenngeld;
+				$this->Template->sepaBeitrag = $objPlayer->sepaBeitrag;
 			}
 			else
 			{
-				$fehler = 'Kein BdF-Mitglied';
+				$fehler = $GLOBALS['TL_CONFIG']['fernschach_hinweis_kontoauszug'];
 			}
 
 		}
@@ -138,13 +110,7 @@ class Kontoauszug extends \Module
 			$fehler = 'Nicht angemeldet';
 		}
 		
-		// Ausgabe
-		$this->Template->kontoauszug = $kontoauszug;
-		$this->Template->kontostand = $kontostand;
-		$this->Template->saldo = $saldo;
-		$this->Template->buchungen = is_array($buchungen) ? $buchungen : array();
-		$this->Template->sepaNenngeld = $objPlayer->sepaNenngeld;
-		$this->Template->sepaBeitrag = $objPlayer->sepaBeitrag;
+		// Ausgabe ergänzen
 		$this->Template->fehler = $fehler;
 
 	}
@@ -160,17 +126,87 @@ class Kontoauszug extends \Module
 	{
 		// Komma umwandeln in Punkt
 		$value = str_replace(',', '.', $value);
+		$html = '';
 
 		// Farbe bestimmen
 		if($typ)
 		{
 			if($typ == 'h') $html = '';
-			elseif($typ == 's') $html = '- ';
+			elseif($typ == 's') $html = '-';
 		}
 
 		// Betrag formatieren und zurückgeben
 		$value = str_replace('.', ',', sprintf('%0.2f', $value));
 		return $html.$value.' €';
+	}
+
+	/**
+	 * Gibt die Informationen zum Konto zurück: Saldo und Auszug
+	 *
+	 * @param string $typ         h, b, n (Hauptkonto, Beitragskonto, Nenngeldkonto)
+	 *
+	 * @return array
+	 */
+	public function getKonto($typ, $spieler, $kontostand)
+	{
+
+		$buchungen = array();
+
+		switch($typ)
+		{
+			case 'h': $kontoname = ''; break; 
+			case 'b': $kontoname = 'beitrag'; break; 
+			case 'n': $kontoname = 'nenngeld'; break; 
+		}
+		
+		// Salden laden
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($spieler->id, $kontoname);
+
+		if($kontostand)
+		{
+			// Kontostand anzeigen
+			$value = end($salden);
+			$wert = str_replace('.', ',', sprintf('%0.2f', $value));
+			$saldo = $wert.' €';
+		}
+		else $saldo = false; // Kontostand nicht anzeigen
+
+		// Buchungen einlesen
+		if($salden) 
+		{
+			// Buchungen ausgeben
+			$buchungen = array();
+			$nummer = 0;
+			//print_r($salden);
+			foreach(array_reverse($salden, true) as $id => $value)
+			{
+				$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto WHERE id=? AND published=?')
+				                                      ->execute($id, 1);
+				if($objBuchung->numRows)
+				{
+					if($this->fernschachverwaltung_maxDatum > $objBuchung->datum) break; // Bei Ab-Datum stoppen
+					$nummer++;
+					$buchungen[] = array
+					(
+						'nummer' => $nummer,
+						'datum'  => date('d.m.Y', $objBuchung->datum),
+						'titel'  => $objBuchung->verwendungszweck,
+						'betrag' => str_replace(' ', '&nbsp;', self::getBetrag($objBuchung->betrag, $objBuchung->typ)),
+						'saldo'  => $kontostand ? str_replace(' ', '&nbsp;', self::getBetrag($value, false)) : '',
+					);
+					if($this->fernschachverwaltung_isReset && $objBuchung->saldoReset) break; // Bei Saldo-Reset stoppen
+					if($this->fernschachverwaltung_maxBuchungen > 0 && $this->fernschachverwaltung_maxBuchungen <= $nummer) break; // Bei Maximalanzahl Buchungen stoppen
+				}
+			}
+		}
+		
+		$kontoname = $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$typ];
+
+		return array
+		(
+			'saldo'     => $saldo,
+			'buchungen' => is_array($buchungen) ? $buchungen : array()
+		);
 	}
 
 }

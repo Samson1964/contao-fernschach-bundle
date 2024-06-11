@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_membershipUpdate,fernschach_maintenanceUpdate,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
 
 /**
@@ -76,7 +76,19 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate'] = array
 	(
 		'rgxp'                => 'datim', 
 		'datepicker'          => true, 
-		'tl_class'            => 'w50 wizard'
+		'tl_class'            => 'clr w50 wizard'
+	),
+);
+
+// Aktualisierungsrhythmus von tl_fernschach_spieler_konto in Minuten
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate_time'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate_time'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'natural', 
+		'tl_class'            => 'w50'
 	),
 );
 
@@ -89,7 +101,19 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_membershipUpdate'] = arr
 	(
 		'rgxp'                => 'datim', 
 		'datepicker'          => true, 
-		'tl_class'            => 'w50 wizard'
+		'tl_class'            => 'clr w50 wizard'
+	),
+);
+
+// Aktualisierungsrhythmus von tl_fernschach_spieler.status in Minuten
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_membershipUpdate_time'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_membershipUpdate_time'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'natural', 
+		'tl_class'            => 'w50'
 	),
 );
 
@@ -102,7 +126,19 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate'] = ar
 	(
 		'rgxp'                => 'datim', 
 		'datepicker'          => true, 
-		'tl_class'            => 'w50 wizard'
+		'tl_class'            => 'clr w50 wizard'
+	),
+);
+
+// Aktualisierungsrhythmus von tl_fernschach_spieler in Minuten
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate_time'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate_time'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'natural', 
+		'tl_class'            => 'w50'
 	),
 );
 
@@ -169,6 +205,20 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_emailAdresse'] = array
 		'mandatory'           => true, 
 		'tl_class'            => 'w50', 
 	),
+);
+
+// Hinweistext im Kontoauszug, wenn Benutzer kein BdF-Mitglied ist
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_hinweis_kontoauszug'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_hinweis_kontoauszug'],
+	'inputType'               => 'textarea',
+	'eval'                    => array
+	(
+		'tl_class'            => 'long clr', 
+		'rte'                 => 'ace|html', 
+		'cols'                => 80,
+		'rows'                => 10
+	)
 );
 
 class tl_settings_fernschach extends Backend

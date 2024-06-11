@@ -1,17 +1,6 @@
 <?php
 
 /**
- * Contao Open Source CMS
- *
- * Copyright (c) 2005-2014 Leo Feyer
- *
- * @package News
- * @link    https://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
-
-
-/**
  * Table tl_fernschach_spieler_konto
  */
 $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
@@ -22,6 +11,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	(
 		'dataContainer'               => 'Table',
 		'ptable'                      => 'tl_fernschach_spieler',
+		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'onload_callback'             => array
 		(
@@ -43,18 +33,17 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 	(
 		'sorting' => array
 		(
-			'mode'                    => 4,
+			'mode'                    => 2,
 			'fields'                  => array('datum', 'sortierung'),
 			'flag'                    => 3,
-			'headerFields'            => array('nachname', 'vorname'),
 			'panelLayout'             => 'filter;sort;search,limit',
-			'child_record_callback'   => array('tl_fernschach_spieler_konto', 'listBuchungen'),
 			'disableGrouping'         => true
 		),
 		'label' => array
 		(
-			'fields'                  => array('betrag'),
-			'format'                  => '%s',
+			'fields'                  => array('datum', 'sortierung', 'betrag', 'kategorie', 'art', 'verwendungszweck', 'saldo'),
+			'showColumns'             => true,
+			'label_callback'          => array('tl_fernschach_spieler_konto', 'getLabel')
 		),
 		'global_operations' => array
 		(
@@ -84,7 +73,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['copy'],
-				'href'                => 'act=copy',
+				'href'                => 'act=paste&amp;mode=copy',
 				'icon'                => 'copy.svg',
 				'button_callback'     => array('tl_fernschach_spieler_konto', 'generateCopyButton')
 			),
@@ -233,8 +222,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
-				'tl_class'            => 'w50', 
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
 				'maxlength'           => 5,
 				'rgxp'                => 'digit'
 			),
@@ -348,9 +337,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 			'eval'                    => array('tl_class' => 'w50','isBoolean' => true),
 			'sql'                     => "char(1) NOT NULL default '1'"
 		),
+		'saldo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['saldo'],
+		),
 	)
 );
-
 
 /**
  * Class tl_fernschach_spieler_konto
@@ -365,6 +357,7 @@ class tl_fernschach_spieler_konto extends \Backend
 
 	var $turniere = array();
 	var $salden = array();
+	var $records = 0;
 
 	/**
 	 * Import the back end user object
@@ -373,7 +366,6 @@ class tl_fernschach_spieler_konto extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-
 	}
 
 	/**
@@ -382,10 +374,10 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function checkSaldo(\DataContainer $dc)
 	{
-		$id = strlen(Input::get('id')) ? Input::get('id') : $dc->currentPid;
+		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
 
 		// Salden berechnen
-		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id);
+		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, '');
 		return;
 
 	}
@@ -395,7 +387,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 *
 	 * @throws AccessDeniedException
 	 */
-	public function checkPermission()
+	public function checkPermission(\DataContainer $dc)
 	{
 		if($this->User->isAdmin)
 		{
@@ -408,7 +400,7 @@ class tl_fernschach_spieler_konto extends \Backend
 		if(!$this->User->hasAccess('create', 'fernschach_konto')) $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto']['config']['closed'] = true;
 
 		// Aktuelle Aktion von act prüfen
-		switch (Input::get('act'))
+		switch(\Input::get('act'))
 		{
 			case 'create': // Buchung anlegen
 				if(!$this->User->hasAccess('create', 'fernschach_konto'))
@@ -416,7 +408,7 @@ class tl_fernschach_spieler_konto extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine neue Buchung anzulegen.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'copy': // Buchung kopieren
 				if(!$this->User->hasAccess('copy', 'fernschach_konto'))
@@ -424,15 +416,15 @@ class tl_fernschach_spieler_konto extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu kopieren.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
-				
+				break;
+
 			case 'toggle': // Buchung aktivieren/deaktivieren
 				if(!$this->User->hasAccess('toggle', 'fernschach_konto'))
 				{
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu (de)aktivieren.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'show': // Infobox
 				if(!$this->User->hasAccess('show', 'fernschach_konto'))
@@ -440,7 +432,7 @@ class tl_fernschach_spieler_konto extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung-Infobox anzuzeigen.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			case 'edit': // Buchung bearbeiten
 				if(!$this->User->hasAccess('edit', 'fernschach_konto'))
@@ -448,12 +440,12 @@ class tl_fernschach_spieler_konto extends \Backend
 					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu bearbeiten.', __METHOD__, TL_ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
-				break; 
+				break;
 
 			default:
 
 				// Aktuelle Aktion von key prüfen
-				switch (Input::get('key'))
+				switch(\Input::get('key'))
 				{
 					case 'import': // Buchungen importieren
 						if(!$this->User->hasAccess('import', 'fernschach_konto'))
@@ -461,8 +453,8 @@ class tl_fernschach_spieler_konto extends \Backend
 							$this->log('Fernschach-Verwaltung: Keine Rechte, um Buchungen zu importieren.', __METHOD__, TL_ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
-						break; 
-        		
+						break;
+
 					default:
 				}
 		}
@@ -470,63 +462,43 @@ class tl_fernschach_spieler_konto extends \Backend
 	}
 
 	/**
-	 * Datensätze auflisten
-	 * @param array
-	 * @return string
+	 * Datensätze modifiziert auflisten
+	 * @param array $arrRow    Array mit dem gesamten Datensatz
+	 * @param string $label    String aus dem Feld datum
+	 * @param array $args      Array mit dem Teildatensatz (gewünschte Felder in gewünschter Reihenfolge)
+	 * @return array
 	 */
-	public function listBuchungen($arrRow)
+	public function getLabel($arrRow, $label, \DataContainer $dc, $args)
 	{
-		static $row;
+		if(!count($this->salden)) self::checkSaldo($dc);
+
+		$css = 'display:block; ';
 		// Buchung positiv oder negativ?
 		switch($arrRow['typ'])
 		{
-			case 'h': $css = 'color:green;'; break;
-			case 's': $css = 'color:red;'; break;
-			default: $css = 'color:yellow;'; break;
-		}
-		
-		// Resetbuchung = true (schwarze Linie unten)
-		$resetCss = '';
-		if($arrRow['resetRecord'])
-		{
-			$resetCss = 'border-bottom: 2px red solid; padding-bottom:1px;';
-		}
-		elseif($arrRow['saldoReset'])
-		{
-			$resetCss = 'border-bottom: 2px black solid; padding-bottom:1px;';
+			case 'h': $css .= 'color:green; '; break;
+			case 's': $css .= 'color:red; '; break;
+			default: $css .= 'color:yellow; '; break;
 		}
 
-		// Buchung auflisten
-		$row++;
-		$temp = '';
-		$temp .= '<div class="tl_content_right">';
-		$saldo = self::getEuro($this->salden[$arrRow['id']]);
-		$temp .= '<span style="display:inline-block; width:120px;" title="Der Saldo wird aus allen veröffentlichten, ggfs. gefilterten Datensätzen berechnet."><b>Saldo: '.$saldo.'</b></span> ';
-		$temp .= '</div>';
+		// Resetbuchung = true (schwarze Linie unten)
+		if($arrRow['resetRecord'])
+			$css .= 'border-bottom:2px red solid; padding-bottom:2px; ';
+		elseif($arrRow['saldoReset'])
+			$css .= 'border-bottom:2px black solid; padding-bottom:2px; ';
 
 		// Markieren = true (rötliche Hintergrundfarbe)
-		if($arrRow['markierung']) $temp .= '<div class="tl_content_left" style="background-color:#FFE8DD;'.$resetCss.'">';
-		else $temp .= '<div class="tl_content_left" style="'.$resetCss.'">';
+		if($arrRow['markierung']) $css .= 'background-color:#FFE8DD; ';
 
-		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.date('d.m.Y', $arrRow['datum']);
+		$args[0] = '<span style="'.$css.'">'.$args[0].'</span>';
+		$args[1] = '<span style="'.$css.'">'.$args[1].'</span>';
+		$args[2] = '<span style="white-space:nowrap;'.$css.'">'.self::getEuro($args[2], $arrRow['typ']).'</span>';
+		$args[3] = '<span style="'.$css.'">'.$args[3].'&nbsp;</span>';
+		$args[4] = '<span style="white-space:nowrap;'.$css.'">'.$args[4].'&nbsp;</span>';
+		$args[5] = '<span style="'.$css.'">'.$args[5].'&nbsp;</span>';
+		if(isset($this->salden[$arrRow['id']])) $args[6] = '<span style="white-space:nowrap; font-weight:bold;'.$css.'">'.self::getEuro($this->salden[$arrRow['id']]).'</span>';
 
-		// Sortierungshilsfeld gesetzt
-		if($arrRow['sortierung']) $temp .= ' ('.$arrRow['sortierung'].')';
-
-		$temp .= '</span>';
-		$temp .= '<span style="display:inline-block; width:80px; text-align:right; margin-right:20px;">';
-		//if($arrRow['resetRecord']) $temp .= '<img title="Diese Saldoreset-Buchung wurde global festgelegt." src="bundles/contaofernschach/images/resetGlobal.svg" width="12" align="middle"> ';
-		//elseif($arrRow['saldoReset']) $temp .= '<img title="Der Saldo wurde vor der Buchung auf 0 gesetzt." src="bundles/contaofernschach/images/reset.svg" width="12" align="middle"> ';
-		$temp .= self::getEuro($arrRow['betrag'], $arrRow['typ']).'</span>';
-		$temp .= '<span style="display:inline-block; width:100px; '.$css.'">'.@$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['art_options'][$arrRow['art']].'</span>';
-		$temp .= '<span style="display:inline-block; width:250px; '.$css.'" title="Verwendungszweck">'.$arrRow['verwendungszweck'].'</span>';
-		if($arrRow['turnier'])
-		{
-			// Ein Turnier wurde zugewiesen
-			$temp .= '<span style="display:inline-block;" title="Zugeordnetes Turnier">'.self::getTurnier($arrRow['turnier']).'</span>';
-		}
-		$temp .= '</div>';
-		return $temp;
+		return $args;
 	}
 
 	/**
@@ -642,7 +614,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_konto')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -657,7 +629,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_konto')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -672,7 +644,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_konto')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -687,7 +659,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_konto')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -702,7 +674,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 }

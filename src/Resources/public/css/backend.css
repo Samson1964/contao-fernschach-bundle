@@ -94,3 +94,8 @@ table.fernschach_kopf td {
 .farbe_markiert {
 	background-color: #9DFF9D;
 }
+
+td.col_betrag,
+td.col_saldo {
+	text-align:right;
+}

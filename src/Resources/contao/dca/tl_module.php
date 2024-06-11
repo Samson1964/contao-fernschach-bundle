@@ -16,7 +16,7 @@
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen_liste'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum,fernschachverwaltung_anzahl;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_kontostand,fernschachverwaltung_isReset;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_kontostand,fernschachverwaltung_isReset,fernschachverwaltung_konten;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 
 // Formular mit Mitgliederdaten als Voreinstellung
 $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_linkingMembers'] = array
@@ -140,5 +140,20 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_isReset'] = arra
 		'tl_class'            =>'w50 m12',
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_konten'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten'],
+	'exclude'                 => true,
+	'inputType'               => 'checkboxWizard',
+	'options'                 => array('h', 'b', 'n'),
+	'reference'               => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'],
+	'eval'                    => array
+	(
+		'multiple'            => true, 
+		'mandatory'           => false
+	),
+	'sql'                     => "blob NULL"
 );
 

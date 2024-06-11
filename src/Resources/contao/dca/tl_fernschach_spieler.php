@@ -120,14 +120,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragskonto'],
 				'href'                => 'table=tl_fernschach_spieler_konto_beitrag',
-				'icon'                => 'bundles/contaofernschach/images/beitrag.png',
+				'icon'                => 'bundles/contaofernschach/images/konto_beitrag.png',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateKontoButton')
 			),
 			'nenngeldkonto' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldkonto'],
 				'href'                => 'table=tl_fernschach_spieler_konto_nenngeld',
-				'icon'                => 'bundles/contaofernschach/images/nenngeld.png',
+				'icon'                => 'bundles/contaofernschach/images/konto_nenngeld.png',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateKontoButton')
 			),
 			'toggle' => array
@@ -1624,8 +1624,8 @@ class tl_fernschach_spieler extends \Backend
 
 		// Kontoprüfung ausgeben
 		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'beitrag');
-		if($checked) $args[9] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
-		else $args[9] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
+		if($checked) $args[9] = '<img title="Das Beitragskonto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
+		else $args[9] = '<img title="Das Beitragskonto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Kontostand (tl_fernschach_spieler_konto_nenngeld) ausgeben
 		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], 'nenngeld');
@@ -1655,8 +1655,8 @@ class tl_fernschach_spieler extends \Backend
 
 		// Kontoprüfung ausgeben
 		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'nenngeld');
-		if($checked) $args[11] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
-		else $args[11] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
+		if($checked) $args[11] = '<img title="Das Nenngeldkonto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
+		else $args[11] = '<img title="Das Nenngeldkonto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Zugriffsrechte auf Felder prüfen
 		if(!$this->User->hasAccess('tl_fernschach_spieler::memberId', 'alexf')) $args[0] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
@@ -2103,7 +2103,28 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateKontoButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('konto', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon)).' ';
+		if($this->User->isAdmin || $this->User->hasAccess('konto', 'fernschach_spieler'))
+		{
+			// Benutzer ist Admin oder berechtigter Benutzer, dann normales verlinktes Icon anzeigen
+			// Vorher prüfen, ob überhaupt Buchungen vorliegen
+			$tabelle = substr($href, 6); // Ermitteln anhand Tabellenname, welches Icon gerade geprüft wird
+			if($row['id'])
+			{
+				$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM ".$tabelle." WHERE pid = ?")
+				                                        ->execute($row['id']);
+				$title .= ' ('.$objBuchungen->numRows.' Buchungen)';
+			}
+			if($objBuchungen->numRows)
+				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+			else
+				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon), $label).'</a> ';
+		}
+		else
+		{
+			// Benutzer kein Admin oder berechtigter Benutzer, dann graues unverlinktes Icon anzeigen
+			$string = \Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon)).' ';
+		}
+		return $string;
 	}
 
 	/**
