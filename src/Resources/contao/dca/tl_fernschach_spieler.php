@@ -1709,6 +1709,7 @@ class tl_fernschach_spieler extends \Backend
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
 					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
 					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
+					'5'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_beitrag_minus'],
 					'8'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'],
 					'101' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearNext'],
 					'100' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearThis'],
@@ -1853,6 +1854,21 @@ class tl_fernschach_spieler extends \Backend
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
 					                                      ->execute('', '');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+					break;
+
+				case '5': // Spieler mit Beitrag im Minus
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
+					$arrPlayers = array();
+					if($objPlayers->numRows)
+					{
+						while($objPlayers->next())
+						{
+							// Salden des Spielers laden, wenn letzter Saldo unter 0, dann Spieler auswählen
+							$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objPlayers->id, 'beitrag');
+							if(end($salden) < 0) $arrPlayers[] = $objPlayers->id;
+						}
+					}
 					break;
 
 				case '101': // Mitgliedsende 31.12. nächstes Jahr

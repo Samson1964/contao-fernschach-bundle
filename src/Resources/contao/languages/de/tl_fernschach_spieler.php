@@ -239,6 +239,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Nur Mit
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'] = 'Geburtsdatum fehlt';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'] = 'Ohne ICCF-Nummer';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'] = 'Ohne E-Mail-Adresse';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_beitrag_minus'] = 'Beitragskonto im Minus';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'] = 'Nichtmitglieder';
 
 $jahr = date('Y');

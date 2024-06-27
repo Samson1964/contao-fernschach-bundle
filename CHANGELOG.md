@@ -1,5 +1,16 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.0 (2024-06-27)
+
+* Fix: Formularelemente im FE-Modul Kontoauszug sind nicht editierbar
+* Change: tl_settings.fernschach_resetActive -> Bisher kann nur ein Reset gesetzt werden. Jetzt sind bis zu 9 Resets anlegbar (Nummer 1 bis 9) und für welche Konten diese gelten.
+* Add: Neuer Spezialfilter in tl_fernschach_spieler -> Beitragskonto im Minus
+* Fix: Sortierungsfeld in Buchungen wird als Datum angezeigt
+* Change: Buchungen -> Kategorie sortierbar gemacht. Dafür Sortierbarkeit von Änderungsdatum entfernt.
+* Change: Klasse VerschiebeBuchungen in MoveBuchungen umbenannt, damit es keine Kollission gibt
+* Add: Klasse VerschiebeBuchungen für globale Verschiebung von Buchungen (Demomodus)
+* Add: Klasse DCAParser für eigene Backend-Formulare
+
 ## Version 0.19.0 (2024-06-11)
 
 * Change: Ausgabe von Geldbeträgen und Salden im Kontoauszug ohne Umbrüche

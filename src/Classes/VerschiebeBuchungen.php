@@ -3,7 +3,7 @@
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
 /**
- * Class VerschiebeBuchungen
+ * Class VerschibeBuchungen
   */
 class VerschiebeBuchungen extends \Backend
 {
@@ -13,95 +13,151 @@ class VerschiebeBuchungen extends \Backend
 	}
 
 	/**
-	 * Verschiebt Buchungen vom aktuellen Konto in die richtigen Konten
+	 * Importiert eine Buchungsliste
 	 */
 	public function run()
 	{
 
-		if(\Input::get('key') != 'move')
+		if(\Input::get('key') != 'verschiebeBuchungen')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
-		$id = \Input::get('id'); // ID des Spielers
-		$strTable = \Input::get('table'); // Quelltabelle
+		// Objekt BackendUser importieren
+		$this->import('BackendUser','User');
 
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM ".$strTable." WHERE pid = ?")
-		                                        ->execute($id);
-
+		$verwendungszweck = array();
+		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
+		                                        ->execute();
 		if($objBuchungen->numRows)
 		{
 			while($objBuchungen->next())
 			{
-				if($objBuchungen->kategorie == 'b' && $strTable == 'tl_fernschach_spieler_konto')
+				if(isset($verwendungszweck[$objBuchungen->verwendungszweck]))
 				{
-					// Beitragsbuchung im Hauptkonto verschieben in das Beitragskonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto_beitrag');
+					$verwendungszweck[$objBuchungen->verwendungszweck]++;
 				}
-				elseif($objBuchungen->kategorie == 's' && $strTable == 'tl_fernschach_spieler_konto')
+				else
 				{
-					// Nenngeldbuchung im Hauptkonto verschieben in das Nenngeldkonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto_nenngeld');
-				}
-				elseif($objBuchungen->kategorie == 'b' && $strTable == 'tl_fernschach_spieler_konto_nenngeld')
-				{
-					// Beitragsbuchung im Nenngeldkonto verschieben in das Beitragskonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto_beitrag');
-				}
-				elseif($objBuchungen->kategorie == 's' && $strTable == 'tl_fernschach_spieler_konto_beitrag')
-				{
-					// Nenngeldbuchung im Beitragskonto verschieben in das Nenngeldkonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto_nenngeld');
-				}
-				elseif($objBuchungen->kategorie != 's' && $objBuchungen->kategorie != 'b' && $strTable == 'tl_fernschach_spieler_konto_beitrag')
-				{
-					// Diverse Buchung im Beitragskonto verschieben in das Hauptkonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto');
-				}
-				elseif($objBuchungen->kategorie != 's' && $objBuchungen->kategorie != 'b' && $strTable == 'tl_fernschach_spieler_konto_nenngeld')
-				{
-					// Diverse Buchung im Nenngeldkonto verschieben in das Hauptkonto
-					self::Verschieben($objBuchungen, $strTable, 'tl_fernschach_spieler_konto');
+					$verwendungszweck[$objBuchungen->verwendungszweck] = 1;
 				}
 			}
+			arsort($verwendungszweck); // Array nach Werten absteigend sortieren
+		}
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag")
+		                                        ->execute();
+		if($objBuchungen->numRows)
+		{
+			while($objBuchungen->next())
+			{
+				if(isset($verwendungszweck[$objBuchungen->verwendungszweck]))
+				{
+					$verwendungszweck[$objBuchungen->verwendungszweck]++;
+				}
+				else
+				{
+					$verwendungszweck[$objBuchungen->verwendungszweck] = 1;
+				}
+			}
+			arsort($verwendungszweck); // Array nach Werten absteigend sortieren
+		}
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld")
+		                                        ->execute();
+		if($objBuchungen->numRows)
+		{
+			while($objBuchungen->next())
+			{
+				if(isset($verwendungszweck[$objBuchungen->verwendungszweck]))
+				{
+					$verwendungszweck[$objBuchungen->verwendungszweck]++;
+				}
+				else
+				{
+					$verwendungszweck[$objBuchungen->verwendungszweck] = 1;
+				}
+			}
+			arsort($verwendungszweck); // Array nach Werten absteigend sortieren
 		}
 
-		// Zurück auf die zuletzt aufgerufene Seite
-		$this->redirect(str_replace('&key=move', '', \Environment::get('request')));
-
-	}
-
-	public function Verschieben($objBuchung, $quelle, $ziel)
-	{
-		$set = array
-		(
-			'pid'              => $objBuchung->pid,
-			'tstamp'           => $objBuchung->tstamp,
-			'resetRecord'      => $objBuchung->resetRecord,
-			'importDate'       => $objBuchung->importDate,
-			'betrag'           => $objBuchung->betrag,
-			'typ'              => $objBuchung->typ,
-			'datum'            => $objBuchung->datum,
-			'sortierung'       => $objBuchung->sortierung,
-			'kategorie'        => $objBuchung->kategorie,
-			'art'              => $objBuchung->art,
-			'verwendungszweck' => $objBuchung->verwendungszweck,
-			'markierung'       => $objBuchung->markierung,
-			'saldoReset'       => $objBuchung->saldoReset,
-			'turnier'          => $objBuchung->turnier,
-			'comment'          => $objBuchung->comment,
-			'meldungId'        => $objBuchung->meldungId,
-			'published'        => $objBuchung->published
-		);
-		//log_message('Verschiebe Buchung '.print_r($set, true),'fernschach-buchungen.log');
-		$objInsert = \Database::getInstance()->prepare("INSERT INTO ".$ziel." %s")
-		                                     ->set($set)
-		                                     ->execute();
-		$objDelete = \Database::getInstance()->prepare("DELETE FROM ".$quelle." WHERE id = ?")
-		                                     ->execute($objBuchung->id);
+		// Verwendungszweck modifizieren: array('Titel' => 'Anzahl') wird array('Titel' => 'Titel (Anzahl mal)')
+		foreach($verwendungszweck as $key => $value)
+		{
+			$verwendungszweck[$key] = $key.' ('.$value.' mal)';
+		}
 		
-		return;
+		$form = new \Schachbulle\ContaoFernschachBundle\Classes\DCAParser('tl_dca');
+		$form->setBacklink(ampersand(str_replace('&key=verschiebeBuchungen', '', \Environment::get('request'))));   
+		$dca = array
+		(
+			'submit' => 'Verschiebung starten',
+			'info' => &$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['hinweis'],
+			'fieldsets' => array
+			(
+				'title_legend' => array
+				(
+					'title' => 'Buchungsdatum und Verwendungszweck',
+					'fields' => array
+					(
+						'datum' => array
+						(
+							'label'      => &$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['datum'],
+							'inputType'  => 'text',
+							'eval'       => array('tl_class' => 'w50 widget wizard', 'datepicker'=>true, 'rgxp'=>'date', 'mandatory'=>false)
+						),
+						'search_verwendungszweck' => array
+						(
+							'label'      => &$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['search_verwendungszweck'],
+							'inputType'  => 'text',
+							'eval'       => array('tl_class' => 'w50 clr widget')
+						),
+						'select_verwendungszweck' => array
+						(
+							'label'      => &$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['select_verwendungszweck'],
+							'inputType'  => 'select',
+							'options'    => $verwendungszweck,
+							'eval'       => array('tl_class' => 'w50 widget', 'chosen'=>true, 'includeBlankOption'=>true)
+						)
+					)
+				),
+				'konto_legend' => array
+				(
+					'title' => 'Zielkonto',
+					'fields' => array
+					(
+						'zielkonto' => array
+						(
+							'label'      => &$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['zielkonto'],
+							'inputType'  => 'select',
+							'options'    => array('h'=>'Hauptkonto','b'=>'Beitragskonto','n'=>'Nenngeldkonto'),
+							'eval'       => array('tl_class' => 'w50 widget', 'chosen'=>true, 'includeBlankOption'=>true)
+						),
+					),
+				),
+			)
+		);
+		$form->setDCA($dca);
+		// Formular wurde abgeschickt und ist korrekt
+		//if($form->isSubmitted() && $form->validate())
+		if($form->isSubmitted())
+		{
+			$daten = $form->getData();
+			self::getImport($daten); // Daten sichern
+			// Seite neu laden
+			// Cookie setzen und zurückkehren zur Buchungsliste
+			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			$this->redirect(str_replace('&key=verschiebeBuchungen', '', \Environment::get('request')));
+		}
+		return $form->parse();
+
 	}
 
+	public function getImport($daten)
+	{
+		
+		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
+		                                        ->execute();
+	}
 }

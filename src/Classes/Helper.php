@@ -424,6 +424,8 @@ class Helper extends \Backend
 	 * Funktion updateResetbuchungen
 	 * ============================
 	 * Überprüft tl_fernschach_spieler_konto auf die Gültigkeit der globalen Resetbuchung
+	 * Überprüft tl_fernschach_spieler_konto_nenngeld auf die Gültigkeit der globalen Resetbuchung
+	 * Überprüft tl_fernschach_spieler_konto_beitrag auf die Gültigkeit der globalen Resetbuchung
 	 */
 	public function updateResetbuchungen(\DataContainer $dc)
 	{
@@ -435,71 +437,22 @@ class Helper extends \Backend
 			// Buchungen prüfen
 			if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
 			{
-				// Globaler Reset-Datensatz ist aktiviert
-				$typGlobal = $GLOBALS['TL_CONFIG']['fernschach_resetSaldo'] < 0 ? 's' : 'h';
-				$betragGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetSaldo']);
-				$datumGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetDate']);
+				$resetRecords = (array)unserialize($GLOBALS['TL_CONFIG']['fernschach_resetRecords']); // Reset-Datensätze einlesen
 
-				// Alle Buchungen vom ältesten bis zum jüngsten Datensatz sortiert einlesen
-				$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto ORDER BY pid ASC, datum ASC, sortierung ASC")
-				                                        ->execute($playerId);
-				if($objBuchungen->numRows)
+				// Alle Reset-Datensätze auswerten
+				foreach($resetRecords as $resetRecord)
 				{
-					$pid = 0; // Letzte Spieler-ID merken
-					while($objBuchungen->next())
+					// Globaler Reset-Datensatz ist aktiviert
+					$nummer = abs($resetRecord['nummer']);
+					$typ = $resetRecord['saldo'] < 0 ? 's' : 'h';
+					$betrag = abs($resetRecord['saldo']);
+					$datum = abs($resetRecord['datum']);
+					$konten = $resetRecord['konten'];
+					if(count($konten))
 					{
-						if($objBuchungen->pid != $pid)
+						foreach($konten as $konto)
 						{
-							// Neuer Spieler, deshalb zuerst Variablen zurücksetzen
-							$resetDatensaetze = 0; // Bisher gefundene Datensätze speichern
-							$juengereBuchungen = false; // Jüngere Buchungen vorhanden
-							$aeltereBuchungen = false; // Ältere Buchungen vorhanden
-							$pid = $objBuchungen->pid; // Neuen Spieler der pid zuordnen
-						}
-						// Datensatz untersuchen
-						if($objBuchungen->resetRecord)
-						{
-							// Reset-Datensatz gefunden
-							$resetDatensaetze++;
-							if($resetDatensaetze == 1 && !$juengereBuchungen && !$aeltereBuchungen)
-							{
-								// Reset-Datensatz löschen, da keine Buchungen davor oder danach existieren
-								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
-								                                       ->execute($objBuchungen->id);
-								$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
-							}
-							elseif($resetDatensaetze > 1)
-							{
-								// Überflüssigen Reset-Datensatz löschen
-								$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
-								                                       ->execute($objBuchungen->id);
-								$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
-							}
-						}
-						else
-						{
-							// Normaler Datensatz
-							if($datumGlobal > $objBuchungen->datum) $aeltereBuchungen = true;
-							if($datumGlobal < $objBuchungen->datum) $juengereBuchungen = true;
-							if($aeltereBuchungen && $juengereBuchungen && !$resetDatensaetze)
-							{
-								// Reset-Buchung anlegen
-								$set = array
-								(
-									'pid'              => $objBuchungen->pid,
-									'tstamp'           => time(),
-									'resetRecord'      => 1,
-									'betrag'           => $betragGlobal,
-									'datum'            => $datumGlobal,
-									'saldoReset'       => 1,
-									'typ'              => $typGlobal,
-									'verwendungszweck' => 'Saldo global neu gesetzt',
-								);
-								$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
-								                                     ->set($set)
-								                                     ->execute();
-								$resetDatensaetze++;
-							}
+							self::KontoResetpruefung($konto, $nummer, $betrag, $datum, $typ);
 						}
 					}
 				}
@@ -507,8 +460,12 @@ class Helper extends \Backend
 			else
 			{
 				// Globaler Reset-Datensatz ist nicht aktiviert, deshalb alle Reset-Buchungen löschen
-				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE resetRecord = ?")
-				                                       ->execute(1);
+				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE resetRecord != ?")
+				                                       ->execute('');
+				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE resetRecord != ?")
+				                                       ->execute('');
+				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_beitrag WHERE resetRecord != ?")
+				                                       ->execute('');
 			}
 
 
@@ -516,6 +473,91 @@ class Helper extends \Backend
 			\Contao\Config::persist('fernschach_resetUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 		}
 
+	}
+
+	/**
+	 * Funktion KontoResetpruefung
+	 * ===========================
+	 * Überprüft die Konten auf Vorhandensein des Resetdatensatzes
+	 * @param $konto
+	 * @param $nummer
+	 * @param $betrag
+	 * @param $datum
+	 * @param $typ
+	 */
+	public function KontoResetpruefung($konto, $nummer, $betrag, $datum, $typ)
+	{
+		switch($konto)
+		{
+			case 'h': $suffix = ''; break;
+			case 'b': $suffix = '_beitrag'; break;
+			case 'n': $suffix = '_nenngeld'; break;
+			default: $suffix = '';
+		}
+		
+		// Alle Buchungen vom ältesten bis zum jüngsten Datensatz sortiert einlesen
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." ORDER BY pid ASC, datum ASC, sortierung ASC")
+		                                        ->execute();
+		if($objBuchungen->numRows)
+		{
+			$pid = 0; // Letzte Spieler-ID merken
+			while($objBuchungen->next())
+			{
+				if($objBuchungen->pid != $pid)
+				{
+					// Neuer Spieler, deshalb zuerst Variablen zurücksetzen
+					$resetDatensaetze = 0; // Bisher gefundene Datensätze speichern
+					$juengereBuchungen = false; // Jüngere Buchungen vorhanden
+					$aeltereBuchungen = false; // Ältere Buchungen vorhanden
+					$pid = $objBuchungen->pid; // Neuen Spieler der pid zuordnen
+				}
+				// Datensatz untersuchen
+				if($objBuchungen->resetRecord == $nummer)
+				{
+					// Reset-Datensatz gefunden
+					$resetDatensaetze++;
+					if($resetDatensaetze == 1 && !$juengereBuchungen && !$aeltereBuchungen)
+					{
+						// Reset-Datensatz löschen, da keine Buchungen davor oder danach existieren
+						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
+						                                       ->execute($objBuchungen->id);
+						$this->createNewVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
+					}
+					elseif($resetDatensaetze > 1)
+					{
+						// Überflüssigen Reset-Datensatz löschen
+						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
+						                                       ->execute($objBuchungen->id);
+						$this->createNewVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
+					}
+				}
+				else
+				{
+					// Normaler Datensatz
+					if($datum > $objBuchungen->datum) $aeltereBuchungen = true;
+					if($datum < $objBuchungen->datum) $juengereBuchungen = true;
+					if($aeltereBuchungen && $juengereBuchungen && !$resetDatensaetze)
+					{
+						// Reset-Buchung anlegen
+						$set = array
+						(
+							'pid'              => $objBuchungen->pid,
+							'tstamp'           => time(),
+							'resetRecord'      => $nummer,
+							'betrag'           => $betrag,
+							'datum'            => $datum,
+							'saldoReset'       => 1,
+							'typ'              => $typ,
+							'verwendungszweck' => 'Saldo global neu gesetzt',
+						);
+						$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$suffix." %s")
+						                                     ->set($set)
+						                                     ->execute();
+						$resetDatensaetze++;
+					}
+				}
+			}
+		}
 	}
 
 	/**

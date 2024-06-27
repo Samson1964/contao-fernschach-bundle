@@ -152,6 +152,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_konten'] = array
 	'eval'                    => array
 	(
 		'multiple'            => true, 
+		'tl_class'            =>'w50',
 		'mandatory'           => false
 	),
 	'sql'                     => "blob NULL"

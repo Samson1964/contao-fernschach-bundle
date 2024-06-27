@@ -45,7 +45,8 @@ $GLOBALS['TL_LANG'][$strTable]['markiertIcon'] = array('Spieler markiert/nicht m
 /**
  * Buttons für globale Operationen
  */
-$GLOBALS['TL_LANG'][$strTable]['importBuchungen'] = array('Import Buchungen', 'Globaler Import von neuen Buchungen bzw. um alte Buchungen zu ergänzen.');
+$GLOBALS['TL_LANG'][$strTable]['verschiebeBuchungen'] = array('Buchungen verschieben', 'Buchungen bei allen Spielern verschieben.');
+$GLOBALS['TL_LANG'][$strTable]['importBuchungen'] = array('Buchungen importieren', 'Globaler Import von neuen Buchungen bzw. um alte Buchungen zu ergänzen.');
 
 $GLOBALS['TL_LANG'][$strTable]['typ_options'] = array
 (

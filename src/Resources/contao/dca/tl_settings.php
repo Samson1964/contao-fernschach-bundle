@@ -16,7 +16,7 @@
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
-$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetDate,fernschach_resetSaldo';
+$GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
  * Felder
@@ -33,6 +33,95 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetActive'] = array
 		'submitOnChange'      => true
 	)
 );
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetRecords'] = array
+(
+	'label'                               => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetRecords'],
+	'exclude'                             => true,
+	'inputType'                           => 'multiColumnWizard',
+	'eval'                                => array
+	(
+		'tl_class'                        => 'long clr',
+		'buttonPos'                       => 'middle',
+		'buttons'                         => array
+		(
+			'copy'                        => false,
+			'delete'                      => 'system/themes/flexible/icons/delete.svg',
+			'move'                        => false,
+			'up'                          => false,
+			'down'                        => false
+		),
+		'columnFields'                    => array
+		(
+			'nummer' => array
+			(
+				'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetNumber'],
+				'exclude'                 => true,
+				'inputType'               => 'text',
+				'eval'                    => array
+				(
+					'rgxp'                => 'digit', 
+					'tl_class'            => 'w50', 
+					'style'               => 'width:90%',
+					'maxlength'           => 1,
+					'mandatory'           => true
+				),
+			),
+			'datum' => array
+			(
+				'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetDate'],
+				'exclude'                 => true,
+				'inputType'               => 'text',
+				'eval'                    => array
+				(
+					'rgxp'                => 'datim', 
+					'datepicker'          => true, 
+					'tl_class'            => 'w50 wizard', 
+					'style'               => 'width:90%',
+					'mandatory'           => true
+				),
+			),
+			'saldo' => array
+			(
+				'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetSaldo'],
+				'exclude'                 => true,
+				'inputType'               => 'text',
+				'eval'                    => array
+				(
+					'rgxp'                => 'digit', 
+					'mandatory'           => false, 
+					'style'               => 'width:90%', 
+					'maxlength'           => 6,
+					'mandatory'           => true
+				),
+				'load_callback'           => array
+				(
+					array('tl_settings_fernschach', 'getBetrag')
+				),
+				'save_callback' => array
+				(
+					array('tl_settings_fernschach', 'putBetrag')
+				),
+			),
+			'konten' => array
+			(
+				'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKonten'],
+				'exclude'                 => true,
+				'inputType'               => 'select',
+				'options'                 => array('h', 'b', 'n'),
+				'reference'               => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'],
+				'eval'                    => array
+				(
+					'multiple'            => true,
+					'tl_class'            => '', 
+					'style'               => 'width:100%',
+					'mandatory'           => true
+				)
+			),
+		)
+	),
+);
+
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetDate'] = array
 (

@@ -10,7 +10,6 @@ $GLOBALS['TL_LANG']['CTE']['correspondence_chess'] = 'Fernschach-Elemente';
 $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung'] = array('Fernschach-Verwaltung', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 $GLOBALS['TL_LANG']['CTE']['fernschachverwaltung_zusagen'] = array('Turnierzusagen anzeigen', 'Teilnehmer mit Zusagen für ein Turnier anzeigen.');
 
-
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'] = 'Spielerdaten aus einer CSV-Datei importieren';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['format'] = 
 'Die hochgeladenen CSV-Dateien müssen im UTF-8-Format vorliegen. Je Zeile steht ein Datensatz in der Datei. 
@@ -234,6 +233,27 @@ Folgende Spaltenarten werden unterstützt:
 </tr>
 </table>
 ';
+
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['hinweis'] = array
+(
+	'Buchungen global verschieben (Demomodus, nicht funktionsfähig)', 
+	'Hier können Sie Buchungen global über alle Buchungskonten (Hauptkonto, Beitragskonto, Nenngeld) bei allen Spielern verschieben. 
+	<ul>
+		<li><b>Buchungsdatum</b>: Es werden nur Buchungen mit diesem Datum verschoben. Bei Angabe eines Datums werden beide Möglichkeiten mit Verwendungszweck berücksichtigt!<br>Lassen Sie das Feld frei, wenn Buchungen unabhängig vom Datum verschoben werden sollen.</li>
+		<li><b>Verwendungszweck suchen</b>: Es werden nur Buchungen berücksichtigt, die im Verwendungszweck diesen Text zu stehen haben. Groß- und Kleinschreibung spielt keine Rolle. Wenn Sie das Feld leerlassen, wird es nicht berücksichtigt.</li>
+		<li><b>Verwendungszweck auswählen</b>: Die Auswahlliste zeigt die Verwendungszwecke aus allen Buchungen, abwärts sortiert nach Vorkommen dieses Verwendungszwecks, wobei immer das komplette Feld berücksichtigt wird. Wenn Sie einen Verwendungszweck hier auswählen, werden nur Buchungen damit berücksichtigt. Groß- und Kleinschreibung wird unterschieden.<br>Die Suche nach einem leeren Verwendungszweck (Standardeinstellung oder nur eine Anzahl in Klammern) ist nicht möglich.</li>
+		<li><b>Zielkonto auswählen</b>: Buchungen werden in das ausgewählte Konto verschoben. Die Kategorie der Buchung wird dabei nicht berücksichtigt. Wenn Sie kein Konto auswählen, werden dagegen die Kategorien berücksichtigt. D.h. Buchungen der Kategorie "Nenngeld" werden in das Nenngeldkonto verschoben, Buchungen der Kategorie "Beitrag" in das Beitragskonto. Alle nicht diesen beiden Kategorien zugeordneten Buchungen werden in das Hauptkonto verschoben.</li>
+	</ul>
+	<h3>Beispiele:</h3>
+	<ul>
+		<li><b>Variante 1</b>: Buchungsdatum "12.01.2024", Verwendungszweckssuche "Nenngeld", Verwendungszweckauswahl "Nenngeld (x mal)", kein Zielkonto &raquo; Verschiebt alle Buchungen entsprechend ihrer Kategorie in das richtige Zielkonto. Es werden nur Buchungen berücksichtigt, die mit den Parametern übereinstimmen.</li>
+		<li><b>Variante 2</b>: Buchungsdatum leer, Verwendungszweckssuche leer, Verwendungszweckauswahl "Nenngeld (x mal)", Zielkonto "Nenngeldkonto" &raquo; Verschiebt alle Buchungen mit dem Verwendungszweck "Nenngeld" in das Nenngeldkonto.</li>
+	</ul>'
+);
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['datum'] = array('Buchungsdatum', 'Datum der Buchung(en), die verschoben werden sollen. Leerlassen, wenn das Datum unberücksichtigt bleiben soll.');
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['select_verwendungszweck'] = array('Verwendungszweck auswählen', 'Zusammenfassung aller Verwendungszwecke in allen Buchungskonten. Eine Auswahl hier wird nur berücksichtigt, wenn das Feld "Verwendungszweck suchen" leer bleibt.');
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['search_verwendungszweck'] = array('Verwendungszweck suchen', 'Eine Textsuche im Verwendungszweck hat Vorrang vor "Verwendungszweck auswählen".');
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['zielkonto'] = array('Zielkonto auswählen', 'Legen Sie hier fest in welches Konto die Buchungen verschoben werden sollen. Wenn Sie kein Zielkonto auswählen, werden die Buchungen anhand der zugeordneten Kategorien verschoben.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_import']['headline'] = 'Buchungen aus einer CSV-Datei importieren';
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_import']['format'] = 

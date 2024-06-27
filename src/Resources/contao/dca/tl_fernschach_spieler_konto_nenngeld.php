@@ -146,7 +146,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		),
 		'tstamp' => array
 		(
-			'sorting'                 => true,
 			'flag'                    => 6,
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
@@ -218,7 +217,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['sortierung'],
 			'exclude'                 => true,
-			'flag'                    => 6,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
@@ -232,6 +230,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		'kategorie' => array(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['kategorie'],
 			'exclude'                 => true,
+			'sorting'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'select',
 			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['kategorie_options'],
@@ -491,7 +490,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 		if($arrRow['markierung']) $css .= 'background-color:#FFE8DD; ';
 
 		$args[0] = '<span style="'.$css.'">'.$args[0].'</span>';
-		$args[1] = '<span style="'.$css.'">'.$args[1].'</span>';
+		$args[1] = '<span style="'.$css.'">'.($args[1] ? $args[1] : '-').'</span>';
 		$args[2] = '<span style="white-space:nowrap;'.$css.'">'.self::getEuro($args[2], $arrRow['typ']).'</span>';
 		$args[3] = '<span style="'.$css.'">'.$args[3].'&nbsp;</span>';
 		$args[4] = '<span style="white-space:nowrap;'.$css.'">'.$args[4].'&nbsp;</span>';

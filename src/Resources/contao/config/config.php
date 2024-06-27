@@ -17,9 +17,9 @@ if(!isset($GLOBALS['BE_MOD']['fernschach']))
 
 $GLOBALS['BE_MOD']['fernschach'] = array
 (
-	'fernschach-spieler'    => array
-	(
-		'tables'            => array
+	'fernschach-spieler'      => array
+	(                         
+		'tables'              => array
 		(
 			'tl_fernschach_spieler',
 			'tl_fernschach_spieler_konto',
@@ -27,15 +27,16 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 			'tl_fernschach_spieler_konto_nenngeld',
 			'tl_fernschach_spieler_titel',
 		),
-		'exportXLS'         => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
-		'importSpieler'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),
-		'importBuchungen'   => array('Schachbulle\ContaoFernschachBundle\Classes\ImportBuchungen', 'run'),
-		'move'              => array('Schachbulle\ContaoFernschachBundle\Classes\VerschiebeBuchungen', 'run'),
-		'setNewsletter'     => array('Schachbulle\ContaoFernschachBundle\Classes\Newsletter', 'setNewsletter'),
-	),
-	'fernschach-turniere'   => array
-	(
-		'tables'            => array
+		'exportXLS'           => array('Schachbulle\ContaoFernschachBundle\Classes\Export', 'exportXLS'),
+		'importSpieler'       => array('Schachbulle\ContaoFernschachBundle\Classes\ImportSpieler', 'run'),
+		'importBuchungen'     => array('Schachbulle\ContaoFernschachBundle\Classes\ImportBuchungen', 'run'),
+		'verschiebeBuchungen' => array('Schachbulle\ContaoFernschachBundle\Classes\VerschiebeBuchungen', 'run'),
+		'move'                => array('Schachbulle\ContaoFernschachBundle\Classes\MoveBuchungen', 'run'),
+		'setNewsletter'       => array('Schachbulle\ContaoFernschachBundle\Classes\Newsletter', 'setNewsletter'),
+	),                        
+	'fernschach-turniere'     => array
+	(                         
+		'tables'              => array
 		(
 			'tl_fernschach_turniere',
 			'tl_fernschach_turniere_meldungen',
@@ -45,24 +46,24 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 	),
 	'fernschach-turniere-spieler'     => array
 	(
-		'tables'            => array
+		'tables'              => array
 		(
 			'tl_fernschach_turniere_meldungen',
 		),
-		'callback'                => \Schachbulle\ContaoFernschachBundle\Modules\ZeigeTurniere::class,
-		'hideInNavigation'        => true,
+		'callback'            => \Schachbulle\ContaoFernschachBundle\Modules\ZeigeTurniere::class,
+		'hideInNavigation'    => true,
 	),
 	'fernschach-mitgliederstatistik'   => array
 	(
-		'tables'            => array
+		'tables'              => array
 		(
 			'tl_fernschach_mitgliederstatistik',
 		),
-		'statistik'         => array('Schachbulle\ContaoFernschachBundle\Classes\Statistik', 'run'),
+		'statistik'           => array('Schachbulle\ContaoFernschachBundle\Classes\Statistik', 'run'),
 	),
 	'fernschach-konten'   => array
 	(
-		'tables'            => array
+		'tables'              => array
 		(
 			'tl_fernschach_konten',
 			'tl_fernschach_konten_buchungen',
