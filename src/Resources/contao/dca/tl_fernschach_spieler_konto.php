@@ -34,7 +34,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'sorting' => array
 		(
 			'mode'                    => 2,
-			'fields'                  => array('datum', 'sortierung'),
+			'fields'                  => array('datum DESC', 'sortierung DESC'),
 			'flag'                    => 3,
 			'panelLayout'             => 'filter;sort;search,limit',
 			'disableGrouping'         => true
@@ -382,7 +382,8 @@ class tl_fernschach_spieler_konto extends \Backend
 		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
 
 		// Salden berechnen
-		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, '');
+		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id);
+		//print_r($this->salden);
 		return;
 
 	}

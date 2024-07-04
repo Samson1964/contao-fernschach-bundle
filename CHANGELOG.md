@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.1 (2024-07-04)
+
+* Fix: tl_fernschach_spieler_konto* -> sorting fields korrigiert
+* Fix: The autoloader expected class "Schachbulle\ContaoFernschachBundle\Classes\MoveBuchungen" to be defined in file "schachbulle/contao-fernschach-bundle/src/Classes/MoveBuchungen.php". The file was found but the class was not in it, the class name or namespace probably has a typ -> Klasse MoveBuchungen hatte den Namen VerschiebeBuchungen
+* Fix: Falsche Sortierung der Buchungen im Beitragskonto
+* Add: Link globale Operation verschiebeBuchungen im Nenngeld- und Beitragskonto
+
 ## Version 0.20.0 (2024-06-27)
 
 * Fix: Formularelemente im FE-Modul Kontoauszug sind nicht editierbar

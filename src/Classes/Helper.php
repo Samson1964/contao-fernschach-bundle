@@ -278,11 +278,13 @@ class Helper extends \Backend
 		// Buchungen des Spielers laden
 		if($konto)
 		{
+			// Beitrags- oder Nenngeldkonto
 			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
 			                                        ->execute($pid, 1);
 		}
 		else
 		{
+			// Hauptkonto
 			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
 			                                        ->execute($pid, 1);
 		}
@@ -628,7 +630,7 @@ class Helper extends \Backend
 	 * @param $id        ID des Spielers
 	 * @return           Keine Rückgabe. Es wird direkt in die Datenbank geschrieben
 	 */
-	public function checkResetbuchungen($playerId)
+	public static function checkResetbuchungen($playerId)
 	{
 		$BuchungenJuenger = false; // Boolean, um festzustellen das es jüngere Buchungen als Reset gibt
 		$BuchungenAelter = false; // Boolean, um festzustellen das es ältere Buchungen als Reset gibt

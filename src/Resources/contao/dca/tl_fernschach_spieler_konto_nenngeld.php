@@ -34,7 +34,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		'sorting' => array
 		(
 			'mode'                    => 2,
-			'fields'                  => array('datum', 'sortierung'),
+			'fields'                  => array('datum DESC', 'sortierung DESC'),
 			'flag'                    => 3,
 			'panelLayout'             => 'filter;sort;search,limit',
 			'disableGrouping'         => true
@@ -47,6 +47,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		),
 		'global_operations' => array
 		(
+			'verschiebeBuchungen' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['verschiebeBuchungen'],
+				'href'                => 'key=verschiebeBuchungen',
+				'icon'                => 'bundles/contaofernschach/images/move.png'
+			),
 			'importBuchungen' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['importBuchungen'],

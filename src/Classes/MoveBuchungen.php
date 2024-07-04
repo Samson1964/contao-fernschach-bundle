@@ -5,7 +5,7 @@ namespace Schachbulle\ContaoFernschachBundle\Classes;
 /**
  * Class VerschiebeBuchungen
   */
-class VerschiebeBuchungen extends \Backend
+class MoveBuchungen extends \Backend
 {
 
 	function __construct()
