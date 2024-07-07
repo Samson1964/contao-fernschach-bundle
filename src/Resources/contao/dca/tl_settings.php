@@ -74,7 +74,7 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetRecords'] = array
 				'inputType'               => 'text',
 				'eval'                    => array
 				(
-					'rgxp'                => 'datim', 
+					'rgxp'                => 'date', 
 					'datepicker'          => true, 
 					'tl_class'            => 'w50 wizard', 
 					'style'               => 'width:90%',

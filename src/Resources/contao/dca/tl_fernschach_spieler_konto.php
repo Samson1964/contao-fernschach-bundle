@@ -16,6 +16,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		'onload_callback'             => array
 		(
 			array('tl_fernschach_spieler_konto', 'checkPermission'),
+			array('tl_fernschach_spieler_konto', 'getInfo'),
 			array('tl_fernschach_spieler_konto', 'checkSaldo')
 		),
 		'sql' => array
@@ -381,6 +382,9 @@ class tl_fernschach_spieler_konto extends \Backend
 	{
 		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
 
+		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\ResetUtil();
+		$reset->Pruefung('h', $id);
+
 		// Salden berechnen
 		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id);
 		//print_r($this->salden);
@@ -681,6 +685,29 @@ class tl_fernschach_spieler_konto extends \Backend
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
 		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.\Backend::addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+	}
+
+	public function getInfo(\DataContainer $dc)
+	{
+		if($_POST || Input::get('act') != 'edit')
+		{
+			return;
+		}
+	
+		//$objCte = \Schachbulle\ContaoFernschachBundle\Models\HauptkontoModel::findByPk($dc->id);
+		$objCte = \Schachbulle\ContaoFernschachBundle\Models\HauptkontoModel::findByPk(1);
+		//$objCte = HauptkontoModel::findByPk($dc->id);
+		if($objCte === null)
+		{
+			return;
+		}
+	
+		 //Message::addError("Fehler ist aufgetreten.");
+		if($dc->id)
+		{
+			\Message::addInfo('Information: '.$dc->id);
+		}
+		 //Message::addConfirmation("Confirmation, yeah!");
 	}
 
 }

@@ -144,3 +144,11 @@ $GLOBALS['TL_CONFIG']['fernschach_hinweis_kontoauszug'] = 'Kein BdF-Mitglied';
 $GLOBALS['TL_CONFIG']['fernschach_resetUpdate_time'] = 86400;
 $GLOBALS['TL_CONFIG']['fernschach_membershipUpdate_time'] = 86400;
 $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time'] = 43200;
+
+/**
+ * -------------------------------------------------------------------------
+ * Models registrieren                                  
+ * -------------------------------------------------------------------------
+ */
+
+$GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto'] = \Schachbulle\ContaoFernschachBundle\Models\HauptkontoModel::class;

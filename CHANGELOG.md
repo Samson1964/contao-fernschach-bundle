@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.2 (2024-07-07)
+
+* Add: Klasse ResetUtil für Kontoresets -> Optimierung des Codes, weil diverse alte und neue Funktionen herumgeistern. Suffix Util, weil Reset ein reserviertes Wort in PHP ist
+* Change: tl_settings.fernschach_resetRecords.datum -> date statt datim, weil nur das Datum benötigt wird
+* Add: Model HauptkontoModel für den Zugriff auf tl_fernschach_spieler_konto´
+ACHTUNG: Das Model funktioniert nicht
+
 ## Version 0.20.1 (2024-07-04)
 
 * Fix: tl_fernschach_spieler_konto* -> sorting fields korrigiert
