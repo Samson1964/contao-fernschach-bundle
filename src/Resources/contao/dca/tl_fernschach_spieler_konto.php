@@ -149,7 +149,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 		(
 			'foreignKey'              => 'tl_fernschach_spieler.id',
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
-			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
+			'relation'                => array('type'=>'belongsTo', 'load'=>'eager') // Elterntabelle benötigt ein Model, wenn diese Tabelle eine Relation und ein Model hat
 		),
 		'tstamp' => array
 		(
@@ -694,18 +694,16 @@ class tl_fernschach_spieler_konto extends \Backend
 			return;
 		}
 	
-		//$objCte = \Schachbulle\ContaoFernschachBundle\Models\HauptkontoModel::findByPk($dc->id);
-		$objCte = \Schachbulle\ContaoFernschachBundle\Models\HauptkontoModel::findByPk(1);
-		//$objCte = HauptkontoModel::findByPk($dc->id);
-		if($objCte === null)
+		$objRecord = \Schachbulle\ContaoFernschachBundle\Models\Hauptkonto::findByPk($dc->id);
+		if($objRecord === null)
 		{
 			return;
 		}
 	
 		 //Message::addError("Fehler ist aufgetreten.");
-		if($dc->id)
+		if($objRecord->resetRecord)
 		{
-			\Message::addInfo('Information: '.$dc->id);
+			\Message::addInfo($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['message_resetRecord']);
 		}
 		 //Message::addConfirmation("Confirmation, yeah!");
 	}

@@ -67,3 +67,8 @@ $GLOBALS['TL_LANG'][$strTable]['art_options'] = array
 	'i' => 'ICCF-Turnier',
 	'g' => 'Guthaben',
 );
+
+/**
+ * Infofelder
+ */
+$GLOBALS['TL_LANG'][$strTable]['message_resetRecord'] = 'Dieser Datensatz ist als globaler Reset definiert! Die Felder "Betrag", "Soll/Haben" und "Datum" dürfen nicht geändert werden. Bei einer Änderung wird der Datensatz gelöscht und neu angelegt mit den voreingestellten Werten.';
