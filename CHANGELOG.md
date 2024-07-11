@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.4 (2024-07-11)
+
+* Add: Models Nenngeldkonto und Beitragskonto
+* Fix: Globale Resetbuchungen in Beitrags- und Nenngeldkonto werden nicht ausgewertet
+* Fix: Anzeige von "Konto geprüft" nicht korrekt bei Beitrags- und Guthaben-Konto -> Globale Resetbuchungen wurden versehentlich berücksichtigt, deshalb zusätzliche Abfrage nach resetRecord eingefügt
+* Change: Helper::checkKonto -> Funktion ausgelagert in eigene Klasse Resetbuchung_2023
+
 ## Version 0.20.3 (2024-07-08)
 
 * Change: Model HauptkontoModel zu Hauptkonto

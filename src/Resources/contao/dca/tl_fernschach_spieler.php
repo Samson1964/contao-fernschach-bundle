@@ -1550,10 +1550,10 @@ class tl_fernschach_spieler extends \Backend
 	 * @param array
 	 * @return string
 	 */
-	public function listMembers($row, $label, Contao\DataContainer $dc, $args)
+	public function listMembers($row, $label, \DataContainer $dc, $args)
 	{
 		//echo "<pre>";
-		//print_r($row);
+		//print_r($args);
 		//echo "</pre>";
 		$args[3] = \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($args[3]); // Geburtstag von JJJJMMTT umwandeln in TT.MM.JJJJ
 
@@ -1591,8 +1591,9 @@ class tl_fernschach_spieler extends \Backend
 		}
 		else $args[6] = '0,00&nbsp;€';
 
-		// Kontoprüfung ausgeben
-		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id']);
+		// Resetbuchung 01.04.2023 prüfen
+		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\Resetbuchung_2023($row['id']);
+		$checked = $reset->getResetbuchung();
 		if($checked) $args[7] = '<img title="Das Konto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
 		else $args[7] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
@@ -1623,7 +1624,8 @@ class tl_fernschach_spieler extends \Backend
 		else $args[8] = '0,00&nbsp;€';
 
 		// Kontoprüfung ausgeben
-		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'beitrag');
+		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\Resetbuchung_2023($row['id'], 'b');
+		$checked = $reset->getResetbuchung();
 		if($checked) $args[9] = '<img title="Das Beitragskonto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
 		else $args[9] = '<img title="Das Beitragskonto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
@@ -1654,7 +1656,8 @@ class tl_fernschach_spieler extends \Backend
 		else $args[10] = '0,00&nbsp;€';
 
 		// Kontoprüfung ausgeben
-		$checked = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkKonto($row['id'], 'nenngeld');
+		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\Resetbuchung_2023($row['id'], 'n');
+		$checked = $reset->getResetbuchung();
 		if($checked) $args[11] = '<img title="Das Nenngeldkonto wurde geprüft (Resetbuchung ab 01.04.2023 vorhanden)." src="bundles/contaofernschach/images/ja.png" width="12" align="middle">';
 		else $args[11] = '<img title="Das Nenngeldkonto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 

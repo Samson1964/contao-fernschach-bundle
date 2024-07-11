@@ -153,3 +153,5 @@ $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time'] = 43200;
 
 $GLOBALS['TL_MODELS']['tl_fernschach_spieler'] = \Schachbulle\ContaoFernschachBundle\Models\Spieler::class;
 $GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto'] = \Schachbulle\ContaoFernschachBundle\Models\Hauptkonto::class;
+$GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto_beitrag'] = \Schachbulle\ContaoFernschachBundle\Models\Beitragskonto::class;
+$GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto_nenngeld'] = \Schachbulle\ContaoFernschachBundle\Models\Nenngeldkonto::class;

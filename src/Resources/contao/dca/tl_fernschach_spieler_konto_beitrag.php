@@ -16,6 +16,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_beitrag'] = array
 		'onload_callback'             => array
 		(
 			array('tl_fernschach_spieler_konto_beitrag', 'checkPermission'),
+			array('tl_fernschach_spieler_konto_beitrag', 'getInfo'),
 			array('tl_fernschach_spieler_konto_beitrag', 'checkSaldo')
 		),
 		'sql' => array
@@ -381,6 +382,10 @@ class tl_fernschach_spieler_konto_beitrag extends \Backend
 	{
 		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
 
+		// Globale Resetbuchungen prüfen
+		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\ResetUtil();
+		$reset->Pruefung('b', $id);
+
 		// Salden berechnen
 		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, 'beitrag');
 		return;
@@ -680,6 +685,27 @@ class tl_fernschach_spieler_konto_beitrag extends \Backend
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
 		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+	}
+
+	public function getInfo(\DataContainer $dc)
+	{
+		if($_POST || Input::get('act') != 'edit')
+		{
+			return;
+		}
+	
+		$objRecord = \Schachbulle\ContaoFernschachBundle\Models\Beitragskonto::findByPk($dc->id);
+		if($objRecord === null)
+		{
+			return;
+		}
+	
+		if($objRecord->resetRecord)
+		{
+			\Message::addInfo($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['message_resetRecord']);
+			//Message::addError("Fehlermeldung.");
+			//Message::addConfirmation("Bestätigungsmeldung");
+		}
 	}
 
 }

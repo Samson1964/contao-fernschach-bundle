@@ -382,6 +382,7 @@ class tl_fernschach_spieler_konto extends \Backend
 	{
 		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
 
+		// Globale Resetbuchungen prüfen
 		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\ResetUtil();
 		$reset->Pruefung('h', $id);
 
@@ -700,12 +701,12 @@ class tl_fernschach_spieler_konto extends \Backend
 			return;
 		}
 	
-		 //Message::addError("Fehler ist aufgetreten.");
 		if($objRecord->resetRecord)
 		{
 			\Message::addInfo($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['message_resetRecord']);
+			//Message::addError("Fehlermeldung.");
+			//Message::addConfirmation("Bestätigungsmeldung");
 		}
-		 //Message::addConfirmation("Confirmation, yeah!");
 	}
 
 }
