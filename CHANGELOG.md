@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.5 (2024-07-15)
+
+* Fix: Attempted to call an undefined method named "checkKonto" of class "Schachbulle\ContaoFernschachBundle\Classes\Helper" in Modules/Kontoauszug.php (line 72) 
+
 ## Version 0.20.4 (2024-07-11)
 
 * Add: Models Nenngeldkonto und Beitragskonto
