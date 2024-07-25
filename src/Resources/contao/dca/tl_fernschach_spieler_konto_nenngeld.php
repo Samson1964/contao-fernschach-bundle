@@ -387,7 +387,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 		$reset->Pruefung('n', $id);
 
 		// Salden berechnen
-		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, 'nenngeld');
+		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, '_nenngeld');
 		return;
 
 	}

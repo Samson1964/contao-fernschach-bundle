@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.7 (2024-07-25)
+
+* Fix: Aufruf Helper::getSaldo hat sich geändert -> _nenngeld statt nenngeld und _beitrag statt beitrag
+
 ## Version 0.20.6 (2024-07-25)
 
 * Fix: Anzeige Kontocheck KBN falsch

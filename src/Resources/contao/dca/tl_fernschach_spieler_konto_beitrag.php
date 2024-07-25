@@ -387,7 +387,7 @@ class tl_fernschach_spieler_konto_beitrag extends \Backend
 		$reset->Pruefung('b', $id);
 
 		// Salden berechnen
-		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, 'beitrag');
+		$this->salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($id, '_beitrag');
 		return;
 
 	}

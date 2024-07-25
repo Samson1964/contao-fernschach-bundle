@@ -241,6 +241,10 @@ class Helper extends \Backend
 		$salden = array();
 		$session = \Contao\Session::getInstance()->getData(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
+		
+		// konto-Variable prüfen und ggfs. korrigieren
+		if($konto == 'nenngeld') $konto = '_nenngeld';
+		if($konto == 'beitrag') $konto = '_beitrag';
 
 		// Filter laden
 		if(isset($session['filter']['tl_fernschach_spieler_konto_'.$pid]['typ']))
