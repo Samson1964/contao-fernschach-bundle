@@ -248,6 +248,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['accountChecked'],
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'boolean'             => true
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'beitragChecked' => array
@@ -255,6 +259,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragChecked'],
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'boolean'             => true
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'nenngeldChecked' => array
@@ -262,6 +270,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'],
 			'filter'                  => true,
 			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'boolean'             => true
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'archived' => array
@@ -1598,7 +1610,7 @@ class tl_fernschach_spieler extends \Backend
 		else $args[7] = '<img title="Das Konto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Kontostand (tl_fernschach_spieler_konto_beitrag) ausgeben
-		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], 'beitrag');
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], '_beitrag');
 		if($salden)
 		{
 			$value = end($salden);
@@ -1630,7 +1642,7 @@ class tl_fernschach_spieler extends \Backend
 		else $args[9] = '<img title="Das Beitragskonto wurde noch nicht geprüft (Resetbuchung ab 01.04.2023 nicht vorhanden)." src="bundles/contaofernschach/images/nein.png" width="12" align="middle">';
 
 		// Kontostand (tl_fernschach_spieler_konto_nenngeld) ausgeben
-		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], 'nenngeld');
+		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($row['id'], '_nenngeld');
 		if($salden)
 		{
 			$value = end($salden);

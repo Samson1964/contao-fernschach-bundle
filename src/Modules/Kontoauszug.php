@@ -107,10 +107,10 @@ class Kontoauszug extends \Module
 
 		}
 		else
-		{  
+		{
 			$fehler = 'Nicht angemeldet';
 		}
-		
+
 		// Ausgabe ergänzen
 		$this->Template->fehler = $fehler;
 
@@ -155,11 +155,11 @@ class Kontoauszug extends \Module
 
 		switch($typ)
 		{
-			case 'h': $kontoname = ''; break; 
-			case 'b': $kontoname = 'beitrag'; break; 
-			case 'n': $kontoname = 'nenngeld'; break; 
+			case 'h': $kontoname = ''; break;
+			case 'b': $kontoname = '_beitrag'; break;
+			case 'n': $kontoname = '_nenngeld'; break;
 		}
-		
+
 		// Salden laden
 		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($spieler->id, $kontoname);
 
@@ -173,7 +173,7 @@ class Kontoauszug extends \Module
 		else $saldo = false; // Kontostand nicht anzeigen
 
 		// Buchungen einlesen
-		if($salden) 
+		if($salden)
 		{
 			// Buchungen ausgeben
 			$buchungen = array();
@@ -181,7 +181,7 @@ class Kontoauszug extends \Module
 			//print_r($salden);
 			foreach(array_reverse($salden, true) as $id => $value)
 			{
-				$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto WHERE id=? AND published=?')
+				$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto'.$kontoname.' WHERE id=? AND published=?')
 				                                      ->execute($id, 1);
 				if($objBuchung->numRows)
 				{
@@ -200,7 +200,7 @@ class Kontoauszug extends \Module
 				}
 			}
 		}
-		
+
 		$kontoname = $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$typ];
 
 		return array

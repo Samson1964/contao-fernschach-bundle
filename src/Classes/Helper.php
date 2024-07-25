@@ -276,18 +276,8 @@ class Helper extends \Backend
 		}
 
 		// Buchungen des Spielers laden
-		if($konto)
-		{
-			// Beitrags- oder Nenngeldkonto
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
-			                                        ->execute($pid, 1);
-		}
-		else
-		{
-			// Hauptkonto
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
-			                                        ->execute($pid, 1);
-		}
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
+		                                        ->execute($pid, 1);
 
 		// Datum umwandeln
 		if(!$datum)
