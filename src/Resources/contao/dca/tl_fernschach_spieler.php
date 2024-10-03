@@ -158,8 +158,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'attributes'          => 'onclick="Backend.getScrollOffset();"',
 				'haste_ajax_operation' => array
 				(
-					'field'           => 'sepaBeitrag',
-					'options'         => array
+					'field'                     => 'sepaBeitrag',
+					'options'                   => array
 					(
 						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/sepa_on.png'),
 						array('value' => '', 'icon' => 'bundles/contaofernschach/images/sepa_off.png'),
@@ -1287,6 +1287,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'sepaBeitrag' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'],
+			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1320,6 +1321,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'sepaNenngeld' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'],
+			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'filter'                  => true,
 			'eval'                    => array
@@ -1551,6 +1553,17 @@ class tl_fernschach_spieler extends \Backend
 				if($key == 'fertig')
 				{
 					unset($GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['operations']['fertigIcon']);
+				}
+
+				// Zusätzlich sepaBeitragIcon abschalten, wenn Feld sepaBeitrag nicht erlaubt ist
+				if($key == 'sepaBeitrag')
+				{
+					unset($GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['operations']['sepaBeitragIcon']);
+				}
+				// Zusätzlich sepaNenngeldIcon abschalten, wenn Feld sepaNenngeld nicht erlaubt ist
+				if($key == 'sepaNenngeld')
+				{
+					unset($GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['operations']['sepaNenngeldIcon']);
 				}
 			}
 		}

@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.20.8 (2024-10-03)
+
+* Add: Benutzerrechte für Setzen des SEPA-Status an Bearbeitung der Felder tl_fernschach_spieler.sepaBeitrag und tl_fernschach_spieler.sepaNenngeld gekoppelt
+
 ## Version 0.20.7 (2024-07-25)
 
 * Fix: Aufruf Helper::getSaldo hat sich geändert -> _nenngeld statt nenngeld und _beitrag statt beitrag
