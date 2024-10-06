@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.0 (2024-10-06)
+
+* Change: Klasse VerschiebeBuchungen fertiggestellt
+* Fix: Undefined constant PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE in Classes/Export.php (line 133) => \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE ersetzt durch '#,##0.00_-" €"'
+* Add: Kenncode-Generierung an Datum binden (Beim Excel-Export wird ein Formular vorgeschaltet, was das Datum abfragt, zu dem der Kenncode generiert werden soll.)
+
 ## Version 0.20.8 (2024-10-03)
 
 * Add: Benutzerrechte für Setzen des SEPA-Status an Bearbeitung der Felder tl_fernschach_spieler.sepaBeitrag und tl_fernschach_spieler.sepaNenngeld gekoppelt

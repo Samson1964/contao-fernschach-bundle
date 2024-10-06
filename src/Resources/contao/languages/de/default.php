@@ -236,23 +236,26 @@ Folgende Spaltenarten werden unterstützt:
 
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['hinweis'] = array
 (
-	'Buchungen global verschieben (Demomodus, nicht funktionsfähig)', 
-	'Hier können Sie Buchungen global über alle Buchungskonten (Hauptkonto, Beitragskonto, Nenngeld) bei allen Spielern verschieben. 
+	'Buchungen global verschieben', 
+	'<p class="fernschach-verwaltung">Hier können Sie Buchungen global über alle Buchungskonten (Hauptkonto, Beitragskonto, Nenngeld) bei allen Spielern verschieben. Wenn Sie kein Zielkonto auswählen, werden die Buchungen anhand der Kategorie verschoben: "Nenngeld" in das Nenngeldkonto, "Beitrag" in das Beitragskonto, alle anderen Kategorien in das Hauptkonto. Es werden maximal 2000 Buchungen verschoben, um fertig zu sein, bevor der Server das Skript abbricht. Führen Sie das Formular in dem Fall ggfs. mehrmals aus.<br><br><span style="color:red; font-weight:bold;">Mit dem Klick auf "Verschiebung starten" beginnt ohne Sicherheitsfrage die Verschiebung. Bitte sind Sie achtsam beim Füllen der Formularfelder!</span><br><br>Alle Ausführungen der Funktion werden in fernschachverwaltung_buchungen.log protokolliert. Fragen Sie den Webmaster für den Zugriff darauf.
 	<ul>
-		<li><b>Buchungsdatum</b>: Es werden nur Buchungen mit diesem Datum verschoben. Bei Angabe eines Datums werden beide Möglichkeiten mit Verwendungszweck berücksichtigt!<br>Lassen Sie das Feld frei, wenn Buchungen unabhängig vom Datum verschoben werden sollen.</li>
-		<li><b>Verwendungszweck suchen</b>: Es werden nur Buchungen berücksichtigt, die im Verwendungszweck diesen Text zu stehen haben. Groß- und Kleinschreibung spielt keine Rolle. Wenn Sie das Feld leerlassen, wird es nicht berücksichtigt.</li>
-		<li><b>Verwendungszweck auswählen</b>: Die Auswahlliste zeigt die Verwendungszwecke aus allen Buchungen, abwärts sortiert nach Vorkommen dieses Verwendungszwecks, wobei immer das komplette Feld berücksichtigt wird. Wenn Sie einen Verwendungszweck hier auswählen, werden nur Buchungen damit berücksichtigt. Groß- und Kleinschreibung wird unterschieden.<br>Die Suche nach einem leeren Verwendungszweck (Standardeinstellung oder nur eine Anzahl in Klammern) ist nicht möglich.</li>
-		<li><b>Zielkonto auswählen</b>: Buchungen werden in das ausgewählte Konto verschoben. Die Kategorie der Buchung wird dabei nicht berücksichtigt. Wenn Sie kein Konto auswählen, werden dagegen die Kategorien berücksichtigt. D.h. Buchungen der Kategorie "Nenngeld" werden in das Nenngeldkonto verschoben, Buchungen der Kategorie "Beitrag" in das Beitragskonto. Alle nicht diesen beiden Kategorien zugeordneten Buchungen werden in das Hauptkonto verschoben.</li>
+		<li><b>Buchungsdatum</b>: Es werden nur Buchungen mit diesem Datum verschoben. Lassen Sie das Feld frei, wenn Buchungen unabhängig vom Datum verschoben werden sollen.</li>
+		<li><b>Verwendungszweck suchen</b>: Es werden nur Buchungen berücksichtigt, die im Verwendungszweck diesen Text zu stehen haben. Groß- und Kleinschreibung wird nicht unterschieden. Wenn Sie das Feld leerlassen, wird es nicht berücksichtigt.</li>
+		<li><b>Verwendungszweck auswählen</b>: Die Auswahlliste zeigt die Verwendungszwecke aus allen Buchungen, abwärts sortiert nach Vorkommen dieses Verwendungszwecks, wobei immer das komplette Feld berücksichtigt wird. Wenn Sie einen Verwendungszweck hier auswählen, werden nur Buchungen damit berücksichtigt. Groß- und Kleinschreibung wird nicht unterschieden.<br>Die Suche nach einem leeren Verwendungszweck (Standardeinstellung oder nur eine Anzahl in Klammern) ist nicht möglich. In dem Fall bleibt das Feld unberücksichtigt.</li>
+		<li><b>Zielkonto auswählen</b>: Buchungen werden in das ausgewählte Konto verschoben. Die Kategorie der Buchung wird dabei nicht berücksichtigt!</li>
 	</ul>
+	<br>
 	<h3>Beispiele:</h3>
 	<ul>
 		<li><b>Variante 1</b>: Buchungsdatum "12.01.2024", Verwendungszweckssuche "Nenngeld", Verwendungszweckauswahl "Nenngeld (x mal)", kein Zielkonto &raquo; Verschiebt alle Buchungen entsprechend ihrer Kategorie in das richtige Zielkonto. Es werden nur Buchungen berücksichtigt, die mit den Parametern übereinstimmen.</li>
 		<li><b>Variante 2</b>: Buchungsdatum leer, Verwendungszweckssuche leer, Verwendungszweckauswahl "Nenngeld (x mal)", Zielkonto "Nenngeldkonto" &raquo; Verschiebt alle Buchungen mit dem Verwendungszweck "Nenngeld" in das Nenngeldkonto.</li>
-	</ul>'
+		<li><b>Variante 3</b>: Buchungsdatum leer, Verwendungszweckssuche leer, Verwendungszweckauswahl leer, Zielkonto leer &raquo; Hier werden alle Buchungen entsprechend ihrer Kategorie in das richtige Zielkonto verschoben.</li>
+		<li><b>Variante 4</b>: Buchungsdatum leer, Verwendungszweckssuche leer, Verwendungszweckauswahl leer, Zielkonto ausgewählt &raquo; <b>Hier wird nichts ausgeführt, da alle Buchungen in das gewählte Zielkonto verschoben würden.</b></li>
+	</ul></p>'
 );
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['datum'] = array('Buchungsdatum', 'Datum der Buchung(en), die verschoben werden sollen. Leerlassen, wenn das Datum unberücksichtigt bleiben soll.');
-$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['select_verwendungszweck'] = array('Verwendungszweck auswählen', 'Zusammenfassung aller Verwendungszwecke in allen Buchungskonten. Eine Auswahl hier wird nur berücksichtigt, wenn das Feld "Verwendungszweck suchen" leer bleibt.');
-$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['search_verwendungszweck'] = array('Verwendungszweck suchen', 'Eine Textsuche im Verwendungszweck hat Vorrang vor "Verwendungszweck auswählen".');
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['select_verwendungszweck'] = array('Verwendungszweck auswählen', 'Zusammenfassung aller Verwendungszwecke in allen Buchungskonten. Technisch bedingt wird der Verwendungszweck in Kleinschreibung angezeigt. In Klammern steht die Anzahl der Vorkommen.');
+$GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['search_verwendungszweck'] = array('Verwendungszweck suchen', 'Es wird im ganzen Verwendungszweck nach dem Begriff gesucht.');
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_verschieben']['zielkonto'] = array('Zielkonto auswählen', 'Legen Sie hier fest in welches Konto die Buchungen verschoben werden sollen. Wenn Sie kein Zielkonto auswählen, werden die Buchungen anhand der zugeordneten Kategorien verschoben.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_buchungen_import']['headline'] = 'Buchungen aus einer CSV-Datei importieren';
@@ -352,6 +355,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['aktiviert'] = array('N
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start'] = 'Export starten';
 
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'] = 'Spieler nach Excel exportieren';
+$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'] = array('Stichtag Kenncode', 'Geben Sie den Stichtag für den Kenncode ein. Mit dem Stichtag wird ein eindeutiger Kenncode für den Spieler generiert, der als Passwort für andere Projekte verwendet werden kann. Wiederholen Sie einen Excel-Export, dann verwenden Sie bitte immer denselben Stichtag!');
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'] = array('Stichtag Saldo', 'Geben Sie den Stichtag für den Saldo ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'] = array('Export starten', 'Der Download des Exports erfolgt im Hintergrund. Klicken Sie danach auf den Zurück-Link.');
 

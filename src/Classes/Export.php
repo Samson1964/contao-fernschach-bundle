@@ -80,7 +80,7 @@ class Export extends \Backend
 			            ->setCellValue('A1', 'Datensatz')
 			            ->setCellValue('B1', 'Letzte Änderung')
 			            ->setCellValue('C1', 'Archiviert')
-			            ->setCellValue('D1', 'Kenncode')
+			            ->setCellValue('D1', 'Kenncode '.\Input::post('kenncode_stichtag'))
 			            ->setCellValue('E1', 'Name')
 			            ->setCellValue('F1', 'Vorname')
 			            ->setCellValue('G1', 'Titel')
@@ -121,16 +121,22 @@ class Export extends \Backend
 			            ->setCellValue('AP1', 'Inhaber')
 			            ->setCellValue('AQ1', 'IBAN')
 			            ->setCellValue('AR1', 'BIC')
-			            ->setCellValue('AS1', 'Saldo '.\Input::post('stichtag'))
-			            ->setCellValue('AT1', 'Veröffentlicht')
-			            ->setCellValue('AU1', 'Fertig');
+			            ->setCellValue('AS1', 'Saldo Hauptkonto '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AT1', 'Saldo Beitrag '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AU1', 'Saldo Nenngeld '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AV1', 'Veröffentlicht')
+			            ->setCellValue('AW1', 'Fertig');
 
 			// Daten schreiben
 			$zeile = 2;
 			foreach($arrExport as $item)
 			{
 				$spreadsheet->getActiveSheet()
-				            ->getStyle('AS'.$zeile, $item['saldo'])->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE);
+				            ->getStyle('AS'.$zeile, $item['saldo_h'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
+				$spreadsheet->getActiveSheet()
+				            ->getStyle('AT'.$zeile, $item['saldo_b'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
+				$spreadsheet->getActiveSheet()
+				            ->getStyle('AU'.$zeile, $item['saldo_n'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
 				$spreadsheet->getActiveSheet()
 				            ->setCellValue('A'.$zeile, $item['id'])
 				            ->setCellValue('B'.$zeile, $item['tstamp'])
@@ -176,9 +182,11 @@ class Export extends \Backend
 				            ->setCellValue('AP'.$zeile, $item['inhaber'])
 				            ->setCellValue('AQ'.$zeile, $item['iban'])
 				            ->setCellValue('AR'.$zeile, $item['bic'])
-				            ->setCellValue('AS'.$zeile, $item['saldo'])
-				            ->setCellValue('AT'.$zeile, $item['published'])
-				            ->setCellValue('AU'.$zeile, $item['fertig']);
+				            ->setCellValue('AS'.$zeile, $item['saldo_h'])
+				            ->setCellValue('AT'.$zeile, $item['saldo_b'])
+				            ->setCellValue('AU'.$zeile, $item['saldo_n'])
+				            ->setCellValue('AV'.$zeile, $item['published'])
+				            ->setCellValue('AW'.$zeile, $item['fertig']);
 				$zeile++;
 			}
 
@@ -238,9 +246,14 @@ class Export extends \Backend
 
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'].'</h2>
 	<div class="tl_tbox">
-		<div class="widget">
+		<div class="widget w50">
+			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][0].'</h3>
+			<input type="text" name="kenncode_stichtag" value="'.(\Input::post('kenncode_stichtag') ? \Input::post('kenncode_stichtag') : date('d.m.Y')).'">
+			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][1].'</p>
+		</div>
+		<div class="widget clr long">
 			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][0].'</h3>
-			<input type="text" name="stichtag" value="'.(\Input::post('stichtag') ? \Input::post('stichtag') : date('d.m.Y')).'">
+			<input type="text" name="saldo_stichtag" value="'.(\Input::post('saldo_stichtag') ? \Input::post('saldo_stichtag') : date('d.m.Y')).'">
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][1].'</p>
 		</div>
 	</div>
@@ -409,13 +422,15 @@ class Export extends \Backend
 				}
 				if($exportieren)
 				{
-					$saldo = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, '', \Input::post('stichtag')));
+					$saldo_h = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, '', \Input::post('saldo_stichtag')));
+					$saldo_b = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'beitrag', \Input::post('saldo_stichtag')));
+					$saldo_n = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'nenngeld', \Input::post('saldo_stichtag')));
 					$arrExport[] = array
 					(
 						'id'                      => $records->id,
 						'tstamp'                  => $records->tstamp ? date("d.m.Y H:i:s",$records->tstamp) : '',
 						'archived'                => $records->archived,
-						'kenncode'                => self::getCode($records->id, \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->birthday), $records->memberId),
+						'kenncode'                => self::getCode($records->id, \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->birthday), $records->memberId, \Input::post('kenncode_stichtag')),
 						'nachname'                => $records->nachname,
 						'vorname'                 => $records->vorname,
 						'titel'                   => $records->titel,
@@ -456,7 +471,9 @@ class Export extends \Backend
 						'inhaber'                 => $records->inhaber,
 						'iban'                    => $records->iban,
 						'bic'                     => $records->bic,
-						'saldo'                   => $saldo ? sprintf("%01.2f", $saldo) : '',
+						'saldo_h'                 => $saldo_h ? sprintf("%01.2f", $saldo_h) : '',
+						'saldo_b'                 => $saldo_b ? sprintf("%01.2f", $saldo_b) : '',
+						'saldo_n'                 => $saldo_n ? sprintf("%01.2f", $saldo_n) : '',
 						'published'               => $records->published,
 						'fertig'                  => $records->fertig,
 					);
@@ -476,9 +493,9 @@ class Export extends \Backend
 		return trim($varValue) ? date('d.m.Y', $varValue) : '';
 	}
 
-	public function getCode($id, $birthday, $memberid)
+	public function getCode($id, $birthday, $memberid, $datum)
 	{
-		$zeit = time();
+		$zeit = mktime(0, 0, 0, (int)substr($datum, 3, 2), (int)substr($datum, 0, 2), (int)substr($datum, 6, 4));
 		$temp = (string)$id.(string)$birthday.(string)$memberid.(string)$zeit;
 		$hash = substr(hash('md5', $temp), 0, 8);
 		return $hash;

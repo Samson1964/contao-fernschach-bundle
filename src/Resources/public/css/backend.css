@@ -99,3 +99,11 @@ td.col_betrag,
 td.col_saldo {
 	text-align:right;
 }
+
+p.fernschach-verwaltung ul {
+	list-style: square;
+}
+
+p.fernschach-verwaltung li {
+	margin-bottom: 3px;
+}
