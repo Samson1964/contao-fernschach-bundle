@@ -346,6 +346,7 @@ $GLOBALS['TL_LANG']['tl_fernschachverwaltung']['normen_titel'] = array
 	'lgm' => 'LGM',
 	'cce' => 'CCE',
 	'lim' => 'LIM',
+	'im'  => 'IM',
 );
 
 $GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['headline'] = 'Mitgliederstatistik erstellen';

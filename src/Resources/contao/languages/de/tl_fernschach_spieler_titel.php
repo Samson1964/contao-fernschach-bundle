@@ -48,12 +48,4 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'] = array
 	'CCE'  => 'Fernschachexperte (CCE)',
 	'LGM'  => 'Großmeisterin (Fernschach)',
 	'LIM'  => 'Internationale Meisterin (Fernschach)',
-	'GM'   => 'Großmeister',
-	'IM'   => 'Internationaler Meister',
-	'FM'   => 'FIDE-Meister',
-	'CM'   => 'Kandidatenmeister (CM)',
-	'WGM'  => 'Großmeisterin',
-	'WIM'  => 'Internationale Meisterin',
-	'WFM'  => 'FIDE-Meisterin',
-	'WCM'  => 'Kandidatenmeisterin (WCM)',
 );

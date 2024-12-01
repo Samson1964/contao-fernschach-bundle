@@ -10,6 +10,8 @@ class Newsletter
 		if(strpos($objTemplate->getName(), 'mail_') !== 0)
 			return;
 
+		$arr = array();
+
 		// Daten des Empfängers aus dem Newsletter-Verteiler laden
 		$verteiler = \Database::getInstance()->prepare('SELECT * FROM tl_newsletter_recipients WHERE pid=? AND email=?')
 		                                     ->execute($GLOBALS['TL_CONFIG']['fernschach_newsletter'], $objTemplate->recipient);

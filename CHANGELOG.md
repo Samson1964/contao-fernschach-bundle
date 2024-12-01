@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.1 (2024-12-01)
+
+* Fix: Warning: Undefined variable $arr in Hooks/Newsletter.php (line 31) 
+* Fix: Warning: Undefined array key "im" in src/Modules/TitelNormenLast.php (line 191) -> Wert in TL_Lang ergänzt, aber "im" darf es eigentlich nicht geben
+* Change: Nahschachtitel in tl_fernschach_spieler_titel entfernt, da diese wohl für Verwirrung sorgen
+
 ## Version 0.21.0 (2024-10-06)
 
 * Change: Klasse VerschiebeBuchungen fertiggestellt
