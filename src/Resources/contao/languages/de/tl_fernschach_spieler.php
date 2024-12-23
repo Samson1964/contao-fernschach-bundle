@@ -108,7 +108,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iban'] = array('IBAN', 'IBAN');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['bic'] = array('BIC', 'BIC');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag_legend'] = 'Beitragszahlung';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'] = array('Beitrag bezahlt', 'Der Beitrag wurde bezahlt.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'] = array('Beitrag ≤ 2024 bezahlt', 'Der Beitrag für ≤ 2024 wurde bezahlt.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['contribution_paid'] = array('Beitrag 2025 bezahlt', 'Der Beitrag für 2025 wurde bezahlt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag_legend'] = 'SEPA-Mandat Beiträge';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'] = array('SEPA-Mandat Beitrag', 'Das SEPA-Mandat für den Beitragseinzug liegt vor.');

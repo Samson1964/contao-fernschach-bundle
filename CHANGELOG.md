@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.2 (2024-12-23)
+
+* Add: tl_fernschach_spieler.contribution_paid -> Feld für Beitrag 2025 bezahlt
+* Change: tl_fernschach_spieler.checkBeitrag -> Übersetzung "Beitrag bezahlt" geändert auf "Beitrag ≤ 2024 bezahlt"
+
 ## Version 0.21.1 (2024-12-01)
 
 * Fix: Warning: Undefined variable $arr in Hooks/Newsletter.php (line 31) 
