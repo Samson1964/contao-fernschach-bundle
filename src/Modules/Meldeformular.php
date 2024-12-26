@@ -69,7 +69,7 @@ class Meldeformular extends \Module
 				$fehlertext = 'Zugriff auf das Formular nicht erlaubt, da nicht angemeldet.';
 			}
 		}
-		
+
 		if($fehler)
 		{
 			echo $fehlertext;
@@ -89,14 +89,16 @@ class Meldeformular extends \Module
 		// Der 3. Parameter ist eine Funktion, die entscheidet wann das Formular gesendet wird (Third is a callable that decides when your form is submitted)
 		// Der optionale 4. Parameter legt fest, ob das ausgegebene Formular auf Tabellen basiert (true)
 		// oder nicht (false) (You can pass an optional fourth parameter (true by default) to turn the form into a table based one)
-		$objForm = new \Haste\Form\Form('meldeform', 'POST', function($objHaste)
+		$objForm = new \Codefog\HasteBundle\Form\Form('meldeform', 'POST', function($objHaste)
 		{
 			return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
 		});
-		
+
 		// BdF-Mitgliedsdaten laden
 		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
-		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId);
+		$salden_haupt = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, '');
+		$salden_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'beitrag');
+		$salden_nenngeld = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'nenngeld');
 		$mitgliedsdaten = '<h4>Angemeldeter Benutzer</h4>';
 		$mitgliedsdaten .= '<ul>';
 		$mitgliedsdaten .= '<li>Anmeldename: <b>'.\FrontendUser::getInstance()->username.'</b></li>';
@@ -109,8 +111,9 @@ class Meldeformular extends \Module
 		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
-		$value = end($salden);
-		if($value > 0)
+		// Saldo Hauptkonto ermitteln und ausgeben
+		$value = end($salden_haupt);
+		if($value >= 0)
 		{
 			$html_start = '<span style="color:green;">';
 			$html_ende = ' €<span>';
@@ -121,16 +124,45 @@ class Meldeformular extends \Module
 			$html_ende = ' €<span>';
 		}
 		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
-		$mitgliedsdaten .= '<li>Kontostand: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		$mitgliedsdaten .= '<li>Kontostand Hauptkonto: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		// Saldo Beitragskonto ermitteln und ausgeben
+		$value = end($salden_beitrag);
+		if($value >= 0)
+		{
+			$html_start = '<span style="color:green;">';
+			$html_ende = ' €<span>';
+		}
+		else
+		{
+			$html_start = '<span style="color:red;">';
+			$html_ende = ' €<span>';
+		}
+		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
+		$mitgliedsdaten .= '<li>Kontostand Beitrag: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		// Saldo Nenngeldkonto ermitteln und ausgeben
+		$value = end($salden_nenngeld);
+		if($value >= 0)
+		{
+			$html_start = '<span style="color:green;">';
+			$html_ende = ' €<span>';
+		}
+		else
+		{
+			$html_start = '<span style="color:red;">';
+			$html_ende = ' €<span>';
+		}
+		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
+		$mitgliedsdaten .= '<li>Kontostand Nenngeld: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+
 		$mitgliedsdaten .= '</ul>';
-		
+
 		$objForm->addFormField('fieldset1_start', array(
 			'inputType' => 'html',
 			'eval' => array
 			(
 				'html' => '<fieldset><legend>Persönliche Daten</legend>'
 			)
-		)); 
+		));
 		$objForm->addFormField('mitgliedsdaten', array(
 			'inputType'     => 'html',
 			'eval' => array
@@ -144,7 +176,7 @@ class Meldeformular extends \Module
 			(
 				'html' => '</fieldset>'
 			)
-		)); 
+		));
 
 		$objForm->addFormField('fieldset2_start', array(
 			'inputType' => 'html',
@@ -152,14 +184,14 @@ class Meldeformular extends \Module
 			(
 				'html' => '<fieldset><legend>Turnier</legend><b>Hiermit melde ich mich zu folgendem Fernschachturnier an:</b>'
 			)
-		)); 
+		));
 		$objForm->addFormField('turnierbox_start', array(
 			'inputType' => 'html',
 			'eval' => array
 			(
 				'html' => '<div style="display:flex;">'
 			)
-		)); 
+		));
 		$objForm->addFormField('turnier', array(
 			'label'         => 'Turnier',
 			'inputType'     => 'select',
@@ -172,14 +204,14 @@ class Meldeformular extends \Module
 			(
 				'html' => '</div>'
 			)
-		)); 
+		));
 		$objForm->addFormField('fieldset2_ende', array(
 			'inputType' => 'html',
 			'eval' => array
 			(
 				'html' => '</fieldset>'
 			)
-		)); 
+		));
 
 		$objForm->addFormField('fieldset5_start', array(
 			'inputType' => 'html',
@@ -187,7 +219,7 @@ class Meldeformular extends \Module
 			(
 				'html' => '<fieldset><legend>Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse</legend>'
 			)
-		)); 
+		));
 		$objForm->addFormField('qualifikation', array(
 			'label'         => 'Turnierkennzeichen und Punktestand',
 			'inputType'     => 'textarea',
@@ -199,7 +231,7 @@ class Meldeformular extends \Module
 			(
 				'html' => '</fieldset>'
 			)
-		)); 
+		));
 
 		$objForm->addFormField('fieldset6_start', array(
 			'inputType' => 'html',
@@ -207,7 +239,7 @@ class Meldeformular extends \Module
 			(
 				'html' => '<fieldset><legend>Bemerkungen</legend>'
 			)
-		)); 
+		));
 		$objForm->addFormField('bemerkungen', array(
 			'label'         => 'Sonstiges (z.B. Urlaub von ... bis ...)',
 			'inputType'     => 'textarea',
@@ -219,7 +251,7 @@ class Meldeformular extends \Module
 			(
 				'html' => '</fieldset>'
 			)
-		)); 
+		));
 
 		// Submit-Button hinzufügen
 		$objForm->addFormField('submit', array(
@@ -231,7 +263,7 @@ class Meldeformular extends \Module
 		// Ausgeblendete Felder FORM_SUBMIT und REQUEST_TOKEN automatisch hinzufügen.
 		// Nicht verwenden wenn generate() anschließend verwendet, da diese Felder dort standardmäßig bereitgestellt werden.
 		// $objForm->addContaoHiddenFields();
-		
+
 		// validate() prüft auch, ob das Formular gesendet wurde
 		if($objForm->validate())
 		{
@@ -240,9 +272,9 @@ class Meldeformular extends \Module
 			self::saveMeldung($arrData); // Daten sichern
 			// Seite neu laden
 			\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
-			\Controller::reload(); 
+			\Controller::reload();
 		}
-		
+
 		// Formular als String zurückgeben
 		return $objForm->generate();
 
@@ -257,7 +289,7 @@ class Meldeformular extends \Module
 
 		// Mitgliedsdaten laden
 		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
-		
+
 		// Turnier prüfen
 		if($data['turnier'])
 		{
@@ -285,7 +317,7 @@ class Meldeformular extends \Module
 			                                     ->set($set)
 			                                     ->execute();
 			$meldungId = $objInsert->insertId;
-			
+
 			// Turnier laden
 			$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
@@ -305,7 +337,7 @@ class Meldeformular extends \Module
 				'meldungId'         => $meldungId,
 				'published'         => '1'
 			);
-			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto %s')
+			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
 			                                     ->set($set)
 			                                     ->execute();
 		}
@@ -314,7 +346,7 @@ class Meldeformular extends \Module
 		//\System::log('[Linkscollection] New Link submitted: '.$data['title'].' ('.$data['url'].')', __CLASS__.'::'.__FUNCTION__, TL_CRON);
         //
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
-		
+
 		// E-Mail für Turnierleiter zusammenbauen
 		$turnierleiter = self::getTurnierleiter($data['turnier']);
 
@@ -336,7 +368,7 @@ class Meldeformular extends \Module
 					if($turnierleiter[$x]['email']) $empfaenger[] = $turnierleiter[$x]['name'] . ' <' . $turnierleiter[$x]['email'] . '>';
 				}
 				$cc = implode(',', $empfaenger);
-				$objEmail->sendCc($cc);  
+				$objEmail->sendCc($cc);
 			}
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
@@ -365,13 +397,53 @@ class Meldeformular extends \Module
 			//	'pid'               => $data['turnier'],
 			//	'tstamp'            => $zeit,
 			//	'spielerId'         => $spielerId,
-        	
+
 			// Add the comment details
 			$objEmail->html = $text;
 			$objEmail->sendTo(array($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>'));
 		}
 
-		// E-Mail für Anmelder erstellen        
+		// E-Mail für Anmelder erstellen
+		if(isset($mitglied->email1))
+		{
+			// Email verschicken
+			$objEmail = new \Email();
+			$objEmail->charset = 'utf-8';
+			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
+			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
+			$objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
+			// Kommentar zusammenbauen
+			$text = '<html><head><title></title></head><body>';
+			$text .= '<p>Sie haben eine Turnieranmeldung vorgenommen:</p>';
+			$text .= '<h3>Angaben zum Turnier</h3>';
+			$text .= '<ul>';
+			$text .= '<li>Meldezeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
+			$text .= '<li>Turnier: <b>'.$objTurnier->title.'</b></li>';
+			$text .= '<li>Meldeschluss: <b>'.($objTurnier->registrationDate ? date('d.m.Y', $objTurnier->registrationDate) : '-').'</b></li>';
+			$text .= '<li>Nenngeld: <b>'.str_replace('.', ',', sprintf('%0.2f',$objTurnier->nenngeld)).'</b></li>';
+			$text .= '</ul>';
+			$text .= '<h3>Angaben zum Spieler</h3>';
+			$text .= '<ul>';
+			$text .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
+			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+			$text .= '<li>Adresse: <b>'.$mitglied->plz.' '.$mitglied->ort.', '.$mitglied->strasse.'</b></li>';
+			$text .= '<li>Fax: <b>'.$mitglied->fax.'</b></li>';
+			$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
+			$text .= '</ul>';
+			$text .= '<h3>Sonstiges</h3>';
+			$text .= '<ul>';
+			$text .= '<li>Information zur Qualifikation: <b>'.$data['qualifikation'].'</b></li>';
+			$text .= '<li>Bemerkungen: <b>'.$data['bemerkungen'].'</b></li>';
+			$text .= '</ul>';
+			$text .= '<p><i>Diese E-Mail wurde automatisch erstellt.</i></p></body></html>';
+			//	'pid'               => $data['turnier'],
+			//	'tstamp'            => $zeit,
+			//	'spielerId'         => $spielerId,
+
+			// Add the comment details
+			$objEmail->html = $text;
+			$objEmail->sendTo(array($mitglied->vorname.' '.$mitglied->nachname.' <'.$mitglied->email1.'>'));
+		}
 	}
 
 	/**
@@ -390,7 +462,7 @@ class Meldeformular extends \Module
 		while($objTurniere->next())
 		{
 			$published = self::TurnierkategorieVeroeffentlicht($objTurniere->pid); // Prüfen, ob alle übergeordneten Turnierkategorien veröffentlicht sind
-			
+
 			if($published)
 			{
 				$meldedatum = $objTurniere->registrationDate ? '  | Meldedatum: '.date('d.m.Y', $objForms->registrationDate) : '  | ohne Meldedatum';
@@ -413,7 +485,7 @@ class Meldeformular extends \Module
 			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
-			if($objTurnier->published) 
+			if($objTurnier->published)
 			{
 				$id = $objTurnier->pid; // Neue ID setzen
 			}
@@ -437,7 +509,7 @@ class Meldeformular extends \Module
 			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
-			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail) 
+			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail)
 			{
 				// Turnierleiter speichern
 				$arr[] = array
@@ -460,14 +532,14 @@ class Meldeformular extends \Module
 		$arrTokens['member_email'] = $objMember->email;
 		$arrTokens['member_firstname'] = $objMember->firstname;
 		$arrTokens['member_lastname'] = $objMember->lastname;
-		
+
 		foreach ($arrData as $key => $data) {
 			$arrTokens['form_' . $key] = $data;
 		}
-		
+
 		$calendar = CalendarModel::findOneById($arrData['calendar_id']);
 		$arrTokens['form_calendar_title'] = $calendar->title;
-		
+
 		$objNotification = Notification::findByPk($this->nc_notification);
 		if (null !== $objNotification) {
 			$objNotification->send($arrTokens);

@@ -23,6 +23,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_konten']['published'] = array('Aktiv', 'Aktiv
  * Buttons für Operationen
  */
 
+$GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts'] = array('Standardkonten anlegen', 'Legt einen einfachen Standardkontorahmen an, wenn es noch keine Konten gibt.');
+$GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts_confirm'] = 'Wollen Sie wirklich einen Standardkontorahmen anlegen?';
 $GLOBALS['TL_LANG']['tl_fernschach_konten']['new'] = array('Neues Konto', 'Neues Konto anlegen');
 $GLOBALS['TL_LANG']['tl_fernschach_konten']['edit'] = array('Konto bearbeiten', 'Konto %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_konten']['copy'] = array('Konto kopieren', 'Konto %s kopieren');

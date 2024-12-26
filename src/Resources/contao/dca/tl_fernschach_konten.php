@@ -64,6 +64,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_konten'] = array
 				'class'               => 'header_toggle',
 				'showOnSelect'        => true 
 			),
+			'initAccounts' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts'],
+				'icon'                => 'bundles/contaofernschach/images/initAccounts.png',
+				'href'                => 'key=initAccounts',
+				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts_confirm'] . '\'))return false;Backend.getScrollOffset()"',
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -441,7 +448,7 @@ class tl_fernschach_konten extends \Backend
 		$disablePA = false;
 		$disablePI = false;
 
-		if ($row['type'] == 'group')
+		if(isset($row['type']) && $row['type'] == 'group')
 		{
 			$disablePI = true;
 		}
@@ -449,8 +456,10 @@ class tl_fernschach_konten extends \Backend
 		$return = '';
 
 		// Return the buttons
-		$imagePasteAfter = Image::getHtml('pasteafter.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id']));
-		$imagePasteInto = Image::getHtml('pasteinto.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1], $row['id']));
+		if(!isset($GLOBALS['TL_LANG'][$table]['pasteafter'])) $GLOBALS['TL_LANG'][$table]['pasteafter'] = array('', '');
+		if(!isset($GLOBALS['TL_LANG'][$table]['pasteinto'])) $GLOBALS['TL_LANG'][$table]['pasteinto'] = array('', '');
+		$imagePasteAfter = \Image::getHtml('pasteafter.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id']));
+		$imagePasteInto = \Image::getHtml('pasteinto.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1], $row['id']));
 
 		if ($row['id'] > 0)
 		{

@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.3 (2024-12-26)
+
+* Fix: Attempted to load class "Form" from namespace "Haste\Form". Did you forget a "use" statement for e.g. "Symfony\Component\DomCrawler\Form", "Schachbulle\ContaoHelperBundle\Classes\Form", "Schachbulle\ContaoFideidBundle\Modules\Form" or "Codefog\HasteBundle\Form\Form"? in src/Modules/Meldeformular.php (line 92) 
+* Change: Turniermeldeformular überarbeitet, damit die Buchung auf das Nenngeldkonto geht
+* Add: Ausbau tl_fernschach_konten mit Klasse Init, um einen Standardkontorahmen zu erstellen.
+* Fix: Warning: Undefined array key "type" in src/Resources/contao/dca/tl_fernschach_konten.php (line 451) 
+* Fix: Warning: Undefined array key "pasteafter" in src/Resources/contao/dca/tl_fernschach_konten.php (line 459) 
+
 ## Version 0.21.2 (2024-12-23)
 
 * Add: tl_fernschach_spieler.contribution_paid -> Feld für Beitrag 2025 bezahlt
