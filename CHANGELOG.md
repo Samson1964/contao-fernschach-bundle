@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.4 (2024-12-27)
+
+* Fix: Abhängigkeit codefog/contao-haste von * auf <5 geändert, da in Haste 5 die Namesapces geändert wurden. Haste 5 ist erst ab PHP 8.1 möglich.
+
 ## Version 0.21.3 (2024-12-26)
 
 * Fix: Attempted to load class "Form" from namespace "Haste\Form". Did you forget a "use" statement for e.g. "Symfony\Component\DomCrawler\Form", "Schachbulle\ContaoHelperBundle\Classes\Form", "Schachbulle\ContaoFideidBundle\Modules\Form" or "Codefog\HasteBundle\Form\Form"? in src/Modules/Meldeformular.php (line 92) 
