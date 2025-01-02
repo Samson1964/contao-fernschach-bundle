@@ -336,7 +336,7 @@ class Export extends \Backend
 
 		$sql = "SELECT * FROM tl_fernschach_spieler".$sql;
 
-		log_message('Excel-Export mit: '.$sql, 'fernschachverwaltung.log');
+		//log_message('Excel-Export mit: '.$sql, 'fernschachverwaltung.log');
 		// Datensätze laden
 		$records = \Database::getInstance()->prepare($sql)
 		                                   ->execute();

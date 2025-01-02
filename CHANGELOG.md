@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.5 (2025-01-02)
+
+* Fix: Attempted to call function "error_log" from the global namespace. Did you mean to call "\safe\error_log"? -> Export.php log_message deaktiviert
+
 ## Version 0.21.4 (2024-12-27)
 
 * Fix: Abhängigkeit codefog/contao-haste von * auf <5 geändert, da in Haste 5 die Namesapces geändert wurden. Haste 5 ist erst ab PHP 8.1 möglich.
