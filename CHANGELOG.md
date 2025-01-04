@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.6 (2025-01-04)
+
+* Change: log_message deaktiviert in Newsletter.php
+
 ## Version 0.21.5 (2025-01-02)
 
 * Fix: Attempted to call function "error_log" from the global namespace. Did you mean to call "\safe\error_log"? -> Export.php log_message deaktiviert

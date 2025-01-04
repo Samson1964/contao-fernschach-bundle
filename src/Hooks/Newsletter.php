@@ -30,7 +30,7 @@ class Newsletter
 			}
 		}
 
-		log_message(print_r($arr, true), 'test.log');
+		//log_message(print_r($arr, true), 'test.log');
 
 	}
 }
