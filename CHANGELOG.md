@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.7 (2025-01-04)
+
+* Change: Newsletter.php auskommentiert -> Tokens werden nicht ersetzt, und zwar auch die von Contao!
+
 ## Version 0.21.6 (2025-01-04)
 
 * Change: log_message deaktiviert in Newsletter.php

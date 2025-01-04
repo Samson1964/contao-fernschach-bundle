@@ -6,6 +6,8 @@ class Newsletter
 
 	public function NewsletterTags(\Template $objTemplate)
 	{
+		return; // Tokens werden nicht ersetzt, und zwar auch die von Contao!
+		
 		// Prüfen, ob es ein Mailtemplate ist
 		if(strpos($objTemplate->getName(), 'mail_') !== 0)
 			return;
