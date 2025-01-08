@@ -60,7 +60,7 @@ class ImportBuchungen extends \Backend
 					continue;
 				}
 
-				log_message('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
+				//log_message('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
 				$resFile = $objFile->handle;
 				$record_count = 0;
 				$neu_count = 0;
@@ -79,7 +79,7 @@ class ImportBuchungen extends \Backend
 						{
 							// Kopfzeile auslesen
 							$kopf = $spalte;
-							log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+							//log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 							for($x = 0; $x < count($kopf); $x++)
 							{
 								$kopf[$x] = trim($kopf[$x]);
@@ -87,50 +87,70 @@ class ImportBuchungen extends \Backend
 						}
 						else
 						{
-							log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+							//log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 							// Datensatz auslesen
 							$set = array();
 							$mitgliedsdaten = array();
 							for($x = 0; $x < count($spalte); $x++)
 							{
 								$spalte[$x] = trim($spalte[$x]);
-								switch($kopf[$x])
+								if(isset($kopf[$x]))
 								{
-									case 'betrag':
-										$set['betrag'] = (double)str_replace(',', '.', $spalte[$x]); break;
-									case 'typ':
-										$set['typ'] = $spalte[$x]; break;
-									case 'art':
-										$set['art'] = $spalte[$x]; break;
-									case 'kategorie':
-										$set['kategorie'] = $spalte[$x]; break;
-									case 'markierung':
-										$set['markierung'] = $spalte[$x]; break;
-									case 'reset':
-										$set['saldoReset'] = $spalte[$x]; break;
-									case 'datum':
-										$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
-									case 'verwendungszweck':
-										$set['verwendungszweck'] = $spalte[$x]; break;
-									case 'turnier':
-										$set['turnier'] = self::getTurnierId($spalte[$x]); break; // Turnier ggfs. erstellen
-									case 'comment':
-										$set['comment'] = $spalte[$x]; break;
-									case 'published':
-										$set['published'] = $spalte[$x]; break;
-									case 'id':
-										$set['id'] = (int)$spalte[$x]; break;
-									// Die nächsten 3 Felder müssen noch aufgelöst werden, um eine pid zu ermitteln
-									case 'memberid':
-										$set['memberId'] = $spalte[$x]; break;
-									case 'nachname':
-										$set['nachname'] = $spalte[$x]; break;
-									case 'vorname':
-										$set['vorname'] = $spalte[$x]; break;
-									case 'iccfid':
-										$set['memberInternationalId'] = $spalte[$x]; break;
-									default:
+									switch($kopf[$x])
+									{
+										case 'konto':
+											$set['konto'] = trim($spalte[$x]); break;
+										case 'betrag':
+											$set['betrag'] = (double)str_replace(',', '.', $spalte[$x]); break;
+										case 'typ':
+											$set['typ'] = substr(trim($spalte[$x]), 0, 1); break;
+										case 'art':
+											$set['art'] = trim($spalte[$x]); break;
+										case 'kategorie':
+											$set['kategorie'] = trim($spalte[$x]); break;
+										case 'markierung':
+											$set['markierung'] = trim($spalte[$x]); break;
+										case 'reset':
+											$set['saldoReset'] = trim($spalte[$x]); break;
+										case 'datum':
+											$set['datum'] = strtotime(str_replace('.', '-', $spalte[$x])); break;
+										case 'verwendungszweck':
+											$set['verwendungszweck'] = trim($spalte[$x]); break;
+										case 'turnier':
+											$set['turnier'] = self::getTurnierId($spalte[$x]); break; // Turnier ggfs. erstellen
+										case 'comment':
+											$set['comment'] = trim($spalte[$x]); break;
+										case 'published':
+											$set['published'] = trim($spalte[$x]); break;
+										case 'id':
+											$set['id'] = (int)$spalte[$x]; break;
+										// Die nächsten 3 Felder müssen noch aufgelöst werden, um eine pid zu ermitteln
+										case 'memberid':
+											$set['memberId'] = trim($spalte[$x]); break;
+										case 'nachname':
+											$set['nachname'] = trim($spalte[$x]); break;
+										case 'vorname':
+											$set['vorname'] = trim($spalte[$x]); break;
+										case 'iccfid':
+											$set['memberInternationalId'] = trim($spalte[$x]); break;
+										default:
+									}
 								}
+							}
+
+							// Kontotyp setzen
+							if($set['konto'])
+							{
+								switch($set['konto'])
+								{
+									case 'n': $konto = '_nenngeld'; break;
+									case 'b': $konto = '_beitrag'; break;
+									default: $konto = ''; break;
+								}
+							}
+							else
+							{
+								$konto = '';
 							}
 
 							// Buchungsbetrag und -typ ggfs. korrigieren
@@ -151,15 +171,17 @@ class ImportBuchungen extends \Backend
 							}
 
 							// Datensatz-id prüfen
-							if(!$set['id'])
+							if(!isset($set['id']))
 							{
 								// id ist nicht gesetzt, Spalte löschen
 								unset($set['id']);
 							}
 
 							// memberId, nachname, vorname, memberInternationalId in eine pid auflösen
+							if(!isset($set['memberInternationalId'])) $set['memberInternationalId'] = '';
 							$set['pid'] = self::getSpielerId($set['memberId'], $set['nachname'], $set['vorname'], $set['memberInternationalId']);
 							// Felder löschen, da in tl_fernschach_spieler_konto unerwünscht
+							unset($set['konto']);
 							unset($set['memberId']);
 							unset($set['memberInternationalId']);
 							unset($set['nachname']);
@@ -185,20 +207,20 @@ class ImportBuchungen extends \Backend
 							if($set['pid'])
 							{
 								// Buchung eintragen, wenn ein Spieler zugeordnet werden konnte
-								log_message('Set-Array Update tl_fernschach_spieler_konto:','fernschach-verwaltung.log');
-								log_message(print_r($set,true),'fernschach-verwaltung.log');
+								//log_message('Set-Array Update tl_fernschach_spieler_konto:','fernschach-verwaltung.log');
+								//log_message(print_r($set,true),'fernschach-verwaltung.log');
 								// Neuer Datensatz
-								if($set['id'])
+								if(isset($set['id']))
 								{
-									$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+									$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto".$konto." %s WHERE id = ?")
 									                                     ->set($set)
 									                                     ->execute($set['id']);
-									$this->createNewVersion('tl_fernschach_spieler_konto', $set['id']);
+									$this->createNewVersion('tl_fernschach_spieler_konto'.$konto, $set['id']);
 									$neu_count++;
 								}
 								else
 								{
-									$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
+									$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$konto." %s")
 									                                     ->set($set)
 									                                     ->execute();
 									$neu_count++;
@@ -206,8 +228,8 @@ class ImportBuchungen extends \Backend
 							}
 							else
 							{
-								log_message('Set-Array Update failed tl_fernschach_spieler_konto - pid not found:','fernschach-verwaltung.log');
-								log_message(print_r($set,true),'fernschach-verwaltung.log');
+								//log_message('Set-Array Update failed tl_fernschach_spieler_konto - pid not found:','fernschach-verwaltung.log');
+								//log_message(print_r($set,true),'fernschach-verwaltung.log');
 							}
 						}
 						$record_count++;
@@ -308,8 +330,8 @@ class ImportBuchungen extends \Backend
 				'title'     => $string,
 				'published' => '',
 			);
-			log_message('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
-			log_message(print_r($set,true),'fernschach-verwaltung.log');
+			//log_message('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
+			//log_message(print_r($set,true),'fernschach-verwaltung.log');
 			// Neues Turnier
 			$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_turniere %s")
 			                                     ->set($set)
@@ -356,8 +378,8 @@ class ImportBuchungen extends \Backend
 					'vorname'               => $vorname ? $vorname : '?',
 					'published'             => '',
 				);
-				log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
-				log_message(print_r($set,true),'fernschach-verwaltung.log');
+				//log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+				//log_message(print_r($set,true),'fernschach-verwaltung.log');
 				// Neues Turnier
 				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 				                                     ->set($set)
@@ -391,8 +413,8 @@ class ImportBuchungen extends \Backend
 						'vorname'               => $vorname ? $vorname : '?',
 						'published'             => '',
 					);
-					log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
-					log_message(print_r($set,true),'fernschach-verwaltung.log');
+					//log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+					//log_message(print_r($set,true),'fernschach-verwaltung.log');
 					// Neues Turnier
 					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 					                                     ->set($set)
@@ -423,8 +445,8 @@ class ImportBuchungen extends \Backend
 						'vorname'   => $vorname,
 						'published' => '',
 					);
-					log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
-					log_message(print_r($set,true),'fernschach-verwaltung.log');
+					//log_message('Set-Array Insert tl_fernschach_spieler:','fernschach-verwaltung.log');
+					//log_message(print_r($set,true),'fernschach-verwaltung.log');
 					// Neues Turnier
 					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 					                                     ->set($set)

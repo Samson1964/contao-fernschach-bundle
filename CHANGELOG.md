@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.8 (2025-01-08)
+
+* Change: ImportBuchungen.php log-Message auskommentiert
+* Change: ImportBuchungen.php Option für Kontoart eingebaut
+* Fix: Warning: Undefined array key "id" in src/Classes/ImportBuchungen.php (line 171) 
+* Fix: Warning: Undefined array key "id" in src/Classes/ImportBuchungen.php (line 209) 
+* Fix: Warning: Undefined array key "memberInternationalId" in src/Classes/ImportBuchungen.php (line 178) 
+* Fix: Warning: Undefined array key 10 in src/Classes/ImportBuchungen.php (line 97) 
+* Fix: An exception occurred while executing a query: SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'typ' at row 1 beim Import von Buchungen
+
 ## Version 0.21.7 (2025-01-04)
 
 * Change: Newsletter.php auskommentiert -> Tokens werden nicht ersetzt, und zwar auch die von Contao!

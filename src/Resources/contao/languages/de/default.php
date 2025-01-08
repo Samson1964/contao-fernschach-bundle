@@ -270,6 +270,10 @@ Folgende Spaltenarten werden unterstützt:
 	<th>Wert der Spalte<br>(2. - x. Zeile)</th>
 </tr>
 <tr>
+	<td>konto</td>
+	<td>Mögliche Werte: h, b, n - h (Hauptkonto) ist Standard, wenn nichts angegeben wird. Möglich sind auch noch b (Beitrag) und n (Nenngeld).</td>
+</tr>
+<tr>
 	<td>betrag</td>
 	<td>Betrag in Euro (ggfs. mit Vorzeichen, siehe <i>typ</i>), z.B. -12,05 oder 13.23</td>
 </tr>
