@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.9 (2025-01-20)
+
+* Add: Klasse MoveBuchung für das Verschieben einzelner Buchungen
+* Add: Operationen in den drei Buchungskonten für das Verschieben einzelner Buchungen
+
 ## Version 0.21.8 (2025-01-08)
 
 * Change: ImportBuchungen.php log-Message auskommentiert

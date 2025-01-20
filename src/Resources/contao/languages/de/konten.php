@@ -41,6 +41,9 @@ $GLOBALS['TL_LANG'][$strTable]['delete'] = array('Buchung löschen', 'Buchung %s
 $GLOBALS['TL_LANG'][$strTable]['toggle'] = array('Buchung aktivieren/deaktivieren', 'Buchung %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG'][$strTable]['show'] = array('Buchungsdetails anzeigen', 'Details der Buchung %s anzeigen');
 $GLOBALS['TL_LANG'][$strTable]['markiertIcon'] = array('Spieler markiert/nicht markiert', 'Spieler %s markieren - aktivieren oder deaktivieren');
+$GLOBALS['TL_LANG'][$strTable]['moveBeitrag'] = array('Buchung in das Beitragskonto verschieben', 'Buchung %s in das Beitragskonto verschieben');
+$GLOBALS['TL_LANG'][$strTable]['moveNenngeld'] = array('Buchung in das Nenngeldkonto verschieben', 'Buchung %s in das Nenngeldkonto verschieben');
+$GLOBALS['TL_LANG'][$strTable]['moveHaupt'] = array('Buchung in das Hauptkonto verschieben', 'Buchung %s in das Hauptkonto verschieben');
 
 /**
  * Buttons für globale Operationen

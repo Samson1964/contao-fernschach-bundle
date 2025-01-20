@@ -115,6 +115,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto'] = array
 				'icon'                => 'bundles/contaofernschach/images/show.svg',
 				//'button_callback'     => array('tl_fernschach_spieler_konto', 'generateShowButton')
 			),
+			'moveBeitrag' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveBeitrag'],
+				'href'                => 'key=moveBuchung&source=h&target=b',
+				'icon'                => 'bundles/contaofernschach/images/konto_beitrag_move.png',
+				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveBeitragConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+			),
+			'moveNenngeld' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveNenngeld'],
+				'href'                => 'key=moveBuchung&source=h&target=n',
+				'icon'                => 'bundles/contaofernschach/images/konto_nenngeld_move.png',
+				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveNenngeldConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+			),
 			'markiertIcon' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['markiertIcon'],

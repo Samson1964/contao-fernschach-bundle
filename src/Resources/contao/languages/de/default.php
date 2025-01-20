@@ -1,5 +1,19 @@
 <?php
 
+/**
+ * Buttons für Operationen
+ */
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveBeitragConfirm'] = 'Buchung in das Beitragskonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Beitrag` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveNenngeldConfirm'] = 'Buchung in das Nenngeldkonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Nenngeld` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveHauptConfirm'] = 'Buchung in das Hauptkonto verschieben? Die Kategorie der Buchung wird dabei nicht verändert.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveBeitragConfirm'] = 'Buchung in das Beitragskonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Beitrag` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveNenngeldConfirm'] = 'Buchung in das Nenngeldkonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Nenngeld` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveHauptConfirm'] = 'Buchung in das Hauptkonto verschieben? Die Kategorie der Buchung wird dabei nicht verändert.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['moveBeitragConfirm'] = 'Buchung in das Beitragskonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Beitrag` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['moveNenngeldConfirm'] = 'Buchung in das Nenngeldkonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Nenngeld` gesetzt.';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['moveHauptConfirm'] = 'Buchung in das Hauptkonto verschieben? Die Kategorie der Buchung wird dabei nicht verändert.';
+
 // Globale Variablen
 $GLOBALS['TL_LANG']['fernschachverwaltung']['botname'] = 'Fernschach-Bot';
 

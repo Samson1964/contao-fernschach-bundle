@@ -3,7 +3,7 @@
 /**
  * Backend-Bereich fernschach (an erster Stelle) anlegen
  */
-if(!isset($GLOBALS['BE_MOD']['fernschach'])) 
+if(!isset($GLOBALS['BE_MOD']['fernschach']))
 {
 	$fernschach = array(
 		'fernschach' => array()
@@ -18,7 +18,7 @@ if(!isset($GLOBALS['BE_MOD']['fernschach']))
 $GLOBALS['BE_MOD']['fernschach'] = array
 (
 	'fernschach-spieler'      => array
-	(                         
+	(
 		'tables'              => array
 		(
 			'tl_fernschach_spieler',
@@ -34,9 +34,10 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'move'                => array('Schachbulle\ContaoFernschachBundle\Classes\MoveBuchungen', 'run'),
 		'setNewsletter'       => array('Schachbulle\ContaoFernschachBundle\Classes\Newsletter', 'setNewsletter'),
 		'initAccounts'        => array('Schachbulle\ContaoFernschachBundle\Classes\Accounts\Init', 'run'),
-	),                        
+		'moveBuchung'         => array('Schachbulle\ContaoFernschachBundle\Classes\Konto\MoveBuchung', 'run'),
+	),
 	'fernschach-turniere'     => array
-	(                         
+	(
 		'tables'              => array
 		(
 			'tl_fernschach_turniere',
@@ -79,8 +80,8 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 if(TL_MODE == 'BE')
 {
 	$GLOBALS['TL_CSS'][] = 'bundles/contaofernschach/css/backend.css';
-	//$GLOBALS['TL_JAVASCRIPT'][] = 'assets/jquery/js/jquery.min.js'; 
-	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaofernschach/js/backend.js'; 
+	//$GLOBALS['TL_JAVASCRIPT'][] = 'assets/jquery/js/jquery.min.js';
+	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaofernschach/js/backend.js';
 }
 
 /**
@@ -148,7 +149,7 @@ $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time'] = 43200;
 
 /**
  * -------------------------------------------------------------------------
- * Models registrieren                                  
+ * Models registrieren
  * -------------------------------------------------------------------------
  */
 
