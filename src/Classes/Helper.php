@@ -284,16 +284,21 @@ class Helper extends \Backend
 		                                        ->execute($pid, 1);
 
 		// Datum umwandeln
-		if(!$datum)
+		if($datum)
 		{
-			$datum = date('d.m.Y');
+			// Datum wurde übergeben
+			$datum_neu = $datum;
 		}
-		$tag = substr($datum, 0, 2);
-		$monat = substr($datum, 3, 2);
-		$jahr = substr($datum, 6, 4);
-		// Bugfix: $jahr+10 statt $jahr
-		// Da auch Buchungen in der Zukunft eingetragen werden, werden bei $jahr nicht die Salden in der Zukunft berechnet.
-		$datum_neu = mktime(23, 59, 59, $monat, $tag, $jahr+10);
+		else
+		{
+			// Datum nicht übergeben im Formular
+			$datum_neu = date('d.m.Y');
+		}
+		// Umwandeln auf Mitternacht
+		$tag = substr($datum_neu, 0, 2);
+		$monat = substr($datum_neu, 3, 2);
+		$jahr = substr($datum_neu, 6, 4);
+		$datum_neu2 = mktime(23, 59, 59, $monat, $tag, $jahr);
 
 		// Buchungen auswerten
 		$saldo = 0;
@@ -302,7 +307,7 @@ class Helper extends \Backend
 			while($objBuchungen->next())
 			{
 				// Nur Buchungen verwenden, die jünger oder gleich dem gewünschten Datum sind
-				if($objBuchungen->datum <= $datum_neu)
+				if($objBuchungen->datum <= $datum_neu2)
 				{
 					if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
 					{

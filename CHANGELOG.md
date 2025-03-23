@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.10 (2025-03-23)
+
+* Fix: Fehler beim Zugriff auf Haste/Form: Attempted to load class "Form" from namespace "Codefog\HasteBundle\Form" -> \Haste\Form\Form statt \Codefog\HasteBundle\Form\Form
+* Fix: Der Saldo wird nicht korrekt exportiert -> Das Datum beim Spieler-Export wird ignoriert, was natürlich ein Fehler ist. -> Es wurde immer das aktuelle Datum plus 10 Jahre gesetzt, ein Überbleibsel der alten Funktion
+
 ## Version 0.21.9 (2025-01-20)
 
 * Add: Klasse MoveBuchung für das Verschieben einzelner Buchungen
