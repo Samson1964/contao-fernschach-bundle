@@ -48,7 +48,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			'fields'                  => array('sorting'),
 			'icon'                    => 'pagemounts.gif',
 			'paste_button_callback'   => array('tl_fernschach_turniere', 'pasteTournament'),
-			'panelLayout'             => 'filter,search',
+			'panelLayout'             => 'filter;sort,search',
 		),
 		'label' => array
 		(
@@ -152,17 +152,17 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('type', 'bewerbungErlaubt', 'nenngeldActive'), 
+		'__selector__'                => array('type', 'titleView', 'bewerbungErlaubt', 'nenngeldActive'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
-		'category'                    => '{title_legend},title,type;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{nenngeld_legend},nenngeldView,nenngeldActive;{publish_legend},published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,art,artInfo,spielerMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},published',
-		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},published',
+		'category'                    => '{title_legend},title,type,titleView;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{nenngeld_legend},nenngeldView,nenngeldActive;{publish_legend},archived,published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,registrationDate,startDate,typ,art,artInfo,spielerMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},archived,published',
+		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},archived,published',
 	), 
 
 	// Subpalettes
 	'subpalettes' => array
 	(
-		'protected'                   => 'groups',
+		'titleView'                   => 'titleAlternate',
 		'bewerbungErlaubt'            => 'applications,applicationText',
 		'nenngeldActive'              => 'nenngeld'
 	), 
@@ -220,6 +220,35 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			),
 			'options_callback'        => array('tl_fernschach_turniere', 'getTypen'),
 			'sql'                     => "varchar(64) NOT NULL default ''"
+		),
+		'titleView' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['titleView'],
+			'exclude'                 => true,
+			'default'                 => '',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'long clr', 
+				'isBoolean'           => true,
+				'submitOnChange'      => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'titleAlternate' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['titleAlternate'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'search'                  => true,
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'maxlength'           => 255,
+				'decodeEntities'      => true,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'kennziffer' => array
 		(
@@ -497,10 +526,24 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['zusagen'],
 		),
+		'archived' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['archived'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => '',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'boolean'             => true,
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['published'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'default'                 => 1,
 			'inputType'               => 'checkbox',
 			'eval'                    => array

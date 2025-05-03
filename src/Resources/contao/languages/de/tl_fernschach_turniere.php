@@ -4,8 +4,12 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'] = 'Ordner & Turniere'
 
 /**
  * Backend-Modul: Übersetzungen im Eingabeformular
- */$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
+ */
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['title_legend'] = 'Titel und Art';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type'] = array('Ordner/Turnier', 'Turnierart bzw. Ordner. Es werden nur die an dieser Stelle möglichen Optionen angezeigt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['titleView'] = array('In Turnieranmeldung anzeigen', 'Titel im Anmeldeformular als Gruppenname der untergeordneten Turniere anzeigen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['titleAlternate'] = array('Titel überschreiben', 'Sie können hier den anzuzeigenden Titel überschreiben. Ein Leerlassen übernimmt den Titel oben.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
@@ -43,7 +47,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['state'] = array('Status', 'Status
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['promiseDate'] = array('Datum', 'Datum der Zu- oder Absage');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['applicationText'] = array('Hinweistext', 'Tragen Sie hier Informationen und Links zum Turnier ein. Dieser Text wird im Frontend bei den Zusagen angezeigt.');
 
-$GLOBALS['TL_LANG']['tl_fernschach_turniere']['publish_legend'] = 'Aktivieren';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['publish_legend'] = 'Archiv/Aktivieren';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['archived'] = array('Archiviert', 'Turnier als archiviert markieren.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier den Eintrag.');
 
 /**

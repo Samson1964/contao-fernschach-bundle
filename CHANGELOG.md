@@ -1,5 +1,17 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 0.21.11 (2025-05-03)
+
+* Add: tl_user.fernschach_turnierzugriff analog tl_user_group -> aber beide Felder in der Palette deaktiviert, weil das Widget noch programmiert werden muß
+* Fix: Saldozugriff auch bei Exporten beachten
+* Add: tl_fernschach_turniere.archived -> Archiviert-Checkbox um nach Archivstatus filtern zu können
+* Fix: Warning: Undefined array key "initAccounts_confirm" in src/Resources/contao/dca/tl_fernschach_konten.php (line 72) 
+* Fix: tl_fernschach_turniere panelLayout korrigiert
+* Fix: Warning: Undefined variable $objForms in src/Modules/Meldeformular.php (line 468) 
+* Change: Klasse Meldeformular umgebaut von Haste/Form auf meine eigene Form-Klasse
+* Add: tl_fernschach_turniere.formview und .formtitle -> nur bei Ordnern: optional Anzeige des Ordners als optgroup in der Turnieranmeldung
+* Add: Turnieranmeldung nur möglich, wenn alle SEPA-Mandate vorliegen
+
 ## Version 0.21.10 (2025-03-23)
 
 * Fix: Fehler beim Zugriff auf Haste/Form: Attempted to load class "Form" from namespace "Codefog\HasteBundle\Form" -> \Haste\Form\Form statt \Codefog\HasteBundle\Form\Form

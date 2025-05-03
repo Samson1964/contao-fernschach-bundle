@@ -69,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_konten'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts'],
 				'icon'                => 'bundles/contaofernschach/images/initAccounts.png',
 				'href'                => 'key=initAccounts',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts_confirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . @$GLOBALS['TL_LANG']['tl_fernschach_konten']['initAccounts_confirm'] . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'all' => array
 			(

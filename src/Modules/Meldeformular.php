@@ -154,129 +154,67 @@ class Meldeformular extends \Module
 		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
 		$mitgliedsdaten .= '<li>Kontostand Nenngeld: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
 
+		// SEPA-Mandate prüfen
+		$sepamandate = '';
+		$sepacount = 0;
+		if($mitglied->sepaNenngeld) 
+		{
+			$sepacount++;
+			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Nenngeld | ';
+		}
+		else
+		{
+			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Nenngeld | ';
+		}
+		if($mitglied->sepaBeitrag) 
+		{
+			$sepacount++;
+			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Beitrag';
+		}
+		else
+		{
+			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Beitrag';
+		}
+		if($sepacount != 2) 
+		{
+			$sepamandate .= '<li><span style="color:red;">Eine Turnieranmeldung ist wegen fehlender SEPA-Mandate nicht möglich.</span></li>';
+		}
+		$mitgliedsdaten .= '<li>SEPA-Mandate: <b>'.$sepamandate.'</b></li>';
+
 		$mitgliedsdaten .= '</ul>';
 
-		$objForm->addFormField('fieldset1_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Persönliche Daten</legend>'
-			)
-		));
-		$objForm->addFormField('mitgliedsdaten', array(
-			'inputType'     => 'html',
-			'eval' => array
-			(
-				'html' => $mitgliedsdaten
-			)
-		));
-		$objForm->addFormField('fieldset1_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		));
-
-		$objForm->addFormField('fieldset2_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Turnier</legend><b>Hiermit melde ich mich zu folgendem Fernschachturnier an:</b>'
-			)
-		));
-		$objForm->addFormField('turnierbox_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<div style="display:flex;">'
-			)
-		));
-		$objForm->addFormField('turnier', array(
-			'label'         => 'Turnier',
-			'inputType'     => 'select',
-			'options'       => self::getTournaments(),
-			'eval'          => array('mandatory'=>false, 'choosen'=>true, 'includeBlankOption' => true)
-		));
-		$objForm->addFormField('turnierbox_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</div>'
-			)
-		));
-		$objForm->addFormField('fieldset2_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		));
-
-		$objForm->addFormField('fieldset5_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse</legend>'
-			)
-		));
-		$objForm->addFormField('qualifikation', array(
-			'label'         => 'Turnierkennzeichen und Punktestand',
-			'inputType'     => 'textarea',
-			'eval'          => array('mandatory'=>false, 'rte'=>'tinyMCE')
-		));
-		$objForm->addFormField('fieldset5_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		));
-
-		$objForm->addFormField('fieldset6_start', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '<fieldset><legend>Bemerkungen</legend>'
-			)
-		));
-		$objForm->addFormField('bemerkungen', array(
-			'label'         => 'Sonstiges (z.B. Urlaub von ... bis ...)',
-			'inputType'     => 'textarea',
-			'eval'          => array('mandatory'=>false, 'rte'=>'tinyMCE')
-		));
-		$objForm->addFormField('fieldset6_ende', array(
-			'inputType' => 'html',
-			'eval' => array
-			(
-				'html' => '</fieldset>'
-			)
-		));
-
-		// Submit-Button hinzufügen
-		$objForm->addFormField('submit', array(
-			'label'         => 'Absenden',
-			'inputType'     => 'submit',
-			'eval'          => array('class'=>'btn btn-primary')
-		));
-		$objForm->addCaptchaFormField('captcha');
-		// Ausgeblendete Felder FORM_SUBMIT und REQUEST_TOKEN automatisch hinzufügen.
-		// Nicht verwenden wenn generate() anschließend verwendet, da diese Felder dort standardmäßig bereitgestellt werden.
-		// $objForm->addContaoHiddenFields();
-
+		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
+		$form->addField(array('typ' => 'hidden', 'name' => 'FORM_SUBMIT', 'value' => 'form_turnieranmeldung'));
+		$form->addField(array('typ' => 'fieldset', 'label' => 'Persönliche Daten'));
+		$form->addField(array('typ' => 'explanation', 'label' => $mitgliedsdaten));
+		$form->addField(array('typ' => 'fieldset', 'label' => ''));
+		if($sepacount == 2)
+		{ 
+			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
+			$form->addField(array('typ' => 'explanation', 'label' => '<b>Hiermit melde ich mich zu folgendem Fernschachturnier an:</b>'));
+			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments()));
+			$form->addField(array('typ' => 'fieldset', 'label' => ''));
+			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
+			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));
+			$form->addField(array('typ' => 'fieldset', 'label' => ''));
+			$form->addField(array('typ' => 'fieldset', 'label' => 'Bemerkungen'));
+			$form->addField(array('typ' => 'textarea', 'name' => 'bemerkungen', 'label' => 'Sonstiges (z.B. Urlaub von ... bis ...)'));
+			$form->addField(array('typ' => 'fieldset', 'label' => ''));
+			$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
+		} 
 		// validate() prüft auch, ob das Formular gesendet wurde
-		if($objForm->validate())
+		if($form->validate())
 		{
 			// Alle gesendeten und analysierten Daten holen (funktioniert nur mit POST)
-			$arrData = $objForm->fetchAll();
+			$arrData = $form->fetchAll();
 			self::saveMeldung($arrData); // Daten sichern
 			// Seite neu laden
 			\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
 			\Controller::reload();
 		}
-
+       
 		// Formular als String zurückgeben
-		return $objForm->generate();
+		return $form->generate();
 
 	}
 
@@ -455,23 +393,31 @@ class Meldeformular extends \Module
 	 */
 	public function getTournaments()
 	{
-		$arrForms = array();
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY art AND title")
+		$Turniere = array();
+		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
+
+		// Meldefähige Turniere laden
+		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
 		                                       ->execute(time(), 0, 1, 1);
 
 		while($objTurniere->next())
 		{
 			$published = self::TurnierkategorieVeroeffentlicht($objTurniere->pid); // Prüfen, ob alle übergeordneten Turnierkategorien veröffentlicht sind
+			$Gruppenname = self::Turniergruppe($objTurniere->pid); // Titel der Turnierkategorie laden
 
 			if($published)
 			{
-				$meldedatum = $objTurniere->registrationDate ? '  | Meldedatum: '.date('d.m.Y', $objForms->registrationDate) : '  | ohne Meldedatum';
-				$nenngeld = ' | Nenngeld: '.str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld)).' € ';
-				$arrForms[$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+				// Optgroup-Label festlegen
+				$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
+				if(!isset($Turniere[$Gruppe])) $Turniere[$Gruppe] = array(); // Unterarray anlegen
+				
+				$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
+				$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
+				$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
 			}
 		}
 
-		return $arrForms;
+		return $Turniere;
 	}
 
 	/*
@@ -495,6 +441,29 @@ class Meldeformular extends \Module
 			}
 		}
 		return true;
+	}
+
+	/*
+	 * Funktion TurnierkategorieVeroeffentlicht
+	 * Liefert true/false, je nach veröffentlichten Oberkategorien
+	 */
+	private function Turniergruppe($id)
+	{
+		$gruppe = '';
+
+		while($id > 0)
+		{
+			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			                                      ->execute($id);
+
+			// Gruppenname ermitteln
+			if($objTurnier->titleView)
+			{
+				$gruppe = $objTurnier->titleAlternate ? $objTurnier->titleAlternate : $objTurnier->title;
+			}
+			$id = $objTurnier->pid; // Neue ID setzen
+		}
+		return $gruppe;
 	}
 
 	/*

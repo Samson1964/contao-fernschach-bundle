@@ -62,7 +62,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['exportXLS'],
 				'href'                => 'key=exportXLS',
 				'icon'                => 'bundles/contaofernschach/images/exportEXCEL.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();"'
+				'attributes'          => 'onclick="Backend.getScrollOffset();"',
 			),
 			'setNewsletter' => array
 			(
@@ -1541,7 +1541,7 @@ class tl_fernschach_spieler extends \Backend
 				}
 
 				// Buchungen eines Spielers aufgerufen?
-				if(Input::get('do') == 'fernschach-spieler' && Input::get('table') == 'tl_fernschach_spieler_konto' && Input::get('id') > 0 && !Input::get('act'))
+				if(Input::get('do') == 'fernschach-spieler' && \Input::get('table') == 'tl_fernschach_spieler_konto' && \Input::get('id') > 0 && !Input::get('act'))
 				{
 					if(!$this->User->hasAccess('konto', 'fernschach_spieler'))
 					{
@@ -2086,7 +2086,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2101,7 +2101,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2116,7 +2116,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2131,7 +2131,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2146,7 +2146,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'&amp;popup=1" title="'.specialchars($title).'"'.$attributes.' onclick="Backend.openModalIframe({\'title\':\''.str_replace('%s', $row['id'], $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'][1]).'\',\'url\':this.href});return false" >'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'&amp;popup=1" title="'.specialchars($title).'"'.$attributes.' onclick="Backend.openModalIframe({\'title\':\''.str_replace('%s', $row['id'], $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'][1]).'\',\'url\':this.href});return false" >'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 
 
 	}

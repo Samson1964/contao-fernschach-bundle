@@ -32,8 +32,8 @@ $GLOBALS['TL_LANG']['tl_user']['fernschach_spieler_optionen'] = array
 	'toggle'         => 'Datensatz: Spieler Veröffentlichen-Status setzen',
 	'show'           => 'Datensatz: Spieler Infobox zeigen',
 	'fertig'         => 'Datensatz: Spieler Fertig-Status setzen',
-	'saldo'          => 'Auflistung: Saldo anzeigen',
-	'accountChecked' => 'Auflistung: Konto geprüft anzeigen',
+	'saldo'          => 'Auflistungen/Exporte: Saldo anzeigen',
+	'accountChecked' => 'Auflistungen/Exporte: Konto geprüft anzeigen',
 );
 
 $GLOBALS['TL_LANG']['tl_user']['fernschach_konto_optionen'] = array

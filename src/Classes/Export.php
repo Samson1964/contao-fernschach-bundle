@@ -9,6 +9,15 @@ class Export extends \Backend
 {
 
 	/**
+	 * Import the back end user object
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->import('BackendUser', 'User');
+	}
+
+	/**
 	 * Funktion exportTrainer_XLS
 	 * @param object
 	 * @return string
@@ -16,12 +25,12 @@ class Export extends \Backend
 
 	public function exportXLS(\DataContainer $dc)
 	{
-		if ($this->Input->get('key') != 'exportXLS')
+		if($this->Input->get('key') != 'exportXLS' || !$this->User->hasAccess('export', 'fernschach_spieler'))
 		{
 			return '';
 		}
 
-		// Formular wurde abgeschickt, Wortliste importieren
+		// Formular wurde abgeschickt
 		if(\Input::post('FORM_SUBMIT') == 'tl_fernschach_exportexcel')
 		{
 			$arrExport = self::getRecords($dc); // Spieler auslesen
@@ -232,7 +241,7 @@ class Export extends \Backend
 
 		// Formularfelder generieren
 		// Return form
-		return '
+		$ausgabe = '
 <div id="tl_buttons">
 <a href="'.ampersand(str_replace('&key=exportXLS', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
@@ -246,16 +255,23 @@ class Export extends \Backend
 
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'].'</h2>
 	<div class="tl_tbox">
-		<div class="widget w50">
+		<div class="widget clr long">
 			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][0].'</h3>
 			<input type="text" name="kenncode_stichtag" value="'.(\Input::post('kenncode_stichtag') ? \Input::post('kenncode_stichtag') : date('d.m.Y')).'">
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][1].'</p>
-		</div>
-		<div class="widget clr long">
-			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][0].'</h3>
-			<input type="text" name="saldo_stichtag" value="'.(\Input::post('saldo_stichtag') ? \Input::post('saldo_stichtag') : date('d.m.Y')).'">
-			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][1].'</p>
-		</div>
+		</div>';
+		
+		if($this->User->hasAccess('saldo', 'fernschach_spieler'))
+		{
+			$ausgabe .= '
+			<div class="widget clr long">
+				<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][0].'</h3>
+				<input type="text" name="saldo_stichtag" value="'.(\Input::post('saldo_stichtag') ? \Input::post('saldo_stichtag') : date('d.m.Y')).'">
+				<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][1].'</p>
+			</div>';
+		}
+		
+		$ausgabe .= '
 	</div>
 </div>
 
@@ -268,6 +284,8 @@ class Export extends \Backend
 
 </form>
 </div>';
+
+		return $ausgabe;
 
 	}
 
@@ -471,9 +489,9 @@ class Export extends \Backend
 						'inhaber'                 => $records->inhaber,
 						'iban'                    => $records->iban,
 						'bic'                     => $records->bic,
-						'saldo_h'                 => $saldo_h ? sprintf("%01.2f", $saldo_h) : '',
-						'saldo_b'                 => $saldo_b ? sprintf("%01.2f", $saldo_b) : '',
-						'saldo_n'                 => $saldo_n ? sprintf("%01.2f", $saldo_n) : '',
+						'saldo_h'                 => $this->User->hasAccess('saldo', 'fernschach_spieler') ? ($saldo_h ? sprintf("%01.2f", $saldo_h) : '') : 'Zugriff gesperrt',
+						'saldo_b'                 => $this->User->hasAccess('saldo', 'fernschach_spieler') ? ($saldo_b ? sprintf("%01.2f", $saldo_b) : '') : 'Zugriff gesperrt',
+						'saldo_n'                 => $this->User->hasAccess('saldo', 'fernschach_spieler') ? ($saldo_n ? sprintf("%01.2f", $saldo_n) : '') : 'Zugriff gesperrt',
 						'published'               => $records->published,
 						'fertig'                  => $records->fertig,
 					);
