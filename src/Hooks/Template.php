@@ -15,13 +15,26 @@ class Template
 			$do = \Input::get('do');
 			$table = \Input::get('table');
 			$id = \Input::get('id');
+			$act = \Input::get('act');
 			
 			if($do == 'fernschach-spieler' && $table == 'tl_fernschach_spieler_konto')
 			{
 				\System::loadlanguagefile('tl_fernschach_spieler', 'de');
 				// Buchungen wurden aufgerufen, zur Überschrift den Spielernamen hinzufügen
-				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
-				                                      ->execute($id);
+				if($act == 'edit')
+				{
+					// Im Edit-Modus muß in den Buchungen erst die pid besorgt werden
+					$objBuchung = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE id = ?")
+					                                      ->execute($id);
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($objBuchung->pid);
+				}
+				else
+				{
+					// Spieler kann direkt abgefragt werden
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($id);
+				}
 				$str = '';
 				if($objSpieler->numRows)
 				{
@@ -84,8 +97,20 @@ class Template
 			{
 				\System::loadlanguagefile('tl_fernschach_spieler', 'de');
 				// Buchungen wurden aufgerufen, zur Überschrift den Spielernamen hinzufügen
-				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
-				                                      ->execute($id);
+				if($act == 'edit')
+				{
+					// Im Edit-Modus muß in den Buchungen erst die pid besorgt werden
+					$objBuchung = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE id = ?")
+					                                      ->execute($id);
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($objBuchung->pid);
+				}
+				else
+				{
+					// Spieler kann direkt abgefragt werden
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($id);
+				}
 				$str = '';
 				if($objSpieler->numRows)
 				{
@@ -148,8 +173,20 @@ class Template
 			{
 				\System::loadlanguagefile('tl_fernschach_spieler', 'de');
 				// Buchungen wurden aufgerufen, zur Überschrift den Spielernamen hinzufügen
-				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
-				                                      ->execute($id);
+				if($act == 'edit')
+				{
+					// Im Edit-Modus muß in den Buchungen erst die pid besorgt werden
+					$objBuchung = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE id = ?")
+					                                      ->execute($id);
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($objBuchung->pid);
+				}
+				else
+				{
+					// Spieler kann direkt abgefragt werden
+					$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+					                                      ->execute($id);
+				}
 				$str = '';
 				if($objSpieler->numRows)
 				{

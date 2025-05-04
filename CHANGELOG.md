@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.0.0 (2025-05-04)
+
+* Add: tl_fernschach_turniere.turnierleiterEmail -> filter von false auf true
+* Fix: Invalid CSRF token. Please reload the page and try again. (beim Abschicken einer Turnieranmeldung) -> REQUEST_TOKEN im Formular vergessen
+* Fix: Beim Bearbeiten einer Buchung wird im Kopf ein falsches Konto angezeigt, z.B. Nenngeldkonto von x statt Nenngeldkonto von y -> Template-Hook korrigiert
+* Change: Meldeformular SEPA- und Kontenprüfung geändert
+* Change: Dokumentation TURNIERANMELDUNGEN.md
+* Add: Meldeformular -> Bearbeitungslink für das gemeldete Turnier in der Mail an die TL anzeigen
+* Change: Turniermodul Alpha-Version entfernt
+
 ## Version 0.21.11 (2025-05-03)
 
 * Add: tl_user.fernschach_turnierzugriff analog tl_user_group -> aber beide Felder in der Palette deaktiviert, weil das Widget noch programmiert werden muß

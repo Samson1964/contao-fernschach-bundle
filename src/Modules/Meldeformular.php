@@ -13,8 +13,6 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-use Codefog\HasteBundle\Form\Form;
-
 class Meldeformular extends \Module
 {
 
@@ -126,8 +124,8 @@ class Meldeformular extends \Module
 		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
 		$mitgliedsdaten .= '<li>Kontostand Hauptkonto: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
 		// Saldo Beitragskonto ermitteln und ausgeben
-		$value = end($salden_beitrag);
-		if($value >= 0)
+		$beitragssaldo = end($salden_beitrag);
+		if($beitragssaldo >= 0)
 		{
 			$html_start = '<span style="color:green;">';
 			$html_ende = ' €<span>';
@@ -137,11 +135,11 @@ class Meldeformular extends \Module
 			$html_start = '<span style="color:red;">';
 			$html_ende = ' €<span>';
 		}
-		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
+		$saldo = str_replace('.', ',', sprintf('%0.2f',$beitragssaldo));
 		$mitgliedsdaten .= '<li>Kontostand Beitrag: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
 		// Saldo Nenngeldkonto ermitteln und ausgeben
-		$value = end($salden_nenngeld);
-		if($value >= 0)
+		$nenngeldsaldo = end($salden_nenngeld);
+		if($nenngeldsaldo >= 0)
 		{
 			$html_start = '<span style="color:green;">';
 			$html_ende = ' €<span>';
@@ -151,48 +149,60 @@ class Meldeformular extends \Module
 			$html_start = '<span style="color:red;">';
 			$html_ende = ' €<span>';
 		}
-		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
+		$saldo = str_replace('.', ',', sprintf('%0.2f',$nenngeldsaldo));
 		$mitgliedsdaten .= '<li>Kontostand Nenngeld: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
 
 		// SEPA-Mandate prüfen
 		$sepamandate = '';
 		$sepacount = 0;
-		if($mitglied->sepaNenngeld) 
+		if($mitglied->sepaBeitrag)
 		{
 			$sepacount++;
-			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Nenngeld | ';
+			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Beitrag | ';
 		}
 		else
 		{
-			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Nenngeld | ';
+			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Beitrag | ';
 		}
-		if($mitglied->sepaBeitrag) 
+		if($mitglied->sepaNenngeld)
 		{
 			$sepacount++;
-			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Beitrag';
+			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Nenngeld';
 		}
 		else
 		{
-			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Beitrag';
-		}
-		if($sepacount != 2) 
-		{
-			$sepamandate .= '<li><span style="color:red;">Eine Turnieranmeldung ist wegen fehlender SEPA-Mandate nicht möglich.</span></li>';
+			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Nenngeld';
 		}
 		$mitgliedsdaten .= '<li>SEPA-Mandate: <b>'.$sepamandate.'</b></li>';
+		if($sepacount != 2)
+		{
+			$mitgliedsdaten .= '<li><span style="color:red;">Es fehlen SEPA-Mandate, weshalb die Turnierauswahl nicht möglich oder eingeschränkt sein könnte.</span></li>';
+		}
+		if(!$mitglied->sepaBeitrag && $beitragssaldo < 0)
+		{
+			$mitgliedsdaten .= '<li><span style="color:red;">Eine Turnieranmeldung ist wegen fehlendem SEPA-Beitragsmandat bzw. negativem Beitragskonto nicht möglich.</span></li>';
+		}
+		else
+		{
+			if(!$mitglied->sepaNenngeld && $nenngeldsaldo < 0)
+			{
+				$mitgliedsdaten .= '<li><span style="color:red;">Es werden u.U. nicht alle Turniere angezeigt, weil Ihr Nenngeldkonto zu wenig Guthaben hat oder Sie kein SEPA-Mandat für Nenngeld erteilt haben.</span></li>';
+			}
+		}
 
 		$mitgliedsdaten .= '</ul>';
 
 		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
 		$form->addField(array('typ' => 'hidden', 'name' => 'FORM_SUBMIT', 'value' => 'form_turnieranmeldung'));
+		$form->addField(array('typ' => 'hidden', 'name' => 'REQUEST_TOKEN', 'value' => REQUEST_TOKEN));
 		$form->addField(array('typ' => 'fieldset', 'label' => 'Persönliche Daten'));
 		$form->addField(array('typ' => 'explanation', 'label' => $mitgliedsdaten));
 		$form->addField(array('typ' => 'fieldset', 'label' => ''));
-		if($sepacount == 2)
-		{ 
+		if($mitglied->sepaBeitrag || $beitragssaldo >= 0)
+		{
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
 			$form->addField(array('typ' => 'explanation', 'label' => '<b>Hiermit melde ich mich zu folgendem Fernschachturnier an:</b>'));
-			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments()));
+			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo)));
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
 			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));
@@ -201,7 +211,7 @@ class Meldeformular extends \Module
 			$form->addField(array('typ' => 'textarea', 'name' => 'bemerkungen', 'label' => 'Sonstiges (z.B. Urlaub von ... bis ...)'));
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
-		} 
+		}
 		// validate() prüft auch, ob das Formular gesendet wurde
 		if($form->validate())
 		{
@@ -212,7 +222,7 @@ class Meldeformular extends \Module
 			\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
 			\Controller::reload();
 		}
-       
+
 		// Formular als String zurückgeben
 		return $form->generate();
 
@@ -308,13 +318,15 @@ class Meldeformular extends \Module
 				$cc = implode(',', $empfaenger);
 				$objEmail->sendCc($cc);
 			}
+			// Backend-Link zum Turnier generieren
+			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=fernschach-turniere&table=tl_fernschach_turniere_meldungen&rt='.REQUEST_TOKEN.'&id='.$objTurnier->id;
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
 			$text .= '<p>Eine neue Turnieranmeldung wurde vorgenommen:</p>';
 			$text .= '<h3>Angaben zum Turnier</h3>';
 			$text .= '<ul>';
 			$text .= '<li>Meldezeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
-			$text .= '<li>Turnier: <b>'.$objTurnier->title.'</b></li>';
+			$text .= '<li>Turnier: <b>'.$objTurnier->title.'</b> (<a href="'.$backendlink.'" target="_blank">Bearbeiten</a>)</li>';
 			$text .= '<li>Meldeschluss: <b>'.($objTurnier->registrationDate ? date('d.m.Y', $objTurnier->registrationDate) : '-').'</b></li>';
 			$text .= '<li>Nenngeld: <b>'.str_replace('.', ',', sprintf('%0.2f',$objTurnier->nenngeld)).'</b></li>';
 			$text .= '</ul>';
@@ -389,9 +401,12 @@ class Meldeformular extends \Module
 	 * =======================
 	 * Turniere einlesen: veröffentlicht, Online-Anmeldung aktiv, ohne Meldedatum oder Meldedatum kleiner akt. Datum
 	 *
+	 * param $sepa        Boolean    Status des SEPA-Mandats für Nenngeld
+	 * param $saldo       Float      Saldo des Nenngeldkontos
+	 *
 	 * @return array
 	 */
-	public function getTournaments()
+	public function getTournaments($sepa, $saldo)
 	{
 		$Turniere = array();
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
@@ -410,10 +425,14 @@ class Meldeformular extends \Module
 				// Optgroup-Label festlegen
 				$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
 				if(!isset($Turniere[$Gruppe])) $Turniere[$Gruppe] = array(); // Unterarray anlegen
-				
+
 				$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
 				$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
-				$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+				// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
+				if($sepa || $saldo >= (int)$objTurniere->nenngeld)
+				{
+					$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+				}
 			}
 		}
 

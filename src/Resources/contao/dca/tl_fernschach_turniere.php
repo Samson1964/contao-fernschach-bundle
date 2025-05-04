@@ -448,6 +448,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['turnierleiterEmail'],
 			'exclude'                 => true,
 			'search'                  => true,
+			'filter'                  => true,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(

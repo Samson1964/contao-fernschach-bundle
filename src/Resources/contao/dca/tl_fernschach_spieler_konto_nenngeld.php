@@ -386,6 +386,8 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+		//$this->Template->headline = 'New Headline'; // oder besser: Referenziere das Sprachen-Array 
+		//$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['headline'] = 'Test';
 	}
 
 	/**
