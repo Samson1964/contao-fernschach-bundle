@@ -53,6 +53,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['new'] = array('Neue Mel
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['edit'] = array('Meldung bearbeiten', 'Meldung %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['copy'] = array('Meldung kopieren', 'Meldung %s kopieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['delete'] = array('Meldung löschen', 'Meldung %s löschen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['deleteConfirm'] = 'Dabei wird auch die zugehörende Buchung gelöscht!';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['toggle'] = array('Meldung aktivieren/deaktivieren', 'Meldung %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['show'] = array('Meldungsdetails anzeigen', 'Details der Meldung %s anzeigen');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['tournaments'] = array('Turnieranmeldungen anzeigen', 'Turnieranmeldungen des gemeldeten Spielers %s anzeigen');

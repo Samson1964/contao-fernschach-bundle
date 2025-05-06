@@ -189,7 +189,24 @@ class Meldeformular extends \Module
 				$mitgliedsdaten .= '<li><span style="color:red;">Es werden u.U. nicht alle Turniere angezeigt, weil Ihr Nenngeldkonto zu wenig Guthaben hat oder Sie kein SEPA-Mandat für Nenngeld erteilt haben.</span></li>';
 			}
 		}
+		$mitgliedsdaten .= '</ul>';
 
+		// Meldungen des Spielers laden
+		$mitgliedsdaten .= '<h4>Letzte 5 Anmeldungen</h4>';
+		$mitgliedsdaten .= '<ul>';
+		$anmeldungen_bewerbungen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAnmeldungenBewerbungen($mitglied->id);
+		$nummer = 0;
+		foreach($anmeldungen_bewerbungen as $item)
+		{
+			if($item['typ'] == 'Anmeldung')
+			{
+				$nummer++;
+				$mitgliedsdaten .= '<li>';
+				$mitgliedsdaten .= date('d.m.Y H:i', $item['datum']).' '.$item['turnier'];
+				$mitgliedsdaten .= '</li>';
+			}
+			if($nummer == 5) break;
+		}
 		$mitgliedsdaten .= '</ul>';
 
 		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
@@ -279,7 +296,7 @@ class Meldeformular extends \Module
 				'datum'             => $zeit,
 				'kategorie'         => 's',
 				'art'               => 'n',
-				'verwendungszweck'  => 'Nenngeld-Forderung',
+				'verwendungszweck'  => 'Nenngeld-Forderung '.$objTurnier->title,
 				'turnier'           => $data['turnier'],
 				'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
 				'meldungId'         => $meldungId,
@@ -290,9 +307,6 @@ class Meldeformular extends \Module
 			                                     ->execute();
 		}
 
-        //
-		//\System::log('[Linkscollection] New Link submitted: '.$data['title'].' ('.$data['url'].')', __CLASS__.'::'.__FUNCTION__, TL_CRON);
-        //
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 		// E-Mail für Turnierleiter zusammenbauen

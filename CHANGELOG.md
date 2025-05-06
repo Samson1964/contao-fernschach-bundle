@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.0.2 (2025-05-06)
+
+* Change: Bei Turnieranmeldung wird im Buchungsdatensatz der Turniertitel im Verwendungszweck hinzugefügt.
+* Fix: ondelete_callback in tl_fernschach_turniere_meldungen -> Beim Löschen einer Meldung wurde im falschen Buchungskonto gelöscht
+* Add: Ausgabe der letzten 5 Turnieranmeldungen im Meldeformular
+
 ## Version 1.0.1 (2025-05-06)
 
 * Fix: Attempted to call function "error_log" from the global namespace. (nur im Live-Web) -> log_message auskommentiert
