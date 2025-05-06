@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.0.1 (2025-05-06)
+
+* Fix: Attempted to call function "error_log" from the global namespace. (nur im Live-Web) -> log_message auskommentiert
+* Fix: tl_fernschach_turniere_meldungen.memberId ist unique -> entfernt, da hier nichts eindeutig sein darf
+* Add: tl_fernschach_turniere_meldungen.player mit Unterfeld playerIn -> Als Teilnehmer eines Turniers festgelegt und playerIn ist die Turnier-ID
+* Change: tl_fernschach_turniere_meldungen.player/playerIn -> Funktionsfähigkeit eingebaut inkl. Mehrere überschreiben/bearbeiten
+* Fix: tl_fernschach_turniere_meldungen -> Sortierreihenfolge falsch, nicht tstamp DESC sondern meldungDatum DESC ist richtig
+* Add: Klasse ZeigeTeilnehmer für die Anzeige der Teilnehmer eines Turniers
+
 ## Version 1.0.0 (2025-05-04)
 
 * Add: tl_fernschach_turniere.turnierleiterEmail -> filter von false auf true

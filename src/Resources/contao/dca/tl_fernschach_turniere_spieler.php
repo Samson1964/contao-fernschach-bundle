@@ -234,12 +234,12 @@ class tl_fernschach_turniere_spieler extends \Backend
 
 	public function cacheMeldung(DataContainer $dc)
 	{
-		log_message('Sichere alte Zuordnung','fernschach.log');
-		log_message('tl_fernschach_turniere_spieler.id = '.$this->Input->get('id'),'fernschach.log');
+		//log_message('Sichere alte Zuordnung','fernschach.log');
+		//log_message('tl_fernschach_turniere_spieler.id = '.$this->Input->get('id'),'fernschach.log');
     	$row = $this->Database->prepare("SELECT meldungId FROM tl_fernschach_turniere_spieler WHERE id=?")
     	                      ->execute($this->Input->get('id'));
 
-		log_message('meldungId = '.$row->meldungId,'fernschach.log');
+		//log_message('meldungId = '.$row->meldungId,'fernschach.log');
     	$this->Session->set('tl_fernschach_turniere_spieler.meldungId', $row->meldungId);
 
 	}
@@ -252,9 +252,9 @@ class tl_fernschach_turniere_spieler extends \Backend
 	{
 		// Turnier-ID in der Meldung eintragen
 
-		log_message('Neue Zuordnung','fernschach.log');
-		log_message('meldungId aus Session = '.$this->Session->get('tl_fernschach_turniere_spieler.meldungId'),'fernschach.log');
-		log_message('meldungId aus Bearbeitung = '.$dc->activeRecord->meldungId,'fernschach.log');
+		//log_message('Neue Zuordnung','fernschach.log');
+		//log_message('meldungId aus Session = '.$this->Session->get('tl_fernschach_turniere_spieler.meldungId'),'fernschach.log');
+		//log_message('meldungId aus Bearbeitung = '.$dc->activeRecord->meldungId,'fernschach.log');
 
     	if($this->Session->get('tl_fernschach_turniere_spieler.meldungId') !== $dc->activeRecord->meldungId)
     	{

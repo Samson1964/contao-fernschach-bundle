@@ -55,6 +55,15 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'callback'            => \Schachbulle\ContaoFernschachBundle\Modules\ZeigeTurniere::class,
 		'hideInNavigation'    => true,
 	),
+	'fernschach-turniere-teilnehmer'     => array
+	(
+		'tables'              => array
+		(
+			'tl_fernschach_turniere_meldungen',
+		),
+		'callback'            => \Schachbulle\ContaoFernschachBundle\Modules\ZeigeTeilnehmer::class,
+		'hideInNavigation'    => true,
+	),
 	'fernschach-mitgliederstatistik'   => array
 	(
 		'tables'              => array

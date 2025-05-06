@@ -38,6 +38,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['info_legend'] = 'Bemerk
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['infoQualifikation'] = array('Qualifikationen', 'Informationen zu den Qualifikationen aus dem Meldeformular.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['bemerkungen'] = array('Bemerkungen', 'Bemerkungen aus dem Meldeformular.');
 
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['player_legend'] = 'Zusage Teilnahme';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['player'] = array('Turnier zuordnen', 'Aktivieren oder deaktivieren Sie hier die Teilnahme an diesem Turnier bzw. einer untergeordneten Turniergruppe.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['playerIn'] = array('Turniergruppe', 'Es werden nur dem aktuellen Turnier untergeordnete Turniergruppen angezeigt. Wenn Sie keine Turniergruppe auswählen, wird die Teilnahme dem aktuellen Turnier zugeordnet.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['publish_legend'] = 'Aktivieren';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier die Meldung.');
 

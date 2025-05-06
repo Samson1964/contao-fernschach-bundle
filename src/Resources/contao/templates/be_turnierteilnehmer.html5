@@ -1,0 +1,58 @@
+<div id="tl_buttons">
+	<a href="<?= $this->href ?>" class="header_back" title="<?= $this->title ?>" accesskey="b" onclick="Backend.getScrollOffset()"><?= $this->button ?></a>
+</div>
+<div class="tl_listing_container">
+	<h2 style="margin-bottom:10px;">Turnier: <?= $this->Turnier['title'] ?></h2>
+	<div class="tl_header">
+		<table class="tl_header_table fernschach_kopf" width="100%">
+			<tbody>
+			<tr>
+				<th colspan="2" width="33%"><h2>Stammdaten</h2></th>
+				<th colspan="2" width="33%"><h2>Turnierleiter</h2></th>
+			</tr>
+			<tr>
+				<td><span class="tl_label">Kennziffer:</span></td>
+				<td><?= $this->Turnier['kennziffer'] ?></td>
+				<td><span class="tl_label">Turnierleiter:</span></td>
+				<td><?= $this->Turnier['turnierleiterName'] ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label">Meldeschluss:</span></td>
+				<td><?= $this->Turnier['registrationDate'] ?></td>
+				<td><span class="tl_label">E-Mail:</span></td>
+				<td><?= $this->Turnier['turnierleiterEmail'] ?></td>
+			</tr>
+			<tr>
+				<td><span class="tl_label">Startdatum:</span></td>
+				<td><?= $this->Turnier['startDate'] ?></td>
+				<td><span class="tl_label"></span></td>
+				<td></td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="tl_listing">
+		<h2 style="margin-bottom:3px;">Teilnehmer</h2><p class="tl_help tl_tip" style="margin-bottom:10px;">Teilnehmer des Turniers</p>
+		<table class="tl_listing">
+			<tbody>
+			<tr>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">#</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Meldedatum</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Nachname</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Vorname</th>
+				<th style="padding-left: 2px;" class="tl_folder_tlist">Mitgliedsnummer</th>
+			</tr>
+			<?php foreach($this->Meldungen as $item): ?>
+			<tr>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['nummer'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['meldungDatum'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['nachname'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['vorname'] ?></td>
+				<td class="tl_file_list <?= $item['class'] ?>"><?= $item['mglnr'] ?></td>
+			</tr>
+			<?php endforeach; ?>
+			</tbody>
+		</table>
+	</div>
+</div>

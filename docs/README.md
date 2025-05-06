@@ -17,7 +17,7 @@
 * Verwalten von Turnieren, für die gemeldet werden kann
 * Turnierarten: Klassenturniere, Einladungsturniere, Pokalturniere
 * Bearbeitungsformular zeigt die Meldungen für das Turnier an
-* [Turnierarten im BdF](TURNIERARTEN.md)
+* [Turnierarten](TURNIERARTEN.md)
 
 ### Backend-Modul Meldeverwaltung
 

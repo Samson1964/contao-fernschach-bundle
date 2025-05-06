@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			'mode'                    => 4,
 			'headerFields'            => array('title', 'nenngeld', 'registrationDate', 'startDate'),
 			'flag'                    => 12,
-			'fields'                  => array('tstamp DESC'),
+			'fields'                  => array('meldungDatum DESC'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_fernschach_turniere_meldungen', 'listMeldungen'),
 			'disableGrouping'         => true
@@ -115,7 +115,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 	// Paletten
 	'palettes' => array
 	(
-		'default'                     => '{hinweis_legend},nenngeldInfo;{meldedatum_legend},meldungDatum;{person_legend},vorname,nachname;{memberships_legend},spielerId,memberId;{contact_legend:hide},plz,ort,strasse,email,fax;{turnier_legend};{nenngeld_legend},meldungNenngeld,nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{publish_legend},published'
+		'__selector__'                => array('player'),
+		'default'                     => '{hinweis_legend},nenngeldInfo;{meldedatum_legend},meldungDatum;{person_legend},vorname,nachname;{memberships_legend},spielerId,memberId;{contact_legend:hide},plz,ort,strasse,email,fax;{turnier_legend};{nenngeld_legend},meldungNenngeld,nenngeldDate,nenngeldGuthaben;{info_legend:hide},infoQualifikation,bemerkungen;{player_legend},player;{publish_legend},published'
+	),
+
+	// Subpalettes
+	'subpalettes' => array
+	(
+		'player'                      => 'playerIn'
 	),
 
 	// Felder
@@ -258,7 +265,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 				'mandatory'           => false,
 				'maxlength'           => 20,
 				'tl_class'            => 'w50',
-				'unique'              => true,
 			),
 			'sql'                     => "varchar(20) NOT NULL default ''"
 		),
@@ -367,6 +373,35 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['teilnehmer'],
 			'sql'                     => "int(10) unsigned NOT NULL default 0"
 		),
+		'player' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['player'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'default'                 => '',
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'isBoolean'           => true,
+				'submitOnChange'      => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'playerIn' => array(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['playerIn'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'select',
+			'options_callback'        => array('tl_fernschach_turniere_meldungen', 'getTurniere'),
+			'eval'                    => array
+			(
+				'tl_class'            => 'long',
+				'includeBlankOption'  => true,
+				'chosen'              => true
+			),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['published'],
@@ -423,10 +458,11 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		$temp = '<div class="tl_content_left">';
 
 		// Meldedatum
-		$temp .= '<span style="display:inline-block; width:110px;" title="Anmeldedatum"><b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b></span>';
+		$temp .= '<span style="display:inline-block; width:290px;">';
+		$temp .= '<span title="Anmeldedatum"><b>'.date('d.m.Y H:i', $arrRow['meldungDatum']).'</b> | </span>';
 
 		// Vor- und Nachname
-		$temp .= '<span style="display:inline-block; width:200px;" title="Anmeldename">';
+		$temp .= ' <span title="Anmeldename">';
 		if(isset($arrRow['state']))
 		{
 			if($arrRow['state'] == 0) $temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
@@ -438,25 +474,52 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$temp .= '<b>'.$arrRow['vorname'].' '.$arrRow['nachname'].'</b>';
 		}
 		$temp .= '</span>';
+		$temp .= '</span>';
 
 		// Verlinkung des zugeordneten Spielers vorbereiten
 		$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
-		
-		// Zuordnung
-		$temp .= '<span style="display:inline-block;" title="Zugeordnet">Zugeordnet:';
+
+		// Zuordnung Mitglied
+		$temp .= '<span style="display:inline-block; width:290px;" title="Mitglied">Mitglied:';
 		if($arrRow['spielerId'])
 		{
 			$temp .= ' <a style="color:blue;" href="'.$linkprefix.'?do=fernschach-spieler&amp;act=edit&amp;id='.$arrRow['spielerId'].'&amp;popup=1&amp;rt='.REQUEST_TOKEN.' " onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Spieler bearbeiten\',\'url\':this.href});return false">'.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].'</a>';
 			if($spieler[$arrRow['spielerId']]['sepaNenngeld'])
 			{
-				$temp .= ', (SEPA-Mandat: Ja)';
+				$temp .= ' (SEPA <img src="bundles/contaofernschach/images/ja.png" width="12">)';
 			}
 			else
 			{
-				$temp .= ', (SEPA-Mandat: Nein)';
+				$temp .= ' (SEPA <img src="bundles/contaofernschach/images/nein.png" width="12">)';
 			}
 		}
 		else $temp .= ' -';
+		$temp .= '</span>';
+
+		// Zuordnung Turnierteilnehmer
+		$temp .= '<span style="display:inline-block;" title="Teilnehmer">Teilnehmer: ';
+		if($arrRow['player'])
+		{
+			if($arrRow['playerIn'])
+			{
+				$temp .= '<img src="bundles/contaofernschach/images/ja.png" width="12">';
+				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id=?")
+				                                      ->execute($arrRow['playerIn']);
+
+				if($objTurnier->numRows)
+				{
+					$temp .= ' '.$objTurnier->title;
+				}
+			}
+			else
+			{
+				$temp .= '<img src="bundles/contaofernschach/images/ja.png" width="12">';
+			}
+		}
+		else
+		{
+			$temp .= '<img src="bundles/contaofernschach/images/nein.png" width="12">';
+		}
 		$temp .= '</span>';
 
 		$temp .= '</div>';
@@ -660,6 +723,45 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->id);
 		}
 
+	}
+
+	/**
+	 * options_callback: Ermöglicht das Befüllen eines Drop-Down-Menüs oder einer Checkbox-Liste mittels einer individuellen Funktion.
+	 * @param  $dc
+	 * @return array
+	 */
+	public function getTurniere(\DataContainer $dc)
+	{
+		$arr = array();
+		$act = \Input::get('act');
+
+		if($act)
+		{
+			switch($act)
+			{
+				case 'edit': // Bearbeitungsformular der Meldung  
+					// Nach Turnieren suchen, deren übergeordnetes Turnier gleich der pid ist
+					$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
+					                                       ->execute($dc->activeRecord->pid);
+					break;
+				case 'editAll': // Mehrere bearbeiten
+				case 'overrideAll': // Mehrere überschreiben
+					// Nach Turnieren suchen, deren übergeordnetes Turnier gleich der pid ist
+					$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
+					                                       ->execute(\Input::get('id'));
+					break;
+				default:
+			}
+		}
+		
+		if(isset($objTurniere) && $objTurniere->numRows)
+		{
+			while($objTurniere->next())
+			{
+				$arr[$objTurniere->id] = $objTurniere->title;
+			}
+		}
+		return $arr;
 	}
 
 }

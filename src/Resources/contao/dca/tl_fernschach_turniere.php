@@ -85,9 +85,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			(
 				'button_callback'     => array('tl_fernschach_turniere', 'infoBewerbungen')
 			),
-			'editheader' => array
+			'editHeader' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editheader'],
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editHeader'],
 				'href'                => 'act=edit',
 				'icon'                => 'header.gif',
 			), 
@@ -105,10 +105,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'icon'                => 'bundles/contaofernschach/images/turnier_meldungen.png',
 				'button_callback'     => array('tl_fernschach_turniere', 'meldungenIcon')
 			),
-			'editSpieler' => array
+			'editTeilnehmer' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editSpieler'],
-				'href'                => 'table=tl_fernschach_turniere_spieler',
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editTeilnehmer'],
+				'href'                => 'do=fernschach-turniere-teilnehmer',
 				'icon'                => 'bundles/contaofernschach/images/turnier_gruppe.png',
 				'button_callback'     => array('tl_fernschach_turniere', 'spielerIcon')
 			),
