@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.2 (2025-06-08)
+
+* Add: tl_fernschach_spieler.contribution_paid (Beitrag 2025 bezahlt) -> wiederhergestellt, falls noch benötigt
+* Add: tl_fernschach_spieler.checkBeitrag (Beitrag ≤ 2024 bezahlt) -> wiederhergestellt, falls noch benötigt
+
 ## Version 1.1.1 (2025-06-08)
 
 * Fix: tl_fernschach_spieler.beitragsschulden nicht in der Palette
