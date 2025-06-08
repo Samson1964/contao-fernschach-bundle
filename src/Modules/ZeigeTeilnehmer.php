@@ -59,12 +59,12 @@ class ZeigeTeilnehmer extends \BackendModule
 					$nummer++;
 					$meldungen[] = array
 					(
-						'class' => '',
-						'nummer' => $nummer,
+						'class'        => '',
+						'nummer'       => $nummer,
 						'meldungDatum' => date('d.m.Y H:i', $objMeldungen->meldungDatum),
-						'vorname' => $objMeldungen->vorname,
-						'nachname' => $objMeldungen->nachname,
-						'mglnr' => $objMeldungen->memberId,
+						'vorname'      => $objMeldungen->vorname,
+						'nachname'     => $objMeldungen->nachname,
+						'mglnr'        => $objMeldungen->memberId,
 					);
 				}
 			}

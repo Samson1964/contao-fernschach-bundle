@@ -90,8 +90,18 @@ class Kontoauszug extends \Module
 					$kontoauszug = array();
 					foreach($konten as $konto)
 					{
-						$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = self::getKonto($konto, $objPlayer, $kontostand);
-						$kontoauszug = array_merge($kontoauszug, $arrReturn);
+						if($konto != 'h') 
+						{
+							$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = self::getKonto($konto, $objPlayer, $kontostand);
+							$kontoauszug = array_merge($kontoauszug, $arrReturn);
+						}
+						elseif($konto == 'h') 
+						{
+							$returnArr = self::getKonto($konto, $objPlayer, $kontostand);
+							$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = $returnArr;
+							$saldo = (int)str_replace(',', '.', substr($returnArr['saldo'], 0, 4));
+							if($saldo) $kontoauszug = array_merge($kontoauszug, $arrReturn);
+						}
 					}
 				}
 				// Ausgabe

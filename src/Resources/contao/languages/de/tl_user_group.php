@@ -16,8 +16,15 @@
  */
 
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_legend'] = 'Fernschach-Verwaltung';
+$GLOBALS['TL_LANG']['tl_user_group']['fernschach_turniere_meldungen'] = array('Turniermeldungen-Rechte', 'Hier können Sie die Turniermeldungen-Rechte festlegen.');
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_spieler'] = array('Spielerrechte', 'Hier können Sie den Zugriff auf die Spieler festlegen.');
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_konto'] = array('Kontorechte', 'Hier können Sie den Zugriff auf das Konto der Spieler festlegen.');
+
+$GLOBALS['TL_LANG']['tl_user_group']['fernschach_turniere_meldungen_optionen'] = array
+(
+	'create'     => 'Anlegen',
+	'delete'     => 'Löschen',
+);
 
 $GLOBALS['TL_LANG']['tl_user_group']['fernschach_spieler_optionen'] = array
 (

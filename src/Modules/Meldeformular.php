@@ -122,7 +122,7 @@ class Meldeformular extends \Module
 			$html_ende = ' €<span>';
 		}
 		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
-		$mitgliedsdaten .= '<li>Kontostand Hauptkonto: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		if($value != 0) $mitgliedsdaten .= '<li>Kontostand Hauptkonto: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
 		// Saldo Beitragskonto ermitteln und ausgeben
 		$beitragssaldo = end($salden_beitrag);
 		if($beitragssaldo >= 0)
@@ -176,7 +176,7 @@ class Meldeformular extends \Module
 		$mitgliedsdaten .= '<li>SEPA-Mandate: <b>'.$sepamandate.'</b></li>';
 		if($sepacount != 2)
 		{
-			$mitgliedsdaten .= '<li><span style="color:red;">Es fehlen SEPA-Mandate, weshalb die Turnierauswahl nicht möglich oder eingeschränkt sein könnte.</span></li>';
+			//$mitgliedsdaten .= '<li><span style="color:red;">Es fehlen SEPA-Mandate, weshalb die Turnierauswahl nicht möglich oder eingeschränkt sein könnte.</span></li>';
 		}
 		if(!$mitglied->sepaBeitrag && $beitragssaldo < 0)
 		{
@@ -219,7 +219,7 @@ class Meldeformular extends \Module
 		{
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
 			$form->addField(array('typ' => 'explanation', 'label' => '<b>Hiermit melde ich mich zu folgendem Fernschachturnier an:</b>'));
-			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo)));
+			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
 			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));
@@ -310,7 +310,7 @@ class Meldeformular extends \Module
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 		// E-Mail für Turnierleiter zusammenbauen
-		$turnierleiter = self::getTurnierleiter($data['turnier']);
+		$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($data['turnier']);
 
 		if(isset($turnierleiter[0]))
 		{
@@ -319,6 +319,7 @@ class Meldeformular extends \Module
 			$objEmail->charset = 'utf-8';
 			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
 			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
+			$objEmail->sendBcc($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
 			$objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
 			$objEmail->replyTo($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>');
 			// Weitere Empfänger einbauen
@@ -348,6 +349,7 @@ class Meldeformular extends \Module
 			$text .= '<ul>';
 			$text .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
 			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+			$text .= '<li>ICCF-Mitgliedsnummer: <b>'.$mitglied->memberInternationalId.'</b></li>';
 			$text .= '<li>Adresse: <b>'.$mitglied->plz.' '.$mitglied->ort.', '.$mitglied->strasse.'</b></li>';
 			$text .= '<li>Fax: <b>'.$mitglied->fax.'</b></li>';
 			$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
@@ -390,6 +392,7 @@ class Meldeformular extends \Module
 			$text .= '<ul>';
 			$text .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
 			$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+			$text .= '<li>ICCF-Mitgliedsnummer: <b>'.$mitglied->memberInternationalId.'</b></li>';
 			$text .= '<li>Adresse: <b>'.$mitglied->plz.' '.$mitglied->ort.', '.$mitglied->strasse.'</b></li>';
 			$text .= '<li>Fax: <b>'.$mitglied->fax.'</b></li>';
 			$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
@@ -417,10 +420,11 @@ class Meldeformular extends \Module
 	 *
 	 * param $sepa        Boolean    Status des SEPA-Mandats für Nenngeld
 	 * param $saldo       Float      Saldo des Nenngeldkontos
+	 * param $klasse      String     M, H, O oder leer (Klasse des Spielers)
 	 *
 	 * @return array
 	 */
-	public function getTournaments($sepa, $saldo)
+	public function getTournaments($sepa, $saldo, $klasse)
 	{
 		$Turniere = array();
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
@@ -436,16 +440,51 @@ class Meldeformular extends \Module
 
 			if($published)
 			{
-				// Optgroup-Label festlegen
-				$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
-				if(!isset($Turniere[$Gruppe])) $Turniere[$Gruppe] = array(); // Unterarray anlegen
-
-				$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
-				$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
-				// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
-				if($sepa || $saldo >= (int)$objTurniere->nenngeld)
+				$turnieranmeldung = true;
+				// Spielermaximum prüfen
+				if($objTurniere->spielerMax > 0)
 				{
-					$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+					// Ein Spielermaximum ist gesetzt, jetzt prüfen ob noch Anmeldungen möglich sind
+					$objMeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? AND published = ?")
+					                                        ->execute($objTurniere->id, 1);
+					if($objMeldungen->numRows >= $objTurniere->spielerMax)
+					{
+						$turnieranmeldung = false; // Anmeldung für dieses Turnier überspringen, da maximale Spielerzahl erreicht ist
+					}
+				}
+
+				// Klasse des Spielers prüfen
+				if($klasse == '')
+				{
+					// Keine Klasse gesetzt, nur offene Klasse möglich
+					if($objTurniere->klassenzuordnung != '' && ($objTurniere->klassenzuordnung == 'M' || $objTurniere->klassenzuordnung == 'H'))
+					{
+						$turnieranmeldung = false; // Anmeldung für dieses Turnier überspringen, da Klassenberechtigung nicht übereinstimmt
+					}
+				}
+				else
+				{
+					// Eine Klassenberechtigung ist gesetzt
+					if($objTurniere->klassenzuordnung != '' && $objTurniere->klassenzuordnung != $klasse)
+					{
+						$turnieranmeldung = false; // Anmeldung für dieses Turnier überspringen, da Klassenberechtigung nicht übereinstimmt
+					}
+				}
+
+				// Anmeldung in Select-Box eintragen, wenn erlaubt
+				if($turnieranmeldung)
+				{
+					// Optgroup-Label festlegen
+					$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
+					if(!isset($Turniere[$Gruppe])) $Turniere[$Gruppe] = array(); // Unterarray anlegen
+
+					$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
+					$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
+					// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
+					if($sepa || $saldo >= (int)$objTurniere->nenngeld)
+					{
+						$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+					}
 				}
 			}
 		}
@@ -497,32 +536,6 @@ class Meldeformular extends \Module
 			$id = $objTurnier->pid; // Neue ID setzen
 		}
 		return $gruppe;
-	}
-
-	/*
-	 * Funktion getTurnierleiter
-	 * Liefert die Turnierleiter (Name und E-Mail) eines Turniers und seiner Oberkategorien
-	 */
-	private function getTurnierleiter($id)
-	{
-		$arr = array();
-		while($id > 0)
-		{
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
-			                                      ->execute($id);
-
-			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail)
-			{
-				// Turnierleiter speichern
-				$arr[] = array
-				(
-					'name'    => $objTurnier->turnierleiterName,
-					'email'   => $objTurnier->turnierleiterEmail
-				);
-			}
-			$id = $objTurnier->pid; // Neue ID setzen
-		}
-		return $arr;
 	}
 
 	/*

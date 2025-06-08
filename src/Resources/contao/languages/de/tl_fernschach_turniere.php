@@ -14,6 +14,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['titleAlternate'] = array('Titel �
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['tournament_legend'] = 'Turnier';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['title'] = array('Titel', 'Geben Sie hier den Titel des Turniers bzw. der Kategorie ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['kennziffer'] = array('Kennzeichen', 'Kennzeichen bzw. Kennziffer des Turniers/der Turnierserie');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['klassenzuordnung'] = array('Klassenzuordnung', 'Zuordnung des Turniers zu einer Klasse (wichtig bei Aufstiegsturnieren).');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['registrationDate'] = array('Meldedatum', 'Meldedatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['startDate'] = array('Startdatum', 'Startdatum lt. Ausschreibung im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ des Turniers. Wichtig: Nur Einladungsturniere werden vom Frontend-Modul Zusagen berücksichtigt!');
@@ -99,4 +100,11 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'] = array
 	'a' => 'Allgemeines Kleinturnier',
 	'l' => 'Länderkampf',
 	'9' => 'Schach 960',
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['klassenzuordnung_options'] = array
+(
+	'M'  => 'Meisterklasse',
+	'H'  => 'Hauptturnierklasse',
+	'O'  => 'Offene Klasse',
 );

@@ -1375,24 +1375,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array('mandatory'=>false, 'tl_class'=>'long'),
 			'sql'                     => "text NULL"
 		),
-		'checkBeitrag' => array
+		'beitragsschulden' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array
-			(
-				'mandatory'           => false,
-				'tl_class'            => 'w50',
-				'boolean'             => true,
-				'doNotCopy'           => false
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'contribution_paid' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['contribution_paid'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragsschulden'],
 			'exclude'                 => true,
 			'filter'                  => true,
 			'inputType'               => 'checkbox',

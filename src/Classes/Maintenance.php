@@ -20,30 +20,32 @@ class Maintenance extends \Backend
 	public function getMaintenance(\DataContainer $dc)
 	{
 		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
+		$meldung = '<br>';
 
-		// Aktualisierung notwendig
+		// Aktualisierung notwendig, da die Wartezeit abgelaufen ist
 		if($update < time())
 		{
-			//$zeitmessung = new \Schachbulle\ContaoHelperBundle\Classes\Zeitmessung();
-			//$zeitmessung->Start();
+			$updatezeit = time() - $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time'];
+			// Alle Mitgliederkonten suchen, deren letzte Aktualisierung länger als die Wartezeit zurückliegt
+			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE tstamp <= ?")
+			                                     ->execute($updatezeit);
 
-			// Mitgliederkonten Frontend prüfen
-			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE tstamp >= ?")
-			                                     ->execute($GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate']);
 			if($objMember->numRows)
 			{
 				while($objMember->next())
 				{
-					//$zeitmessung->Zaehler();
 					// E-Mail-Adresse in Fernschach-Verwaltung suchen
 					$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? OR email2 = ?")
 					                                     ->execute($objMember->email, $objMember->email);
+
 					if($objPlayer->numRows)
 					{
 						// Datensatz gefunden. Ist der Spieler Mitglied im BdF?
-						$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer->memberships);
+						$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer->memberships, NULL, $objPlayer->published);
+						
 						if($mitglied)
 						{
+							// Spieler ist Mitglied und veröffentlicht
 							if($objMember->fernschach_memberId)
 							{
 								// Zuordnung bereits vorhanden, prüfen ob die zugeordnete ID paßt
@@ -66,6 +68,7 @@ class Maintenance extends \Backend
 										$version->create();
 
 										// Zuordnung entfernen
+										$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.<br>';
 										\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
 									}
 								}
@@ -106,6 +109,7 @@ class Maintenance extends \Backend
 								$version->create();
 
 								// Zuordnung noch nicht vorhanden, jetzt vornehmen
+								$meldung .= 'Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.') vorgenommen.<br>';
 								\System::log('[Fernschach-Wartung] Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.') vorgenommen.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
 							}
 						}
@@ -129,6 +133,7 @@ class Maintenance extends \Backend
 								$version->create();
 
 								// Zuordnung entfernen
+								$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.<br>';
 								\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
 							}
 						}
@@ -164,6 +169,9 @@ class Maintenance extends \Backend
 
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
+			// Meldung ausgeben
+			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=log';
+			\Message::addConfirmation('Wartung wurde ausgeführt (Details im <a href="'.$backendlink.'">System-Log</a>)'.$meldung);
 
 			//$zeitmessung->Stop();
 		}

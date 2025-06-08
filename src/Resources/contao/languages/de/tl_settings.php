@@ -16,8 +16,6 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetSaldo'] = array('Saldo','Bet
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKonten'] = array('Konten','Konten auswählen, für die der Reset-Buchungsdatensatz gelten soll. Mehrere Konten auswählen: STRG-Taste gedrückt halten beim Anklicken.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate'] = array('Letztes Update Kontostand','Datum und Uhrzeit der letzten Berechnung des Kontostandes in der Spielerliste. Die erneute Aktualisierung erfolgt, wenn der Zeitpunkt länger als 24 Stunden zurückliegt. Durch Ändern des Zeitpunktes können Sie die Aktualisierung beeinflussen.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate_time'] = array('Updaterhythmus in Sekunden','Die nächste Aktualisierung soll in dieser Anzahl Sekunden erfolgen. Die Voreinstellung ist 86400 (1 Tag).');
-$GLOBALS['TL_LANG']['tl_settings']['fernschach_membershipUpdate'] = array('Letztes Update Mitgliedsstatus','Datum und Uhrzeit der letzten Prüfung des Mitgliedsstatus in der Spielerliste. Die erneute Aktualisierung erfolgt, wenn der Zeitpunkt länger als 24 Stunden zurückliegt. Durch Ändern des Zeitpunktes können Sie die Aktualisierung beeinflussen.');
-$GLOBALS['TL_LANG']['tl_settings']['fernschach_membershipUpdate_time'] = array('Updaterhythmus in Sekunden','Die nächste Aktualisierung soll in dieser Anzahl Sekunden erfolgen. Die Voreinstellung ist 86400 (1 Tag).');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate'] = array('Letztes Update Wartung','Datum und Uhrzeit der letzten Wartung der Spielerliste. Die erneute Aktualisierung erfolgt, wenn der Zeitpunkt länger als 12 Stunden zurückliegt. Durch Ändern des Zeitpunktes können Sie die Aktualisierung beeinflussen.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate_time'] = array('Updaterhythmus in Sekunden','Die nächste Aktualisierung soll in dieser Anzahl Sekunden erfolgen. Die Voreinstellung ist 43200 (12 Stunden).');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_memberDefault'] = array('Standard-Mitgliedergruppe','Mitgliedergruppe, die normalen Mitgliederkonten zugeordnet werden soll (kein Mitglied im BdF). Leerlassen, wenn das nicht gewünscht ist.');
@@ -33,4 +31,3 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'] = array
 	'b' => 'Beitragskonto',
 	'n' => 'Nenngeldkonto'
 );
-

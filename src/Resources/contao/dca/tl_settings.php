@@ -181,31 +181,6 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate_time'] = arr
 	),
 );
 
-// Speichert den Zeitpunkt der letzten Prüfung von tl_fernschach_spieler.status
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_membershipUpdate'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_membershipUpdate'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'datim', 
-		'datepicker'          => true, 
-		'tl_class'            => 'clr w50 wizard'
-	),
-);
-
-// Aktualisierungsrhythmus von tl_fernschach_spieler.status in Minuten
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_membershipUpdate_time'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_membershipUpdate_time'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'natural', 
-		'tl_class'            => 'w50'
-	),
-);
-
 // Speichert den Zeitpunkt der letzten Prüfung von tl_fernschach_spieler
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate'] = array
 (

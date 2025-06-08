@@ -12,19 +12,31 @@
 /**
  * Extend default palette
  */
-$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
-$GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
+$GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_turniere_meldungen,fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
+$GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_turniere_meldungen,fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
 
 /**
  * Add fields to tl_user
  */
-$GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_turnierzugriff'] = array
+$GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_turniere'] = array
 (
-	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_turnierzugriff'],
+	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_turniere'],
 	'inputType'               => 'tournamentTree',
 	'eval'                    => array('multiple'=>true, 'fieldType'=>'checkbox'),
 	'sql'                     => "blob NULL"
 );
+
+$GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_turniere_meldungen'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_turniere_meldungen'],
+	'exclude'                 => true,
+	'inputType'               => 'checkbox',
+	'options'                 => array('create', 'delete'),
+	'reference'               => &$GLOBALS['TL_LANG']['tl_user']['fernschach_turniere_meldungen_optionen'],
+	'eval'                    => array('multiple'=>true),
+	'sql'                     => "blob NULL"
+);
+
 $GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_spieler'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_spieler'],

@@ -1,5 +1,24 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.0 (2025-06-08)
+
+* Fix: Bei Turnieranmeldung im Backend landet die Buchung im Hauptkonto -> in tl_fernschach_turniere_meldungen auf tl_fernschach_spieler_konto_nenngeld korrigiert
+* Add: tl_fernschach_turniere_meldungen -> onload_callback für Rechteprüfung (Hintergrund: Anmeldungen löschen nur bestimmten Personen erlauben) -> Neue Anmeldung funktioniert noch nicht richtig
+* Fix: Warning: Undefined array key 0 beim Zugriff auf Benutzerrechte erweitern
+* Add: Turniermeldung als Bcc an Admin (in Betaphase)
+* Add: Turnieranmeldung: In der Anmeldemail soll die ICCF-Nummer mit drinstehen.
+* Delete: Turnieranmeldung: Text "Es fehlen SEPA-Mandate..." entfernen -> auskommentiert in Meldeformular.php
+* Fix: Maximale Spielerzahl bei Turnieranmeldungen wird nicht berücksichtigt
+* Add: Klassenberechtigung bei Turnieranmeldungen berücksichtigen
+* Add: Wenn Hauptkonto 0, dann nicht im Profil/Turnieranmeldung im Frontend anzeigen -> leider funktioniert Profil nicht
+* Change: Funktion getTurnierleiter verschoben von tl_fernschach_turniere_meldungen nach Classes\Turnier
+* Delete: Funktion Helper.updateMitgliedschaften, da nicht mehr verwendet
+* Add: Meldung der Wartungsfunktion ausgeben
+* Fix: Maintenance Wartungsfunktion arbeitet mit falschen Intervallen
+* Delete: tl_fernschach_spieler.contribution_paid (Beitrag 2025 bezahlt)
+* Delete: tl_fernschach_spieler.checkBeitrag (Beitrag ≤ 2024 bezahlt)
+* Add: tl_fernschach_spieler.beitragsschulden -> Spieler als Schuldner markieren
+
 ## Version 1.0.2 (2025-05-06)
 
 * Change: Bei Turnieranmeldung wird im Buchungsdatensatz der Turniertitel im Verwendungszweck hinzugefügt.
