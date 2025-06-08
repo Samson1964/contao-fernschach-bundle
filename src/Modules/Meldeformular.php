@@ -310,7 +310,8 @@ class Meldeformular extends \Module
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 		// E-Mail für Turnierleiter zusammenbauen
-		$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($data['turnier']);
+		$turnierleiter = self::getTurnierleiter($data['turnier']);
+		//$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($data['turnier']);
 
 		if(isset($turnierleiter[0]))
 		{
@@ -571,6 +572,32 @@ class Meldeformular extends \Module
 		$monat = substr($string, 3, 2);
 		$jahr = substr($string, 6, 4);
 		return mktime(0, 0, 0, $monat, $tag, $jahr);
+	}
+
+	/*
+	 * Funktion getTurnierleiter
+	 * Liefert die Turnierleiter (Name und E-Mail) eines Turniers und seiner Oberkategorien
+	 */
+	private function getTurnierleiter($id)
+	{
+		$arr = array();
+		while($id > 0)
+		{
+			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			                                      ->execute($id);
+			
+			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail)
+			{
+				// Turnierleiter speichern
+				$arr[] = array
+				(
+				    'name'    => $objTurnier->turnierleiterName,
+				    'email'   => $objTurnier->turnierleiterEmail
+				);
+			}
+			$id = $objTurnier->pid; // Neue ID setzen
+		}
+		return $arr;
 	}
 
 }

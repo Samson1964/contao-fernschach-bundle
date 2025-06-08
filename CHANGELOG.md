@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.3 (2025-06-08)
+
+* Fix: Funktion getTurnierleiter wiederhergestellt, da Auslagerung in Klasse Turnier auf Fehler 500 aufläuft
+
 ## Version 1.1.2 (2025-06-08)
 
 * Add: tl_fernschach_spieler.contribution_paid (Beitrag 2025 bezahlt) -> wiederhergestellt, falls noch benötigt
