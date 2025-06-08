@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.1 (2025-06-08)
+
+* Fix: tl_fernschach_spieler.beitragsschulden nicht in der Palette
+
 ## Version 1.1.0 (2025-06-08)
 
 * Fix: Bei Turnieranmeldung im Backend landet die Buchung im Hauptkonto -> in tl_fernschach_turniere_meldungen auf tl_fernschach_spieler_konto_nenngeld korrigiert
