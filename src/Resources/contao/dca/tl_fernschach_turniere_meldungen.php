@@ -25,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		),
 		'ondelete_callback'           => array
 		(
-			//array('tl_fernschach_turniere_meldungen', 'InfoTurnierleiter'),
+			array('tl_fernschach_turniere_meldungen', 'InfoTurnierleiter'),
 			array('tl_fernschach_turniere_meldungen', 'LoescheBuchungen')
 		),
 		'sql' => array
@@ -732,9 +732,29 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	 */
 	public function LoescheBuchungen(\DataContainer $dc)
 	{
+		$this->import(\BackendUser::class, 'User');
+
 		// Löscht alle Buchungen zu dieser Meldung
 		$result = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ?")
 		                                  ->execute($dc->activeRecord->id);
+
+		return;
+
+		// Siehe DC_Table.php Funktion delete -> muß noch ausgebaut werden!
+		$set = array
+		(
+			'pid'          => $this->User->id, 
+			'tstamp'       => time(), 
+			'fromTable'    => 'tl_fernschach_spieler_konto_nenngeld', 
+			'query'        => 'DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId='.$dc->activeRecord->id, 
+			'affectedRows' => $affected, 
+			'data'         => serialize($data)
+		);
+
+		$undoset = \Database::getInstance()->prepare("INSERT INTO tl_undo %s")
+		                                   ->set($set)
+		                                   ->execute();
+
 	}
 
 	/**
@@ -745,6 +765,8 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	{
 		// E-Mail für Turnierleiter zusammenbauen, da eine Anmeldung gelöscht wird
 		$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($dc->activeRecord->pid);
+		// Turnier laden
+		$turnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($dc->activeRecord->pid);
 
 		if(isset($turnierleiter[0]))
 		{
@@ -754,7 +776,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
 			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
 			$objEmail->sendBcc($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
-			$objEmail->subject = 'Turnieranmeldung '.$objTurnier->title.' gelöscht';
+			$objEmail->subject = 'Turnieranmeldung von '.$dc->activeRecord->vorname.' '.$dc->activeRecord->nachname.' gelöscht';
 			$objEmail->replyTo($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>');
 			// Weitere Empfänger einbauen
 			if(count($turnierleiter) > 1)
@@ -768,11 +790,22 @@ class tl_fernschach_turniere_meldungen extends \Backend
 				$objEmail->sendCc($cc);
 			}
 			// Backend-Link zum Turnier generieren
-			//$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=fernschach-turniere&table=tl_fernschach_turniere_meldungen&rt='.REQUEST_TOKEN.'&id='.$objTurnier->id;
+			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=undo';
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
-			$text .= '<p>Eine Turnieranmeldung wurde gelöscht:</p>';
-			$text .= $dc->activeRecord->id;
+			$text .= '<p>Eine Turnieranmeldung wurde gelöscht.</p>';
+			$text .= '<h2>Gelöschte Anmeldung:</h2>';
+			$text .= '<ul>';
+			$text .= '<li>Nachname: <b>'.$dc->activeRecord->nachname.'</b></li>';
+			$text .= '<li>Vorname: <b>'.$dc->activeRecord->vorname.'</b></li>';
+			$text .= '<li>Datum der Meldung: <b>'.date('d.m.Y H:i', $dc->activeRecord->meldungDatum).'</b></li>';
+			$text .= '</ul>';
+			$text .= '<h2>War gemeldet für das Turnier:</h2>';
+			$text .= '<ul>';
+			$text .= '<li>Titel: <b>'.$turnier->title.'</b></li>';
+			$text .= '</ul>';
+			$text .= '<p>Der Datensatz mit der Turnieranmeldung kann im Backend wiederhergestellt werden: System -> <a href="'.$backendlink.'">Wiederherstellen</a><br>';
+			$text .= '<b>Der korrelierende Datensatz mit der Nenngeld-Buchung kann nicht wiederhergestellt werden!</b> (Das soll in einer späteren Version möglich werden.)</p>';
 			$text .= '<p><i>Diese E-Mail wurde automatisch erstellt.</i></p></body></html>';
 
 			// Add the comment details

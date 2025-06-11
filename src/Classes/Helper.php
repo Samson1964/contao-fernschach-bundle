@@ -9,9 +9,7 @@ class Helper extends \Backend
 
 	public function __construct()
 	{
-
 	}
-
 
 	/**
 	 * Funktion checkMembership

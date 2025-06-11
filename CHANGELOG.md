@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.4 (2025-06-11)
+
+* Change: Maintenance-Klasse überarbeitet -> tstamp-Aktualisierung fehlte
+* Add: tl_module.fernschachverwaltung_hauptkonto -> Checkbox Hauptkonto ausblenden, wenn Saldo gleich 0
+* Change: getTurnierleiter verschoben von Meldeformular-Klasse in Turnier-Klasse
+* Add: tl_fernschach_turniere_meldungen.php -> Funktion InfoTurnierleiter bei Löschung einer Anmeldung
+
 ## Version 1.1.3 (2025-06-08)
 
 * Fix: Funktion getTurnierleiter wiederhergestellt, da Auslagerung in Klasse Turnier auf Fehler 500 aufläuft

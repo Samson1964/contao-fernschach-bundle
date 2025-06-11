@@ -54,15 +54,15 @@ class Turnier extends \Backend
 
 	/*
 	 * Funktion getTurnierleiter
-	 * Liefert die Turnierleiter (Name und E-Mail) eines Turniers und seiner Oberkategorien
+	 * Liefert alle Turnierleiter (Name und E-Mail) eines Turniers und seiner Oberkategorien
 	 */
-	public static function getTurnierleiter($turnierId)
+	public static function getTurnierleiter($id)
 	{
 		$arr = array();
-		while($turnierId > 0)
+		while($id > 0)
 		{
 			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
-			                                      ->execute($turnierId);
+			                                      ->execute($id);
 
 			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail)
 			{
@@ -77,6 +77,5 @@ class Turnier extends \Backend
 		}
 		return $arr;
 	}
-
 
 }

@@ -90,17 +90,16 @@ class Kontoauszug extends \Module
 					$kontoauszug = array();
 					foreach($konten as $konto)
 					{
-						if($konto != 'h') 
+						$buchungen = self::getKonto($konto, $objPlayer, $kontostand);
+						if($konto == 'h' && $this->fernschachverwaltung_hauptkonto && $buchungen['saldo_raw'] == 0)
 						{
-							$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = self::getKonto($konto, $objPlayer, $kontostand);
-							$kontoauszug = array_merge($kontoauszug, $arrReturn);
+							// Nichts machen, da Hauptkonto bei Saldo = 0 ausgeblendet werden soll
 						}
-						elseif($konto == 'h') 
+						else
 						{
-							$returnArr = self::getKonto($konto, $objPlayer, $kontostand);
-							$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = $returnArr;
-							$saldo = (int)str_replace(',', '.', substr($returnArr['saldo'], 0, 4));
-							if($saldo) $kontoauszug = array_merge($kontoauszug, $arrReturn);
+							// Kontoauszug ausgeben
+							$arrReturn[$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'][$konto]] = $buchungen;
+							$kontoauszug = array_merge($kontoauszug, $arrReturn);
 						}
 					}
 				}
@@ -179,6 +178,7 @@ class Kontoauszug extends \Module
 			$value = end($salden);
 			$wert = str_replace('.', ',', sprintf('%0.2f', $value));
 			$saldo = $wert.' €';
+			$saldo_raw = $value;
 		}
 		else $saldo = false; // Kontostand nicht anzeigen
 
@@ -199,11 +199,11 @@ class Kontoauszug extends \Module
 					$nummer++;
 					$buchungen[] = array
 					(
-						'nummer' => $nummer,
-						'datum'  => date('d.m.Y', $objBuchung->datum),
-						'titel'  => $objBuchung->verwendungszweck,
-						'betrag' => str_replace(' ', '&nbsp;', self::getBetrag($objBuchung->betrag, $objBuchung->typ)),
-						'saldo'  => $kontostand ? str_replace(' ', '&nbsp;', self::getBetrag($value, false)) : '',
+						'nummer'     => $nummer,
+						'datum'      => date('d.m.Y', $objBuchung->datum),
+						'titel'      => $objBuchung->verwendungszweck,
+						'betrag'     => str_replace(' ', '&nbsp;', self::getBetrag($objBuchung->betrag, $objBuchung->typ)),
+						'saldo'      => $kontostand ? str_replace(' ', '&nbsp;', self::getBetrag($value, false)) : '',
 					);
 					if($this->fernschachverwaltung_isReset && $objBuchung->saldoReset) break; // Bei Saldo-Reset stoppen
 					if($this->fernschachverwaltung_maxBuchungen > 0 && $this->fernschachverwaltung_maxBuchungen <= $nummer) break; // Bei Maximalanzahl Buchungen stoppen
@@ -216,6 +216,7 @@ class Kontoauszug extends \Module
 		return array
 		(
 			'saldo'     => $saldo,
+			'saldo_raw' => $saldo_raw,
 			'buchungen' => is_array($buchungen) ? $buchungen : array()
 		);
 	}
