@@ -231,6 +231,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['tstamp'],
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
+		// Speichert den Timestamp der letzten Prüfung der Zuordnung BdF-Mitglied
+		'memberbridgeTime' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberbridgeTime'],
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
 		'saldo' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['saldo'],

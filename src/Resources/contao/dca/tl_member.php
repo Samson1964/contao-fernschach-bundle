@@ -19,6 +19,13 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['fernschach_memberId'] = array
 	'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
 
+// Speichert den Timestamp der letzten Prüfung der Zuordnung BdF-Mitglied
+$GLOBALS['TL_DCA']['tl_member']['fields']['fernschach_memberbridgeTime'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_member']['fernschach_memberbridgeTime'],
+	'sql'                     => "int(10) unsigned NOT NULL default '0'"
+);
+
 PaletteManipulator::create()
     ->addLegend('fernschach_legend', 'personal_legend', PaletteManipulator::POSITION_AFTER)
     ->addField('fernschach_memberId', 'fernschach_legend', PaletteManipulator::POSITION_APPEND)

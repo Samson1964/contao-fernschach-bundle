@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.1.5 (2025-06-12)
+
+* Fix: Maintenance-Klasse hängt sich auf
+* Add: Wartungszeitpunkte und Intervalle in tl_settings überarbeitet
+* Add: tl_member.fernschach_memberbridgeTime -> Speichert den Timestamp der letzten Prüfung der Zuordnung BdF-Mitglied
+* Add: tl_fernschach_spieler.memberbridgeTime -> Speichert den Timestamp der letzten Prüfung der Zuordnung BdF-Mitglied
+
 ## Version 1.1.4 (2025-06-11)
 
 * Change: Maintenance-Klasse überarbeitet -> tstamp-Aktualisierung fehlte

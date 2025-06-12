@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_intervall_memberbridgeCheck,fernschach_intervall_membershipsCheck,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -194,10 +194,34 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate'] = ar
 	),
 );
 
-// Aktualisierungsrhythmus von tl_fernschach_spieler in Minuten
+// Aktualisierungsrhythmus von tl_fernschach_spieler in Sekunden
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate_time'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate_time'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'natural', 
+		'tl_class'            => 'w50'
+	),
+);
+
+// Aktualisierungsrhythmus von tl_member mit tl_fernschach_spieler in Sekunden
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_intervall_memberbridgeCheck'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_intervall_memberbridgeCheck'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'natural', 
+		'tl_class'            => 'w50'
+	),
+);
+
+// Aktualisierungsrhythmus von tl_fernschach_spieler memberships mit published in Sekunden
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_intervall_membershipsCheck'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_intervall_membershipsCheck'],
 	'inputType'               => 'text',
 	'eval'                    => array
 	(
