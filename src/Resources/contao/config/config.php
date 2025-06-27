@@ -92,6 +92,10 @@ if(TL_MODE == 'BE')
 	//$GLOBALS['TL_JAVASCRIPT'][] = 'assets/jquery/js/jquery.min.js';
 	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaofernschach/js/backend.js';
 }
+elseif(TL_MODE == 'FE')
+{
+	$GLOBALS['TL_CSS'][] = 'bundles/contaofernschach/css/frontend.css';
+}
 
 /**
  * Frontend-Module

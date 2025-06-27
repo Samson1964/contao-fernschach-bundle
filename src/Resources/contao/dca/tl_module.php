@@ -13,7 +13,7 @@
  * Add palette to tl_module
  */
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,fernschachverwaltung_tournamentRoot,nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen_liste'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum,fernschachverwaltung_anzahl;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_kontostand,fernschachverwaltung_isReset,fernschachverwaltung_konten,fernschachverwaltung_hauptkonto;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -30,6 +30,21 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_linkingMembers']
 		'tl_class'            =>'w50 m12',
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_tournamentRoot'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_tournamentRoot'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'options_callback'        => array('tl_module_fernschach', 'getTurniere'),
+	'eval'                    => array
+	(
+		'tl_class'            => 'long clr',
+		'includeBlankOption'  => true,
+		'chosen'              => true,
+	),
+	'sql'                     => "int(10) unsigned NOT NULL default '0'",
 );
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_zeitraum'] = array
@@ -172,3 +187,28 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_hauptkonto'] = a
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
 );
+
+class tl_module_fernschach extends \Backend
+{
+	/**
+	 * options_callback: Ermöglicht das Befüllen eines Drop-Down-Menüs oder einer Checkbox-Liste mittels einer individuellen Funktion.
+	 * @param  $dc
+	 * @return array
+	 */
+	public function getTurniere(\DataContainer $dc)
+	{
+		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE titleView = ? ORDER BY title ASC")
+		                                       ->execute(1);
+
+		$arr = array();
+		if($objTurniere->numRows)
+		{
+			while($objTurniere->next())
+			{
+				$titel = $objTurniere->titleAlternate ? $objTurniere->title.' (alt: '.$objTurniere->titleAlternate.')' : $objTurniere->title;
+				$arr[$objTurniere->id] = $titel;
+			}
+		}
+		return $arr;
+	}
+}

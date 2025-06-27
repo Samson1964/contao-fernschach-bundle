@@ -472,7 +472,7 @@ class Meldeformular extends \Module
 				}
 
 				// Anmeldung in Select-Box eintragen, wenn erlaubt
-				if($turnieranmeldung)
+				if($turnieranmeldung && $Gruppenname)
 				{
 					// Optgroup-Label festlegen
 					$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
@@ -522,6 +522,7 @@ class Meldeformular extends \Module
 	private function Turniergruppe($id)
 	{
 		$gruppe = '';
+		$gruppeID = 0;
 
 		while($id > 0)
 		{
@@ -532,10 +533,27 @@ class Meldeformular extends \Module
 			if($objTurnier->titleView)
 			{
 				$gruppe = $objTurnier->titleAlternate ? $objTurnier->titleAlternate : $objTurnier->title;
+				$gruppeID = $id;
 			}
 			$id = $objTurnier->pid; // Neue ID setzen
 		}
-		return $gruppe;
+
+		// Prüfen, ob eine Turniergruppe als Root festgelegt ist
+		if($this->fernschachverwaltung_tournamentRoot)
+		{
+			// Ja, es wurde eine Rootgruppe festgelegt
+			if($this->fernschachverwaltung_tournamentRoot == $gruppeID)
+			{
+				// Richtige Gruppe
+				return $gruppe;
+			}
+		}
+		else
+		{
+			// Nein, es wurde keine Rootgruppe festgelegt
+			return $gruppe;
+		}
+		return false;
 	}
 
 	/*

@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.2.0 (2025-06-27)
+
+* Add: frontend.css -> CSS für Turniermeldeformular hinzugefügt
+* Add: tl_module.fernschachverwaltung_tournamentRoot -> Festlegen welche Turnierkategorie als Root verwendet wird
+
 ## Version 1.1.5 (2025-06-12)
 
 * Fix: Maintenance-Klasse hängt sich auf

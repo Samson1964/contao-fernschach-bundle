@@ -1,0 +1,26 @@
+.mod_fernschachverwaltung_meldeformular select {
+	appearance: none;
+	border: none;
+	font-family: sans-serif;
+	color: #222;
+	padding: 3px 32px 3px 12px;
+	border:2px solid silver;
+	outline:none;
+}
+
+.mod_fernschachverwaltung_meldeformular select optgroup {
+	appearance: none;
+	background: black;
+	color: white;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.mod_fernschachverwaltung_meldeformular select option {
+	appearance: none;
+	background: white;
+	color: black;
+	font-weight: normal;
+	font-size: 16px;
+	margin-left: 20px;
+}
