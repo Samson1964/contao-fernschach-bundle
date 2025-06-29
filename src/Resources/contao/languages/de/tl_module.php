@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_zeitraum_options'] = arra
 $GLOBALS['TL_LANG']['tl_module']['options_legend'] = 'Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_linkingMembers'] = array('Formular an Mitglied binden', 'Im Formular werden die Daten des angemeldeten Mitglieds mit übertragen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_tournamentRoot'] = array('Turnierkategorie', 'Oberste Turnierkategorie festlegen. Es werden nur Kategorien angezeigt, bei denen die Checkbox "In Turnieranmeldung anzeigen" aktiviert ist. Ohne Auswahl, werden alle Kategorien verwendet.');
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_tournamentText'] = array('Einleitungstext', 'Einleitungstext für das Formular. Beispiel: "Hiermit melde ich mich zu folgendem Fernschachturnier an:"');
 
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_minBuchungen'] = array('Buchungen Minimum', 'Mindestanzahl der Buchungen, die angezeigt werden sollen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_maxBuchungen'] = array('Buchungen Maximum', 'Maximalanzahl der Buchungen, die angezeigt werden sollen. 0 = alle Buchungen anzeigen.');

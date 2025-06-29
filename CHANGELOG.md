@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.2.1 (2025-06-29)
+
+* Add: tl_module.fernschachverwaltung_tournamentText -> Text "Hiermit melde ich mich zu folgendem Fernschachturnier an:" selbst anpassen
+
 ## Version 1.2.0 (2025-06-27)
 
 * Add: frontend.css -> CSS für Turniermeldeformular hinzugefügt
