@@ -11,6 +11,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['applicationDate'] = a
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['player_legend'] = 'Zuordnung';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['spielerId'] = array('Spieler/Mitglied', 'Wählen Sie einen Spieler aus, dem diese Bewerbung zugeordnet wird. Der ausgewählte Spieler wird automatisch in den obigen Feldern Vorname und Nachname gespeichert, wenn diese leer sind.');
 
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['info_legend'] = 'Informationen vom Bewerber';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['infoQualifikation'] = array('Qualifikationen', 'Informationen zu den Qualifikationen aus dem Meldeformular.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['bemerkungen'] = array('Bemerkungen', 'Bemerkungen aus dem Meldeformular.');
+
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['promise_legend'] = 'Zu- oder Absage';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['state'] = array('Status BdF', 'Status der Zu- oder Absage vom BdF');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['stateOrganizer'] = array('Zusage Veranstalter', 'Nur wenn diese Checkbox aktiviert ist, wird der Spieler im Frontend angezeigt.');

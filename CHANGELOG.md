@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.3.0 (2025-07-02)
+
+* Add: tl_module.fernschachverwaltung_bewerbung -> Checkbox um aus dem Formular Bewerbungen möglich zu machen
+* Add: Meldeformular um Speichern in tl_fernschach_turniere_bewerbungen ausgebaut
+* Add: tl_fernschach_turniere_bewerbungen.infoQualifikation und bemerkungen -> Bemerkungen des Spielers aus Meldeformular speichern
+
 ## Version 1.2.1 (2025-06-29)
 
 * Add: tl_module.fernschachverwaltung_tournamentText -> Text "Hiermit melde ich mich zu folgendem Fernschachturnier an:" selbst anpassen

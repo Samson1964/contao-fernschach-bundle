@@ -258,56 +258,80 @@ class Meldeformular extends \Module
 		// Turnier prüfen
 		if($data['turnier'])
 		{
-			// Meldung erzeugen
-			$set = array
-			(
-				'pid'               => $data['turnier'],
-				'tstamp'            => $zeit,
-				'spielerId'         => $mitglied->id,
-				'vorname'           => $mitglied->vorname,
-				'nachname'          => $mitglied->nachname,
-				'plz'               => $mitglied->plz,
-				'ort'               => $mitglied->ort,
-				'strasse'           => $mitglied->strasse,
-				'email'             => $mitglied->email1,
-				'fax'               => $mitglied->fax ? $mitglied->fax : '',
-				'memberId'          => $mitglied->memberId,
-				'meldungDatum'      => $zeit,
-				'infoQualifikation' => $data['qualifikation'],
-				'bemerkungen'       => $data['bemerkungen'],
-				'published'         => 1
-			);
-			//print_r($set);
-			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_meldungen %s')
-			                                     ->set($set)
-			                                     ->execute();
-			$meldungId = $objInsert->insertId;
+			if($this->fernschachverwaltung_bewerbung)
+			{
+				// Bewerbung wurde gesendet
+				$set = array
+				(
+					'pid'               => $data['turnier'],
+					'tstamp'            => $zeit,
+					'vorname'           => $mitglied->vorname,
+					'nachname'          => $mitglied->nachname,
+					'applicationDate'   => $zeit, // Bewerbungsdatum
+					'spielerId'         => $mitglied->id,
+					'infoQualifikation' => $data['qualifikation'],
+					'bemerkungen'       => $data['bemerkungen'],
+					'published'         => 1
+				);
+				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_bewerbungen %s')
+				                                     ->set($set)
+				                                     ->execute();
+				$meldungId = $objInsert->insertId;
 
-			// Turnier laden
-			$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
-			// Nenngeldbuchung Soll erzeugen
-			$set = array
-			(
-				'pid'               => $mitglied->id,
-				'tstamp'            => $zeit,
-				'betrag'            => $objTurnier->nenngeld,
-				'typ'               => 's',
-				'datum'             => $zeit,
-				'kategorie'         => 's',
-				'art'               => 'n',
-				'verwendungszweck'  => 'Nenngeld-Forderung '.$objTurnier->title,
-				'turnier'           => $data['turnier'],
-				'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
-				'meldungId'         => $meldungId,
-				'published'         => '1'
-			);
-			$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
-			                                     ->set($set)
-			                                     ->execute();
+			}
+			else
+			{
+				// Anmeldung wurde gesendet
+				// Meldung erzeugen
+				$set = array
+				(
+					'pid'               => $data['turnier'],
+					'tstamp'            => $zeit,
+					'spielerId'         => $mitglied->id,
+					'vorname'           => $mitglied->vorname,
+					'nachname'          => $mitglied->nachname,
+					'plz'               => $mitglied->plz,
+					'ort'               => $mitglied->ort,
+					'strasse'           => $mitglied->strasse,
+					'email'             => $mitglied->email1,
+					'fax'               => $mitglied->fax ? $mitglied->fax : '',
+					'memberId'          => $mitglied->memberId,
+					'meldungDatum'      => $zeit,
+					'infoQualifikation' => $data['qualifikation'],
+					'bemerkungen'       => $data['bemerkungen'],
+					'published'         => 1
+				);
+				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_meldungen %s')
+				                                     ->set($set)
+				                                     ->execute();
+				$meldungId = $objInsert->insertId;
+
+				// Turnier laden
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+
+				// Nenngeldbuchung Soll erzeugen
+				$set = array
+				(
+					'pid'               => $mitglied->id,
+					'tstamp'            => $zeit,
+					'betrag'            => $objTurnier->nenngeld,
+					'typ'               => 's',
+					'datum'             => $zeit,
+					'kategorie'         => 's',
+					'art'               => 'n',
+					'verwendungszweck'  => 'Nenngeld-Forderung '.$objTurnier->title,
+					'turnier'           => $data['turnier'],
+					'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
+					'meldungId'         => $meldungId,
+					'published'         => '1'
+				);
+				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
+				                                     ->set($set)
+				                                     ->execute(); 
+			}
 		}
-
-		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 		// E-Mail für Turnierleiter zusammenbauen
 		$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($data['turnier']); // Übergeben wird die ID des Turniers
@@ -320,7 +344,8 @@ class Meldeformular extends \Module
 			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
 			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
 			$objEmail->sendBcc($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
-			$objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
+			if($this->fernschachverwaltung_bewerbung) $objEmail->subject = 'Turnierbewerbung '.$objTurnier->title;
+			else $objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
 			$objEmail->replyTo($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>');
 			// Weitere Empfänger einbauen
 			if(count($turnierleiter) > 1)
@@ -337,7 +362,8 @@ class Meldeformular extends \Module
 			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=fernschach-turniere&table=tl_fernschach_turniere_meldungen&rt='.REQUEST_TOKEN.'&id='.$objTurnier->id;
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
-			$text .= '<p>Eine neue Turnieranmeldung wurde vorgenommen:</p>';
+			if($this->fernschachverwaltung_bewerbung) $text .= '<p>Eine neue Turnierbewerbung wurde abgegeben:</p>';
+			else $text .= '<p>Eine neue Turnieranmeldung wurde vorgenommen:</p>';
 			$text .= '<h3>Angaben zum Turnier</h3>';
 			$text .= '<ul>';
 			$text .= '<li>Meldezeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
@@ -377,10 +403,12 @@ class Meldeformular extends \Module
 			$objEmail->charset = 'utf-8';
 			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
 			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
-			$objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
+			if($this->fernschachverwaltung_bewerbung) $objEmail->subject = 'Turnierbewerbung '.$objTurnier->title;
+			else $objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
-			$text .= '<p>Sie haben eine Turnieranmeldung vorgenommen:</p>';
+			if($this->fernschachverwaltung_bewerbung) $text .= '<p>Sie haben eine Turnierbewerbung abgegeben:</p>';
+			else $text .= '<p>Sie haben eine Turnieranmeldung vorgenommen:</p>';
 			$text .= '<h3>Angaben zum Turnier</h3>';
 			$text .= '<ul>';
 			$text .= '<li>Meldezeit: <b>'.date('d.m.Y H:i', $zeit).'</b></li>';
@@ -430,8 +458,16 @@ class Meldeformular extends \Module
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
 
 		// Meldefähige Turniere laden
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
-		                                       ->execute(time(), 0, 1, 1);
+		if($this->fernschachverwaltung_bewerbung)
+		{
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND published = ? ORDER BY title AND art")
+			                                       ->execute(time(), 0, 1, 1, 1);
+		}
+		else
+		{
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
+			                                       ->execute(time(), 0, 1, 1);
+		}
 
 		while($objTurniere->next())
 		{
