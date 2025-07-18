@@ -41,6 +41,7 @@ $GLOBALS['TL_LANG']['tl_user']['fernschach_spieler_optionen'] = array
 	'fertig'         => 'Datensatz: Spieler Fertig-Status setzen',
 	'saldo'          => 'Auflistungen/Exporte: Saldo anzeigen',
 	'accountChecked' => 'Auflistungen/Exporte: Konto geprüft anzeigen',
+	'viewNegative'   => 'Info: Nenngeldkonten negativ anzeigen',
 );
 
 $GLOBALS['TL_LANG']['tl_user']['fernschach_konto_optionen'] = array

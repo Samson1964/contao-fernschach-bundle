@@ -219,7 +219,8 @@ class Meldeformular extends \Module
 		{
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
 			$form->addField(array('typ' => 'explanation', 'label' => '<b>'.$this->fernschachverwaltung_tournamentText.'</b>'));
-			$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
+			if($this->fernschachverwaltung_radio) $form->addField(array('typ' => 'radio', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
+			else $form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
 			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));

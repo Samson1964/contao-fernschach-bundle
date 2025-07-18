@@ -73,7 +73,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['fremdspielerNummer'] = array('Frem
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug_legend'] = 'Zuzug';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['zuzug'] = array('Zuzug', 'Datum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnier_legend'] = 'Turniere und Berechtigungen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['spielberechtigungen'] = array('Spielberechtigungen', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['spielberechtigungen_datum'] = array('Datum', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['spielberechtigungen_datei'] = array('Datei', '');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'] = array('Anmeldungen und Bewerbungen', 'Übersicht der Turnieranmeldungen und -bewerbungen absteigend sortiert nach Datum. Es werden max. die 30 letzten Datensätze angezeigt.');
 
@@ -238,7 +241,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_title_options'] = array
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter'] = 'Spezialfilter';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_extended'] = 'Spezialfilter';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Nur Mitglieder';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'] = 'Aktiver Mitgliedschaftszeitraum';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'] = 'Geburtsdatum fehlt';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'] = 'Ohne ICCF-Nummer';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'] = 'Ohne E-Mail-Adresse';

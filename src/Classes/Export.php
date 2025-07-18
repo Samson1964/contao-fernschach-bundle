@@ -82,8 +82,8 @@ class Export extends \Backend
 			// Preise-Tabelle anlegen und füllen
 			$spreadsheet->createSheet();
 			$spreadsheet->setActiveSheetIndex(0);
-			$spreadsheet->getActiveSheet()->getStyle('A1:AU1')->applyFromArray($styleArray);
-			$spreadsheet->getActiveSheet()->getStyle('A2:AU'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
+			$spreadsheet->getActiveSheet()->getStyle('A1:AZ1')->applyFromArray($styleArray);
+			$spreadsheet->getActiveSheet()->getStyle('A2:AZ'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
 			$spreadsheet->getActiveSheet()->getStyle('A1:A1')->applyFromArray($styleArray); // Um Markierung zurückzusetzen
 			$spreadsheet->getActiveSheet()->setTitle('Spieler')
 			            ->setCellValue('A1', 'Datensatz')
@@ -120,32 +120,35 @@ class Export extends \Backend
 			            ->setCellValue('AF1', 'Streichdatum')
 			            ->setCellValue('AG1', 'Mitgliedschaft Beginn')
 			            ->setCellValue('AH1', 'Mitgliedschaft Ende')
-			            ->setCellValue('AI1', 'Verein')
-			            ->setCellValue('AJ1', 'Status')
-			            ->setCellValue('AK1', 'Zuzug')
-			            ->setCellValue('AL1', 'Klassenberechtigung')
-			            ->setCellValue('AM1', 'Gast-Nr.')
-			            ->setCellValue('AN1', 'Servertester-Nr.')
-			            ->setCellValue('AO1', 'Fremdspieler-Nr.')
-			            ->setCellValue('AP1', 'Inhaber')
-			            ->setCellValue('AQ1', 'IBAN')
-			            ->setCellValue('AR1', 'BIC')
-			            ->setCellValue('AS1', 'Saldo Hauptkonto '.\Input::post('saldo_stichtag'))
-			            ->setCellValue('AT1', 'Saldo Beitrag '.\Input::post('saldo_stichtag'))
-			            ->setCellValue('AU1', 'Saldo Nenngeld '.\Input::post('saldo_stichtag'))
-			            ->setCellValue('AV1', 'Veröffentlicht')
-			            ->setCellValue('AW1', 'Fertig');
+			            ->setCellValue('AI1', 'Gönner')
+			            ->setCellValue('AJ1', 'Ehren-M.')
+			            ->setCellValue('AK1', 'Ehren-P.')
+			            ->setCellValue('AL1', 'Verein')
+			            ->setCellValue('AM1', 'Status')
+			            ->setCellValue('AN1', 'Zuzug')
+			            ->setCellValue('AO1', 'Klassenberechtigung')
+			            ->setCellValue('AP1', 'Gast-Nr.')
+			            ->setCellValue('AQ1', 'Servertester-Nr.')
+			            ->setCellValue('AR1', 'Fremdspieler-Nr.')
+			            ->setCellValue('AS1', 'Inhaber')
+			            ->setCellValue('AT1', 'IBAN')
+			            ->setCellValue('AU1', 'BIC')
+			            ->setCellValue('AV1', 'Saldo Hauptkonto '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AW1', 'Saldo Beitrag '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AX1', 'Saldo Nenngeld '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AY1', 'Veröffentlicht')
+			            ->setCellValue('AZ1', 'Fertig');
 
 			// Daten schreiben
 			$zeile = 2;
 			foreach($arrExport as $item)
 			{
 				$spreadsheet->getActiveSheet()
-				            ->getStyle('AS'.$zeile, $item['saldo_h'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
+				            ->getStyle('AV'.$zeile, $item['saldo_h'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
 				$spreadsheet->getActiveSheet()
-				            ->getStyle('AT'.$zeile, $item['saldo_b'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
+				            ->getStyle('AW'.$zeile, $item['saldo_b'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
 				$spreadsheet->getActiveSheet()
-				            ->getStyle('AU'.$zeile, $item['saldo_n'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
+				            ->getStyle('AX'.$zeile, $item['saldo_n'])->getNumberFormat()->setFormatCode('#,##0.00_-"€"'); // vorher setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE)
 				$spreadsheet->getActiveSheet()
 				            ->setCellValue('A'.$zeile, $item['id'])
 				            ->setCellValue('B'.$zeile, $item['tstamp'])
@@ -181,21 +184,24 @@ class Export extends \Backend
 				            ->setCellValue('AF'.$zeile, $item['streichung'])
 				            ->setCellValue('AG'.$zeile, $item['mitglied_beginn'])
 				            ->setCellValue('AH'.$zeile, $item['mitglied_ende'])
-				            ->setCellValue('AI'.$zeile, $item['verein'])
-				            ->setCellValue('AJ'.$zeile, $item['status'])
-				            ->setCellValue('AK'.$zeile, $item['zuzug'])
-				            ->setCellValue('AL'.$zeile, $item['klassenberechtigung'])
-				            ->setCellValue('AM'.$zeile, $item['gastNummer'])
-				            ->setCellValue('AN'.$zeile, $item['servertesterNummer'])
-				            ->setCellValue('AO'.$zeile, $item['fremdspielerNummer'])
-				            ->setCellValue('AP'.$zeile, $item['inhaber'])
-				            ->setCellValue('AQ'.$zeile, $item['iban'])
-				            ->setCellValue('AR'.$zeile, $item['bic'])
-				            ->setCellValue('AS'.$zeile, $item['saldo_h'])
-				            ->setCellValue('AT'.$zeile, $item['saldo_b'])
-				            ->setCellValue('AU'.$zeile, $item['saldo_n'])
-				            ->setCellValue('AV'.$zeile, $item['published'])
-				            ->setCellValue('AW'.$zeile, $item['fertig']);
+				            ->setCellValue('AI'.$zeile, $item['patron'])
+				            ->setCellValue('AJ'.$zeile, $item['honor_member'])
+				            ->setCellValue('AK'.$zeile, $item['honor_president'])
+				            ->setCellValue('AL'.$zeile, $item['verein'])
+				            ->setCellValue('AM'.$zeile, $item['status'])
+				            ->setCellValue('AN'.$zeile, $item['zuzug'])
+				            ->setCellValue('AO'.$zeile, $item['klassenberechtigung'])
+				            ->setCellValue('AP'.$zeile, $item['gastNummer'])
+				            ->setCellValue('AQ'.$zeile, $item['servertesterNummer'])
+				            ->setCellValue('AR'.$zeile, $item['fremdspielerNummer'])
+				            ->setCellValue('AS'.$zeile, $item['inhaber'])
+				            ->setCellValue('AT'.$zeile, $item['iban'])
+				            ->setCellValue('AU'.$zeile, $item['bic'])
+				            ->setCellValue('AV'.$zeile, $item['saldo_h'])
+				            ->setCellValue('AW'.$zeile, $item['saldo_b'])
+				            ->setCellValue('AX'.$zeile, $item['saldo_n'])
+				            ->setCellValue('AY'.$zeile, $item['published'])
+				            ->setCellValue('AZ'.$zeile, $item['fertig']);
 				$zeile++;
 			}
 
@@ -368,7 +374,7 @@ class Export extends \Backend
 				$exportieren = true;
 				switch($filter)
 				{
-					case '1': // Alle Mitglieder
+					case '1': // Nur Mitglieder (Aktiver Mitgliedschaftszeitraum)
 						// Mitgliedschaften prüfen (memberships)
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
 						break;
@@ -479,6 +485,9 @@ class Export extends \Backend
 						'streichung'              => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->streichung),
 						'mitglied_beginn'         => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(\Schachbulle\ContaoFernschachBundle\Classes\Helper::Mitgliedschaft($records->memberships, 1)),
 						'mitglied_ende'           => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(\Schachbulle\ContaoFernschachBundle\Classes\Helper::Mitgliedschaft($records->memberships, 2)),
+						'patron'                  => $records->patron,
+						'honor_member'            => $records->honor_member,
+						'honor_president'         => $records->honor_president,
 						'verein'                  => $records->verein,
 						'status'                  => $records->status,
 						'zuzug'                   => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->zuzug),

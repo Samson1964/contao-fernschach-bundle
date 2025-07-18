@@ -19,6 +19,8 @@ class Maintenance extends \Backend
 	 */
 	public function getMaintenance(\DataContainer $dc)
 	{
+		$this->import('BackendUser', 'User');
+
 		// Nächsten Wartungszeitpunkt berechnen
 		$nextUpdate = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
 		$aktuelleZeit = time();
@@ -26,6 +28,18 @@ class Maintenance extends \Backend
 		// Aktualisierung notwendig, da der Wartungszeitpunkt überschritten wurde
 		if($nextUpdate < $aktuelleZeit)
 		{
+			// Negative Nenngeldkonten suchen und addieren
+			$nenngeldpruefung = '';
+			if($this->User->hasAccess('viewNegative', 'fernschach_spieler'))
+			{
+				// Benutzer hat Zugriff, Nenngeldprüfung ausführen
+				$ergebnis = \Schachbulle\ContaoFernschachBundle\Classes\Konto\Nenngeld::getNegativ();
+				$nenngeldpruefung = 'Nenngeldkonto negativ: <span style="color:red;">'.$ergebnis['summe_alle'].' € bei '.$ergebnis['anzahl_alle'].' veröffentlichten Spielern</span>';
+				$nenngeldpruefung .= ' / davon <span style="color:red;">'.$ergebnis['summe_mitglieder'].' € bei '.$ergebnis['anzahl_mitglieder'].' Mitgliedern</span>';
+				//print_r($ergebnis);
+			}
+
+
 			$meldung = 'Wartung erforderlich: Wartungszeitpunkt ('.date('d.m.Y H:i:s', $nextUpdate).') kleiner als aktuelle Zeit ('.date('d.m.Y H:i:s', $aktuelleZeit).').<br>';
 			$wartungszeit = $aktuelleZeit - $GLOBALS['TL_CONFIG']['fernschach_intervall_memberbridgeCheck']; // Aktuelle Zeit minus eingestelltem Intervall
 			$updatezeit = $aktuelleZeit - $GLOBALS['TL_CONFIG']['fernschach_intervall_memberbridgeCheck']; // Aktuelle Zeit minus eingestelltem Intervall
@@ -196,6 +210,7 @@ class Maintenance extends \Backend
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 			// Meldung ausgeben
 			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=log';
+			\Message::addConfirmation($nenngeldpruefung);
 			\Message::addConfirmation($meldung.'<b>Wartung wurde ausgeführt (Details im <a href="'.$backendlink.'">System-Log</a></b>)');
 
 			//$zeitmessung->Stop();

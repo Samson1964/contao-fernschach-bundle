@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.3.1 (2025-07-18)
+
+* Change: Spezialfilter "Nur Mitglieder" auf "Aktiver Mitgliedschaftszeitraum" geändert
+* Add: Spieler-Export -> Gönner und Ehrenmitglieder/-präsidenten werden mit ausgegeben
+* Add: tl_fernschach_spieler.spielberechtigungen -> Upload von Dateien mit Angabe eines Datums als MCW realisiert
+* Add: tl_module.fernschachverwaltung_radio -> In Turnieranmeldung alternativ die Turnierauswahl mit Radio-Buttons statt Select-Liste ausgeben
+* Add: Nenngeld-Klasse um negative Nenngeldkonten zu finden
+* Add: tl_user neues Recht "Info: Nenngeldkonten negativ anzeigen" -> im Wartungsmodus werden die negativen Nenngeld-Konten ermittelt und als Info angezeigt
+
 ## Version 1.3.0 (2025-07-02)
 
 * Add: tl_module.fernschachverwaltung_bewerbung -> Checkbox um aus dem Formular Bewerbungen möglich zu machen
