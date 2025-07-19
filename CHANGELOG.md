@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.3.2 (2025-07-19)
+
+* Fix: Wartungsfunktion ordnet Mitglied erst zu und löscht danach wieder
+* Fix: Wartungsfunktion -> verschiedene Fehlerbereiningungen, z.B. wurde leerer tl_member.username auch geprüft
+
 ## Version 1.3.1 (2025-07-18)
 
 * Change: Spezialfilter "Nur Mitglieder" auf "Aktiver Mitgliedschaftszeitraum" geändert

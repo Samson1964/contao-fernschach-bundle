@@ -23,6 +23,7 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['fernschach_memberId'] = array
 $GLOBALS['TL_DCA']['tl_member']['fields']['fernschach_memberbridgeTime'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_member']['fernschach_memberbridgeTime'],
+	'flag'                    => 6,
 	'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
 
