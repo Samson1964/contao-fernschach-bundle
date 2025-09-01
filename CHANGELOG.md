@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.3.3 (2025-09-01)
+
+* Fix: Meldeformular zeigt keine Turniere mit Meldeschluß des aktuellen Tages -> in Datenbank steht 00:00:00 als Uhrzeit in registrationDate, geprüft wurde aber mit der aktuellen Uhrzeit
+* Fix: dca/tl_member.php hat ein UTF-8-BOM 
+
 ## Version 1.3.2 (2025-07-19)
 
 * Fix: Wartungsfunktion ordnet Mitglied erst zu und löscht danach wieder

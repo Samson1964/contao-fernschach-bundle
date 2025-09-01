@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 

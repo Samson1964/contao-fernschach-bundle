@@ -457,17 +457,22 @@ class Meldeformular extends \Module
 	{
 		$Turniere = array();
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
+		$zeit = time();
+		$monat = date('m', $zeit);
+		$tag = date('d', $zeit);
+		$jahr = date('Y', $zeit);
+		$aktuellesDatum = mktime(0, 0, 0, $monat, $tag, $jahr);
 
 		// Meldefähige Turniere laden
 		if($this->fernschachverwaltung_bewerbung)
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND published = ? ORDER BY title AND art")
-			                                       ->execute(time(), 0, 1, 1, 1);
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND published = ? ORDER BY title AND art")
+			                                       ->execute($aktuellesDatum, 0, 1, 1, 1);
 		}
 		else
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate > ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
-			                                       ->execute(time(), 0, 1, 1);
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
+			                                       ->execute($aktuellesDatum, 0, 1, 1);
 		}
 
 		while($objTurniere->next())
