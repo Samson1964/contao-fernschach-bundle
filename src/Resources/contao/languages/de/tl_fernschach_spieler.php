@@ -34,13 +34,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresse_legend'] = 'Adresse';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse'] = array('Straße', 'Geben Sie hier die Straße ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz'] = array('PLZ', 'Geben Sie hier die Postleitzahl ein.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort'] = array('Ort', 'Geben Sie hier den Ort ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland'] = array('Bundesland', 'Wählen Sie hier das Bundesland aus. Lassen Sie das Feld leer, wenn eine Zuordnung beim Speichern des Datensatzes automatisch erfolgen soll.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz'] = array('Zusatz', 'Zusatz zur Adresse');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresse2_legend'] = 'Zweite Adresse';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse2'] = array('Straße', 'Geben Sie hier die Straße ein.');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz2'] = array('PLZ', 'Geben Sie hier die Postleitzahl ein.');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort2'] = array('Ort', 'Geben Sie hier den Ort ein.');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz2'] = array('Zusatz', 'Zusatz zur Adresse');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon_legend'] = 'Telefon';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['telefon1'] = array('Telefon 1', 'Geben Sie hier die erste Telefonnummer ein.');
@@ -115,6 +112,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag_legend'] = 'Beitragszahlun
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragsschulden'] = array('Beitragsschulden', 'Spieler als Beitragsschuldner markieren.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['checkBeitrag'] = array('Beitrag ≤ 2024 bezahlt (entfällt bald)', 'Der Beitrag für ≤ 2024 wurde bezahlt.');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['contribution_paid'] = array('Beitrag 2025 bezahlt (entfällt bald)', 'Der Beitrag für 2025 wurde bezahlt.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag2026'] = array('Beitrag 2026 bezahlt', 'Der Beitrag für 2026 wurde bezahlt.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag_legend'] = 'SEPA-Mandat Beiträge';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'] = array('SEPA-Mandat Beitrag', 'Das SEPA-Mandat für den Beitragseinzug liegt vor.');
@@ -235,6 +233,26 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['normen_title_options'] = array
 	'wcm' => 'Kandidaten-Meisterin der FIDE (WCM)',
 );
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland_options'] = array
+(
+	'Baden-Württemberg'      =>'Baden-Württemberg',
+	'Bayern'                 =>'Bayern',
+	'Berlin'                 =>'Berlin',
+	'Brandenburg'            =>'Brandenburg',
+	'Bremen'                 =>'Bremen',
+	'Hamburg'                =>'Hamburg',
+	'Hessen'                 =>'Hessen',
+	'Mecklenburg-Vorpommern' =>'Mecklenburg-Vorpommern',
+	'Niedersachsen'          =>'Niedersachsen',
+	'Nordrhein-Westfalen'    =>'Nordrhein-Westfalen',
+	'Rheinland-Pfalz'        =>'Rheinland-Pfalz',
+	'Saarland'               =>'Saarland',
+	'Sachsen'                =>'Sachsen',
+	'Sachsen-Anhalt'         =>'Sachsen-Anhalt',
+	'Schleswig-Holstein'     =>'Schleswig-Holstein',
+	'Thüringen'              =>'Thüringen',
+);
+
 /**
  * Spezialfilter
  */
@@ -291,6 +309,10 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus13'] = 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus14'] = 'Nicht Mitglied nach 31.12.'.($jahr-14);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus15'] = 'Nicht Mitglied nach 31.12.'.($jahr-15);
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_members_yearMinus16'] = 'Nicht Mitglied nach 31.12.'.($jahr-16);
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month6'] = 'Keine Nenngeldzahlung letzte 6 Monate';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month12'] = 'Keine Nenngeldzahlung letzte 12 Monate';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month24'] = 'Keine Nenngeldzahlung letzte 24 Monate';
 
 /**
  * Sonstige Übersetzungen

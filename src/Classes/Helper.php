@@ -155,6 +155,30 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * Funktion KeineNenngeldzahlung
+	 * =============================
+	 * Sucht nach Nenngeldzahlungen in den letzten Monaten
+	 *
+	 * @param integer $spieler   ID des Spielers
+	 * @param integer $monate    Anzahl der Monate
+	 *
+	 * @return boolean   true = Zahlungen vorhanden / false = keine Zahlungen gefunden
+	 */
+	public static function KeineNenngeldzahlung($spieler, $monate)
+	{
+		$startdatum = strtotime('-'.$monate.' months');
+
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND typ = ? AND datum >= ? AND published = ?")
+		                                        ->execute($spieler, 'h', $startdatum, 1);
+		if($objBuchungen->numRows == 0)
+		{
+			// Keine Nenngeldzahlungen gefunden im Zeitraum
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * Funktion searchNoMembership
 	 * ===========================
 	 * Sucht in den Mitgliedschaften nach der letzten Mitgliedschaft

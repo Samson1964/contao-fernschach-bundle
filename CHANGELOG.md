@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.4.0 (2025-11-17)
+
+* Add: Klasse PLZ für die Postleitzahlen
+* Add: tl_fernschach_spieler.bundesland/bundesland2 -> Wird ein Datensatz gespeichert, erfolgt automatisch eine Zuordnung des Bundeslandes, wenn kein Bundesland ausgewählt wurde
+* Add: Cron-Klasse FernschachBot (noch ohne Funktion) -> soll Maintenance später ersetzen
+* Delete: tl_fernschach_spieler.status -> siehe Deck-Ticket
+* Add: tl_fernschach_spieler.beitrag2026 -> Checkbox für den Beitrag 2026 (aber noch nicht in der Palette)
+* Change: tl_fernschach_spieler.checkBeitrag/contribution_paid in der Palette deaktiviert, da dafür die Spalte beitragsschulden ausreicht
+* Add: Spezialfilter keine Nenngeldbuchung die letzten 6, 12 oder 24 Monate
+
 ## Version 1.3.3 (2025-09-01)
 
 * Fix: Meldeformular zeigt keine Turniere mit Meldeschluß des aktuellen Tages -> in Datenbank steht 00:00:00 als Uhrzeit in registrationDate, geprüft wurde aber mit der aktuellen Uhrzeit

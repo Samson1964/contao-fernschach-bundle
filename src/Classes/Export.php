@@ -442,6 +442,13 @@ class Export extends \Backend
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::isMemberBegin($records->memberships, $jahr);
 						break;
 
+					case '406': // Keine Nenngeldzahlungen letzte 6 Monate
+					case '412': // Keine Nenngeldzahlungen letzte 12 Monate
+					case '424': // Keine Nenngeldzahlungen letzte 24 Monate
+						$monate = $filter - 400;
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::KeineNenngeldzahlung($records->id, $monate);
+						break;
+
 					default:
 				}
 				if($exportieren)

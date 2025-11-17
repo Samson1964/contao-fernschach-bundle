@@ -29,6 +29,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'nachname'              => 'index'
 			)
 		),
+		'onsubmit_callback' => array
+		(
+			array('\Schachbulle\ContaoFernschachBundle\Classes\PLZ', 'setBundesland')
+		),
 	),
 
 	// Datensätze auflisten
@@ -201,7 +205,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,patron,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},spielberechtigungen,klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},beitragsschulden,checkBeitrag,contribution_paid;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,bundesland,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,bundesland2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,patron,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},spielberechtigungen,klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},beitragsschulden;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Subpalettes
@@ -484,6 +488,21 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
+		'bundesland' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'select',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland_options'],
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true,
+				'mandatory'           => false,
+				'tl_class'            => 'w50 clr'
+			),
+			'sql'                     => "varchar(50) NOT NULL default ''"
+		),
 		'strasse' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse'],
@@ -492,7 +511,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'sorting'                 => false,
 			'flag'                    => 1,
 			'search'                  => true,
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
+			'eval'                    => array
+			(
+				'mandatory'           => false, 
+				'maxlength'           => 255, 
+				'tl_class'            => 'w50 clr'
+			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'adresszusatz' => array
@@ -508,7 +532,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		),
 		'plz2' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz2'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['plz'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => false,
@@ -520,7 +544,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		),
 		'ort2' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort2'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['ort'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => false,
@@ -530,20 +554,40 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
+		'bundesland2' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland'],
+			'exclude'                 => true,
+			'filter'                  => false,
+			'inputType'               => 'select',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['bundesland_options'],
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true,
+				'mandatory'           => false,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(50) NOT NULL default ''"
+		),
 		'strasse2' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse2'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['strasse'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => false,
 			'flag'                    => 1,
 			'search'                  => false,
-			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50'),
+			'eval'                    => array
+			(
+				'mandatory'           => false, 
+				'maxlength'           => 255, 
+				'tl_class'            => 'w50 clr'
+			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
 		'adresszusatz2' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz2'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['adresszusatz'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
 			'sorting'                 => false,
@@ -778,25 +822,6 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'tl_class'            => 'w50',
 			),
 			'sql'                     => "varchar(80) NOT NULL default ''"
-		),
-		'status' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status'],
-			'inputType'               => 'select',
-			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['status_options'],
-			'exclude'                 => true,
-			'sorting'                 => false,
-			'flag'                    => 1,
-			'filter'                  => true,
-			'search'                  => true,
-			'eval'                    => array
-			(
-				'includeBlankOption'  => true,
-				'mandatory'           => false,
-				'maxlength'           => 20,
-				'tl_class'            => 'w50',
-			),
-			'sql'                     => "varchar(20) NOT NULL default ''"
 		),
 		'zuzug' => array
 		(
@@ -1432,7 +1457,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitragsschulden'],
 			'exclude'                 => true,
-			'filter'                  => true,
+			'filter'                  => false,
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
@@ -1462,7 +1487,22 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['contribution_paid'],
 			'exclude'                 => true,
-			'filter'                  => true,
+			'filter'                  => false,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
+				'boolean'             => true,
+				'doNotCopy'           => false
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),
+		'beitrag2026' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['beitrag2026'],
+			'exclude'                 => true,
+			'filter'                  => false,
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
@@ -1863,6 +1903,9 @@ class tl_fernschach_spieler extends \Backend
 					'293' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus7'],
 					'292' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus8'],
 					'291' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_is_members_yearMinus9'],
+					'406' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month6'],
+					'412' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month12'],
+					'424' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month24'],
 				)
 			),
 		);
@@ -2063,6 +2106,24 @@ class tl_fernschach_spieler extends \Backend
 						{
 							// Beginn einer Mitgliedschaft suchen (memberships)
 							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::isMemberBegin($objPlayers->memberships, $jahr);
+							if($found) $arrPlayers[] = $objPlayers->id;
+						}
+					}
+					break;
+
+				case '406': // Keine Nenngeldzahlungen letzte 6 Monate
+				case '412': // Keine Nenngeldzahlungen letzte 12 Monate
+				case '424': // Keine Nenngeldzahlungen letzte 24 Monate
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					                                      ->execute();
+					$arrPlayers = array();
+					if($objPlayers->numRows)
+					{
+						$monate = $session['filter']['tl_fernschach_spielerFilter']['tfs_filter'] - 400;
+						while($objPlayers->next())
+						{
+							// Keine Nenngeldzahlungen in den letzten $monate suchen
+							$found = \Schachbulle\ContaoFernschachBundle\Classes\Helper::KeineNenngeldzahlung($objPlayers->id, $monate);
 							if($found) $arrPlayers[] = $objPlayers->id;
 						}
 					}
