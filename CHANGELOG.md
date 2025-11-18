@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.4.1 (2025-11-18)
+
+* Add: Checkboxen checkBeitrag, contribution_paid und beitrag2026 wiederhergestellt
+
 ## Version 1.4.0 (2025-11-17)
 
 * Add: Klasse PLZ für die Postleitzahlen
