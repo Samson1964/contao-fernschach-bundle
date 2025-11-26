@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.4.2 (2025-11-26)
+
+* Fix: Attempted to call an undefined method named "cspUnsafeInlineStyle" of class "MenAtWork\MultiColumnWizardBundle\Contao\Widgets\MultiColumnWizard" in vendor/menatwork/contao-multicolumnwizard-bundle/src/Contao/Widgets/MultiColumnWizard.php (line 1261) -> MCW nicht mehr kompatibel mit Contao 4.13, siehe https://github.com/menatwork/contao-multicolumnwizard-bundle/issues/50 -> MCW auf Version 3.6.11 festgepinnt
+
 ## Version 1.4.1 (2025-11-18)
 
 * Add: Checkboxen checkBeitrag, contribution_paid und beitrag2026 wiederhergestellt
