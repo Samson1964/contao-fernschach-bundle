@@ -155,7 +155,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'__selector__'                => array('type', 'titleView', 'bewerbungErlaubt', 'nenngeldActive'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
 		'category'                    => '{title_legend},title,type,titleView;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{nenngeld_legend},nenngeldView,nenngeldActive;{publish_legend},archived,published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,klassenzuordnung,registrationDate,startDate,typ,art,artInfo,spielerMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},archived,published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,klassenzuordnung,registrationDate,startDate,typ,art,artInfo,spielerMax,spielerGeschlecht,spielerAlterMin,spielerAlterMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},archived,published',
 		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},archived,published',
 	), 
 
@@ -399,6 +399,52 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'maxlength'           => 6
 			),
 			'sql'                     => "int(6) unsigned NOT NULL default 0"
+		),
+		'spielerGeschlecht' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'inputType'               => 'select',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht_options'],
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50',
+				'includeBlankOption'  => true
+			),
+			'sql'                     => "varchar(1) NOT NULL default ''"
+		),
+		'spielerAlterMin' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMin'],
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'default'                 => 0,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'digit', 
+				'mandatory'           => false, 
+				'tl_class'            => 'w50', 
+				'maxlength'           => 3
+			),
+			'sql'                     => "int(3) unsigned NOT NULL default 0"
+		),
+		'spielerAlterMax' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMax'],
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'default'                 => 0,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'digit', 
+				'mandatory'           => false, 
+				'tl_class'            => 'w50', 
+				'maxlength'           => 3
+			),
+			'sql'                     => "int(3) unsigned NOT NULL default 0"
 		),
 		'onlineAnmeldung' => array
 		(

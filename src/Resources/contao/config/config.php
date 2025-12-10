@@ -147,6 +147,8 @@ $GLOBALS['BE_FFL']['tournamentTree'] = 'Schachbulle\ContaoFernschachBundle\Widge
 // Newsletter modifizieren, falls Serienmail Fernschach-Verwaltung
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
 $GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Template', 'BackendTemplate');
+// Formularversendung prüfen: Beitrittserklärung verarbeiten
+$GLOBALS['TL_HOOKS']['processFormData'][] = array('Schachbulle\ContaoFernschachBundle\EventListener\ProcessFormDataListener', '__invoke');
 
 /**
  * -------------------------------------------------------------------------
@@ -180,7 +182,7 @@ $GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto_nenngeld'] = \Schachbulle\Con
 //$GLOBALS['TL_CRON']['weekly'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
 //$GLOBALS['TL_CRON']['daily'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
 //$GLOBALS['TL_CRON']['hourly'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
-$GLOBALS['TL_CRON']['minutely'][] = array(Schachbulle\ContaoFernschachBundle\Classes\Cron\Automator::class, 'checkForUpdates');
+//$GLOBALS['TL_CRON']['minutely'][] = array(Schachbulle\ContaoFernschachBundle\Cron\Automator::class, 'checkNenngeld');
 
 //$GLOBALS['TL_CRON'] = array
 //(

@@ -7,3 +7,13 @@ services:
         Symfony\Component\DependencyInjection\ContainerAwareInterface:
             calls:
                 - ["setContainer", ["@service_container"]]
+
+    contao.cron.fernschach_mitgliederpruefung:
+        class: Schachbulle\ContaoFernschachBundle\Cron\Mitgliederpruefung
+        arguments:
+            - '@contao.framework'
+
+    contao.cron.fernschach_nenngeld:
+        class: Schachbulle\ContaoFernschachBundle\Cron\Nenngeld
+        arguments:
+            - '@contao.framework'

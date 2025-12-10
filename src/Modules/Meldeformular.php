@@ -219,8 +219,8 @@ class Meldeformular extends \Module
 		{
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
 			$form->addField(array('typ' => 'explanation', 'label' => '<b>'.$this->fernschachverwaltung_tournamentText.'</b>'));
-			if($this->fernschachverwaltung_radio) $form->addField(array('typ' => 'radio', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
-			else $form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied->sepaNenngeld, $nenngeldsaldo, $mitglied->klassenberechtigung)));
+			if($this->fernschachverwaltung_radio) $form->addField(array('typ' => 'radio', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied, $nenngeldsaldo)));
+			else $form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied, $nenngeldsaldo)));
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
 			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));
@@ -453,7 +453,7 @@ class Meldeformular extends \Module
 	 *
 	 * @return array
 	 */
-	public function getTournaments($sepa, $saldo, $klasse)
+	public function getTournaments($mitglied, $saldo)
 	{
 		$Turniere = array();
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
@@ -483,7 +483,10 @@ class Meldeformular extends \Module
 			if($published)
 			{
 				$turnieranmeldung = true;
+
+				// ==================================================
 				// Spielermaximum prüfen
+				// ==================================================
 				if($objTurniere->spielerMax > 0)
 				{
 					// Ein Spielermaximum ist gesetzt, jetzt prüfen ob noch Anmeldungen möglich sind
@@ -495,8 +498,10 @@ class Meldeformular extends \Module
 					}
 				}
 
+				// ==================================================
 				// Klasse des Spielers prüfen
-				if($klasse == '')
+				// ==================================================
+				if($mitglied->klassenberechtigung == '')
 				{
 					// Keine Klasse gesetzt, nur offene Klasse möglich
 					if($objTurniere->klassenzuordnung != '' && ($objTurniere->klassenzuordnung == 'M' || $objTurniere->klassenzuordnung == 'H'))
@@ -507,12 +512,47 @@ class Meldeformular extends \Module
 				else
 				{
 					// Eine Klassenberechtigung ist gesetzt
-					if($objTurniere->klassenzuordnung != '' && $objTurniere->klassenzuordnung != $klasse)
+					if($objTurniere->klassenzuordnung != '' && $objTurniere->klassenzuordnung != $mitglied->klassenberechtigung)
 					{
 						$turnieranmeldung = false; // Anmeldung für dieses Turnier überspringen, da Klassenberechtigung nicht übereinstimmt
 					}
 				}
 
+				// ==================================================
+				// Geschlechtsbeschränkung prüfen
+				// ==================================================
+				if($objTurniere->spielerGeschlecht != '' && $objTurniere->spielerGeschlecht != $mitglied->sex)
+				{
+					// Geschlecht des Spielers für dieses Turnier nicht zugelassen
+					$turnieranmeldung = false;
+				}
+				
+				// ==================================================
+				// Mindestalter prüfen
+				// ==================================================
+				if($objTurniere->spielerAlterMin > 0)
+				{
+					$alter = (date('Ymd') - $mitglied->birthday) / 10000;
+					if($objTurniere->spielerAlterMin > $alter)
+					{
+						// Spieler zu jung für dieses Turnier, deshalb nicht zugelassen
+						$turnieranmeldung = false;
+					}
+				}
+				
+				// ==================================================
+				// Maximalalter prüfen
+				// ==================================================
+				if($objTurniere->spielerAlterMax > 0)
+				{
+					$alter = (date('Ymd') - $mitglied->birthday) / 10000;
+					if($objTurniere->spielerAlterMax < $alter)
+					{
+						// Spieler zu alt für dieses Turnier, deshalb nicht zugelassen
+						$turnieranmeldung = false;
+					}
+				}
+				
 				// Anmeldung in Select-Box eintragen, wenn erlaubt
 				if($turnieranmeldung && $Gruppenname)
 				{
@@ -523,7 +563,7 @@ class Meldeformular extends \Module
 					$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
 					$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
 					// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
-					if($sepa || $saldo >= (int)$objTurniere->nenngeld)
+					if($mitglied->sepaNenngeld || $saldo >= (int)$objTurniere->nenngeld)
 					{
 						$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
 					}

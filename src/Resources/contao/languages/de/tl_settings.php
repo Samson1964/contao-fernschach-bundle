@@ -16,6 +16,8 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetSaldo'] = array('Saldo','Bet
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKonten'] = array('Konten','Konten auswählen, für die der Reset-Buchungsdatensatz gelten soll. Mehrere Konten auswählen: STRG-Taste gedrückt halten beim Anklicken.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate'] = array('Letztes Update Kontostand','Datum und Uhrzeit der letzten Berechnung des Kontostandes in der Spielerliste. Die erneute Aktualisierung erfolgt, wenn der Zeitpunkt länger als 24 Stunden zurückliegt. Durch Ändern des Zeitpunktes können Sie die Aktualisierung beeinflussen.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate_time'] = array('Updaterhythmus in Sekunden','Die nächste Aktualisierung soll in dieser Anzahl Sekunden erfolgen. Die Voreinstellung ist 86400 (1 Tag).');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance'] = array('Wartungsfunktionen','Wartungsfunktionen auswählen, die vom Bot übernommen werden sollen.');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_beitrittsformular'] = array('Beitrittsformular','Beitrittsformular auswählen, damit von dort gesendete Daten automatisch in der Spieler-Verwaltung eingetragen werden können.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate'] = array('Letzte Wartung','Datum und Uhrzeit der letzten Wartung. Durch Ändern des Zeitpunktes können Sie die Aktualisierung beeinflussen.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate_time'] = array('Wartungsintervall in Sekunden','Die nächste Wartung soll nach dieser Anzahl Sekunden erfolgen. Die Voreinstellung ist 43200 (12 Stunden).');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_intervall_memberbridgeCheck'] = array('Intervall Prüfung Mitgliederzuordnung','Nach dieser Anzahl Sekunden soll eine Prüfung von tl_member erfolgen. Die Voreinstellung ist 86400 (24 Stunden).');
@@ -32,4 +34,9 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'] = array
 	'h' => 'Hauptkonto',
 	'b' => 'Beitragskonto',
 	'n' => 'Nenngeldkonto'
+);
+
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance_options'] = array
+(
+	'bi' => 'Beitrittserklärungen in Datenbank eintragen (Spielerdatensatz erzeugen)',
 );

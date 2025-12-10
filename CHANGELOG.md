@@ -1,5 +1,20 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.0 (2025-12-10)
+
+* Add: tl_fernschach_spieler.info_beitritt -> Speichert Daten aus dem Beitrittsformular
+* Add: tl_settings.fernschach_beitrittsformular -> Auswahl eines Beitrittsformulars
+* Add: Formular-Hook für das Speichern des Beitrittsformulars in der Spieler-Tabelle (Ticket: Bei der Beitrittserklärung soll gleich ein Spielerdatensatz angelegt werden)
+* Add: tl_fernschach_turniere.spielerGeschlecht -> Geschlecht für das Turnier festlegen
+* Add: tl_fernschach_turniere.spielerAlterMin -> Mindestalter für das Turnier festlegen
+* Add: tl_fernschach_turniere.spielerAlterMax -> Maximalalter für das Turnier festlegen (Ticket: Bei Turniererstellung eine Möglichkeit schaffen das besondere spezifische Einstellungen möglich sind wie: Alter Geschlecht)
+* Add: Meldeformular-Klasse -> Geschlechtsbeschränkung, Mindest- und Maximalalter eingebaut
+* Add: Klasse Cron\Nenngeld erstellt -> verbunden über Service contao.cron
+* Delete: Nenngeldprüfung aus Classes\Maintenance entfernt
+* Delete: Klasse FernschachBot -> wird durch Cron ersetzt
+* ToDo: Cron\Mitgliederpruefung komplett neu programmieren
+* ToDo: Classes\Maintenance entfernen aus onload
+
 ## Version 1.4.2 (2025-11-26)
 
 * Fix: Attempted to call an undefined method named "cspUnsafeInlineStyle" of class "MenAtWork\MultiColumnWizardBundle\Contao\Widgets\MultiColumnWizard" in vendor/menatwork/contao-multicolumnwizard-bundle/src/Contao/Widgets/MultiColumnWizard.php (line 1261) -> MCW nicht mehr kompatibel mit Contao 4.13, siehe https://github.com/menatwork/contao-multicolumnwizard-bundle/issues/50 -> MCW auf Version 3.6.11 festgepinnt

@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_intervall_memberbridgeCheck,fernschach_intervall_membershipsCheck,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_maintenance,fernschach_beitrittsformular,fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_intervall_memberbridgeCheck,fernschach_intervall_membershipsCheck,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -32,6 +32,32 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetActive'] = array
 		'tl_class'            => 'w50',
 		'submitOnChange'      => true
 	)
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenance'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance'],
+	'exclude'                 => true,
+	'options'                 => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance_options'],
+	'inputType'               => 'checkbox',
+	'eval'                    => array
+	(
+		'multiple'            => true,
+		'tl_class'            => 'long',
+	),
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_beitrittsformular'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_beitrittsformular'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'foreignKey'              => 'tl_form.title',
+	'eval'                    => array
+	(
+		'includeBlankOption'  => true,
+		'tl_class'            => 'w50'
+	),
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetRecords'] = array

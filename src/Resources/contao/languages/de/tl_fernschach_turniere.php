@@ -21,6 +21,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht'] = array('Geschlecht beschränken', 'Geschlecht auswählen, das an diesem Turnier teilnehmen darf. Keine Auswahl = ohne Beschränkung.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMin'] = array('Mindestalter', 'Mindestalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMax'] = array('Maximalalter', 'Maximalalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld_legend'] = 'Nenngeld';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldView'] = array('Nenngeld übergeordnet', 'Nenngeld im übergeordneten Turnier festgelegt.');
@@ -107,4 +110,11 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['klassenzuordnung_options'] = arra
 	'M'  => 'Meisterklasse',
 	'H'  => 'Hauptturnierklasse',
 	'O'  => 'Offene Klasse',
+);
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht_options'] = array
+(
+	'm'  => 'Männlich',
+	'w'  => 'Weiblich',
+	'd'  => 'Divers',
 );

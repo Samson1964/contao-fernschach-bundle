@@ -16,6 +16,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			array('tl_fernschach_spieler', 'checkPermission'),
 			array('tl_fernschach_spieler', 'applyAdvancedFilter'),
+			array('tl_fernschach_spieler', 'getPruefungen'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateResetbuchungen'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
 		),
@@ -205,7 +206,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('death', 'honor_25', 'honor_40', 'honor_50', 'honor_60', 'honor_70', 'honor_president', 'honor_member', 'sepaBeitrag', 'sepaNenngeld'),
-		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,bundesland,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,bundesland2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,patron,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},spielberechtigungen,klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},beitragsschulden,checkBeitrag,contribution_paid,beitrag2026;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{archived_legend:hide},archived;{assign_legend:hide},memberAssign;{person_legend},nachname,vorname,titel,anrede,briefanrede,status;{live_legend},birthday,birthplace,sex,death;{adresse_legend:hide},plz,ort,bundesland,strasse,adresszusatz;{adresse2_legend:hide},plz2,ort2,bundesland2,strasse2,adresszusatz2;{telefon_legend:hide},telefon1,telefon2;{telefax_legend:hide},telefax1,telefax2;{email_legend:hide},email1,email2;{memberships_legend},memberId,memberInternationalId,streichung,patron,memberships,verein;{alternativ_legend:hide},gastNummer,servertesterNummer,fremdspielerNummer;{zuzug_legend:hide},zuzug;{turnier_legend:hide},spielberechtigungen,klassenberechtigung,turnierAnmeldungenBewerbungen;{iccf_legend:hide},titelinfo;{normen_legend},normen;{honors_legend},honor_25,honor_40,honor_50,honor_60,honor_70,honor_president,honor_member;{bank_legend:hide},inhaber,iban,bic;{beitrag_legend},beitragsschulden,checkBeitrag,contribution_paid,beitrag2026;{sepaBeitrag_legend:hide},sepaBeitrag;{sepaNenngeld_legend:hide},sepaNenngeld;{download_legend},downloads;{info_legend:hide},info_beitritt,info;{publish_legend},published'
 	),
 
 	// Subpalettes
@@ -1444,6 +1445,15 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			),
 			'sql'                     => "blob NULL",
 		),
+		'info_beitritt' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info_beitritt'],
+			'inputType'               => 'textarea',
+			'exclude'                 => true,
+			'search'                  => false,
+			'eval'                    => array('mandatory'=>false, 'tl_class'=>'long'),
+			'sql'                     => "text NULL"
+		),
 		'info' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'],
@@ -1564,6 +1574,27 @@ class tl_fernschach_spieler extends \Backend
 		$this->import('BackendUser', 'User');
 	}
 
+	public function getPruefungen()
+	{
+		if($this->User->hasAccess('viewNegative', 'fernschach_spieler'))
+		{
+			// Benutzer hat die Erlaubnis, das Ergebnis der letzten Nenngeldprüfung anzusehen
+			$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/nenngeld.txt';
+			if(file_exists($file))
+			{
+				$content = file_get_contents($file);
+				\Message::addConfirmation($content);
+			}
+		}
+
+		$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/mitgliederpruefung.txt';
+		if(file_exists($file))
+		{
+			$content = file_get_contents($file);
+			\Message::addConfirmation($content);
+		}
+	}
+	
 	/**
 	 * Prüfe Zugangsrechte für tl_fernschach_spieler
 	 *

@@ -128,7 +128,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['download_legend'] = 'Dateien';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['downloads'] = array('Dateien', 'Dateien des Spielers');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['info_legend'] = 'Bemerkungen/Hinweise';
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'] = array('Bemerkungen', 'Geben Sie hier interne Bemerkungen zum Spieler ein.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info_beitritt'] = array('Beitrittsbemerkungen', 'Hier stehen Informationen aus dem Beitrittsformular, sofern der Datensatz automatisch erzeugt wurde.');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['info'] = array('Interne Bemerkungen', 'Geben Sie hier interne Bemerkungen zum Spieler ein.');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['publish_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'] = array('Veröffentlicht', 'Wenn gesetzt, ist der Spieler im Frontend bei Meldeständen u.ä. sichtbar.');
