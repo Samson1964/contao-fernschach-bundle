@@ -24,9 +24,9 @@ class Mitgliederpruefung
 	}
 
 	/**
-	 * @CronJob("minutely")
+	 * @CronJob("hourly")
 	 */
-	public function onMinutely(): void
+	public function onHourly(): void
 	{
 		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] yyy Mitglieder wurden überprüft');
 		// Alle Mitgliederkonten suchen, 
@@ -79,9 +79,9 @@ class Mitgliederpruefung
 										\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 										                        ->set($set)
 										                        ->execute($objMember->id);
-										$version = new \Versions('tl_member', $objMember->id);
-										$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
-										$version->create();
+										//$version = new \Versions('tl_member', $objMember->id);
+										//$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+										//$version->create();
 
 										// Zuordnung entfernen
 										$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.<br>';
@@ -103,9 +103,10 @@ class Mitgliederpruefung
 									\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 									                        ->set($set)
 									                        ->execute($objMember->id);
-									$version = new \Versions('tl_member', $objMember->id);
-									$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
-									$version->create();
+									// Auskommentiert wegen ErrorException: Warning: Attempt to read property "server" on null in /kunden/107305_14053/webseiten/schachbund/dsbweb-entwicklung.2023/vendor/contao/core-bundle/src/Resources/contao/classes/Versions.php
+									//$version = new \Versions('tl_member', $objMember->id);
+									//$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+									//$version->create();
 									//\System::log('[Fernschach-Wartung] tl_member.fernschach_memberId ('.$objMember->fernschach_memberId.') <> tl_fernschach_spieler.id ('.$objPlayer->id.'). Geändert von '.$objMember->fernschach_memberId.' auf '.$objPlayer->id.'.', __CLASS__.'::'.__FUNCTION__, TL_ERROR);
 								}
 							}
@@ -125,9 +126,9 @@ class Mitgliederpruefung
 								\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 								                        ->set($set)
 								                        ->execute($objMember->id);
-								$version = new \Versions('tl_member', $objMember->id);
-								$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
-								$version->create();
+								//$version = new \Versions('tl_member', $objMember->id);
+								//$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+								//$version->create();
 
 								// Zuordnung noch nicht vorhanden, jetzt vornehmen
 								$meldung .= 'Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.' ['.$objPlayer->id.']) vorgenommen.<br>';
@@ -151,9 +152,9 @@ class Mitgliederpruefung
 								\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 								                        ->set($set)
 								                        ->execute($objMember->id);
-								$version = new \Versions('tl_member', $objMember->id);
-								$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
-								$version->create();
+								//$version = new \Versions('tl_member', $objMember->id);
+								//$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+								//$version->create();
 
 								// Zuordnung entfernen
 								$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.<br>';
@@ -179,9 +180,9 @@ class Mitgliederpruefung
 						\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 						                        ->set($set)
 						                        ->execute($objMember->id);
-						$version = new \Versions('tl_member', $objMember->id);
-						$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
-						$version->create();
+						//$version = new \Versions('tl_member', $objMember->id);
+						//$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
+						//$version->create();
 
 						// Zuordnung entfernen
 						$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.';
@@ -191,7 +192,7 @@ class Mitgliederpruefung
 			}
 		}
 		
-		$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/mitgliederpruefung.txt';
+		$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_mitgliederpruefung.txt';
 		file_put_contents($file, $meldung);
 
 		// Log-Eintrag vornehmen

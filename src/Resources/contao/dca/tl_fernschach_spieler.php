@@ -18,7 +18,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			array('tl_fernschach_spieler', 'applyAdvancedFilter'),
 			array('tl_fernschach_spieler', 'getPruefungen'),
 			array('\Schachbulle\ContaoFernschachBundle\Classes\Helper', 'updateResetbuchungen'),
-			array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
+			//array('\Schachbulle\ContaoFernschachBundle\Classes\Maintenance', 'getMaintenance'),
 		),
 		'sql'                         => array
 		(
@@ -1579,7 +1579,7 @@ class tl_fernschach_spieler extends \Backend
 		if($this->User->hasAccess('viewNegative', 'fernschach_spieler'))
 		{
 			// Benutzer hat die Erlaubnis, das Ergebnis der letzten Nenngeldprüfung anzusehen
-			$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/nenngeld.txt';
+			$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_nenngeld.txt';
 			if(file_exists($file))
 			{
 				$content = file_get_contents($file);
@@ -1587,7 +1587,7 @@ class tl_fernschach_spieler extends \Backend
 			}
 		}
 
-		$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/mitgliederpruefung.txt';
+		$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_mitgliederpruefung.txt';
 		if(file_exists($file))
 		{
 			$content = file_get_contents($file);

@@ -23,13 +23,18 @@ class Nenngeld
 	}
 
 	/**
-	 * @CronJob("minutely")
+	 * @CronJob("hourly")
 	 */
-	public function onMinutely(): void
+	public function onHourly(): void
 	{
 		// Nenngeldprüfung ausführen
 		$nenngeldpruefung = 'Nenngeldkonten-Prüfung fehlgeschlagen';
+		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Zeitmessung startet');
+		//$time_start = microtime(true); 
 		$ergebnis = \Schachbulle\ContaoFernschachBundle\Classes\Konto\Nenngeld::getNegativ();
+		//$time_end = microtime(true);
+		//$time = $time_end - $time_start;
+		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Dauer getNegativ in Sekunden: '.$time);
 		if(isset($ergebnis))
 		{
 			$nenngeldpruefung = 'Nenngeldkonto negativ: <span style="color:red;">'.$ergebnis['summe_alle'].' € bei '.$ergebnis['anzahl_alle'].' veröffentlichten Spielern</span>';
@@ -37,7 +42,7 @@ class Nenngeld
 			$nenngeldpruefung .= ' <span style="color:#575757;"><i>(Letzte Prüfung: '.date('d.m.Y H:i').')</i></span>';
 		}
 		
-		$file = TL_ROOT.'/vendor/schachbulle/contao-fernschach-bundle/src/Resources/nenngeld.txt';
+		$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_nenngeld.txt';
 		file_put_contents($file, $nenngeldpruefung);
 
 		// Log-Eintrag vornehmen

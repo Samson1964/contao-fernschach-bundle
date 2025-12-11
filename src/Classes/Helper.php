@@ -260,10 +260,10 @@ class Helper extends \Backend
 	 *
 	 * @return array              Salden nach jeder Buchung nach Datum absteigend sortiert
 	 */
-	public static function getSaldo($pid, $konto = '', $datum = false)
+	public static function getSaldo($pid, $konto = '', $datum = false, $sitzung = true)
 	{
 		$salden = array();
-		$session = \Contao\Session::getInstance()->getData(); // Sitzung laden
+		if($sitzung) $session = \Contao\Session::getInstance()->getData(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
 		
 		// konto-Variable prüfen und ggfs. korrigieren

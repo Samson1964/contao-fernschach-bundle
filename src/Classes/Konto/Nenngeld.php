@@ -30,7 +30,7 @@ class Nenngeld extends \Backend
 		{
 			while($objSpieler->next())
 			{
-				$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objSpieler->id, 'nenngeld');
+				$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($objSpieler->id, 'nenngeld', false, false);
 				$nenngeldsaldo = end($salden);
 				if($nenngeldsaldo < 0)
 				{
