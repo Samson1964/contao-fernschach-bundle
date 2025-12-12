@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.3 (2025-12-12)
+
+* Add: Klasse Cron\Mitgliedschaftsende -> Täglicher Cronjob, der Spieler archiviert, wenn deren Austrittsende erreicht ist. Protokollierung im System-Log. (Ticket: Mitgliedschaftsende des Spielers erreicht? Dann automatisch archivieren.)
+* Change: Dokumentation Turnieranmeldungen
+* Add: Dokumentation Wartung
+* Fix: Warning: Undefined array key "tl_fernschach_spieler" in /src/Classes/Newsletter.php (line 94) 
+* Fix: 1062 Duplicate entry '...@t-online.de' for key 'pid_email' -> beim Exportieren der Serienmail-Empfänger
+
 ## Version 1.5.2 (2025-12-11)
 
 * Fix: Klasse Cron\Nenngeld repariert -> unnötiger Session-Aufruf erzeugte Fehler; Cron auf stündlich geändert

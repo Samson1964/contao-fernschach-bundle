@@ -532,8 +532,9 @@ class Meldeformular extends \Module
 				// ==================================================
 				if($objTurniere->spielerAlterMin > 0)
 				{
-					$alter = (date('Ymd') - $mitglied->birthday) / 10000;
-					if($objTurniere->spielerAlterMin > $alter)
+					$aktuell = (int)date('Y').'1231';
+					$alter = ($aktuell - $mitglied->birthday) / 10000;
+					if($objTurniere->spielerAlterMin >= $alter)
 					{
 						// Spieler zu jung für dieses Turnier, deshalb nicht zugelassen
 						$turnieranmeldung = false;
@@ -545,8 +546,9 @@ class Meldeformular extends \Module
 				// ==================================================
 				if($objTurniere->spielerAlterMax > 0)
 				{
-					$alter = (date('Ymd') - $mitglied->birthday) / 10000;
-					if($objTurniere->spielerAlterMax < $alter)
+					$aktuell = (int)date('Y').'0101';
+					$alter = ($aktuell - $mitglied->birthday) / 10000;
+					if($objTurniere->spielerAlterMax <= $alter)
 					{
 						// Spieler zu alt für dieses Turnier, deshalb nicht zugelassen
 						$turnieranmeldung = false;

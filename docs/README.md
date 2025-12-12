@@ -46,3 +46,4 @@
 ## Technische Abläufe
 
 * [Anmeldungen zu Turnieren](TURNIERANMELDUNGEN.md)
+* [Wartungsarbeiten](WARTUNG.md)

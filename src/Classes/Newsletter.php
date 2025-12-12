@@ -21,67 +21,29 @@ class Newsletter extends \Backend
 			// Nur aktualisieren, wenn ein Newsletter-Archiv ausgewählt ist
 			$arrExport = self::getRecords($dc); // Spieler auslesen
 
-			// Aktiven Verteiler laden, um vorhandene Adrssen zu bearbeiten (aktivieren oder deaktivieren) 
-			$result = \Database::getInstance()->prepare("SELECT * FROM tl_newsletter_recipients WHERE pid=?")
-			                                  ->execute($GLOBALS['TL_CONFIG']['fernschach_newsletter']);
-			if($result->numRows)
-			{
-				while($result->next())
-				{
-					if(isset($arrExport[$result->email]))
-					{
-						// Adresse soll im Verteiler aktiviert werden
-						$set = array
-						(
-							'tstamp'        => time(),
-							'fernschach_id' => $arrExport[$result->email]['id'],
-							'active'        => 1
-						);
-						$arrExport[$result->email]['checked'] = true; // Adresse abgearbeitet
-					}
-					else
-					{
-						// Adresse im Verteiler nicht gewünscht, deshalb deaktivieren
-						$set = array
-						(
-							'tstamp'   => time(),
-							'active'   => ''
-						);
-					}
-					\Database::getInstance()->prepare("UPDATE tl_newsletter_recipients %s WHERE id=?")
-					                        ->set($set)
-					                        ->execute($result->id);
-					$this->createNewVersion('tl_newsletter_recipients', $result->id);
-				}
-			}
+			// Aktiven Verteiler löschen 
+			\Database::getInstance()->prepare("DELETE FROM tl_newsletter_recipients WHERE pid=?")
+			                        ->execute($GLOBALS['TL_CONFIG']['fernschach_newsletter']);
 
-			// Nun die restlichen Adressen in den Verteiler eintragen
-			foreach($arrExport as $key => $value)
+			foreach($arrExport as $email)
 			{
-				if(!$arrExport[$key]['checked'])
-				{
-					// Adresse noch nicht im Verteiler
-					$set = array
-					(
-						'pid'           => $GLOBALS['TL_CONFIG']['fernschach_newsletter'],
-						'tstamp'        => time(),
-						'email'         => $key,
-						'fernschach_id' => $arrExport[$key]['id'],
-						'active'        => 1
-					);
-					$arrExport[$key]['checked'] = true; // Adresse abgearbeitet
-					\Database::getInstance()->prepare("INSERT INTO tl_newsletter_recipients %s")
-					                        ->set($set)
-					                        ->execute();
-				}
+				// Adresse eintragen
+				$set = array
+				(
+					'pid'           => $GLOBALS['TL_CONFIG']['fernschach_newsletter'],
+					'tstamp'        => time(),
+					'email'         => $email,
+					'active'        => 1
+				);
+				\Database::getInstance()->prepare("INSERT INTO tl_newsletter_recipients %s")
+				                        ->set($set)
+				                        ->execute();
 			}
-			
 		}
 		
 		// Cookie setzen und zurückkehren (key=setDefault aus URL entfernen)
 		\System::setCookie('BE_PAGE_OFFSET', 0, 0);
 		\Controller::redirect(str_replace('&key=setNewsletter', '', \Environment::get('request')));
-
 
 	}
 
@@ -91,9 +53,9 @@ class Newsletter extends \Backend
 
 		// Suchbegriff in aktueller Ansicht laden
 		$search = $dc->Session->get('search');
-		$search = $search[$dc->table]; // Das Array enthält field und value
+		$search = isset($search[$dc->table]) ? $search[$dc->table] : array(); // Das Array enthält field und value
 		//if($search['field']) $sql = " WHERE ".$search['field']." LIKE '%%".$search['value']."%%'"; // findet auch Umlaute, Suche nach "ba" findet auch "bä"
-		if($search['field'] && $search['value']) $sql = " WHERE LOWER(CAST(".$search['field']." AS CHAR)) REGEXP LOWER('".$search['value']."')"; // Contao-Standard, ohne Umlaute, Suche nach "ba" findet nicht "bä"
+		if(isset($search['field']) && isset($search['value'])) $sql = " WHERE LOWER(CAST(".$search['field']." AS CHAR)) REGEXP LOWER('".$search['value']."')"; // Contao-Standard, ohne Umlaute, Suche nach "ba" findet nicht "bä"
 		else $sql = '';
 
 		// Filter in aktueller Ansicht laden. Beispiel mit Spezialfilter (tli_filter):
@@ -113,7 +75,7 @@ class Newsletter extends \Backend
 		//
 		//       )
 		$filter = $dc->Session->get('filter');
-		$filter = $filter[$dc->table]; // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
+		$filter = isset($filter[$dc->table]) ? $filter[$dc->table] : array(); // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
 		log_message(print_r($filter, true), 'fernschachverwaltung.log');
 		foreach($filter as $key => $value)
 		{
@@ -198,12 +160,12 @@ class Newsletter extends \Backend
 				}
 				if($exportieren)
 				{
-					if($records->email1) $arrExport[$records->email1] = array('id' => $records->id, 'checked' => false);
-					if($records->email2) $arrExport[$records->email2] = array('id' => $records->id, 'checked' => false);
+					if($records->email1) $arrExport[] = strtolower($records->email1);
+					if($records->email2) $arrExport[] = strtolower($records->email2);
 				}
 			}
 		}
-		return $arrExport;
+		return array_unique($arrExport);
 	}
 
 }

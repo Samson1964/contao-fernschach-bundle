@@ -16,7 +16,16 @@ Zusätzlich gibt es optionale Eingabefelder für Qualifikationen und Bemerkungen
 
 * SEPA-Mandat Beitrag liegt vor oder Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich.
 * SEPA-Mandat Nenngeld liegt vor oder Nenngeldkonto ist nicht im Minus. Im ersten Fall stehen alle Turniere zur Auswahl. Im zweiten Fall stehen nur Turniere zur Auswahl, wo das Nenngeld das Guthaben auf dem Nenngeldkonto nicht übersteigt.
- 
+* Die Turnierparameter (Teilnehmeranzahl, Qualifikation, Geschlecht, Mindest- oder Maximalalter) passen zum meldewilligen Spieler
+
+#### Berechnung Mindest- und Maximalalter
+
+Für ein Mindest- oder Maximalalter wird nicht der Anmeldetag und auch nicht der Meldeschluss des Turniers berücksichtigt. Für die Prüfung des Mindestalters wird der 31.12. des aktuellen Jahres zugrunde gelegt. Für die Prüfung des Maximalalters wird der 01.01. des aktuellen Jahres zugrunde gelegt. Dabei gilt: Das Mindestalter muß größer/gleich dem Alter sein. Das Maximalalter muß kleiner/gleich dem Alter sein. Ein paar Beispiele:
+
+ 1. Im Turnier ist ein Mindestalter von 20 Jahren eingetragen. Ein 19-jähriger Spieler (* 01.11.2005) will sich am 01.10.2025 anmelden, also einen Monat vor seinem 20. Geburtstag. Das Programm rechnet jetzt (20251231 - 20051101) / 10000 = 20,013. Das Mindestalter ist größer/gleich dem Alter. Damit ist der Spieler spielberechtigt.
+ 2. Im Turnier ist ein Mindestalter von 20 Jahren eingetragen. Ein 20-jähriger Spieler (* 01.07.2005) will sich am 01.10.2025 anmelden, also drei Monate nach seinem 20. Geburtstag. Das Programm rechnet jetzt (20251231 - 20050701) / 10000 = 20,053. Das Mindestalter ist größer/gleich dem Alter. Damit ist der Spieler spielberechtigt.
+ 3. Im Turnier ist ein Maximalalter von 60 Jahren eingetragen. Ein 60-jähriger Spieler (* 01.07.1965) will sich am 01.10.2025 anmelden, also drei Monate nach seinem 60. Geburtstag. Das Programm rechnet jetzt (20250101 - 19650701) / 10000 = 59,94. Das Maximalalter ist kleiner/gleich dem Alter. Damit ist der Spieler spielberechtigt.
+
 ## Verarbeitung des Anmeldeformulars
 
  1. Prüfung der vom Formular versendeten Daten.
