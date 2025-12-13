@@ -29,6 +29,15 @@ class Mitgliederpruefung
 	public function onHourly(): void
 	{
 
+		//// Log-Eintrag vornehmen
+		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] checkGroup');
+		//$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE id = ?")
+		//                                     ->execute(1);
+        //
+		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] objMember->groups: '.print_r($objMember->groups, true));
+		//$gruppen = self::setGroups($objMember->groups, true);
+		//\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] gruppen: '.print_r($gruppen, true));
+
 		// ================================================================
 		// Prüfung tl_member auf Mitgliedschaft im BdF
 		// ================================================================
@@ -369,6 +378,19 @@ class Mitgliederpruefung
 		}
 	}
 
+	public function checkGroup()
+	{
+		// Log-Eintrag vornehmen
+		\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] checkGroup');
+		$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE id = ?")
+		                                     ->execute(1);
+
+		\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] objMember->groups: '.print_r($objMember->groups, true));
+		$gruppen = self::setGroups($objMember->groups, true);
+		\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] gruppen: '.print_r($gruppen, true));
+
+	}
+
 	/**
 	 * Funktion setGroups
 	 *
@@ -399,5 +421,40 @@ class Mitgliederpruefung
 
 		return serialize(array_unique($gruppen));
 	}
+
+	///**
+	// * Funktion setGroups
+	// *
+	// * param $value      Serialisierter String mit den Mitgliedergruppen aus tl_member.groups
+	// * param $status     TRUE = Mitgliedschaft eintragen, FALSE = Mitgliedschaft austragen
+	// * return string     Aktualisierter serialisierter String
+	// */
+	//public function setGroups($value, $status)
+	//{
+	//	$gruppen = unserialize($value); // Deserialisieren, um das Gruppen-Array wiederherzustellen
+    //
+	//	if($status)
+	//	{
+	//		// Gruppen-Array prüfen
+	//		if($gruppen !== true || !is_array($gruppen)) $gruppen = array();
+	//		// BdF-Mitgliedschaft eintragen
+	//		if($GLOBALS['TL_CONFIG']['fernschach_memberFernschach']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberFernschach'];
+	//		// Standard-Mitgliedschaft entfernen
+	//		$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberDefault'], $gruppen);
+	//		if(isset($key)) unset($gruppen[$key]);
+	//	}
+	//	else
+	//	{
+	//		// Gruppen-Array prüfen
+	//		if($gruppen !== true || !is_array($gruppen)) $gruppen = array();
+	//		// Standard-Mitgliedschaft eintragen
+	//		if($GLOBALS['TL_CONFIG']['fernschach_memberDefault']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberDefault'];
+	//		// BdF-Mitgliedschaft entfernen
+	//		$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberFernschach'], $gruppen);
+	//		if(isset($key)) unset($gruppen[$key]);
+	//	}
+    //
+	//	return serialize(array_unique($gruppen));
+	//}
 
 }

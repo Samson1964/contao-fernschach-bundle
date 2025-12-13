@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.4 (2025-12-13)
+
+* Add: tl_fernschach_spieler.streichung -> filter auf true
+* Change: Mitgliederpruefung::setGroups nochmal prüfen, da zuviel Output im Backend angezeigt wird
+* Change: tl_fernschach_spieler.spielberechtigungen.datum -> default auf ''
+
 ## Version 1.5.3 (2025-12-12)
 
 * Add: Klasse Cron\Mitgliedschaftsende -> Täglicher Cronjob, der Spieler archiviert, wenn deren Austrittsende erreicht ist. Protokollierung im System-Log. (Ticket: Mitgliedschaftsende des Spielers erreicht? Dann automatisch archivieren.)

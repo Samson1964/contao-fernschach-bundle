@@ -716,6 +716,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['streichung'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'search'                  => false,
 			'sorting'                 => false,
 			'flag'                    => 11,
@@ -871,7 +872,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 						(
 							'maxlength'           => 10,
 							'style'               => 'width: 200px',
-							'rgxp'                => 'date',
+							'rgxp'                => 'date', 
+							'default'             => '',
 							'tl_class'            => 'w50 wizard',
 							'datepicker'          => true
 						),
