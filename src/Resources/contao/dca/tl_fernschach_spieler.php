@@ -672,8 +672,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'flag'                    => 11,
 			'filter'                  => false,
 			'search'                  => true,
+			'explanation'             => 'fernschach_spieler_bdfnummer',
 			'eval'                    => array
 			(
+				'helpwizard'          => true,
 				'mandatory'           => true,
 				'maxlength'           => 20,
 				'tl_class'            => 'w50',
@@ -931,8 +933,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'flag'                    => 1,
 			'filter'                  => false,
 			'search'                  => true,
+			'explanation'             => 'fernschach_spieler_bdfnummer',
 			'eval'                    => array
 			(
+				'helpwizard'          => true,
 				'mandatory'           => false,
 				'maxlength'           => 20,
 				'tl_class'            => 'w50',
@@ -948,8 +952,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'flag'                    => 1,
 			'filter'                  => false,
 			'search'                  => true,
+			'explanation'             => 'fernschach_spieler_bdfnummer',
 			'eval'                    => array
 			(
+				'helpwizard'          => true,
 				'mandatory'           => false,
 				'maxlength'           => 20,
 				'tl_class'            => 'w50',
@@ -965,8 +971,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'flag'                    => 1,
 			'filter'                  => false,
 			'search'                  => true,
+			'explanation'             => 'fernschach_spieler_bdfnummer',
 			'eval'                    => array
 			(
+				'helpwizard'          => true,
 				'mandatory'           => false,
 				'maxlength'           => 20,
 				'tl_class'            => 'w50',

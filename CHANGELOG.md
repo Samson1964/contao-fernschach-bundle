@@ -1,5 +1,19 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.5 (2025-12-14)
+
+* Change: Mitgliederpruefung::setGroups leicht geändert -> es gibt Probleme, das die Gruppen im Backend richtig erkannt werden. Problem ist wahrscheinlich, das ein String statt eines Integer übergeben (die ID der Gruppe) werden muß. (Ticket: Backend - Mitglieder - Gruppe BdF-Mitglied: Es werden viel zu wenig Spieler angezeigt)
+* Delete: tl_settings.fernschach_maintenance wurde als Dummy angelegt und wird nicht gebraucht
+* Delete: tl_settings.fernschach_resetUpdate -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_resetUpdate_time -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_membershipUpdate -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_membershipUpdate_time -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_maintenanceUpdate -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_maintenanceUpdate_time -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_intervall_memberbridgeCheck -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Delete: tl_settings.fernschach_intervall_membershipsCheck -> Wartungseinstellung wird nicht mehr benötigt, da Cronjob
+* Add: tl_fernschach_spieler Hilfetext bei BdF-Mitgliedsnummern ergänzt (Ticket: Aufbau der BdF-Mitgliedsnummern)
+
 ## Version 1.5.4 (2025-12-13)
 
 * Add: tl_fernschach_spieler.streichung -> filter auf true

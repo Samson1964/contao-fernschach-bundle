@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_maintenance,fernschach_beitrittsformular,fernschach_resetActive,fernschach_resetUpdate,fernschach_resetUpdate_time,fernschach_membershipUpdate,fernschach_membershipUpdate_time,fernschach_maintenanceUpdate,fernschach_maintenanceUpdate_time,fernschach_intervall_memberbridgeCheck,fernschach_intervall_membershipsCheck,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -32,19 +32,6 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetActive'] = array
 		'tl_class'            => 'w50',
 		'submitOnChange'      => true
 	)
-);
-
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenance'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance'],
-	'exclude'                 => true,
-	'options'                 => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenance_options'],
-	'inputType'               => 'checkbox',
-	'eval'                    => array
-	(
-		'multiple'            => true,
-		'tl_class'            => 'long',
-	),
 );
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_beitrittsformular'] = array
@@ -148,113 +135,6 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetRecords'] = array
 	),
 );
 
-
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetDate'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetDate'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'datim', 
-		'datepicker'          => true, 
-		'tl_class'            => 'w50 wizard'
-	),
-);
-
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetSaldo'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetSaldo'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'digit', 
-		'mandatory'           => false, 
-		'tl_class'            => 'w50', 
-		'maxlength'           => 6
-	),
-	'load_callback'           => array
-	(
-		array('tl_settings_fernschach', 'getBetrag')
-	),
-	'save_callback' => array
-	(
-		array('tl_settings_fernschach', 'putBetrag')
-	),
-);
-
-// Speichert den Zeitpunkt der letzten Aktualisierung von tl_fernschach_spieler_konto
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'datim', 
-		'datepicker'          => true, 
-		'tl_class'            => 'clr w50 wizard'
-	),
-);
-
-// Aktualisierungsrhythmus von tl_fernschach_spieler_konto in Minuten
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetUpdate_time'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_resetUpdate_time'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'natural', 
-		'tl_class'            => 'w50'
-	),
-);
-
-// Speichert den Zeitpunkt der letzten Prüfung von tl_fernschach_spieler
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'datim', 
-		'datepicker'          => true, 
-		'tl_class'            => 'clr w50 wizard'
-	),
-);
-
-// Aktualisierungsrhythmus von tl_fernschach_spieler in Sekunden
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_maintenanceUpdate_time'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_maintenanceUpdate_time'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'natural', 
-		'tl_class'            => 'w50'
-	),
-);
-
-// Aktualisierungsrhythmus von tl_member mit tl_fernschach_spieler in Sekunden
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_intervall_memberbridgeCheck'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_intervall_memberbridgeCheck'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'natural', 
-		'tl_class'            => 'w50'
-	),
-);
-
-// Aktualisierungsrhythmus von tl_fernschach_spieler memberships mit published in Sekunden
-$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_intervall_membershipsCheck'] = array
-(
-	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_intervall_membershipsCheck'],
-	'inputType'               => 'text',
-	'eval'                    => array
-	(
-		'rgxp'                => 'natural', 
-		'tl_class'            => 'w50'
-	),
-);
 
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_memberDefault'] = array
 (
