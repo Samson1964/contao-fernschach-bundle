@@ -22,3 +22,8 @@ services:
         class: Schachbulle\ContaoFernschachBundle\Cron\Nenngeld
         arguments:
             - '@contao.framework'
+
+    contao.cron.fernschach_streichung:
+        class: Schachbulle\ContaoFernschachBundle\Cron\Streichung
+        arguments:
+            - '@contao.framework'

@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.6 (2025-12-23)
+
+* Add: tl_fernschach_spieler.isDeletion -> Checkbox für Aktivierung von Streichungen
+* Change: tl_fernschach_spieler.streichung -> in Subpalette geschoben
+* Add: Helper::checkMembership um Streichungen erweitert, Parameter 1 auf ganzen Spielerdatensatz geändert
+* Add: Cron\Streichung (täglich) -> Überprüft die korrekte Setzung der Mitgliedschaftsstreichung
+* Fix: Meldeformular::getTournaments -> Umwandlung $saldo = (string)$saldo -> Es gibt ein Problem mit der Saldoberechnung: 4 wird übergeben, bei Umwandlung in int wird 3 draus, bei Umwandlung in String bleibt es 4!
+
 ## Version 1.5.5 (2025-12-14)
 
 * Change: Mitgliederpruefung::setGroups leicht geändert -> es gibt Probleme, das die Gruppen im Backend richtig erkannt werden. Problem ist wahrscheinlich, das ein String statt eines Integer übergeben (die ID der Gruppe) werden muß. (Ticket: Backend - Mitglieder - Gruppe BdF-Mitglied: Es werden viel zu wenig Spieler angezeigt)

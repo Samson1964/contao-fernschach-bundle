@@ -129,12 +129,12 @@ class Newsletter extends \Backend
 				{
 					case '1': // Alle Mitglieder
 						// Mitgliedschaften prüfen (memberships)
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);
 						break;
 
 					case '8': // Alle Nichtmitglieder
 						// Nichtmitgliedschaften prüfen (memberships)
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records->memberships);
+						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);
 						// Wahr/Falsch umdrehen
 						if($exportieren) $exportieren = false;
 						else $exportieren = true;

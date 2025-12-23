@@ -18,15 +18,22 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
-	public static function checkMembership($value, $heute = false, $published = true)
+	public static function checkMembership($playerRecord, $heute = false, $published = true)
 	{
 		if(!$published) return false; // Datensatz nicht veröffentlicht
 		
 		if(!$heute) $heute = date('Ymd');
 
-		$mitgliedschaften = unserialize($value); // String umwandeln
+		$mitgliedschaften = unserialize($playerRecord->memberships); // String umwandeln
 		//print_r($mitgliedschaften);
 		$return = false;
+		
+		// Streichung prüfen
+		if($playerRecord->isDeletion && $playerRecord->streichung <= $heute)
+		{
+			return false;
+		}
+		
 		if(is_array($mitgliedschaften))
 		{
 			//print_r($mitgliedschaften);

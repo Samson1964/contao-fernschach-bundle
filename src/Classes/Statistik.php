@@ -282,7 +282,7 @@ class Statistik extends \Backend
 			$anzahl = 0;
 			while($objPlayer->next())
 			{
-				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer->memberships, $datum);
+				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer, $datum);
 				if($mitglied)
 				{
 					$anzahl++;

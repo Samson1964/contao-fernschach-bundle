@@ -565,6 +565,7 @@ class Meldeformular extends \Module
 					$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
 					$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
 					// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
+					$saldo = (string)$saldo; // Es gibt ein Problem mit der Saldoberechnung: 4 wird übergeben, ebi Umwandlung in int wird 3 draus, bei Umwandlung in String bleibt es 4!
 					if($mitglied->sepaNenngeld || $saldo >= (int)$objTurniere->nenngeld)
 					{
 						$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;

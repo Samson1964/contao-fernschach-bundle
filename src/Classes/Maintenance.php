@@ -57,7 +57,7 @@ class Maintenance extends \Backend
 						while($objPlayer->next())
 						{
 							// Ist der Spieler Mitglied im BdF?
-							$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer->memberships, NULL, $objPlayer->published);
+							$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayer, NULL, $objPlayer->published);
 
 							if($mitglied)
 							{

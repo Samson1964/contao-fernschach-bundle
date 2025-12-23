@@ -37,7 +37,7 @@ class Nenngeld extends \Backend
 					$anzahl_alle++;
 					$summe_alle += $nenngeldsaldo;
 					// Mitgliedsstatus prüfen
-					$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler->memberships);
+					$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler);
 					if($mitglied)
 					{
 						$anzahl_mitglieder++;

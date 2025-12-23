@@ -15,13 +15,6 @@ class DCAParser extends \Backend
 		$this->dca = array();
 	}
 
-	/**
-	 * Funktion checkMembership
-	 *
-	 * @param integer $value
-	 *
-	 * @return string
-	 */
 	public function setDCA($dca)
 	{
 		$this->dca = $dca;
