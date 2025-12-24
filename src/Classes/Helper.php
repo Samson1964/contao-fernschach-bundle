@@ -347,10 +347,12 @@ class Helper extends \Backend
 					switch($objBuchungen->typ)
 					{
 						case 'h':
-							$saldo += (float)$objBuchungen->betrag;
+							//$saldo += $objBuchungen->betrag;
+							$saldo = bcadd($saldo, $objBuchungen->betrag, 2);
 							break;
 						case 's':
-							$saldo -= (float)$objBuchungen->betrag;
+							//$saldo -= $objBuchungen->betrag;
+							$saldo = bcsub($saldo, $objBuchungen->betrag, 2);
 							break;
 						default:
 					}

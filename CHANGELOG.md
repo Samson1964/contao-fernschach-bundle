@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.7 (2025-12-24)
+
+* Add: Cron\Streichung mit Funktionen ausgebaut -> Prüft, ob tl_fernschach_spieler.isDeletion richtig auf true/false gesetzt ist - und sucht das Streichdatum im Mitgliedschaftsende
+* Change: tl_fernschach_spieler.streichung ist jetzt ein Pflichtfeld
+* Fix: Rechenfehler in Helper::getSaldo (Ursache evtl.: Fehler bei Floats in PHP entstehen oft durch die begrenzte Genauigkeit des binären Systems, was zu Rundungsfehlern führt, besonders bei Operationen mit Zahlen wie 0.1 oder 0.7, die nicht exakt darstellbar sind) -> plus und minus durch bcadd und bcsub ersetzt
+
 ## Version 1.5.6 (2025-12-23)
 
 * Add: tl_fernschach_spieler.isDeletion -> Checkbox für Aktivierung von Streichungen

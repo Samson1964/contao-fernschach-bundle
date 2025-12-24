@@ -740,6 +740,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
+				'mandatory'           => true,
 				'rgxp'                => 'alnum',
 				'maxlength'           => 10,
 				'tl_class'            => 'w50',
