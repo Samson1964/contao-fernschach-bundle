@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['MOD']['fernschach-turnierkategorien'] = array('Turnierkateg
 $GLOBALS['TL_LANG']['MOD']['fernschach-mitgliederstatistik'] = array('Mitgliederstatistik', 'Mitgliederstatistiken verwalten und ausgeben');
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere'] = array('Turniere', 'Turniere und Anmeldungen/Bewerbungen verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-konten'] = array('Konten (Dev-Version)', 'Konten verwalten (Development-Version: noch nicht einsetzbar, da in der Entwicklung)');
+$GLOBALS['TL_LANG']['MOD']['fernschach-iccf'] = array('ICCF-Rating (Dev-Version)', 'ICCF-Wertungslisten und -spieler verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-dokumentation'] = array('Dokumentation', 'Dokumentation der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere-spieler'] = array('Anmeldungen eines Spielers', 'Anmeldungen eines Spielers');
 
@@ -28,3 +29,7 @@ $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular'] = array('Meldef
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen'] = array('Titel und Normen ausgeben','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen_liste'] = array('Glückwunschliste Titel und Normen','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_kontoauszug'] = array('Kontoauszug BdF-Mitglied', 'Kontoauszug des angemeldeten Mitglieds anzeigen.');
+
+$GLOBALS['TL_LANG']['MOD']['iccf_import_headline'] = array('Wertungszahlen aus CSV-Dateien importieren', 'Wertungszahlen aus CSV-Dateien importieren');
+$GLOBALS['TL_LANG']['MOD']['iccf_import_file'] = array('CSV-Datei', 'CSV-Datei auswählen');
+$GLOBALS['TL_LANG']['MOD']['iccf_import_submit'] = array('Import starten', 'Import starten');

@@ -7,6 +7,7 @@
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveBeitragConfirm'] = 'Buchung in das Beitragskonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Beitrag` gesetzt.';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveNenngeldConfirm'] = 'Buchung in das Nenngeldkonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Nenngeld` gesetzt.';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto']['moveHauptConfirm'] = 'Buchung in das Hauptkonto verschieben? Die Kategorie der Buchung wird dabei nicht verändert.';
+$GLOBALS['TL_LANG']['tl_fernschach_iccf_ratinglists']['importConfirm'] = 'Import starten?';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveBeitragConfirm'] = 'Buchung in das Beitragskonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Beitrag` gesetzt.';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveNenngeldConfirm'] = 'Buchung in das Nenngeldkonto verschieben? Die Kategorie der Buchung wird dabei automatisch auf `Nenngeld` gesetzt.';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveHauptConfirm'] = 'Buchung in das Hauptkonto verschieben? Die Kategorie der Buchung wird dabei nicht verändert.';
@@ -403,3 +404,48 @@ $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten_options'] = array
 	'b'           => 'Beitragskonto',
 	'n'           => 'Nenngeldkonto'
 );
+
+$GLOBALS['TL_LANG']['tl_fernschach_iccf_import']['headline'] = 'Wertungszahlen aus einer CSV-Datei importieren';
+$GLOBALS['TL_LANG']['tl_fernschach_iccf_import']['format'] = 
+'Die CSV-Datei mit den ICCF-Wertungszahlen kann <a href="https://www.iccf.com/RatingList.aspx" target="_blank">hier heruntergeladen</a> werden. Bitte deaktivieren Sie alle Filter auf der ICCF-Seite und laden Sie dann erst die Datei herunter. Die hochgeladenen CSV-Dateien sollten im UTF-8-Format vorliegen. Je Zeile steht ein Datensatz in der Datei.<br>
+Die Datei ratinglist.csv sollte folgenden Aufbau haben:
+<table class="tl_iccf_tabelle">
+<tr>
+	<th>Spalte</th>
+	<th>Inhalt</th>
+</tr>
+<tr>
+	<td>1</td>
+	<td>ICCF-ID</td>
+</tr>
+<tr>
+	<td>2</td>
+	<td>Land (z.B. GER)</td>
+</tr>
+<tr>
+	<td>3</td>
+	<td>ICCF-Titel</td>
+</tr>
+<tr>
+	<td>4</td>
+	<td>Nachname, Vorname</td>
+</tr>
+<tr>
+	<td>5</td>
+	<td>Partien</td>
+</tr>
+<tr>
+	<td>6</td>
+	<td>Wertungszahl</td>
+</tr>
+<tr>
+	<td>7</td>
+	<td>RD-Wert (Bewertungsabweichung)</td>
+</tr>
+<tr>
+	<td>8</td>
+	<td>Status (z.B. Inaktiv-Flag i)</td>
+</tr>
+</table>
+<p style="margin:18px"><b>Achtung! Beim Import werden die vorhandenen Wertungszahlen in der ausgewählten Wertungsliste gelöscht.</b></p>
+';

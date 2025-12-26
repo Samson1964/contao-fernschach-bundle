@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.8 (2025-12-26)
+
+* Change: Cron\Streichung trägt jetzt fehlendes Mitgliedschaftsende in Mitgliedschaften nach, wenn to-Feld leer ist
+* Add: tl_fernschach_iccf_ratinglists -> Für den Import von ICCF-Wertungslisten
+* Add: tl_fernschach_iccf_players -> Für die Speicherung der ICCF-Spielerstammdaten
+* Add: tl_fernschach_iccf_ratings -> Für die Speicherung der ICCF-Wertungszahlen aller Spieler 
+Problem: Der Import bricht ab -> Möglichkeiten mit Ajax und Routen anschauen
+
 ## Version 1.5.7 (2025-12-24)
 
 * Add: Cron\Streichung mit Funktionen ausgebaut -> Prüft, ob tl_fernschach_spieler.isDeletion richtig auf true/false gesetzt ist - und sucht das Streichdatum im Mitgliedschaftsende

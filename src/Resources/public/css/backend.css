@@ -107,3 +107,17 @@ p.fernschach-verwaltung ul {
 p.fernschach-verwaltung li {
 	margin-bottom: 3px;
 }
+
+table.tl_iccf_tabelle {
+	border-collapse: collapse;
+	margin: 18px;
+	border: 1px solid #c0c0c0;
+	border-radius: 5px;
+}
+
+table.tl_iccf_tabelle th,
+table.tl_iccf_tabelle td {
+	padding: 6px;;
+	border: 1px solid #DFDFDF;
+	vertical-align: top;
+}

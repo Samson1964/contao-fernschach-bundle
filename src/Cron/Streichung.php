@@ -68,10 +68,27 @@ class Streichung
 					$found = false;
 					if(is_array($mitgliedschaften))
 					{
-						foreach($mitgliedschaften as $mitgliedschaft)
+						for($x = 0; $x < count($mitgliedschaften); $x++)
 						{
-							if($mitgliedschaft['to'] == $objPlayer->streichung) 
+							if($mitgliedschaften[$x]['to'] == 0)
 							{
+								// Kein Streichdatum eingetragen, deshalb jetzt eintragen und speichern
+								$found = true;
+								$mitgliedschaften[$x]['to'] = $objPlayer->streichung;
+								$mitgliedschaften[$x]['status'] = 'Streichung';
+								$set = array
+								(
+									'tstamp'      => time(),
+									'memberships' => serialize($mitgliedschaften)
+								);
+								\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+								                        ->set($set)
+								                        ->execute($objPlayer->id);
+								\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), aber kein Mitgliedschaftsende &#10142; Mitgliedschaft geändert');
+							}
+							if($mitgliedschaften[$x]['to'] == $objPlayer->streichung)
+							{
+								// Streichdatum ist bereits eingetragen
 								$found = true;
 								break;
 							}
@@ -79,7 +96,22 @@ class Streichung
 					}
 					if(!$found)
 					{
-						\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), aber kein Mitgliedschaftsende &#10142; bitte korrigieren');
+						// Keine passende Mitgliedschaft gefunden, deshalb eine hinzufügen
+						$mitgliedschaften[] = array
+						(
+							'from'      => 0,
+							'to'        => $objPlayer->streichung,
+							'status'    => 'Streichung'
+						);
+						$set = array
+						(
+							'tstamp'      => time(),
+							'memberships' => serialize($mitgliedschaften)
+						);
+						\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+						                        ->set($set)
+						                        ->execute($objPlayer->id);
+						\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), aber kein Mitgliedschaftsende &#10142; Mitgliedschaft angelegt');
 					}
 				}
 			}
