@@ -20,6 +20,8 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_memberFernschach'] = array('BdF-M
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_newsletter'] = array('Serienmail-Verteiler', 'Newsletter-Archiv auswählen, dessen Empfänger für Serienmails verwendet werden sollen.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_emailVon'] = array('E-Mail-Absender','Globaler E-Mail-Absendername, z.B. Deutscher Fernschachbund');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'] = array('E-Mail-Adresse','Globale E-Mail-Absenderadresse, z.B. info@bdf-fernschachbund.de');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorName'] = array('Name Turnierdirektor','Name des Turnierdirektors');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorEmail'] = array('E-Mail-Adresse Turnierdirektor','E-Mail-Adresse des Turnierdirektors');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_hinweis_kontoauszug'] = array('Hinweis Kontoauszug','Hinweistext statt der Kontoauszug-Ausgabe, wenn Benutzer kein BdF-Mitglied ist.');
 
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'] = array

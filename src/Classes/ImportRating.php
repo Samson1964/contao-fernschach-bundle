@@ -15,7 +15,7 @@ class ImportRating extends \Backend
 	 */
 	public function importCSV(\DataContainer $dc)
 	{
-		if (\Input::get('key') != 'importCSV')
+		if(\Input::get('key') != 'importCSV')
 		{
 			return '';
 		}
@@ -42,13 +42,11 @@ class ImportRating extends \Backend
 				$this->reload();
 			}
 
-			$this->import('Database');
-
 			foreach($arrUploaded as $strFile)
 			{
 				$objFile = new \File($strFile, true);
 
-				if ($objFile->extension != 'csv')
+				if($objFile->extension != 'csv')
 				{
 					\Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
 					continue;

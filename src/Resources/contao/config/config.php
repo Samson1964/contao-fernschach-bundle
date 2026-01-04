@@ -112,10 +112,11 @@ elseif(TL_MODE == 'FE')
  */
 $GLOBALS['FE_MOD']['fernschachverwaltung'] = array
 (
-	'fernschachverwaltung_meldeformular'     => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular',
-	'fernschachverwaltung_titelnormen'       => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormen',
-	'fernschachverwaltung_titelnormen_liste' => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormenLast',
-	'fernschachverwaltung_kontoauszug'       => 'Schachbulle\ContaoFernschachBundle\Modules\Kontoauszug',
+	'fernschachverwaltung_meldeformular_player' => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular_Spieler',
+	'fernschachverwaltung_meldeformular_team'   => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular_Mannschaft',
+	'fernschachverwaltung_titelnormen'          => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormen',
+	'fernschachverwaltung_titelnormen_liste'    => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormenLast',
+	'fernschachverwaltung_kontoauszug'          => 'Schachbulle\ContaoFernschachBundle\Modules\Kontoauszug',
 );
 
 /**

@@ -13,7 +13,7 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class Meldeformular extends \Module
+class Meldeformular_Spieler extends \Module
 {
 
 	protected $strTemplate = 'mod_fernschach';
@@ -28,7 +28,7 @@ class Meldeformular extends \Module
 		{
 			$objTemplate = new \BackendTemplate('be_wildcard');
 
-			$objTemplate->wildcard = '### FERNSCHACH MELDEFORMULAR ###';
+			$objTemplate->wildcard = '### FERNSCHACH MELDEFORMULAR SPIELER ###';
 			$objTemplate->title = $this->name;
 			$objTemplate->id = $this->id;
 

@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_hinweis_kontoauszug';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_turnierdirektorName,fernschach_turnierdirektorEmail,fernschach_hinweis_kontoauszug';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -192,6 +192,31 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_emailVon'] = array
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_emailAdresse'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'email', 
+		'mandatory'           => true, 
+		'tl_class'            => 'w50', 
+	),
+);
+
+// Name Turnierdirektor
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_turnierdirektorName'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorName'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'mandatory'           => true, 
+		'tl_class'            => 'w50 clr', 
+	),
+);
+
+// E-Mail-Adresse Turnierdirektor
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_turnierdirektorEmail'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorEmail'],
 	'inputType'               => 'text',
 	'eval'                    => array
 	(

@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.9 (2026-01-04)
+
+* Add: Modul Meldeformular_Mannschaft
+* Change: Modul Meldeformular -> Meldeformular_Spieler
+* Add: Einstellungen für Kontaktdaten Turnierdirektor
+
 ## Version 1.5.8 (2025-12-26)
 
 * Change: Cron\Streichung trägt jetzt fehlendes Mitgliedschaftsende in Mitgliedschaften nach, wenn to-Feld leer ist
