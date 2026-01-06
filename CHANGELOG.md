@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.11 (2026-01-06)
+
+* Change: fernschachverwaltung_meldeformular_player wieder zurückgesetzt auf fernschachverwaltung_meldeformular -> Probleme mit FE-Modul-Wechsel
+
 ## Version 1.5.10 (2026-01-06)
 
 * Ausbau des ICCF-Imports via Ajax

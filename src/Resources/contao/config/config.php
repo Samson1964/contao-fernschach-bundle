@@ -113,7 +113,7 @@ elseif(TL_MODE == 'FE')
  */
 $GLOBALS['FE_MOD']['fernschachverwaltung'] = array
 (
-	'fernschachverwaltung_meldeformular_player' => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular_Spieler',
+	'fernschachverwaltung_meldeformular'        => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular_Spieler',
 	'fernschachverwaltung_meldeformular_team'   => 'Schachbulle\ContaoFernschachBundle\Modules\Meldeformular_Mannschaft',
 	'fernschachverwaltung_titelnormen'          => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormen',
 	'fernschachverwaltung_titelnormen_liste'    => 'Schachbulle\ContaoFernschachBundle\Modules\TitelNormenLast',
@@ -186,35 +186,3 @@ $GLOBALS['TL_MODELS']['tl_fernschach_spieler'] = \Schachbulle\ContaoFernschachBu
 $GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto'] = \Schachbulle\ContaoFernschachBundle\Models\Hauptkonto::class;
 $GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto_beitrag'] = \Schachbulle\ContaoFernschachBundle\Models\Beitragskonto::class;
 $GLOBALS['TL_MODELS']['tl_fernschach_spieler_konto_nenngeld'] = \Schachbulle\ContaoFernschachBundle\Models\Nenngeldkonto::class;
-
-/**
- * Cron jobs
- */
-//$GLOBALS['TL_CRON']['monthly'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
-//$GLOBALS['TL_CRON']['weekly'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
-//$GLOBALS['TL_CRON']['daily'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
-//$GLOBALS['TL_CRON']['hourly'][] = array('Schachbulle\ContaoFernschachBundle\Hooks\Newsletter', 'NewsletterTags');
-//$GLOBALS['TL_CRON']['minutely'][] = array(Schachbulle\ContaoFernschachBundle\Cron\Automator::class, 'checkNenngeld');
-
-//$GLOBALS['TL_CRON'] = array
-//(
-//	'monthly' => array
-//	(
-//		array('Automator', 'purgeImageCache')
-//	),
-//	'weekly' => array
-//	(
-//		array('Automator', 'generateSitemap'),
-//		array('Automator', 'purgeScriptCache'),
-//		array('Automator', 'purgeSearchCache')
-//	),
-//	'daily' => array
-//	(
-//		array('Automator', 'rotateLogs'),
-//		array('Automator', 'purgeTempFolder'),
-//		array('Automator', 'checkForUpdates')
-//	),
-//	'hourly' => array(),
-//	'minutely' => array()
-//);
-

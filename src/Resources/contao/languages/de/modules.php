@@ -25,7 +25,7 @@ $GLOBALS['TL_LANG']['MOD']['fernschach-turniere-spieler'] = array('Anmeldungen e
  * Frontend-Module
  */
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung'] = array('Fernschach-Verwaltung', 'Fernschach-Verwaltung');
-$GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular_player'] = array('Meldeformular Spieler-Turnieranmeldung', 'Meldeformular Spieler-Turnieranmeldung anzeigen');
+$GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular'] = array('Meldeformular Spieler-Turnieranmeldung', 'Meldeformular Spieler-Turnieranmeldung anzeigen');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular_team'] = array('Meldeformular Mannschaftsanmeldung', 'Meldeformular Mannschaftsanmeldung anzeigen');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen'] = array('Titel und Normen ausgeben','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen_liste'] = array('Glückwunschliste Titel und Normen','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
