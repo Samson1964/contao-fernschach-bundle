@@ -89,6 +89,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 			'tl_fernschach_iccf_ratings',
 		),
 		'importCSV'              => array('\Schachbulle\ContaoFernschachBundle\Classes\ImportRating', 'importCSV'), 
+		'importProgress'         => array('\Schachbulle\ContaoFernschachBundle\Classes\ImportProgress', 'importProgress'), 
 	),
 	'fernschach-dokumentation'   => array
 	(

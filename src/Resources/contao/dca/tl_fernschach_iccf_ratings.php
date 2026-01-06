@@ -30,6 +30,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_iccf_ratings'] = array
 			(
 				'id'                            => 'primary',
 				'pid'                           => 'index',
+				'listId'                        => 'index',
+				'pid,listId'                    => 'index'
 			)
 		)
 	),
@@ -142,6 +144,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_iccf_ratings'] = array
 		),
 		'listId' => array
 		(
+			'label'                     => &$GLOBALS['TL_LANG']['tl_fernschach_iccf_ratings']['listId'],
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'tstamp' => array

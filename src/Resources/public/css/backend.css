@@ -121,3 +121,25 @@ table.tl_iccf_tabelle td {
 	border: 1px solid #DFDFDF;
 	vertical-align: top;
 }
+
+#progressbar {
+	width: 100%;
+	border: 1px solid black;
+	height: 30px;
+}
+
+#progressbar div {
+	background-color: #f47c00;
+	background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+	animation: crawl-progress-bar-stripes 1s linear infinite;
+	width: 0%;
+	height: 100%;
+	text-align: center;
+}
+
+#progressbar span {
+	display: inline-block;
+	line-height: 30px;
+	font-weight: bold;
+	color: white;
+}

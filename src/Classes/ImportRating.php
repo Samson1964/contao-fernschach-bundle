@@ -53,54 +53,33 @@ class ImportRating extends \Backend
 				}
 
 				$resFile = $objFile->handle;
-				$count_import = 0;
-				$count_player = 0;
-				$start = microtime(true);
-
-				// Alte Datensätze löschen
-				\Database::getInstance()->prepare('DELETE FROM tl_fernschach_iccf_ratings WHERE listId = ?')
-				                        ->execute(\Input::get('id'));
-
-				while(!feof($resFile))
-				{
-					$zeile = self::remove_utf8_bom(trim(fgets($resFile)));
-					$spalte = explode(';', $zeile);
-					$spielername = explode(',', $spalte[3]);
-					$count_import++;
-					// Nach Spieler mit ICCF-ID (aus Spalte 1) suchen
-					$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_iccf_players WHERE iccfid = ?")
-					                                     ->execute($spalte[0]);
-					if($objPlayer->numRows)
-					{
-						// ICCF-ID gefunden
-						$playerId = $objPlayer->id;
-					}
-					else
-					{
-						// ICCF-ID nicht gefunden, Spieler neu eintragen
-						$set_player = array
-						(
-							'tstamp'      => time(),
-							'iccfid'      => $spalte[0], // ICCF-ID in Spalte 1
-							'country'     => $spalte[1], // Land in Spalte 2
-							'surname'     => trim($spielername[0]), // Nachname
-							'prename'     => isset($spielername[1]) ? trim($spielername[1]) : '', // Vorname
-							'intern'      => NULL,
-							'published'   => true
-						);
-						$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_iccf_players %s")
-						                                     ->set($set_player)
-						                                     ->execute();
-						$playerId = $objInsert->insertId;
-						$count_player++;
-					}
-				}
-				$dauer = sprintf('%f0.4', microtime(true) - $start);
-				\System::log('ICCF-Import aus Datei '.$objFile->name.' - '.($count_import).' Datensätze im Import - '.$count_player.' Spieler neu, '.$count_player.' Spieler ergänzt - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
 			}
 
+			// Einstellungen der Ratingliste laden
+			$objListe = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_iccf_ratinglists WHERE id = ?')
+			                                    ->execute(\Input::get('id'));
+
+			// Zeilenanzahl ermitteln
+			$zeilen = file($objFile->dirname.'/'.$objFile->basename);
+			$anzahlZeilen = count($zeilen);
+			// Sitzung laden und Importdaten initialisieren
+			$session = \System::getContainer()->get('session');
+			$daten = array
+			(
+				'pfad'     => $objFile->dirname,
+				'datei'    => $objFile->basename,
+				'zeilen'   => $anzahlZeilen,
+				'listDate' => $objListe->fromDate,
+				'listId'   => \Input::get('id'),
+			);
+			$session->set('iccf_import', $daten);
+
+			// Alte Datensätze auf unveröffentlicht setzen
+			\Database::getInstance()->prepare('UPDATE tl_fernschach_iccf_ratings SET published = ? WHERE listId = ?')
+			                        ->execute('', \Input::get('id'));
+
 			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			$this->redirect(str_replace('&key=importCSV', '', \Environment::get('request')));
+			$this->redirect(str_replace('&key=importCSV', '&key=importProgress', \Environment::get('request')));
 		}
 
 		// Return form

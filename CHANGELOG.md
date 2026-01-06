@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.10 (2026-01-06)
+
+* Ausbau des ICCF-Imports via Ajax
+* Verbesserung der Rating-DCA
+* Immer wieder 500er bei Aufruf von bundles/contaofernschach/Import_ICCF_Rating.php?zeile=0
+
 ## Version 1.5.9 (2026-01-04)
 
 * Add: Modul Meldeformular_Mannschaft
