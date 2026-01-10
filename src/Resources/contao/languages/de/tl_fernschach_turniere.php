@@ -24,6 +24,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Sp
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht'] = array('Geschlecht beschränken', 'Geschlecht auswählen, das an diesem Turnier teilnehmen darf. Keine Auswahl = ohne Beschränkung.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMin'] = array('Mindestalter', 'Mindestalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMax'] = array('Maximalalter', 'Maximalalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['bretter'] = array('Bretter', 'Anzahl der Bretter. Wird nur benötigt bei Turniertyp "Mannschaftsturnier".');
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeld_legend'] = 'Nenngeld';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['nenngeldView'] = array('Nenngeld übergeordnet', 'Nenngeld im übergeordneten Turnier festgelegt.');
@@ -94,6 +95,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ_options'] = array
 	'n' => 'Nationales Turnier',
 	'i' => 'Internationales Turnier',
 	'e' => 'Einladungsturnier',
+	'm' => 'Mannschaftsturnier',
 );
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art_options'] = array

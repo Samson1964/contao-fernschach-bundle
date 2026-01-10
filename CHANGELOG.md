@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.12 (2026-01-10)
+
+* Change: Meldeformular_Mannschaft -> ML wird direkt aus Datensatz des FE-Mitglieds geladen
+* Change: tl_fernschach_turniere mit Turnierart Mannschaftsturnier und Feld Anzahl der Bretter (Standard = 4)
+* Change: Modul ICCF-Rating Hinweis auf Dev-Version entfernt
+* Add: Nenngeld-Buchung wird beim meldenden Spieler erzeugt
+
 ## Version 1.5.11 (2026-01-06)
 
 * Change: fernschachverwaltung_meldeformular_player wieder zurückgesetzt auf fernschachverwaltung_meldeformular -> Probleme mit FE-Modul-Wechsel

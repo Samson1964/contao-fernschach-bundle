@@ -17,7 +17,7 @@ $GLOBALS['TL_LANG']['MOD']['fernschach-turnierkategorien'] = array('Turnierkateg
 $GLOBALS['TL_LANG']['MOD']['fernschach-mitgliederstatistik'] = array('Mitgliederstatistik', 'Mitgliederstatistiken verwalten und ausgeben');
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere'] = array('Turniere', 'Turniere und Anmeldungen/Bewerbungen verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-konten'] = array('Konten (Dev-Version)', 'Konten verwalten (Development-Version: noch nicht einsetzbar, da in der Entwicklung)');
-$GLOBALS['TL_LANG']['MOD']['fernschach-iccf'] = array('ICCF-Rating (Dev-Version)', 'ICCF-Wertungslisten und -spieler verwalten');
+$GLOBALS['TL_LANG']['MOD']['fernschach-iccf'] = array('ICCF-Rating', 'ICCF-Wertungslisten und -spieler verwalten');
 $GLOBALS['TL_LANG']['MOD']['fernschach-dokumentation'] = array('Dokumentation', 'Dokumentation der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['MOD']['fernschach-turniere-spieler'] = array('Anmeldungen eines Spielers', 'Anmeldungen eines Spielers');
 

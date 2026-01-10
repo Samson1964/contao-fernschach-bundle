@@ -82,7 +82,10 @@ class Meldeformular_Mannschaft extends \Module
 	protected function Formular()
 	{
 
-		// BdF-Mitgliedsdaten laden
+		// BdF-Mitgliedsdaten des angemeldeten Benutzers laden
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
+		$beitragssaldo = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'beitrag'));
+
 		$records = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? ORDER BY nachname ASC, vorname ASC")
 		                                   ->execute('1', '');
 		$mitglieder = array();
@@ -90,8 +93,8 @@ class Meldeformular_Mannschaft extends \Module
 		{
 			while($records->next())
 			{
-				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);
-				if($mitglied)
+				$bdf_mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);
+				if($bdf_mitglied)
 				{
 					// Nur Mitglieder berücksichtigen
 					$saldo_beitrag = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'beitrag'));
@@ -105,17 +108,35 @@ class Meldeformular_Mannschaft extends \Module
 			}
 		}
 
+		$mitgliedsdaten = '<h4>Angemeldeter Benutzer</h4>';
+		$mitgliedsdaten .= '<ul>';
+		$mitgliedsdaten .= '<li>Anmeldename: <b>'.\FrontendUser::getInstance()->username.'</b></li>';
+		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.\FrontendUser::getInstance()->firstname.' '.\FrontendUser::getInstance()->lastname.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse: <b>'.\FrontendUser::getInstance()->email.'</b></li>';
+		$mitgliedsdaten .= '</ul>';
+		$mitgliedsdaten .= '<h4>Zugeordnetes BdF-Mitglied</h4>';
+		$mitgliedsdaten .= '<ul>';
+		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
+		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
+		$mitgliedsdaten .= '</ul>';
+		$mitgliedsdaten .= '<p><b>Du bist der Mannschaftsführer der zu meldenden Mannschaft. Das Nenngeld des ausgewählten Turniers wird mit Deinem Nenngeldkonto verrechnet.</b></p>';
+		
 		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
 		$form->addField(array('typ' => 'hidden', 'name' => 'FORM_SUBMIT', 'value' => 'form_turnieranmeldung'));
 		$form->addField(array('typ' => 'hidden', 'name' => 'REQUEST_TOKEN', 'value' => REQUEST_TOKEN));
 		$form->addField(array('typ' => 'hidden', 'name' => 'registrierung', 'value' => time()));
+		$form->addField(array('typ' => 'fieldset', 'label' => 'Mannschaftsführer'));
+		$form->addField(array('typ' => 'explanation', 'label' => $mitgliedsdaten));
+		$form->addField(array('typ' => 'fieldset', 'label' => ''));
+		$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
+		$form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied, $beitragssaldo)));
+		$form->addField(array('typ' => 'fieldset', 'label' => ''));
 		$form->addField(array('typ' => 'fieldset', 'label' => 'Angaben zur Mannschaft'));
 		$form->addField(array('typ' => 'text', 'name' => 'vereinsname', 'label' => 'Genauer Name des Vereins bzw. der Spielgemeinschaft', 'mandatory' => true));
 		$form->addField(array('typ' => 'text', 'name' => 'vereinsname_alt', 'label' => 'Alter Name der Mannschaft (bei Namensänderung)'));
 		$form->addField(array('typ' => 'text', 'name' => 'mannschaftsname', 'label' => 'Genaue Bezeichnung der gemeldeten Mannschaft (ggf. mit römischer Ziffer bei mehreren Teams)', 'mandatory' => true));
-		$form->addField(array('typ' => 'fieldset', 'label' => ''));
-		$form->addField(array('typ' => 'fieldset', 'label' => 'Mannschaftsführer'));
-		$form->addField(array('typ' => 'select', 'name' => 'mannschaftsleiter', 'mandatory' => true, 'options' => $mitglieder));
 		$form->addField(array('typ' => 'fieldset', 'label' => ''));
 		$form->addField(array('typ' => 'fieldset', 'label' => 'Spieler'));
 		$form->addField(array('typ' => 'select', 'name' => 'brett1', 'label' => 'Brett 1', 'mandatory' => true, 'options' => $mitglieder));
@@ -123,12 +144,9 @@ class Meldeformular_Mannschaft extends \Module
 		$form->addField(array('typ' => 'select', 'name' => 'brett3', 'label' => 'Brett 3', 'mandatory' => true, 'options' => $mitglieder));
 		$form->addField(array('typ' => 'select', 'name' => 'brett4', 'label' => 'Brett 4', 'mandatory' => true, 'options' => $mitglieder));
 		$form->addField(array('typ' => 'fieldset', 'label' => ''));
-		$form->addField(array('typ' => 'fieldset', 'label' => 'Angaben zum Melder'));
-		$form->addField(array('typ' => 'text', 'name' => 'melder_vorname', 'label' => 'Ihr Vorname', 'mandatory' => true));
-		$form->addField(array('typ' => 'text', 'name' => 'melder_nachname', 'label' => 'Ihr Nachname', 'mandatory' => true));
-		$form->addField(array('typ' => 'text', 'name' => 'melder_email', 'label' => 'Ihre E-Mail-Adresse', 'mandatory' => true));
-		$form->addField(array('typ' => 'fieldset', 'label' => ''));
+		$form->addField(array('typ' => 'fieldset', 'label' => 'Sonstiges'));
 		$form->addField(array('typ' => 'textarea', 'name' => 'bemerkungen', 'label' => 'Bemerkungen'));
+		$form->addField(array('typ' => 'fieldset', 'label' => ''));
 		$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
 		// validate() prüft auch, ob das Formular gesendet wurde
 		if($form->validate())
@@ -148,9 +166,38 @@ class Meldeformular_Mannschaft extends \Module
 
 	protected function saveMeldung($data)
 	{
+		// BdF-Mitgliedsdaten des angemeldeten Benutzers laden
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
+		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+
+		// Nenngeldbuchung Soll erzeugen
+		$zeit = time();
+		$set = array
+		(
+			'pid'               => $mitglied->id,
+			'tstamp'            => $zeit,
+			'betrag'            => $objTurnier->nenngeld,
+			'typ'               => 's',
+			'datum'             => $zeit,
+			'kategorie'         => 's',
+			'art'               => 'n',
+			'verwendungszweck'  => 'Nenngeld-Forderung '.$objTurnier->title,
+			'turnier'           => $data['turnier'],
+			'comment'           => 'Datensatz erzeugt durch Turnieranmeldung am '.date('d.m.Y H:i', $zeit),
+			'meldungId'         => 0,
+			'published'         => '1'
+		);
+		$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
+		                                     ->set($set)
+		                                     ->execute(); 
 
 		// Text für Absender zusammenbauen
 		$text = '<html><head><title></title></head><body>';
+		$text .= '<p>Sie haben eine Meldung zu einer Mannschaftsmeisterschaft vorgenommen:</p>';
+		$text .= '<h3>Angaben zum Turnier</h3>';
+		$text .= '<ul>';
+		$text .= '<li>Turniername: <b>'.$objTurnier->title.'</b></li>';
+		$text .= '</ul>';
 		$text .= '<h3>Angaben zur Mannschaft</h3>';
 		$text .= '<ul>';
 		$text .= '<li>Vereinsname: <b>'.$data['vereinsname'].'</b></li>';
@@ -159,7 +206,10 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '</ul>';
 		$text .= '<h3>Mannschaftsführer</h3>';
 		$text .= '<ul>';
-		$text .= '<li><b>'.$data['mannschaftsleiter'].'</b></li>';
+		$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$text .= '<li>Vorname: <b>'.$mitglied->vorname.'</b></li>';
+		$text .= '<li>Nachname: <b>'.$mitglied->nachname.'</b></li>';
+		$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
 		$text .= '</ul>';
 		$text .= '<h3>Spieler</h3>';
 		$text .= '<ul>';
@@ -168,11 +218,8 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '<li>Brett 3: <b>'.$data['brett3'].'</b></li>';
 		$text .= '<li>Brett 4: <b>'.$data['brett4'].'</b></li>';
 		$text .= '</ul>';
-		$text .= '<h3>Angaben zum Melder</h3>';
+		$text .= '<h3>Sonstiges</h3>';
 		$text .= '<ul>';
-		$text .= '<li>Vorname: <b>'.$data['melder_vorname'].'</b></li>';
-		$text .= '<li>Nachname: <b>'.$data['melder_nachname'].'</b></li>';
-		$text .= '<li>E-Mail: <b>'.$data['melder_email'].'</b></li>';
 		$text .= '<li>Bemerkungen: <b>'.$data['bemerkungen'].'</b></li>';
 		$text .= '</ul>';
 		$text .= '<p><i>Diese E-Mail wurde automatisch erstellt.</i></p></body></html>';
@@ -184,10 +231,15 @@ class Meldeformular_Mannschaft extends \Module
 		$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
 		$objEmail->subject = 'Mannschaftsmeldung '.$data['vereinsname'];
 		$objEmail->html = $text;
-		$objEmail->sendTo(array($data['melder_vorname'].' '.$data['melder_nachname'].' <'.$data['melder_email'].'>'));
+		$objEmail->sendTo(array($mitglied->vorname.' '.$mitglied->nachname.' <'.$mitglied->email1.'>'));
 
 		// Text für Turnierdirektor zusammenbauen
 		$text = '<html><head><title></title></head><body>';
+		$text .= '<p>Eine neue Turnieranmeldung wurde vorgenommen:</p>';
+		$text .= '<h3>Angaben zum Turnier</h3>';
+		$text .= '<ul>';
+		$text .= '<li>Turniername: <b>'.$objTurnier->title.'</b></li>';
+		$text .= '</ul>';
 		$text .= '<h3>Angaben zur Mannschaft</h3>';
 		$text .= '<ul>';
 		$text .= '<li>Vereinsname: <b>'.$data['vereinsname'].'</b></li>';
@@ -196,7 +248,10 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '</ul>';
 		$text .= '<h3>Mannschaftsführer</h3>';
 		$text .= '<ul>';
-		$text .= '<li><b>'.$data['mannschaftsleiter'].'</b></li>';
+		$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$text .= '<li>Vorname: <b>'.$mitglied->vorname.'</b></li>';
+		$text .= '<li>Nachname: <b>'.$mitglied->nachname.'</b></li>';
+		$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
 		$text .= '</ul>';
 		$text .= '<h3>Spieler</h3>';
 		$text .= '<ul>';
@@ -205,17 +260,9 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '<li>Brett 3: <b>'.$data['brett3'].'</b></li>';
 		$text .= '<li>Brett 4: <b>'.$data['brett4'].'</b></li>';
 		$text .= '</ul>';
-		$text .= '<h3>Angaben zum Melder</h3>';
+		$text .= '<h3>Sonstiges</h3>';
 		$text .= '<ul>';
-		$text .= '<li>Vorname: <b>'.$data['melder_vorname'].'</b></li>';
-		$text .= '<li>Nachname: <b>'.$data['melder_nachname'].'</b></li>';
-		$text .= '<li>E-Mail: <b>'.$data['melder_email'].'</b></li>';
 		$text .= '<li>Bemerkungen: <b>'.$data['bemerkungen'].'</b></li>';
-		$text .= '</ul>';
-		$text .= '<h3>Hinweise für den Turnierdirektor</h3>';
-		$text .= '<ul>';
-		$text .= '<li>Das Nenngeld muß dem Mannschaftsführer in Rechnung gestellt werden. Dazu ist in Contao ein Datensatz im Nenngeld beim Mannschaftsführer zu erzeugen.</li>';
-		$text .= '<li>Eine automatische Erzeugung der Nenngeld-Sollbuchung ist nicht möglich.</li>';
 		$text .= '</ul>';
 		$text .= '<p><i>Diese E-Mail wurde automatisch erstellt.</i></p></body></html>';
 
@@ -228,4 +275,40 @@ class Meldeformular_Mannschaft extends \Module
 		$objEmail->html = $text;
 		$objEmail->sendTo(array($GLOBALS['TL_CONFIG']['fernschach_turnierdirektorName'].' <'.$GLOBALS['TL_CONFIG']['fernschach_turnierdirektorEmail'].'>'));
 	}
+
+	/**
+	 * Funktion getTournaments
+	 * =======================
+	 * Turniere einlesen: veröffentlicht, Online-Anmeldung aktiv, ohne Meldedatum oder Meldedatum kleiner akt. Datum
+	 *
+	 * param $saldo       Float      Saldo des Beitragskontos
+	 *
+	 * @return array
+	 */
+	public function getTournaments($mitglied, $saldo)
+	{
+		$Turniere = array();
+		$zeit = time();
+		$monat = date('m', $zeit);
+		$tag = date('d', $zeit);
+		$jahr = date('Y', $zeit);
+		$aktuellesDatum = mktime(0, 0, 0, $monat, $tag, $jahr);
+
+		// Meldefähige Turniere laden
+		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? AND typ = ? ORDER BY title AND art")
+		                                       ->execute($aktuellesDatum, 0, 1, 1, 'm');
+
+		while($objTurniere->next())
+		{
+			$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
+			$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
+			if($saldo >= 0)
+			{
+				$Turniere[$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+			}
+		}
+
+		return $Turniere;
+	}
+
 }
