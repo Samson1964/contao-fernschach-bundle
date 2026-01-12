@@ -109,6 +109,7 @@ class Meldeformular_Spieler extends \Module
 		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
+		$mitgliedsdaten .= '<li>Beitragssaldo: <b>'.\Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo($mitglied->id).'</b></li>';
 		// Saldo Hauptkonto ermitteln und ausgeben
 		$value = end($salden_haupt);
 		if($value >= 0)
@@ -466,13 +467,13 @@ class Meldeformular_Spieler extends \Module
 		// Meldefähige Turniere laden
 		if($this->fernschachverwaltung_bewerbung)
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND published = ? ORDER BY title AND art")
-			                                       ->execute($aktuellesDatum, 0, 1, 1, 1);
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND typ != ? AND published = ? ORDER BY title AND art")
+			                                       ->execute($aktuellesDatum, 0, 1, 1, 'm', 1);
 		}
 		else
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND published = ? ORDER BY title AND art")
-			                                       ->execute($aktuellesDatum, 0, 1, 1);
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND typ != ? AND published = ? ORDER BY title AND art")
+			                                       ->execute($aktuellesDatum, 0, 1, 'm', 1);
 		}
 
 		while($objTurniere->next())

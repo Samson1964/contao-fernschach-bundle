@@ -84,7 +84,7 @@ class Meldeformular_Mannschaft extends \Module
 
 		// BdF-Mitgliedsdaten des angemeldeten Benutzers laden
 		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
-		$beitragssaldo = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'beitrag'));
+		$beitragssaldo = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo(\FrontendUser::getInstance()->fernschach_memberId);
 
 		$records = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? ORDER BY nachname ASC, vorname ASC")
 		                                   ->execute('1', '');
@@ -97,7 +97,7 @@ class Meldeformular_Mannschaft extends \Module
 				if($bdf_mitglied)
 				{
 					// Nur Mitglieder berücksichtigen
-					$saldo_beitrag = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'beitrag'));
+					$saldo_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo($records->id);
 					if($saldo_beitrag >= 0)
 					{
 						// Nur Nichtrückstand bei Beitrag berücksichtigen
@@ -120,6 +120,7 @@ class Meldeformular_Mannschaft extends \Module
 		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
 		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
+		$mitgliedsdaten .= '<li>Saldo Beitragskonto: <b>'.$beitragssaldo.'</b></li>';
 		$mitgliedsdaten .= '</ul>';
 		$mitgliedsdaten .= '<p><b>Du bist der Mannschaftsführer der zu meldenden Mannschaft. Das Nenngeld des ausgewählten Turniers wird mit Deinem Nenngeldkonto verrechnet.</b></p>';
 		

@@ -257,6 +257,70 @@ class Helper extends \Backend
 	}
 
 	/**
+	 * function getBeitragssaldo
+	 * =================================================================
+	 * Liefert den aktuellen Stand des Beitragskontos. Dabei gilt folgende Regelung:
+	 * - aktueller Monat ist Januar: Stand vom 31.12. des Vorjahres zurückgeben
+	 * - aktueller Monat ist nicht Januar: Stand aktuell zurückgeben
+	 *
+	 * @param integer $id         ID des Spielers
+	 *
+	 * @return float              Saldo
+	 */
+	public static function getBeitragssaldo($id)
+	{
+		$datum = date('d.m.Y');
+		// Umwandeln auf Mitternacht
+		$tag = substr($datum, 0, 2);
+		$monat = substr($datum, 3, 2);
+		$jahr = substr($datum, 6, 4);
+		
+		if($monat == '01')
+		{
+			// Monat Januar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
+			$datum_zeit = mktime(23, 59, 59, 12, 31, ($jahr-1));
+		}
+		else
+		{
+			// Monat Januar trifft nicht, dann Saldodatum auf aktuelles Datum 23:59:59 setzen
+			$datum_zeit = mktime(23, 59, 59, $monat, $tag, $jahr);
+		}
+
+		// Buchungen des Spielers laden
+		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE pid=? AND published=? ORDER BY datum ASC, sortierung ASC")
+		                                        ->execute($id, 1);
+
+		$saldo = 0;
+		if($objBuchungen->numRows)
+		{
+			while($objBuchungen->next())
+			{
+				// Nur Buchungen verwenden, die jünger oder gleich dem gewünschten Datum sind
+				if($objBuchungen->datum <= $datum_zeit)
+				{
+					if($objBuchungen->saldoReset || $objBuchungen->resetRecord)
+					{
+						$saldo = 0; // Saldo soll hier resettet werden
+					}
+					switch($objBuchungen->typ)
+					{
+						case 'h':
+							$saldo = bcadd($saldo, $objBuchungen->betrag, 2);
+							break;
+						case 's':
+							$saldo = bcsub($saldo, $objBuchungen->betrag, 2);
+							break;
+						default:
+					}
+				}
+			}
+		}
+
+		return $saldo;
+
+	}
+
+	/**
 	 * function getSaldo
 	 * =================================================================
 	 * Saldorechner für tl_fernschach_spieler_konto, tl_fernschach_spieler_konto_beitrag und tl_fernschach_spieler_konto_nenngeld

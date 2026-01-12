@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.13 (2026-01-12)
+
+* Fix: Bei Turnieranmeldung Einzel werden Mannschaftsturniere angezeigt
+* Change: Funktion Helper::getBeitragssaldo gibt den aktuellen Beitragssaldo zurück. Ist der aktuelle Monat Januar wird der Saldo vom 31.12. zurückgegeben (Schonfrist Beitragszahlung)
+
 ## Version 1.5.12 (2026-01-10)
 
 * Change: Meldeformular_Mannschaft -> ML wird direkt aus Datensatz des FE-Mitglieds geladen
