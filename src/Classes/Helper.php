@@ -275,9 +275,9 @@ class Helper extends \Backend
 		$monat = substr($datum, 3, 2);
 		$jahr = substr($datum, 6, 4);
 		
-		if($monat == '01')
+		if($monat == '01' || $monat == '02')
 		{
-			// Monat Januar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
+			// Monat Januar/Februar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
 			$datum_zeit = mktime(23, 59, 59, 12, 31, ($jahr-1));
 		}
 		else

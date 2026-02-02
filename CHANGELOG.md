@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.14 (2026-02-02)
+
+* Change: Helper.getBeitragssaldo -> Beitragsamnestie von Januar auf Februar erweitert
+
 ## Version 1.5.13 (2026-01-12)
 
 * Fix: Bei Turnieranmeldung Einzel werden Mannschaftsturniere angezeigt
