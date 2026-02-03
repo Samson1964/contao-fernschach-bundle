@@ -1,6 +1,6 @@
 # Fernschach-Verwaltung ToDo
 
-nächster Schritt: E-Mail für Anmelder einbauen im Meldeformular
+* Turnieranmeldung: Prüfung auf SEPA/Mitgliedschaft usw. mit Optionen in Einstellungen festlegen
 
 ## tl_fernschach_spieler und tl_fernschach_spieler_konto
 

@@ -98,11 +98,21 @@ class Meldeformular_Mannschaft extends \Module
 				{
 					// Nur Mitglieder berücksichtigen
 					$saldo_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo($records->id);
-					if($saldo_beitrag >= 0)
+					if($records->sepaBeitrag)
 					{
-						// Nur Nichtrückstand bei Beitrag berücksichtigen
+						// SEPA-Mandat vorhanden, Spieler berücksichtigen
 						$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.')';
 						$mitglieder[$datensatz] = $datensatz;
+					}
+					else
+					{
+						// Kein SEPA-Mandat
+						if($saldo_beitrag >= 0)
+						{
+							// Nur Nichtrückstand bei Beitrag berücksichtigen
+							$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.')';
+							$mitglieder[$datensatz] = $datensatz;
+						}
 					}
 				}
 			}
