@@ -313,9 +313,16 @@ class Meldeformular_Mannschaft extends \Module
 		{
 			$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
 			$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
-			if($saldo >= 0)
+			if($mitglied->sepaBeitrag)
 			{
 				$Turniere[$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+			}
+			else
+			{
+				if($saldo >= 0)
+				{
+					$Turniere[$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+				}
 			}
 		}
 

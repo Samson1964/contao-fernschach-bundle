@@ -1,9 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.5.16 (2026-02-08)
+
+* Fix: Turnieranmeldung Mannschaft (Turnierauswahl) jetzt mit SEPA-Prüfung
+
 ## Version 1.5.15 (2026-02-03)
 
 * Change: Helper.getBeitragssaldo -> Beitragsamnestie Februar entfernt
-* Add: Turnieranmeldung Mannschaft jetzt mit SEPA-prüfung
+* Add: Turnieranmeldung Mannschaft jetzt mit SEPA-Prüfung
 
 ## Version 1.5.14 (2026-02-02)
 
