@@ -23,10 +23,18 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'] = array('E-Mail-Ad
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorName'] = array('Name Turnierdirektor','Name des Turnierdirektors');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorEmail'] = array('E-Mail-Adresse Turnierdirektor','E-Mail-Adresse des Turnierdirektors');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_hinweis_kontoauszug'] = array('Hinweis Kontoauszug','Hinweistext statt der Kontoauszug-Ausgabe, wenn Benutzer kein BdF-Mitglied ist.');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'] = array('Turnieranmeldung (noch nicht implementiert!)','Optionen für die Prüfung von Turnieranmeldungen');
 
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'] = array
 (
 	'h' => 'Hauptkonto',
 	'b' => 'Beitragskonto',
 	'n' => 'Nenngeldkonto'
+);
+
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung_options'] = array
+(
+	'1' => 'SEPA-Mandat Beitrag muß vorhanden sein oder Saldo Beitragskonto >= 0 €',
+	'2' => 'Saldo Beitragskonto >= 0 € ohne Berücksichtigung Januar (bei fehlendem SEPA-Mandat Beitrag)',
+	'3' => 'SEPA-Mandat Nenngeld muß vorhanden sein oder Saldo Nenngeldkonto >= 0 € (nur bei Einzelturnieren)',
 );

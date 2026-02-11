@@ -15,7 +15,7 @@
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_turnierdirektorName,fernschach_turnierdirektorEmail,fernschach_hinweis_kontoauszug';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_turnierdirektorName,fernschach_turnierdirektorEmail,fernschach_hinweis_kontoauszug,fernschach_check_turnieranmeldung';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -237,6 +237,19 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_hinweis_kontoauszug'] = 
 		'rte'                 => 'ace|html', 
 		'cols'                => 80,
 		'rows'                => 10
+	)
+);
+
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_check_turnieranmeldung'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'],
+	'inputType'               => 'checkbox',
+	'options'                 => array('1', '2', '3'),
+	'reference'               => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung_options'],
+	'eval'                    => array
+	(
+		'tl_class'            => 'long',
+		'multiple'            => true
 	)
 );
 

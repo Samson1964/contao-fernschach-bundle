@@ -27,6 +27,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'id'                    => 'primary',
 				'memberId'              => 'index',
 				'memberInternationalId' => 'index',
+				'email1'                => 'index',
+				'email2'                => 'index',
 				'nachname'              => 'index'
 			)
 		),
@@ -647,7 +649,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['email1'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
-			'sorting'                 => false,
+			'sorting'                 => true,
 			'flag'                    => 1,
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50', 'rgxp'=>'email'),
@@ -658,7 +660,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['email2'],
 			'inputType'               => 'text',
 			'exclude'                 => true,
-			'sorting'                 => false,
+			'sorting'                 => true,
 			'flag'                    => 1,
 			'search'                  => true,
 			'eval'                    => array('mandatory'=>false, 'maxlength'=>255, 'tl_class'=>'w50', 'rgxp'=>'email'),
@@ -1918,6 +1920,7 @@ class tl_fernschach_spieler extends \Backend
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
 					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
 					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
+					'6'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_multiple'],
 					'5'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_beitrag_minus'],
 					'8'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_none_members'],
 					'101' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members_yearNext'],
@@ -2065,6 +2068,19 @@ class tl_fernschach_spieler extends \Backend
 				case '4': // E-Mail fehlt
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
 					                                      ->execute('', '');
+					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
+					break;
+
+				case '6': // Doppelte 1. E-Mail-Adressen suchen
+					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 != ? AND email1 IN (SELECT email1 FROM tl_fernschach_spieler GROUP BY email1 HAVING COUNT(*) > 1) ORDER BY email1")
+					                                      ->execute('');
+					if($objPlayers->numRows)
+					{
+						while($objPlayers->next())
+						{
+							$arrPlayers[] = $objPlayers->id;
+						}
+					}
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
 

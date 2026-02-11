@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.6.0 (2026-02-11)
+
+* Add: Spezialfilter um doppelte E-Mail-Adressen zu finden (filter_mail_multiple) -> "E-Mail-Adresse 1 mehrfach verwendet"
+* Add: Index tl_fernschach_spieler.email1 und tl_fernschach_spieler.email2
+* Change: sorting tl_fernschach_spieler.email1 und tl_fernschach_spieler.email2 auf true
+* Add: Einstellungen, Optionen für Turnieranmeldungen (noch nicht implementiert, aber anklickbar)
+
 ## Version 1.5.16 (2026-02-08)
 
 * Fix: Turnieranmeldung Mannschaft (Turnierauswahl) jetzt mit SEPA-Prüfung
