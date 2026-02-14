@@ -8,6 +8,11 @@ services:
             calls:
                 - ["setContainer", ["@service_container"]]
 
+    contao.cron.fernschach_mitgliedschaftscheck:
+        class: Schachbulle\ContaoFernschachBundle\Cron\Mitgliedschaftscheck
+        arguments:
+            - '@contao.framework'
+
     contao.cron.fernschach_mitgliedschaftsende:
         class: Schachbulle\ContaoFernschachBundle\Cron\Mitgliedschaftsende
         arguments:

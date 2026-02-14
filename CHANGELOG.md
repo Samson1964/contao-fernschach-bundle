@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.6.1 (2026-02-14)
+
+* Add: tl_fernschach_spieler.membercheck mit zwei Optionen für Datum und Info -> Checkbox für geprüfte Mitgliedschaften
+* Add: ICCF-ID bei Mannschaftsmeldungen
+* Add: tl_fernschach_spieler.member -> Interne Checkbox für den Bot, um BdF-Mitglied ja/nein zu speichern
+* Add: Cron Mitgliedschaftscheck erstellt, um den Status des Feldes tl_fernschach_spieler.member zu prüfen und ggfs. zu korrigieren
+
 ## Version 1.6.0 (2026-02-11)
 
 * Add: Spezialfilter um doppelte E-Mail-Adressen zu finden (filter_mail_multiple) -> "E-Mail-Adresse 1 mehrfach verwendet"

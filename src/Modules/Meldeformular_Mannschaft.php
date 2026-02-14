@@ -101,7 +101,7 @@ class Meldeformular_Mannschaft extends \Module
 					if($records->sepaBeitrag)
 					{
 						// SEPA-Mandat vorhanden, Spieler berücksichtigen
-						$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.')';
+						$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.' / ICCF-ID '.$records->memberInternationalId.')';
 						$mitglieder[$datensatz] = $datensatz;
 					}
 					else
@@ -110,7 +110,7 @@ class Meldeformular_Mannschaft extends \Module
 						if($saldo_beitrag >= 0)
 						{
 							// Nur Nichtrückstand bei Beitrag berücksichtigen
-							$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.')';
+							$datensatz = $records->nachname.','.$records->vorname.' (BdF-Nr. '.$records->memberId.' / ICCF-ID '.$records->memberInternationalId.')';
 							$mitglieder[$datensatz] = $datensatz;
 						}
 					}
@@ -218,6 +218,7 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '<h3>Mannschaftsführer</h3>';
 		$text .= '<ul>';
 		$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$text .= '<li>ICCF-ID: <b>'.$mitglied->memberInternationalId.'</b></li>';
 		$text .= '<li>Vorname: <b>'.$mitglied->vorname.'</b></li>';
 		$text .= '<li>Nachname: <b>'.$mitglied->nachname.'</b></li>';
 		$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';
@@ -260,6 +261,7 @@ class Meldeformular_Mannschaft extends \Module
 		$text .= '<h3>Mannschaftsführer</h3>';
 		$text .= '<ul>';
 		$text .= '<li>BdF-Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
+		$text .= '<li>ICCF-ID: <b>'.$mitglied->memberInternationalId.'</b></li>';
 		$text .= '<li>Vorname: <b>'.$mitglied->vorname.'</b></li>';
 		$text .= '<li>Nachname: <b>'.$mitglied->nachname.'</b></li>';
 		$text .= '<li>E-Mail: <b>'.$mitglied->email1.'</b></li>';

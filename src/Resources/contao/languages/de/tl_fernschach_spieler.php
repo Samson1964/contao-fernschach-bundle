@@ -6,6 +6,7 @@
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['id'] = array('ID', 'ID dieses Spielers');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['tstamp'] = array('Letzte Änderung', 'Zeitstempel der letzten Änderung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['memberbridgeTime'] = array('Letzte Wartung', 'Zeitstempel der letzten Wartung');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['member'] = array('Mitglied', 'Mitgliedschaft im BdF');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived_legend'] = 'Archivierung';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived'] = array('Archiviert', 'Der Spieler wird in der Übersicht in grauer Schrift angezeigt.');
@@ -62,6 +63,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_from'] = array('Von', '
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Bemerkungen', 'Freies Textfeld für Bemerkungen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein in der DFMM oder im Pokal');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck'] = array('Mitgliedschaften geprüft', 'Mitgliedschaften geprüft');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck_date'] = array('Prüfdatum', 'Prüfdatum');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck_info'] = array('Bemerkung', 'Bemerkung');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['alternativ_legend'] = 'Alternative Spielernummern';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['gastNummer'] = array('Gast-Nummer', 'Gast-Nummer');
