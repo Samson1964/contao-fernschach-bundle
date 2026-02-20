@@ -32,7 +32,7 @@ class Mitgliedschaftscheck
 
 		// ===================================================================================
 		// Überprüft alle Spieler auf aktive Mitgliedschaft
-		// Entsprechend wird das feld tl_fernschach_spieler.member auf tru/false gesetzt
+		// Entsprechend wird das feld tl_fernschach_spieler.member auf true/false gesetzt
 		// ===================================================================================
 		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 		                                     ->execute();
@@ -49,14 +49,14 @@ class Mitgliedschaftscheck
 					$set = array
 					(
 						'tstamp'   => time(),
-						'member'   => $mitglied
+						'member'   => $mitglied ? true : false
 					);
 					\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 					                        ->set($set)
 					                        ->execute($objPlayer->id);
-					$feldMember = $mitglied ? 'Mitglied' : 'kein Mitglied';
+					$feldMember = $mitglied ? 'ja (Mitglied)' : 'nein (kein Mitglied)';
 					// Log-Eintrag vornehmen
-					\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] - Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (BdF-Mitgliedsnummer '.$objPlayer->memberId.') Feld member geändert auf '.$feldMember);
+					\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] - Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (BdF-Mitgliedsnummer '.$objPlayer->memberId.') Feld member geändert auf: '.$feldMember);
 				}
 			}
 		}

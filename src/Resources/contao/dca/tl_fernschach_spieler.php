@@ -244,6 +244,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['member'],
 			'filter'                  => true,
+			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
 				'boolean'             => true

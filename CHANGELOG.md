@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.6.2 (2026-02-20)
+
+* Fix: Cron Mitgliedschaftscheck speichert true/false nicht richtig ab -> war aber okay. Problem: das Feld member muß den Inputtyp checkbox haben, um im Filter mit ja/nein angezeigt zu werden.
+
 ## Version 1.6.1 (2026-02-14)
 
 * Add: tl_fernschach_spieler.membercheck mit zwei Optionen für Datum und Info -> Checkbox für geprüfte Mitgliedschaften
