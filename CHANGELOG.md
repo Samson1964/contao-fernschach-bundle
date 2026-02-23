@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.6.3 (2026-02-23)
+
+* Fix: tl_fernschach_spieler.archived -> Archivieren-Checkbox darf nicht aktiviert sein
+
 ## Version 1.6.2 (2026-02-20)
 
 * Fix: Cron Mitgliedschaftscheck speichert true/false nicht richtig ab -> war aber okay. Problem: das Feld member muß den Inputtyp checkbox haben, um im Filter mit ja/nein angezeigt zu werden.

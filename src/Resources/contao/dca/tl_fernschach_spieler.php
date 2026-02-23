@@ -307,7 +307,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['archived'],
 			'exclude'                 => true,
 			'filter'                  => true,
-			'default'                 => 1,
+			'default'                 => false,
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
