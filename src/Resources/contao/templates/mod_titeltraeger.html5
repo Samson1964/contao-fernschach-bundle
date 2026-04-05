@@ -5,15 +5,21 @@
 <?php if($this->daten): ?>
 	<table class="titel">
 		<tr>
-			<th>ID</th>
+			<th>BdF-ID</th>
+			<th>ICCF-ID</th>
 			<th>Name</th>
+			<th>Ort</th>
 			<th>Datum</th>
+			<th>Jahr</th>
 		</tr>
 	<?php foreach($this->daten as $item): ?>
 		<tr>
+			<td><?= $item['bdfid'] ?></td>
 			<td><?= $item['iccfid'] ?></td>
 			<td><?= $item['name'] ?></td>
+			<td><?= $item['ort'] ?></td>
 			<td><?= $item['datum'] ?></td>
+			<td><?= $item['jahr'] ?></td>
 		</tr>
 	<?php endforeach; ?>
 	</table>

@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.7.2 (2026-04-05)
+
+* Fix: Modul Titelträger: Feld Jahr wird nicht ausgeben -> substr mit falschen Parametern
+
 ## Version 1.7.1 (2026-04-05)
 
 * Change: Ausgabe von Titelträgern um einige Felder ergänzt -> Ort, Verstorben-Status, Jahr der Verleihung

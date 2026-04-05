@@ -72,7 +72,7 @@ class Titel extends \Module
 					'ort'        => $objSpieler->ort,
 					'verstorben' => $objSpieler->death,
 					'datum'      => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($objTitel->datum),
-					'jahr'       => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(substr($objTitel->datum, 4)),
+					'jahr'       => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(substr($objTitel->datum, 0, 4)),
 				);
 			}
 		}
