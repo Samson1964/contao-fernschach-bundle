@@ -66,10 +66,13 @@ class Titel extends \Module
 				                                      ->execute($objTitel->pid);
 				$daten[] = array
 				(
-					'bdfid'  => $objSpieler->memberId,
-					'iccfid' => $objSpieler->memberInternationalId,
-					'name'   => $objSpieler->nachname.','.$objSpieler->vorname,
-					'datum'  => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($objTitel->datum),
+					'bdfid'      => $objSpieler->memberId,
+					'iccfid'     => $objSpieler->memberInternationalId,
+					'name'       => $objSpieler->nachname.','.$objSpieler->vorname,
+					'ort'        => $objSpieler->ort,
+					'verstorben' => $objSpieler->death,
+					'datum'      => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($objTitel->datum),
+					'jahr'       => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate(substr($objTitel->datum, 4)),
 				);
 			}
 		}

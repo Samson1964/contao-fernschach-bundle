@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.7.1 (2026-04-05)
+
+* Change: Ausgabe von Titelträgern um einige Felder ergänzt -> Ort, Verstorben-Status, Jahr der Verleihung
+
 ## Version 1.7.0 (2026-04-05)
 
 * Add: tl_fernschach_spieler.qualifikationen -> Qualifikationsbescheinigungen ausstellen/eintragen (Wunsch Kracht)
