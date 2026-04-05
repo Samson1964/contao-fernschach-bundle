@@ -30,3 +30,4 @@ $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_isReset'] = array('Resetb
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_kontostand'] = array('Kontostand anzeigen', 'Kontostand anzeigen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_konten'] = array('Konten auswählen', 'Konten auswählen, die angezeigt werden sollen. Die Reihenfolge der Anzeige können Sie per Drag & Drop einstellen.');
 $GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_hauptkonto'] = array('Hauptkonto ausblenden', 'Hauptkonto ausblenden, wenn der Saldo = 0 ist.');
+$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_titel'] = array('Titel wählen', 'Titel wählen');

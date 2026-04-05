@@ -15,6 +15,7 @@
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,fernschachverwaltung_tournamentRoot,fernschachverwaltung_tournamentText,fernschachverwaltung_bewerbung,fernschachverwaltung_radio,nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular_team'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titel'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_titel;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen_liste'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum,fernschachverwaltung_anzahl;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_kontoauszug'] = '{title_legend},name,headline,type;{fernschachverwaltungKontoauszug_legend},fernschachverwaltung_minBuchungen,fernschachverwaltung_maxBuchungen,fernschachverwaltung_maxDatum,fernschachverwaltung_kontostand,fernschachverwaltung_isReset,fernschachverwaltung_konten,fernschachverwaltung_hauptkonto;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -227,6 +228,22 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_hauptkonto'] = a
 		'boolean'             => true
 	),
 	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_titel'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_module']['fernschachverwaltung_titel'],
+	'exclude'                 => true,
+	'inputType'               => 'select',
+	'options'                 => array('FSGM', 'SIM', 'FSIM', 'CCM', 'CCE', 'LGM', 'LIM', 'NFMG', 'NFMS', 'NFMB', 'NFM', 'NFFM', 'NSFM', 'NMK', 'NJFM', 'GM', 'IM', 'FM', 'CM', 'WGM', 'WIM', 'WFM', 'WCM'),
+	'reference'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'],
+	'eval'                    => array
+	(
+		'tl_class'            => 'long clr',
+		'includeBlankOption'  => true,
+		'chosen'              => true,
+	),
+	'sql'                     => "varchar(4) NOT NULL default ''"
 );
 
 class tl_module_fernschach extends \Backend

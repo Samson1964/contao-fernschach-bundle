@@ -18,22 +18,57 @@ class Helper extends \Backend
 	 *
 	 * @return string
 	 */
+	public static function getQualifikationen($playerRecord)
+	{
+		if(!$playerRecord->published) return false; // Datensatz nicht veröffentlicht
+
+		$qualifikationen = unserialize($playerRecord->qualifikationen); // String umwandeln
+		$return = array();
+
+		if(is_array($qualifikationen))
+		{
+			foreach($qualifikationen as $qualifikation)
+			{
+				if(!$qualifikation['genutzt_fuer'] && !$qualifikation['angemeldet_am'])
+				{
+					$return[] = array
+					(
+						'fuer'          => $qualifikation['fuer'],
+						'im_turnier'    => $qualifikation['im_turnier'],
+						'vom'           => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($qualifikation['vom']),
+						'gueltig_bis'   => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($qualifikation['gueltig_bis']),
+						'genutzt_fuer'  => $qualifikation['genutzt_fuer'],
+						'angemeldet_am' => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($qualifikation['angemeldet_am']),
+					);
+				}
+			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Funktion checkMembership
+	 *
+	 * @param integer $value
+	 *
+	 * @return string
+	 */
 	public static function checkMembership($playerRecord, $heute = false, $published = true)
 	{
 		if(!$published) return false; // Datensatz nicht veröffentlicht
-		
+
 		if(!$heute) $heute = date('Ymd');
 
 		$mitgliedschaften = unserialize($playerRecord->memberships); // String umwandeln
 		//print_r($mitgliedschaften);
 		$return = false;
-		
+
 		// Streichung prüfen
 		if($playerRecord->isDeletion && $playerRecord->streichung <= $heute)
 		{
 			return false;
 		}
-		
+
 		if(is_array($mitgliedschaften))
 		{
 			//print_r($mitgliedschaften);
@@ -274,7 +309,7 @@ class Helper extends \Backend
 		$tag = substr($datum, 0, 2);
 		$monat = substr($datum, 3, 2);
 		$jahr = substr($datum, 6, 4);
-		
+
 		if($monat == '01')
 		{
 			// Monat Januar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
@@ -336,7 +371,7 @@ class Helper extends \Backend
 		$salden = array();
 		if($sitzung) $session = \Contao\Session::getInstance()->getData(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
-		
+
 		// konto-Variable prüfen und ggfs. korrigieren
 		if($konto == 'nenngeld') $konto = '_nenngeld';
 		if($konto == 'beitrag') $konto = '_beitrag';
@@ -518,7 +553,7 @@ class Helper extends \Backend
 			case 'n': $suffix = '_nenngeld'; break;
 			default: $suffix = '';
 		}
-		
+
 		// Alle Buchungen vom ältesten bis zum jüngsten Datensatz sortiert einlesen
 		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." ORDER BY pid ASC, datum ASC, sortierung ASC")
 		                                        ->execute();

@@ -1,0 +1,22 @@
+<?php $this->extend('block_unsearchable'); ?>
+
+<?php $this->block('content'); ?>
+
+<?php if($this->daten): ?>
+	<table class="titel">
+		<tr>
+			<th>ID</th>
+			<th>Name</th>
+			<th>Datum</th>
+		</tr>
+	<?php foreach($this->daten as $item): ?>
+		<tr>
+			<td><?= $item['iccfid'] ?></td>
+			<td><?= $item['name'] ?></td>
+			<td><?= $item['datum'] ?></td>
+		</tr>
+	<?php endforeach; ?>
+	</table>
+<?php endif; ?>
+
+<?php $this->endblock(); ?>

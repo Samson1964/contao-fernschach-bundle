@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.7.0 (2026-04-05)
+
+* Add: tl_fernschach_spieler.qualifikationen -> Qualifikationsbescheinigungen ausstellen/eintragen (Wunsch Kracht)
+* Add: Qualifikationen im Frontend im Meldeformular Spieler anzeigen (Wunsch Kracht)
+* Add: Nationale Titel in tl_fernschach_spieler_titel hinzugefügt
+* Add: tl_module.fernschachverwaltung_titel um eine Liste von Titelträgern auszugeben
+
 ## Version 1.6.3 (2026-02-23)
 
 * Fix: tl_fernschach_spieler.archived -> Archivieren-Checkbox darf nicht aktiviert sein

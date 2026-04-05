@@ -164,7 +164,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_titel'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel'],
 			'inputType'               => 'select',
-			'options'                 => array('FSGM', 'SIM', 'FSIM', 'CCM', 'CCE', 'LGM', 'LIM', 'GM', 'IM', 'FM', 'CM', 'WGM', 'WIM', 'WFM', 'WCM'),
+			'options'                 => array('FSGM', 'SIM', 'FSIM', 'CCM', 'CCE', 'LGM', 'LIM', 'NFMG', 'NFMS', 'NFMB', 'NFM', 'NFFM', 'NSFM', 'NMK', 'NJFM', 'GM', 'IM', 'FM', 'CM', 'WGM', 'WIM', 'WFM', 'WCM'),
 			'reference'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'],
 			'exclude'                 => true,
 			'sorting'                 => true,

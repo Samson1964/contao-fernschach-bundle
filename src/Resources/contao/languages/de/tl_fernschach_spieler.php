@@ -82,6 +82,15 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['spielberechtigungen_datei'] = arra
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['klassenberechtigung'] = array('Klassenberechtigung', 'Aktuelle Klassenberechtigung');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'] = array('Anmeldungen und Bewerbungen', 'Übersicht der Turnieranmeldungen und -bewerbungen absteigend sortiert nach Datum. Es werden max. die 30 letzten Datensätze angezeigt.');
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikationen_legend'] = 'Qualifikationsbescheinigungen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikationen'] = array('Bescheinigungen', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_fuer'] = array('Qualifikation für', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_im_turnier'] = array('im Turnier', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_vom'] = array('vom', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_gueltig_bis'] = array('gültig bis', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_genutzt_fuer'] = array('genutzt für Turnier', '');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['qualifikation_angemeldet_am'] = array('angemeldet am', '');
+
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['iccf_legend'] = 'ICCF-Titel';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['titelinfo'] = array('Titelinfo', 'Enthält die Inhalte der Felder titelhalter und iccftitel aus dem Stammdaten-Import. Für die interne Verwendung und spätere Zuordnung. Dieses Feld entfällt vielleicht in zukünftigen Versionen!');
 

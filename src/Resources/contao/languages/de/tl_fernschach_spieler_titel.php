@@ -38,14 +38,3 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['show'] = array('Titeldetails
  * Buttons für globale Operationen
  */
 $GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['importTitelen'] = array('Import Titelen', 'Globaler Import von neuen Titelen bzw. um alte Titelen zu ergänzen.');
-
-$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'] = array
-(
-	'FSGM' => 'Großmeister (Fernschach)',
-	'SIM'  => 'Internationaler Seniorenmeister (SIM)',
-	'FSIM' => 'Internationaler Meister (Fernschach)',
-	'CCM'  => 'Fernschachmeister (CCM)',
-	'CCE'  => 'Fernschachexperte (CCE)',
-	'LGM'  => 'Großmeisterin (Fernschach)',
-	'LIM'  => 'Internationale Meisterin (Fernschach)',
-);

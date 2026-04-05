@@ -192,6 +192,34 @@ class Meldeformular_Spieler extends \Module
 		}
 		$mitgliedsdaten .= '</ul>';
 
+		// Offene Qualifikationsbescheinigungen des Spielers laden
+		$mitgliedsdaten .= '<h4>Noch nicht genutzte Qualifikationen</h4>';
+		$qualifikationen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getQualifikationen($mitglied);
+		if($qualifikationen)
+		{
+			$mitgliedsdaten .= '<table>';
+			$mitgliedsdaten .= '<tr>';
+			$mitgliedsdaten .= '<th>Qualifikation für</th>';
+			$mitgliedsdaten .= '<th>im Turnier</th>';
+			$mitgliedsdaten .= '<th>vom</th>';
+			$mitgliedsdaten .= '<th>gültig bis</th>';
+			$mitgliedsdaten .= '</tr>';
+			foreach($qualifikationen as $item)
+			{
+				$mitgliedsdaten .= '<tr>';
+				$mitgliedsdaten .= '<td>'.$item['fuer'].'</td>';
+				$mitgliedsdaten .= '<td>'.$item['im_turnier'].'</td>';
+				$mitgliedsdaten .= '<td>'.$item['vom'].'</td>';
+				$mitgliedsdaten .= '<td>'.$item['gueltig_bis'].'</td>';
+				$mitgliedsdaten .= '</tr>';
+			}
+			$mitgliedsdaten .= '</table>';
+		}
+		else
+		{
+			$mitgliedsdaten .= 'Keine offenen Qualifikationen vorhanden.';
+		}
+
 		// Meldungen des Spielers laden
 		$mitgliedsdaten .= '<h4>Letzte 5 Anmeldungen</h4>';
 		$mitgliedsdaten .= '<ul>';

@@ -449,3 +449,30 @@ Die Datei ratinglist.csv sollte folgenden Aufbau haben:
 </table>
 <p style="margin:18px"><b>Achtung! Beim Import werden die vorhandenen Wertungszahlen in der ausgewählten Wertungsliste gelöscht.</b></p>
 ';
+
+$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['titel_options'] = array
+(
+	'FSGM' => 'Großmeister (Fernschach)',
+	'SIM'  => 'Internationaler Seniorenmeister (SIM)',
+	'FSIM' => 'Internationaler Meister (Fernschach)',
+	'CCM'  => 'Fernschachmeister (CCM)',
+	'CCE'  => 'Fernschachexperte (CCE)',
+	'LGM'  => 'Großmeisterin (Fernschach)',
+	'LIM'  => 'Internationale Meisterin (Fernschach)',
+	'NFMG' => 'Nationaler Fernschachmeister (Gold)',
+	'NFMS' => 'Nationaler Fernschachmeister (Silber)',
+	'NFMB' => 'Nationaler Fernschachmeister (Bronze)',
+	'NFM'  => 'Nationaler Fernschachmeister',
+	'NFFM' => 'Nationale Fernschachmeisterin',
+	'NSFM' => 'Nationaler Senioren-Fernschachmeister',
+	'NMK'  => 'Nationaler Fernschachmeisterkandidat',
+	'NJFM' => 'Nationaler Junioren-Fernschachmeister',
+	'GM'   => 'Großmeister (Nahschach)',
+	'IM'   => 'Internationaler Meister (Nahschach)',
+	'FM'   => 'FIDE-Meister (Nahschach)',
+	'CM'   => 'Kandidatenmeister (Nahschach)',
+	'WGM'  => 'Großmeisterin (Nahschach)',
+	'WIM'  => 'Internationale Meisterin (Nahschach)',
+	'WFM'  => 'FIDE-Meisterin (Nahschach)',
+	'WCM'  => 'Kandidatenmeisterin (Nahschach)',
+);
