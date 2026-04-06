@@ -11,7 +11,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 	(
 		'dataContainer'               => 'Table',
 		'enableVersioning'            => true,
-		'ctable'                      => array('tl_fernschach_spieler_konto_beitrag', 'tl_fernschach_spieler_konto_nenngeld'),
+		'ctable'                      => array('tl_fernschach_spieler_mails', 'tl_fernschach_spieler_konto_beitrag', 'tl_fernschach_spieler_konto_nenngeld'),
 		'onload_callback'             => array
 		(
 			array('tl_fernschach_spieler', 'checkPermission'),
@@ -94,6 +94,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'href'                => 'act=edit',
 				'icon'                => 'edit.svg',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateEditButton')
+			),
+			'emailbox' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['emailbox'],
+				'href'                => 'table=tl_fernschach_spieler_mails',
+				'icon'                => 'bundles/contaofernschach/images/email.png',
+				'button_callback'     => array('tl_fernschach_spieler', 'toggleEmail')
 			),
 			'titel_normen' => array
 			(
@@ -2097,7 +2104,6 @@ class tl_fernschach_spieler extends \Backend
 				'label'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_extended'],
 				'options' => array
 				(
-					'1'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_active_members'],
 					'2'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_birthday_failed'],
 					'3'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_iccf_failed'],
 					'4'   => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_mail_failed'],
@@ -2219,21 +2225,6 @@ class tl_fernschach_spieler extends \Backend
 		{
 			switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 			{
-				case '1': // Nur Mitglieder (Aktiver Mitgliedschaftszeitraum)
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
-					                                      ->execute();
-					$arrPlayers = array();
-					if($objPlayers->numRows)
-					{
-						while($objPlayers->next())
-						{
-							// Mitgliedschaften prüfen (memberships)
-							$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers);
-							if($aktiv) $arrPlayers[] = $objPlayers->id;
-						}
-					}
-					break;
-
 				case '2': // Geburtsdatum fehlt
 					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
 					                                      ->execute(0, '');
@@ -2785,6 +2776,24 @@ class tl_fernschach_spieler extends \Backend
 		$ausgabe .= '</div>';
 		return $ausgabe;
 
+	}
+
+	/**
+	 * Funktion toogleEmail (noch ohne Funktion, d.h. gibt nur den Standard-Button zurück)
+	 * ===================================================================
+	 * Gibt den E-Mail-Button zurück, aufgrund der vorhandenen E-Mails des Spielers
+	 * @param array
+	 * @return string
+	 */
+	public function toggleEmail($row, $href, $label, $title, $icon, $attributes)
+	{
+		$this->import('BackendUser', 'User');
+
+		$href .= '&amp;id='.$row['id'];
+
+		$icon = 'bundles/contaofernschach/images/email.png';
+
+		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 	}
 
 }

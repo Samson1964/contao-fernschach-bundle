@@ -245,6 +245,30 @@ class Template
 				);
 				$strContent = preg_replace($suchen, $ersetzen, $strContent);
 			}
+			elseif($do == 'fernschach-spieler' && $table == 'tl_fernschach_spieler_mails')
+			{
+				\System::loadlanguagefile('tl_fernschach_spieler', 'de');
+				\System::loadlanguagefile('tl_fernschach_spieler_mails', 'de');
+				// E-Mails wurden aufgerufen, zur Überschrift den Spielernamen hinzufügen
+				$objMail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE id = ?")
+				                                   ->execute($id);
+				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+				                                      ->execute($objMail->pid);
+				$str = '';
+				if($objSpieler->numRows)
+				{
+					$str = ' <span>Empfänger: '.$objSpieler->vorname.' '.$objSpieler->nachname.'</span>';
+				}
+				$suchen = array
+				(
+					'~\<h1 id=\"main_headline\">(.*?)</h1>~s',
+				);
+				$ersetzen = array
+				(
+					'<h1 id="main_headline">$1'.$str.'</h1>',
+				);
+				$strContent = preg_replace($suchen, $ersetzen, $strContent);
+			}
 		}
 		
 		return $strContent;

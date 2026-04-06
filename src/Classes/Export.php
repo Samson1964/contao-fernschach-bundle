@@ -374,11 +374,6 @@ class Export extends \Backend
 				$exportieren = true;
 				switch($filter)
 				{
-					case '1': // Nur Mitglieder (Aktiver Mitgliedschaftszeitraum)
-						// Mitgliedschaften prüfen (memberships)
-						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);
-						break;
-
 					case '8': // Alle Nichtmitglieder
 						// Nichtmitgliedschaften prüfen (memberships)
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($records);

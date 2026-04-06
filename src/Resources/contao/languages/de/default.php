@@ -17,6 +17,8 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['moveHauptConfirm'] 
 
 // Globale Variablen
 $GLOBALS['TL_LANG']['fernschachverwaltung']['botname'] = 'Fernschach-Bot';
+$GLOBALS['TL_LANG']['fernschachverwaltung']['emailCorrupt'] = 'Die Adresse "%s" enthält ungültige Zeichen!';
+$GLOBALS['TL_LANG']['fernschachverwaltung']['emailSended'] = 'Diese E-Mail wurde bereits gesendet! Um sie noch einmal zu versenden, legen Sie bitte eine Kopie der E-Mail an.';
 
 // Bestätigungen in Popups
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] = 'Wollen Sie die E-Mail-Adressen der aktuellen Spielerliste wirklich in das Serienmail-Newsletter-Archiv importieren?';

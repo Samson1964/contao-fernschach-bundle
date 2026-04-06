@@ -12,12 +12,32 @@
 /**
  * Extend default palette
  */
+$GLOBALS['TL_DCA']['tl_user']['palettes']['admin'] = str_replace('email;', 'email;{fernschachverwaltung_legend:hide},fernschach_signatur;', $GLOBALS['TL_DCA']['tl_user']['palettes']['admin']);
+$GLOBALS['TL_DCA']['tl_user']['palettes']['login'] = str_replace('email;', 'email;{fernschachverwaltung_legend:hide},fernschach_signatur;', $GLOBALS['TL_DCA']['tl_user']['palettes']['login']);
 $GLOBALS['TL_DCA']['tl_user']['palettes']['extend'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_turniere_meldungen,fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['extend']);
 $GLOBALS['TL_DCA']['tl_user']['palettes']['custom'] = str_replace('fop;', 'fop;{fernschach_legend},fernschach_turniere_meldungen,fernschach_spieler,fernschach_konto;', $GLOBALS['TL_DCA']['tl_user']['palettes']['custom']);
+
 
 /**
  * Add fields to tl_user
  */
+$GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_signatur'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_signatur'],
+	'exclude'                 => true,
+	'search'                  => true,
+	'inputType'               => 'textarea',
+	'eval'                    => array
+	(
+		'mandatory'           => false,
+		'rte'                 => 'tinyMCE',
+		'helpwizard'          => true,
+		'tl_class'            => 'long clr',
+	),
+	'explanation'             => 'insertTags',
+	'sql'                     => "mediumtext NULL"
+);
+
 $GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_turniere'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['fernschach_turniere'],
@@ -45,7 +65,7 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_spieler'] = array
 	'options'                 => &$GLOBALS['TL_LANG']['tl_user']['fernschach_spieler_optionen'],
 	'eval'                    => array('multiple'=>true),
 	'sql'                     => "blob NULL"
-); 
+);
 
 $GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_konto'] = array
 (
@@ -55,4 +75,4 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['fernschach_konto'] = array
 	'options'                 => &$GLOBALS['TL_LANG']['tl_user']['fernschach_konto_optionen'],
 	'eval'                    => array('multiple'=>true),
 	'sql'                     => "blob NULL"
-); 
+);

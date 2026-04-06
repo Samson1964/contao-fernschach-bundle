@@ -15,6 +15,9 @@
  * Backend-Modul Übersetzungen
  */
 
+$GLOBALS['TL_LANG']['tl_user']['fernschachverwaltung_legend'] = 'Fernschach-Verwaltung';
+$GLOBALS['TL_LANG']['tl_user']['fernschach_signatur'] = array('E-Mail-Signatur', 'E-Mail-Signatur');
+
 $GLOBALS['TL_LANG']['tl_user']['fernschach_legend'] = 'Fernschach-Verwaltung';
 $GLOBALS['TL_LANG']['tl_user']['fernschach_turniere_meldungen'] = array('Turniermeldungen-Rechte', 'Hier können Sie die Turniermeldungen-Rechte festlegen.');
 $GLOBALS['TL_LANG']['tl_user']['fernschach_spieler'] = array('Spielerrechte', 'Hier können Sie den Zugriff auf die Spieler festlegen.');

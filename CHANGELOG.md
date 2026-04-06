@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.8.0 (2026-04-06)
+
+* Delete: Filter "Aktiver Mitgliedschaftszeitraum", da dies durch den Bot Mitgliedschaftscheck abgedeckt wird
+* Add: tl_fernschach_spieler_mails für die Verwaltung und den Versand von E-Mails an einen Spieler
+* Add: Klasse Mailer für den Versand der in tl_fernschach_spieler_mails gespeicherten E-Mails
+
 ## Version 1.7.3 (2026-04-06)
 
 * Fix: Mitgliedsprüfung um die BdF-Nummer erweitert -> Helper::checkMembership -> Mitglieder sind nur Spieler mit Nummern von 1 bis 89999
