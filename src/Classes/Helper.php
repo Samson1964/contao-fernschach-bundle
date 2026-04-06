@@ -57,6 +57,8 @@ class Helper extends \Backend
 	{
 		if(!$published) return false; // Datensatz nicht veröffentlicht
 
+		if($playerRecord->memberId > 89999) return false; // BdF-Mitglieder haben nur Nummern von 1 bis 89999
+		
 		if(!$heute) $heute = date('Ymd');
 
 		$mitgliedschaften = unserialize($playerRecord->memberships); // String umwandeln

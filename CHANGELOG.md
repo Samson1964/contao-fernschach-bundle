@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.7.3 (2026-04-06)
+
+* Fix: Mitgliedsprüfung um die BdF-Nummer erweitert -> Helper::checkMembership -> Mitglieder sind nur Spieler mit Nummern von 1 bis 89999
+
 ## Version 1.7.2 (2026-04-05)
 
 * Fix: Modul Titelträger: Feld Jahr wird nicht ausgeben -> substr mit falschen Parametern
