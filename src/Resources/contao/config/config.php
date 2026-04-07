@@ -47,6 +47,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 			'tl_fernschach_turniere_spieler',
 			'tl_fernschach_turniere_bewerbungen',
 		),
+		'statistik'           => array('Schachbulle\ContaoFernschachBundle\Classes\Turnierstatistik', 'Statistik'),
 	),
 	'fernschach-turniere-spieler'     => array
 	(

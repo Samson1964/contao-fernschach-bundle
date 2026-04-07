@@ -1,0 +1,67 @@
+<div class="tl_listing_container parent_view">
+
+	<div id="tl_buttons">
+		<a href="contao?do=fernschach-turniere&amp;rt=<?= REQUEST_TOKEN ?>" class="header_back" title="" accesskey="b" onclick="Backend.getScrollOffset()"><?= $GLOBALS['TL_LANG']['MSC']['backBT'] ?></a> 
+	</div>
+
+	<div onmouseout="Theme.hoverDiv(this,0)" onmouseover="Theme.hoverDiv(this,1)" class="tl_header click2edit toggle_select" style="">
+		<table class="tl_header_table" width="100%">
+			<tbody>
+			<tr>
+				<td><span class="tl_label">Turnierstatistik</span> <span style="color:red"><?= $this->Datum ?></span>
+				(<?= $this->ZurueckLink ?>/<?= $this->VorLink ?>)
+				</td>
+				<td>Heute: <b><?= $this->LinkAktuellesJahr ?></b> - <b><?= $this->LinkAktuellerMonat ?></b> - <b><?= $this->LinkAktuellerTag ?></b></td>
+			</tr></tbody>
+		</table>
+	</div>
+
+<?php if($this->Datumsstatistik): ?>
+	<div class="tl_listing_container list_view" id="tl_listing">
+	<h2>Statistik für <?= $this->Datumtext ?></h2><br>
+	<table class="tl_listing showColumns">
+	<tbody>
+		<tr>
+			<th class="tl_folder_tlist" style="width:40%">Kriterium</th>
+			<th class="tl_folder_tlist">Anzahl</th>
+		</tr>
+		<?php foreach ($this->Datumsstatistik as $key => $value): ?>
+			<tr class="click2edit toggle_select hover-row">
+				<td class="tl_file_list"><?= $key ?></td>
+				<td class="tl_file_list" style="white-space: nowrap;"><?= $value ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</tbody>
+	</table>
+	</div>
+<?php else: ?>
+	<div class="tl_listing_container list_view" id="tl_listing">
+		Keine Daten
+	</div>
+<?php endif; ?>
+
+<?php if($this->Gesamtstatistik): ?>
+	<div class="tl_listing_container list_view" id="tl_listing">
+	<h2>Gesamtstatistik (ohne Datumsbeschränkung)</h2><br>
+	<table class="tl_listing showColumns">
+	<tbody>
+		<tr>
+			<th class="tl_folder_tlist" style="width:40%">Kriterium</th>
+			<th class="tl_folder_tlist">Anzahl</th>
+		</tr>
+		<?php foreach ($this->Gesamtstatistik as $key => $value): ?>
+			<tr class="click2edit toggle_select hover-row">
+				<td class="tl_file_list"><?= $key ?></td>
+				<td class="tl_file_list" style="white-space: nowrap;"><?= $value ?></td>
+			</tr>
+		<?php endforeach; ?>
+	</tbody>
+	</table>
+	</div>
+<?php else: ?>
+	<div class="tl_listing_container list_view" id="tl_listing">
+		Keine Daten
+	</div>
+<?php endif; ?>
+
+</div>

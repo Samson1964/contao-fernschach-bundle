@@ -74,6 +74,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['show'] = array('Eintragsdetails a
  * Buttons für globale Operationen
  */
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['importTurniere'] = array('Import Turniere', 'Import von neuen Turnieren bzw. vorhandene Turniere ergänzen.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['statistik'] = array('Statistik', 'Turnierstatistik: Anmeldungen, Turniere u.a.');
 
 
 /**

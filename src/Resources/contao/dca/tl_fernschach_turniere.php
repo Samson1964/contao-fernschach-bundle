@@ -71,6 +71,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'href'                => 'key=importTurniere',
 				'icon'                => 'bundles/contaofernschach/images/import.png'
 			),
+			'statistik' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['statistik'],
+				'href'                => 'key=statistik',
+				'icon'                => 'bundles/contaofernschach/images/chart.png'
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],

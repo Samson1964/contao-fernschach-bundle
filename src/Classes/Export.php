@@ -8,6 +8,8 @@ namespace Schachbulle\ContaoFernschachBundle\Classes;
 class Export extends \Backend
 {
 
+	public $Titeltraeger = array();
+
 	/**
 	 * Import the back end user object
 	 */
@@ -15,6 +17,24 @@ class Export extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+		$this->Titeltraeger = array
+		(
+			'500' => 'FSGM',
+			'501' => 'SIM',
+			'502' => 'FSIM',
+			'503' => 'CCM',
+			'504' => 'CCE',
+			'505' => 'LGM',
+			'506' => 'LIM',
+			'507' => 'NFMG',
+			'508' => 'NFMS',
+			'509' => 'NFMB',
+			'510' => 'NFM',
+			'511' => 'NFFM',
+			'512' => 'NSFM',
+			'513' => 'NMK',
+			'514' => 'NJFM',
+		);
 	}
 
 	/**
@@ -442,6 +462,30 @@ class Export extends \Backend
 					case '424': // Keine Nenngeldzahlungen letzte 24 Monate
 						$monate = $filter - 400;
 						$exportieren = \Schachbulle\ContaoFernschachBundle\Classes\Helper::KeineNenngeldzahlung($records->id, $monate);
+						break;
+
+					case '500': // Alle Titelträger FSGM = Großmeister (Fernschach)
+					case '501': // Alle Titelträger SIM  = Internationaler Seniorenmeister (SIM)
+					case '502': // Alle Titelträger FSIM = Internationaler Meister (Fernschach)
+					case '503': // Alle Titelträger CCM  = Fernschachmeister (CCM)
+					case '504': // Alle Titelträger CCE  = Fernschachexperte (CCE)
+					case '505': // Alle Titelträger LGM  = Großmeisterin (Fernschach)
+					case '506': // Alle Titelträger LIM  = Internationale Meisterin (Fernschach)
+					case '507': // Alle Titelträger NFMG = Nationaler Fernschachmeister (Gold)
+					case '508': // Alle Titelträger NFMS = Nationaler Fernschachmeister (Silber)
+					case '509': // Alle Titelträger NFMB = Nationaler Fernschachmeister (Bronze)
+					case '510': // Alle Titelträger NFM  = Nationaler Fernschachmeister
+					case '511': // Alle Titelträger NFFM = Nationale Fernschachmeisterin
+					case '512': // Alle Titelträger NSFM = Nationaler Senioren-Fernschachmeister
+					case '513': // Alle Titelträger NMK  = Nationaler Fernschachmeisterkandidat
+					case '514': // Alle Titelträger NJFM = Nationaler Junioren-Fernschachmeister
+						$exportieren = false;
+						$objTitel = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ? AND pid = ?")
+						                                    ->execute($this->Titeltraeger[$filter], $records->id);
+						if($objTitel->numRows)
+						{
+							$exportieren = true;
+						}
 						break;
 
 					default:

@@ -495,12 +495,12 @@ class Meldeformular_Spieler extends \Module
 		// Meldefähige Turniere laden
 		if($this->fernschachverwaltung_bewerbung)
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND typ != ? AND published = ? ORDER BY title AND art")
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
 			                                       ->execute($aktuellesDatum, 0, 1, 1, 'm', 1);
 		}
 		else
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND typ != ? AND published = ? ORDER BY title AND art")
+			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
 			                                       ->execute($aktuellesDatum, 0, 1, 'm', 1);
 		}
 

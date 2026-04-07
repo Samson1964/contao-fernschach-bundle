@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.0 (2026-04-08)
+
+* Add: Klasse Turnierstatistik -> Statistik-Seite bei den Turnieren (Wunsch Kracht)
+* Fix: Thematurniere erscheinen z.B. im Anmeldeformular nicht untereinander. Es sollte nicht nur alphabetisch, sondern auch nach Turnierart sortiert werden. Hinweis von Jörg Kracht. -> Syntaxfehler bei der Datenbankabfrage
+* Add: Spezialfilter für die Ausgabe der internationalen und nationalen Titelträger
+
 ## Version 1.8.3 (2026-04-07)
 
 * Fix: backend.css für Mailvorschau ergänzt (aus Lizenz-Bundle)

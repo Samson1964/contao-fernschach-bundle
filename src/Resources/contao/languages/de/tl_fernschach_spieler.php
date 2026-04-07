@@ -331,6 +331,22 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month6'] = 'Kei
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month12'] = 'Keine Nenngeldzahlung letzte 12 Monate';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month24'] = 'Keine Nenngeldzahlung letzte 24 Monate';
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_fsgm'] = 'Großmeister (Fernschach)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_sim'] = 'Internationale Seniorenmeister (SIM)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_fsim'] = 'Internationale Meister (Fernschach)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_ccm'] = 'Fernschachmeister (CCM)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_cce'] = 'Fernschachmeister (CCE)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_lgm'] = 'Großmeisterinnen (Fernschach)';           
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_lim'] = 'Internationale Meisterinnen (Fernschach)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfmg'] ='Nationale Fernschachmeister (Gold)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfms'] ='Nationale Fernschachmeister (Silber)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfmb'] ='Nationale Fernschachmeister (Bronze)';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfm'] = 'Nationale Fernschachmeister';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nffm'] ='Nationale Fernschachmeisterinnen';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nsfm'] ='Nationale Senioren-Fernschachmeister';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nmk'] = 'Nationale Fernschachmeisterkandidat';
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_njfm'] ='Nationale Junioren-Fernschachmeister';
+
 /**
  * Sonstige Übersetzungen
  */

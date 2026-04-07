@@ -536,8 +536,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'search'                  => true,
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
-				'maxlength'           => 255, 
+				'mandatory'           => false,
+				'maxlength'           => 255,
 				'tl_class'            => 'w50 clr'
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
@@ -602,8 +602,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'search'                  => false,
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
-				'maxlength'           => 255, 
+				'mandatory'           => false,
+				'maxlength'           => 255,
 				'tl_class'            => 'w50 clr'
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
@@ -969,7 +969,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 						(
 							'maxlength'           => 10,
 							'style'               => 'width: 200px',
-							'rgxp'                => 'date', 
+							'rgxp'                => 'date',
 							'default'             => NULL,
 							'tl_class'            => 'w50 wizard',
 							'datepicker'          => true
@@ -1781,6 +1781,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 class tl_fernschach_spieler extends \Backend
 {
 
+	public $Titeltraeger = array();
+	
 	/**
 	 * Import the back end user object
 	 */
@@ -1788,6 +1790,24 @@ class tl_fernschach_spieler extends \Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+		$this->Titeltraeger = array
+		(
+			'500' => 'FSGM',
+			'501' => 'SIM',
+			'502' => 'FSIM',
+			'503' => 'CCM',
+			'504' => 'CCE',
+			'505' => 'LGM',
+			'506' => 'LIM',
+			'507' => 'NFMG',
+			'508' => 'NFMS',
+			'509' => 'NFMB',
+			'510' => 'NFM',
+			'511' => 'NFFM',
+			'512' => 'NSFM',
+			'513' => 'NMK',
+			'514' => 'NJFM',
+		);
 	}
 
 	public function getPruefungen()
@@ -1810,7 +1830,7 @@ class tl_fernschach_spieler extends \Backend
 			\Message::addConfirmation($content);
 		}
 	}
-	
+
 	/**
 	 * Prüfe Zugangsrechte für tl_fernschach_spieler
 	 *
@@ -2153,6 +2173,21 @@ class tl_fernschach_spieler extends \Backend
 					'406' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month6'],
 					'412' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month12'],
 					'424' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_no_nenngeld_month24'],
+					'500' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_fsgm'],
+					'501' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_sim'],
+					'502' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_fsim'],
+					'503' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_ccm'],
+					'504' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_cce'],
+					'505' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_lgm'],
+					'506' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_lim'],
+					'507' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfmg'],
+					'508' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfms'],
+					'509' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfmb'],
+					'510' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nfm'],
+					'511' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nffm'],
+					'512' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nsfm'],
+					'513' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nmk'],
+					'514' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_njfm'],
 				)
 			),
 		);
@@ -2385,6 +2420,33 @@ class tl_fernschach_spieler extends \Backend
 							// Mitgliedschaften prüfen (memberships)
 							$aktiv = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objPlayers);
 							if(!$aktiv) $arrPlayers[] = $objPlayers->id;
+						}
+					}
+					break;
+
+				case '500': // Alle Titelträger FSGM = Großmeister (Fernschach)
+				case '501': // Alle Titelträger SIM  = Internationaler Seniorenmeister (SIM)
+				case '502': // Alle Titelträger FSIM = Internationaler Meister (Fernschach)
+				case '503': // Alle Titelträger CCM  = Fernschachmeister (CCM)
+				case '504': // Alle Titelträger CCE  = Fernschachexperte (CCE)
+				case '505': // Alle Titelträger LGM  = Großmeisterin (Fernschach)
+				case '506': // Alle Titelträger LIM  = Internationale Meisterin (Fernschach)
+				case '507': // Alle Titelträger NFMG = Nationaler Fernschachmeister (Gold)
+				case '508': // Alle Titelträger NFMS = Nationaler Fernschachmeister (Silber)
+				case '509': // Alle Titelträger NFMB = Nationaler Fernschachmeister (Bronze)
+				case '510': // Alle Titelträger NFM  = Nationaler Fernschachmeister
+				case '511': // Alle Titelträger NFFM = Nationale Fernschachmeisterin
+				case '512': // Alle Titelträger NSFM = Nationaler Senioren-Fernschachmeister
+				case '513': // Alle Titelträger NMK  = Nationaler Fernschachmeisterkandidat
+				case '514': // Alle Titelträger NJFM = Nationaler Junioren-Fernschachmeister
+					$objTitel = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ?")
+					                                    ->execute($this->Titeltraeger[$session['filter']['tl_fernschach_spielerFilter']['tfs_filter']]);
+					$arrPlayers = array();
+					if($objTitel->numRows)
+					{
+						while($objTitel->next())
+						{
+							$arrPlayers[] = $objTitel->pid;
 						}
 					}
 					break;
@@ -2796,7 +2858,7 @@ class tl_fernschach_spieler extends \Backend
 
 		$icon = 'bundles/contaofernschach/images/email_grau.png';
 		$title .= ' | '.$mail->numRows.' gefunden';
-		
+
 		if($mail->numRows)
 		{
 			$icon = 'bundles/contaofernschach/images/email.png';
