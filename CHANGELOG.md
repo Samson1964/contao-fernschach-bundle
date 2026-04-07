@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.8.3 (2026-04-07)
+
+* Fix: backend.css für Mailvorschau ergänzt (aus Lizenz-Bundle)
+* Add: Token- und Inserttag-Ersetzung in Mailer::getPreview hinzugefügt
+
 ## Version 1.8.2 (2026-04-07)
 
 * Fix: tl_fernschach_spieler_mails -> Icon email_senden.png nicht zu sehen -> hat auf anderes Bundle verwiesen

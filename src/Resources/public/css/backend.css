@@ -143,3 +143,62 @@ table.tl_iccf_tabelle td {
 	font-weight: bold;
 	color: white;
 }
+
+/* E-Mail */
+
+.tl_fernschachverwaltung_send {
+    margin-top: 24px;
+}
+
+.tl_fernschachverwaltung_send .prev_header {
+  border-color: #ccc #ccc -moz-use-text-color;
+  border-image: none;
+  border-style: solid solid none;
+  border-width: 1px 1px 0;
+  margin: 0;
+  width: 100%;
+}
+
+.tl_fernschachverwaltung_send .prev_header .row_0 td {
+    background-color: #f0f0f0;
+    padding: 8px 12px 2px;
+}
+
+.tl_fernschachverwaltung_send .prev_header .row_1 td {
+    background-color: #f0f0f0;
+    padding: 2px 12px;
+}
+
+
+.tl_fernschachverwaltung_send .prev_header .row_2 td {
+    background-color: #f0f0f0;
+    padding: 2px 12px 9px;
+}
+
+.tl_fernschachverwaltung_send .prev_header .col_0 {
+    font-weight: bold;
+    padding-right: 18px;
+    white-space: nowrap;
+    width: 1%;
+}
+
+.tl_fernschachverwaltung_send .preview_html {
+  border-color: #ccc;
+  border-image: none;
+  border-style: solid;
+  border-width: 1px;
+  overflow: auto;
+  padding: 24px 18px;
+}
+
+.tl_preview {
+	border: 1px solid #D4D4D4;
+	border-radius: 5px;
+	padding: 10px;
+	background-color: #F9F9F9;
+	margin: 10px;
+}
+
+.prev_header td {
+	padding: 3px;
+}

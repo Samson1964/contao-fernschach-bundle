@@ -234,6 +234,7 @@ class Mailer extends \Backend
 		                                ->execute($mail_id);
 
 		// Token-Ersetzung
+		$arrTokens = array();
 		//$arrTokens = array
 		//(
 		//	'css'               => $css,
@@ -250,7 +251,7 @@ class Mailer extends \Backend
 		//$content = $tpl->template;
 		$content = $mail->content;
 		$content = \StringUtil::restoreBasicEntities($content); // [nbsp] und Co. ersetzen
-		//$content = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($content, $arrTokens);
+		$content = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($content, $arrTokens);
 
 		// Signatur einfügen, wenn aktiviert
 		if($mail->signatur)
