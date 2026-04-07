@@ -92,7 +92,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['send'],
 				'href'                => 'key=send',
-				'icon'                => 'bundles/contaolizenzverwaltung/images/email_senden.png'
+				'icon'                => 'bundles/contaofernschach/images/email_senden.png'
 			)
 		)
 	),

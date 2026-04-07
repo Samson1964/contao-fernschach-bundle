@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.8.2 (2026-04-07)
+
+* Fix: tl_fernschach_spieler_mails -> Icon email_senden.png nicht zu sehen -> hat auf anderes Bundle verwiesen
+
 ## Version 1.8.1 (2026-04-07)
 
 * Add: Headerdaten in Klasse Mailer ergänzt (To, From, Reply-To, Cc, Subject, Date)
