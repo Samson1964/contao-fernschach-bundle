@@ -16,10 +16,6 @@ class Mailer extends \Backend
 	{
 		$this->import('BackendUser', 'User');
 
-		$css = '<style>
-	* { font-family:Calibri,Verdana,sans-serif,Arial; font-size:16px; }
-</style>';
-
 		// E-Mail-Datensatz einlesen
 		$mail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE id = ?")
 		                                ->execute($dc->id);
@@ -92,12 +88,22 @@ class Mailer extends \Backend
 			$status = $objEmail->sendTo($to);
 			if($status)
 			{
+				$sendezeit = time();
+				// Header
+				$header = '<b>From: '.$GLOBALS['TL_CONFIG']['fernschach_emailVon'].' &lt;'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'&gt;'."\n";
+				$header .= 'To: '.\Input::get('an')."\n";
+				$header .= 'Reply-To: '.$this->User->name.' &lt;'.$this->User->email.'&gt;'."\n";
+				$header .= 'Cc: '.\Input::get('cc')."\n";
+				$header .= 'Bcc: '.\Input::get('bcc')."\n\n";
+				$header .= 'Subject: '.$mail->subject."\n";
+				$header .= 'Date: '.date('d.m.Y H:i:s', $sendezeit)."</b>\n\n";
+
 				// Versanddatum in Datenbank eintragen
 				$set = array
 				(
-					'sent_date'  => time(),
+					'sent_date'  => $sendezeit,
 					'sent_state' => 1,
-					'sent_text'  => $preview
+					'sent_text'  => $header.$preview
 				);
 				$mailstatus = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_mails %s WHERE id = ?")
 				                                      ->set($set)
@@ -139,7 +145,27 @@ class Mailer extends \Backend
 		$strToken = md5(uniqid(mt_rand(), true));
 		$this->Session->set('tl_fernschachverwaltung_send', $strToken);
 
-		return
+		if($mail->sent_state)
+		{
+			// E-Mail wurde bereits versendet, deshalb nur E-Mail-Daten anzeigen
+		$return =
+		'<div id="tl_buttons">
+<a href="'.$this->getReferer(true).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+</div>
+'.\Message::generate().'
+<div class="tl_formbody_edit tl_fernschachverwaltung_send">
+<div class="tl_preview">' .nl2br($mail->sent_text). '</div>
+<div class="tl_formbody_submit">
+<div class="tl_submit_container">
+'.($mail->sent_state ? '<span class="mandatory">'.$GLOBALS['TL_LANG']['fernschachverwaltung']['emailSended'].'</span>' : '<input type="submit" onclick="return confirm(\'Soll die E-Mail wirklich verschickt werden?\')" value="E-Mail versenden" accesskey="s" class="tl_submit" id="send">').'
+</div>
+</div>
+</form>';
+		}
+		else
+		{
+			// E-Mail-Sendeformular anzeigen
+		$return =
 		'<div id="tl_buttons">
 <a href="'.$this->getReferer(true).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
@@ -194,7 +220,10 @@ class Mailer extends \Backend
 </div>
 </div>
 </form>';
+		}
+		
 
+		return $return;
 	}
 
 

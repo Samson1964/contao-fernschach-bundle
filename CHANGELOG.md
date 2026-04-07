@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.8.1 (2026-04-07)
+
+* Add: Headerdaten in Klasse Mailer ergänzt (To, From, Reply-To, Cc, Subject, Date)
+* Add: tl_fernschach_spieler_mails zeigt das Brief-Icon andersfarbig, wenn Mails vorhanden sind
+* Change: tl_fernschach_spieler_mails.signatur_text kein Pflichtfeld mehr um Signatur löschen zu können
+* Change: In Mailer die Speicherung von Bcc in sent_text ergänzt
+
 ## Version 1.8.0 (2026-04-06)
 
 * Delete: Filter "Aktiver Mitgliedschaftszeitraum", da dies durch den Bot Mitgliedschaftscheck abgedeckt wird

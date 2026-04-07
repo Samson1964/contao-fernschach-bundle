@@ -2791,7 +2791,16 @@ class tl_fernschach_spieler extends \Backend
 
 		$href .= '&amp;id='.$row['id'];
 
-		$icon = 'bundles/contaofernschach/images/email.png';
+		$mail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
+		                                ->execute($row['id']);
+
+		$icon = 'bundles/contaofernschach/images/email_grau.png';
+		$title .= ' | '.$mail->numRows.' gefunden';
+		
+		if($mail->numRows)
+		{
+			$icon = 'bundles/contaofernschach/images/email.png';
+		}
 
 		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
 	}

@@ -187,7 +187,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 			),
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
+				'mandatory'           => false, 
 				'rte'                 => 'tinyMCE',
 				'helpwizard'          => true,
 				'tl_class'            => 'long clr',

@@ -162,6 +162,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldChecked'] = array('Geprüf
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['new'] = array('Neuer Spieler', 'Neuen Spieler anlegen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['edit'] = array('Spieler bearbeiten', 'Spieler %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['emailbox'] = array('E-Mails an diesen Spieler', 'E-Mails an den Spieler %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['titel_normen'] = array('Titel des Spielers', 'Titel des Spielers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['copy'] = array('Spieler kopieren', 'Spieler %s kopieren');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'] = array('Spieler löschen', 'Spieler %s löschen');
