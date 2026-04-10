@@ -347,6 +347,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nsfm'] ='Nationale Se
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nmk'] = 'Nationale Fernschachmeisterkandidat';
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_njfm'] ='Nationale Junioren-Fernschachmeister';
 
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_emails'] ='E-Mails vorhanden';
 /**
  * Sonstige Übersetzungen
  */

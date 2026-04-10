@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.2 (2026-04-10)
+
+* Add: Spezialfilter für Vorhandensein von E-Mails -> "E-Mails vorhanden"
+
 ## Version 1.9.1 (2026-04-10)
 
 * Add: tl_fernschach_spieler_mailtemplates um Vorlagen für die E-Mail-Funktion zu verwalten

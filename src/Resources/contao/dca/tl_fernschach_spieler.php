@@ -2188,6 +2188,7 @@ class tl_fernschach_spieler extends \Backend
 					'512' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nsfm'],
 					'513' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_nmk'],
 					'514' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_titel_njfm'],
+					'600' => $GLOBALS['TL_LANG']['tl_fernschach_spieler']['filter_emails'],
 				)
 			),
 		);
@@ -2449,6 +2450,20 @@ class tl_fernschach_spieler extends \Backend
 							$arrPlayers[] = $objTitel->pid;
 						}
 					}
+					break;
+
+				case '600': // Alle Spieler mit E-Mails (unbearbeitet und versendet)
+					$objMails = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails")
+					                                    ->execute();
+					$arrPlayers = array();
+					if($objMails->numRows)
+					{
+						while($objMails->next())
+						{
+							$arrPlayers[] = $objMails->pid;
+						}
+					}
+					$arrPlayers = array_unique($arrPlayers);
 					break;
 
 				default:

@@ -488,6 +488,16 @@ class Export extends \Backend
 						}
 						break;
 
+					case '600': // Alle Spieler mit E-Mails (unbearbeitet und versendet)
+						$exportieren = false;
+						$objMails = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
+						                                    ->execute($records->id);
+						if($objMails->numRows)
+						{
+							$exportieren = true;
+						}
+						break;
+
 					default:
 				}
 				if($exportieren)
