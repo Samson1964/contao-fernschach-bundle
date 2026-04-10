@@ -23,7 +23,31 @@ class Mailer extends \Backend
 		$spieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
 		                                   ->execute($mail->pid);
 
-		$preview = $this->getPreview($dc->id, $mail->pid); // HTML-Vorschau erstellen
+		// Template aus Datenbank laden
+		$template = '';
+		if($mail->template)
+		{
+			$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
+			                                  ->execute($mail->template);
+			if($result->numRows)
+			{
+				$template = $result->template;
+			}
+		}
+		// Signatur einfügen, wenn aktiviert
+		$signatur = '';
+		if($mail->signatur)
+		{
+			if($mail->signatur_text)
+			{
+				$signatur = $mail->signatur_text;
+			}
+			else
+			{
+				$signatur = $this->User->fernschach_signatur;
+			}
+		}
+		$preview = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getPreview($template, $mail->content, $signatur, $spieler);
 
 		// E-Mail versenden
 		if(\Input::get('token') != '' && \Input::get('token') == $this->Session->get('tl_fernschachverwaltung_send'))
@@ -224,50 +248,6 @@ class Mailer extends \Backend
 		
 
 		return $return;
-	}
-
-
-	public function getPreview($mail_id, $spieler_id, $header = false)
-	{
-		// Mail-Datensatz einlesen
-		$mail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE id = ?")
-		                                ->execute($mail_id);
-
-		// Token-Ersetzung
-		$arrTokens = array();
-		//$arrTokens = array
-		//(
-		//	'css'               => $css,
-		//	'lizenz_art'        => $trainer->lizenz,
-		//	'lizenz_nummer'     => $trainer->license_number_dosb,
-		//	'lizenz_title'      => $mail->subject,
-		//	'lizenz_vorname'    => $trainer->vorname,
-		//	'lizenz_nachname'   => $trainer->name,
-		//	'lizenz_geschlecht' => $trainer->geschlecht,
-		//	'lizenz_content'    => $mail->content,
-		//	'lizenz_signatur'   => $mail->signatur ? $GLOBALS['TL_CONFIG']['lizenzverwaltung_mailsignatur'] : '',
-		//);
-        //
-		//$content = $tpl->template;
-		$content = $mail->content;
-		$content = \StringUtil::restoreBasicEntities($content); // [nbsp] und Co. ersetzen
-		$content = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($content, $arrTokens);
-
-		// Signatur einfügen, wenn aktiviert
-		if($mail->signatur)
-		{
-			if($mail->signatur_text)
-			{
-				$content .= $mail->signatur_text;
-			}
-			else
-			{
-				$content .= $this->User->fernschach_signatur;
-			}
-		}
-
-		return $content;
-
 	}
 
 	function validateEmail($email)

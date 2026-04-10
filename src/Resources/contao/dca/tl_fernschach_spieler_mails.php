@@ -47,6 +47,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 		),
 		'global_operations' => array
 		(
+			'templates' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['templates'],
+				'href'                => 'table=tl_fernschach_spieler_mailtemplates',
+				'icon'                => 'bundles/contaofernschach/images/templates.png',
+				'attributes'          => 'onclick="Backend.getScrollOffset();"'
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -101,7 +108,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('signatur'),
-		'default'                     => '{text_legend},subject,content;{signatur_legend:hide},signatur;{mail_legend},copyBenutzer,send'
+		'default'                     => '{preview_legend:hide},preview;{template_legend},template;{text_legend},subject,content;{signatur_legend:hide},signatur;{mail_legend},copyBenutzer,send'
 	),
 
 	// Subpalettes
@@ -126,6 +133,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 		'tstamp' => array
 		(
 			'flag'                    => 11,
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),
+		'template' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['template'],
+			'exclude'                 => true,
+			'inputType'               => 'select',
+			'options_callback'        => array('tl_fernschach_spieler_mails', 'getTemplates'),
+			'eval'                    => array
+			(
+				'tl_class'            => 'long',
+				'includeBlankOption'  => true,
+				'submitOnChange'      => true
+			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
 		'subject' => array
@@ -154,7 +175,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 			'inputType'               => 'textarea',
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
+				'mandatory'           => false, 
 				'rte'                 => 'tinyMCE',
 				'helpwizard'          => true,
 				'tl_class'            => 'long clr',
@@ -194,6 +215,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 			),
 			'explanation'             => 'insertTags',
 			'sql'                     => "mediumtext NULL"
+		),
+		'preview' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['preview'],
+			'input_field_callback'    => array('tl_fernschach_spieler_mails', 'getPreview'),
+			'exclude'                 => false,
 		),
 		'copyBenutzer' => array
 		(
@@ -296,6 +323,70 @@ class tl_fernschach_spieler_mails extends Backend
 		{
 			return $this->User->fernschach_signatur;
 		}
+	}
+
+	public function getTemplates(\DataContainer $dc)
+	{
+
+		// Neue Templates laden
+		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE published = ?")
+		                                  ->execute(1);
+
+		$options = array();
+		while($result->next())
+		{
+			$options[$result->id] = $result->name.($result->description ? ' ('.$result->description.')' : '');
+		}
+		
+		return $options;
+	}
+
+	public function getPreview(\DataContainer $dc)
+	{
+		// Template aus Datenbank laden
+		$template = '';
+		if($dc->activeRecord->template)
+		{
+			$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
+			                                  ->execute($dc->activeRecord->template);
+			if($result->numRows)
+			{
+				$template = $result->template;
+			}
+		}
+
+		// Spielerdatensatz laden
+		$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
+		                                      ->execute($dc->activeRecord->pid);
+		
+		// Vorschau generieren
+		// Signatur einfügen, wenn aktiviert
+		$signatur = '';
+		if($dc->activeRecord->signatur)
+		{
+			if($dc->activeRecord->signatur_text)
+			{
+				$signatur = $dc->activeRecord->signatur_text;
+			}
+			else
+			{
+				$signatur = $this->User->fernschach_signatur;
+			}
+		}
+		$content = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getPreview($template, $dc->activeRecord->content, $signatur, $objSpieler);
+
+		$string = '
+<div class="long clr widget">
+<h3><label>'.$dc->activeRecord->subject.'</label></h3>
+</div>
+<div class="tl_preview">
+	'.$content.'
+</div>
+<div class="long clr widget">
+<p class="tl_help tl_tip" title="">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['preview'][1].'</p>
+</div>';
+
+		return $string;
 	}
 
 }

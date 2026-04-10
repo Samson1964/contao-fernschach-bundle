@@ -16,3 +16,22 @@ $GLOBALS['TL_LANG']['XPL']['fernschach_spieler_bdfnummer'] = array
 	array('600000 bis 699999', '6-stellig beginnend mit 6 = Gastnummer (keine Mitglieder)'),
 	array('900000 bis 999999', '6-stellig beginnend mit 9 = DDR-Spieler (keine Mitglieder)')
 );
+
+$GLOBALS['TL_LANG']['XPL']['fernschach_mailtemplates'] = array
+(
+	array('Inserttags', 'Weitere Informationen zu Inserttags finden Sie unter <a href="https://docs.contao.org/books/manual/current/de/04-inhalte-verwalten/inserttags.html" title="Contao Online-Dokumentation" target="_blank" rel="noreferrer noopener">docs.contao.org/books/manual/current/de/04-inhalte-verwalten/inserttags.html</a>.'),
+	array('', '<b>Verwendbare Platzhalter</b>'),
+	array('##content##', 'Wird mit dem Text der E-Mail ersetzt.'),
+	array('##signatur##', 'Wird mit der Signatur der E-Mail ersetzt.'),
+	array('##spieler_vorname##', 'Vorname des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_nachname##', 'Nachname des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_titel##', 'Titel des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_anrede##', 'Anrede des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_briefanrede##', 'Briefanrede des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_geschlecht##', 'Geschlecht des Spielers (m, w, d), für den die E-Mail bestimmt ist.'),
+	array('##spieler_geburtstag##', 'Geburtstag des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_geburtsort##', 'Geburtsort des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_verstorben##', 'Verstorbenstatus des Spielers (wahr oder falsch), für den die E-Mail bestimmt ist.'),
+	array('##spieler_sterbetag##', 'Sterbedatum des Spielers, für den die E-Mail bestimmt ist.'),
+	array('##spieler_sterbeort##', 'Sterbeort des Spielers, für den die E-Mail bestimmt ist.'),
+);

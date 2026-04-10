@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.1 (2026-04-10)
+
+* Add: tl_fernschach_spieler_mailtemplates um Vorlagen für die E-Mail-Funktion zu verwalten
+* Add: tl_fernschach_spieler_mails.template -> Auswahlfeld für eine Mailvorlage
+* Add: Vorschaufunktion in tl_fernschach_spieler_mails bei der Bearbeitung der E-Mail
+* Add: Helper::getPreview -> generiert eine Vorschau für E-Mails
+* Change: tl_fernschach_spieler_mails.content kein Pflichtfeld mehr
+* Add: Eigene Tokens in der Mailfunktion
+
 ## Version 1.9.0 (2026-04-08)
 
 * Add: Klasse Turnierstatistik -> Statistik-Seite bei den Turnieren (Wunsch Kracht)

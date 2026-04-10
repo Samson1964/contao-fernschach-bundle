@@ -954,4 +954,49 @@ class Helper extends \Backend
 		return $records;
 	}
 
+	/**
+	 * Funktion getPreview
+	 * ===================================================================
+	 * Erstellt eine E-Mail-Vorschau
+	 * @param
+	 * @return    string
+	 */
+	public static function getPreview($template, $content, $signatur, $Spieler)
+	{
+		// Tokens der Art ##name## zuweisen
+		$arrTokens = array
+		(
+			'content'              => $content,
+			'signatur'             => $signatur,
+			'spieler_nachname'     => $Spieler->nachname,
+			'spieler_vorname'      => $Spieler->vorname,
+			'spieler_titel'        => $Spieler->titel,
+			'spieler_anrede'       => $Spieler->anrede,
+			'spieler_briefanrede'  => $Spieler->briefanrede,
+			'spieler_geschlecht'   => $Spieler->sex,
+			'spieler_geburtstag'   => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($Spieler->birthday),
+			'spieler_geburtsort'   => $Spieler->birthplace,
+			'spieler_verstorben'   => $Spieler->death,
+			'spieler_sterbetag'    => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($Spieler->deathday),
+			'spieler_sterbeort'    => $Spieler->deathplace,
+		);
+
+		$ausgabe = '';
+		
+		if($template)
+		{
+			// Template auswerten
+			$ausgabe = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($template, $arrTokens);
+		}
+		else
+		{
+			// Ohne Template 
+			$ausgabe = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($content.$signatur, $arrTokens);
+		}
+
+		$ausgabe = \StringUtil::restoreBasicEntities($ausgabe); // [nbsp] und Co. ersetzen
+		//$ausgabe = nl2br($ausgabe);
+		return $ausgabe;
+	}
+
 }
