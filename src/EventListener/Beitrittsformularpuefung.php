@@ -5,7 +5,7 @@ use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use Contao\Form;
 
 #[AsHook('processFormData')]
-class ProcessFormDataListener
+class Beitrittsformularpuefung
 {
 	public function __invoke(array $submittedData, array $formData, array|null $files, array $labels, Form $form): void
 	{

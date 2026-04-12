@@ -25,10 +25,10 @@
 			<th class="tl_folder_tlist" style="width:40%">Kriterium</th>
 			<th class="tl_folder_tlist">Anzahl</th>
 		</tr>
-		<?php foreach ($this->Datumsstatistik as $key => $value): ?>
+		<?php foreach ($this->Datumsstatistik as $item): ?>
 			<tr class="click2edit toggle_select hover-row">
-				<td class="tl_file_list"><?= $key ?></td>
-				<td class="tl_file_list" style="white-space: nowrap;"><?= $value ?></td>
+				<td class="tl_file_list"><?= $item[0] ?></td>
+				<td class="tl_file_list" style="white-space: nowrap;"><?= $item[1] ?></td>
 			</tr>
 		<?php endforeach; ?>
 	</tbody>
@@ -49,10 +49,10 @@
 			<th class="tl_folder_tlist" style="width:40%">Kriterium</th>
 			<th class="tl_folder_tlist">Anzahl</th>
 		</tr>
-		<?php foreach ($this->Gesamtstatistik as $key => $value): ?>
+		<?php foreach ($this->Gesamtstatistik as $item): ?>
 			<tr class="click2edit toggle_select hover-row">
-				<td class="tl_file_list"><?= $key ?></td>
-				<td class="tl_file_list" style="white-space: nowrap;"><?= $value ?></td>
+				<td class="tl_file_list"><?= $item[0] ?></td>
+				<td class="tl_file_list" style="white-space: nowrap;"><?= $item[1] ?></td>
 			</tr>
 		<?php endforeach; ?>
 	</tbody>

@@ -48,10 +48,13 @@ class Helper extends \Backend
 
 	/**
 	 * Funktion checkMembership
+	 * ==================================================================
+	 * Liefert den Status der BdF-Mitgliedschaft zurück: true oder false
+	 * @param object $playerRecord    Spielerdatensatz
+	 * @param integer $heute          Referenzdatum (optional) in der Form JJJJMMTT (Standard: aktuelles Datum)
+	 * @param boolean $published      Spieler veröffentlicht (optional) true/false (Standard: true)
 	 *
-	 * @param integer $value
-	 *
-	 * @return string
+	 * @return boolean
 	 */
 	public static function checkMembership($playerRecord, $heute = false, $published = true)
 	{

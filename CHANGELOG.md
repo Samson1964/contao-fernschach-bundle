@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.3 (2026-04-12)
+
+* Change: EventListener ProcessFormDataListener umbenannt in Beitrittsformularpuefung
+* Add: Turnierstatistik -> Turniere nach Turniertyp (national, international, ET, MT)
+* Add: Turnierstatistik -> Meldungen nach Turniertyp (national, international, ET, MT)
+* Add: Turnierstatistik -> Bewerbungen nach Turniertyp (national, international, ET, MT)
+* Add: Turnierstatistik -> Anzahl Meldungen von Anzahl BdF-Mitgliedern für alle Turniertypen
+* Add: Turnierstatistik -> Anzahl Bewerbungen von Anzahl BdF-Mitgliedern für alle Turniertypen
+
 ## Version 1.9.2 (2026-04-10)
 
 * Add: Spezialfilter für Vorhandensein von E-Mails -> "E-Mails vorhanden"

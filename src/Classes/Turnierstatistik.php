@@ -121,16 +121,19 @@ class Turnierstatistik
 		{
 			$von = mktime(0, 0, 0, 1, 1, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
 			$bis = mktime(23, 59, 59, 12, 31, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
+			$referenzdatum = $viewJahr.'1231';
 			$datumtext = $viewJahr;
 			if($viewMonat)
 			{
 				$von = mktime(0, 0, 0, $viewMonat, 1, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
 				$bis = mktime(23, 59, 59, $viewMonat, 31, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
+				$referenzdatum = $viewJahr.str_pad($viewMonat, 2, '0', STR_PAD_LEFT).'31';
 				$datumtext = $Monate[$viewMonat].' '.$datumtext;
 				if($viewTag)
 				{
 					$von = mktime(0, 0, 0, $viewMonat, $viewTag, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
 					$bis = mktime(23, 59, 59, $viewMonat, $viewTag, $viewJahr); // Std, Min, Sek, Mon, Tag, Jahr
+					$referenzdatum = $viewJahr.str_pad($viewMonat, 2, '0', STR_PAD_LEFT).str_pad($viewTag, 2, '0', STR_PAD_LEFT);
 					$datumtext = $viewTag.'. '.$datumtext;
 				}
 			}
@@ -144,10 +147,182 @@ class Turnierstatistik
 		$aktTagLink = 'jahr='.$aktJahr.'&monat='.$aktMonat.'&tag='.$aktTag;
 
 		// Datumsstatistik erstellen (für den aktuellen Zeitraum)
+		$objMeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
+		                                        ->execute($von, $bis, 1);
+		$arrMeldungen = array
+		(
+			'count' => array
+			(
+				'all' => 0,
+				'n'   => 0,
+				'i'   => 0,
+				'e'   => 0,
+				'm'   => 0,
+				''    => 0,
+			),
+			'players' => array
+			(
+				'all' => array('meldungen' => 0, 'player' => array()),
+				'n'   => array('meldungen' => 0, 'player' => array()),
+				'i'   => array('meldungen' => 0, 'player' => array()),
+				'e'   => array('meldungen' => 0, 'player' => array()),
+				'm'   => array('meldungen' => 0, 'player' => array()),
+				''    => array('meldungen' => 0, 'player' => array()),
+			),
+		);
+		if($objMeldungen->numRows)
+		{
+			// Veröffentlichte Meldungen für diesen Zeitraum im Detail auswerten
+			while($objMeldungen->next())
+			{
+				// Spielerdatensatz laden
+				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+				                                      ->execute($objMeldungen->spielerId);
+				// Mitgliedsstatus prüfen (hier muß noch das Datum rein)
+				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler, $referenzdatum);
+				// Turnierdatensatz laden
+				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				                                      ->execute($objMeldungen->pid);
+				if($objTurnier->numRows)
+				{
+					$arrMeldungen['count']['all']++;
+					$arrMeldungen['count'][$objTurnier->typ]++;
+					if($mitglied)
+					{
+						if(isset($arrMeldungen['players']['all']['meldungen']))
+						{
+							$arrMeldungen['players']['all']['meldungen']++;
+						}
+						else
+						{
+							$arrMeldungen['players']['all']['meldungen'] = 1;
+						}
+						if(isset($arrMeldungen['players'][$objTurnier->typ]['meldungen']))
+						{
+							$arrMeldungen['players'][$objTurnier->typ]['meldungen']++;
+						}
+						else
+						{
+							$arrMeldungen['players'][$objTurnier->typ]['meldungen'] = 1;
+						}
+						// Meldungen für alle Turniere addieren
+						if(isset($arrMeldungen['players']['all']['player'][$objSpieler->id]))
+						{
+							$arrMeldungen['players']['all']['player'][$objSpieler->id]++;
+						}
+						else
+						{
+							$arrMeldungen['players']['all']['player'][$objSpieler->id] = 1;
+						}
+						if(isset($arrMeldungen['players'][$objTurnier->typ]['player'][$objSpieler->id]))
+						{
+							$arrMeldungen['players'][$objTurnier->typ]['player'][$objSpieler->id]++;
+						}
+						else
+						{
+							$arrMeldungen['players'][$objTurnier->typ]['player'][$objSpieler->id] = 1;
+						}
+					}
+				}
+			}
+		}
 		$meldungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ?")
 		                                     ->execute($von, $bis);
 		$meldungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
 		                                                     ->execute($von, $bis, 1);
+		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
+		                                          ->execute($von, $bis, 1);
+		$arrBewerbungen = array
+		(
+			'count' => array
+			(
+				'all' => 0,
+				'n'   => 0,
+				'i'   => 0,
+				'e'   => 0,
+				'm'   => 0,
+				''    => 0,
+			),
+			'players' => array
+			(
+				'all' => array('meldungen' => 0, 'player' => array()),
+				'n'   => array('meldungen' => 0, 'player' => array()),
+				'i'   => array('meldungen' => 0, 'player' => array()),
+				'e'   => array('meldungen' => 0, 'player' => array()),
+				'm'   => array('meldungen' => 0, 'player' => array()),
+				''    => array('meldungen' => 0, 'player' => array()),
+			),
+		);
+		if($objBewerbungen->numRows)
+		{
+			// Veröffentlichte Meldungen für diesen Zeitraum im Detail auswerten
+			while($objBewerbungen->next())
+			{
+				// Spielerdatensatz laden
+				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+				                                      ->execute($objBewerbungen->spielerId);
+				// Mitgliedsstatus prüfen (hier muß noch das Datum rein)
+				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler, $referenzdatum);
+				// Turnierdatensatz laden
+				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				                                      ->execute($objBewerbungen->pid);
+				if($objTurnier->numRows)
+				{
+					$arrBewerbungen['count']['all']++;
+					$arrBewerbungen['count'][$objTurnier->typ]++;
+					if($mitglied)
+					{
+						if(isset($arrBewerbungen['players']['all']['meldungen']))
+						{
+							$arrBewerbungen['players']['all']['meldungen']++;
+						}
+						else
+						{
+							$arrBewerbungen['players']['all']['meldungen'] = 1;
+						}
+						if(isset($arrBewerbungen['players'][$objTurnier->typ]['meldungen']))
+						{
+							$arrBewerbungen['players'][$objTurnier->typ]['meldungen']++;
+						}
+						else
+						{
+							$arrBewerbungen['players'][$objTurnier->typ]['meldungen'] = 1;
+						}
+						// Bewerbungen für alle Turniere addieren
+						if(isset($arrBewerbungen['players']['all']['player'][$objSpieler->id]))
+						{
+							$arrBewerbungen['players']['all']['player'][$objSpieler->id]++;
+						}
+						else
+						{
+							$arrBewerbungen['players']['all']['player'][$objSpieler->id] = 1;
+						}
+						if(isset($arrBewerbungen['players'][$objTurnier->typ]['player'][$objSpieler->id]))
+						{
+							$arrBewerbungen['players'][$objTurnier->typ]['player'][$objSpieler->id]++;
+						}
+						else
+						{
+							$arrBewerbungen['players'][$objTurnier->typ]['player'][$objSpieler->id] = 1;
+						}
+					}
+				}
+			}
+		}
+
+		if($objBewerbungen->numRows)
+		{
+			// Veröffentlichte Bewerbungen für diesen Zeitraum im Detail auswerten
+			while($objBewerbungen->next())
+			{
+				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				                                      ->execute($objBewerbungen->pid);
+				if($objTurnier->numRows)
+				{
+					$arrBewerbungen['count'][$objTurnier->typ]++;
+				}
+			}
+		}
 		$bewerbungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ?")
 		                                       ->execute($von, $bis);
 		$bewerbungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
@@ -155,16 +330,36 @@ class Turnierstatistik
 
 		$datumsstatistik = array
 		(
-			'<b>Anzahl aller Meldungen</b>' => $meldungen->anzahl,
-			'&raquo; davon veröffentlicht&nbsp;' => $meldungen_veroeffentlicht->anzahl,
-			'<b>Anzahl aller Bewerbungen</b>' => $bewerbungen->anzahl,
-			'&raquo; davon veröffentlicht&nbsp;&nbsp;' => $bewerbungen_veroeffentlicht->anzahl,
+			array('<b>Anzahl aller Meldungen</b>', $meldungen->anzahl),
+			array('&raquo; davon veröffentlicht', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $meldungen_veroeffentlicht->anzahl, count($arrMeldungen['players']['all']['player']), $arrMeldungen['players']['all']['meldungen'])),
+			array('&raquo; &raquo; davon für nationale Turniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $arrMeldungen['count']['n'], count($arrMeldungen['players']['n']['player']), $arrMeldungen['players']['n']['meldungen'])),
+			array('&raquo; &raquo; davon für internationale Turniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $arrMeldungen['count']['i'], count($arrMeldungen['players']['i']['player']), $arrMeldungen['players']['i']['meldungen'])),
+			array('&raquo; &raquo; davon für Einladungsturniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $arrMeldungen['count']['e'], count($arrMeldungen['players']['e']['player']), $arrMeldungen['players']['e']['meldungen'])),
+			array('&raquo; &raquo; davon für Mannschaftsturniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $arrMeldungen['count']['m'], count($arrMeldungen['players']['m']['player']), $arrMeldungen['players']['m']['meldungen'])),
+			array('&raquo; &raquo; davon für unbekannte Turniertypen', sprintf('%s (davon %s BdF-Mitglieder mit %s Meldungen)', $arrMeldungen['count'][''], count($arrMeldungen['players']['']['player']), $arrMeldungen['players']['']['meldungen'])),
+			array('<b>Anzahl aller Bewerbungen</b>', $bewerbungen->anzahl),
+			array('&raquo; davon veröffentlicht', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $bewerbungen_veroeffentlicht->anzahl, count($arrBewerbungen['players']['all']['player']), $arrBewerbungen['players']['all']['meldungen'])),
+			array('&raquo; &raquo; davon für nationale Turniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count']['n'], count($arrBewerbungen['players']['n']['player']), $arrBewerbungen['players']['n']['meldungen'])),
+			array('&raquo; &raquo; davon für internationale Turniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count']['i'], count($arrBewerbungen['players']['i']['player']), $arrBewerbungen['players']['i']['meldungen'])),
+			array('&raquo; &raquo; davon für Einladungsturniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count']['e'], count($arrBewerbungen['players']['e']['player']), $arrBewerbungen['players']['e']['meldungen'])),
+			array('&raquo; &raquo; davon für Mannschaftsturniere', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count']['m'], count($arrBewerbungen['players']['m']['player']), $arrBewerbungen['players']['m']['meldungen'])),
+			array('&raquo; &raquo; davon für unbekannte Turniertypen', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count'][''], count($arrBewerbungen['players']['']['player']), $arrBewerbungen['players']['']['meldungen'])),
 		);
 
 		$turniere = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere")
 		                                    ->execute();
 		$turniere_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ?")
 		                                                    ->execute(1);
+		$turniere_national = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		                                             ->execute(1, 'n');
+		$turniere_international = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		                                                  ->execute(1, 'i');
+		$turniere_einladungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		                                                ->execute(1, 'e');
+		$turniere_mannschaften = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		                                             ->execute(1, 'm');
+		$turniere_sonstige = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		                                             ->execute(1, '');
 		$turniere_meldeschluss = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE registrationDate >= ?")
 		                                                 ->execute(time());
 		$meldungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen")
@@ -178,13 +373,18 @@ class Turnierstatistik
 
 		$gesamtstatistik = array
 		(
-			'<b>Anzahl aller Turniere</b>' => $turniere->anzahl,
-			'&raquo; davon veröffentlicht' => $turniere_veroeffentlicht->anzahl,
-			'&raquo; &raquo; davon mit Meldeschluss in der Zukunft' => $turniere_meldeschluss->anzahl,
-			'<b>Anzahl aller Meldungen</b>' => $meldungen->anzahl,
-			'&raquo; davon veröffentlicht&nbsp;' => $meldungen_veroeffentlicht->anzahl,
-			'<b>Anzahl aller Bewerbungen</b>' => $bewerbungen->anzahl,
-			'&raquo; davon veröffentlicht&nbsp;&nbsp;' => $bewerbungen_veroeffentlicht->anzahl,
+			array('<b>Anzahl aller Turniere</b>', $turniere->anzahl),
+			array('&raquo; davon veröffentlicht', $turniere_veroeffentlicht->anzahl),
+			array('&raquo; &raquo; davon nationale Turniere', $turniere_national->anzahl),
+			array('&raquo; &raquo; davon internationale Turniere', $turniere_international->anzahl),
+			array('&raquo; &raquo; davon Einladungsturniere', $turniere_einladungen->anzahl),
+			array('&raquo; &raquo; davon Mannschaftsturniere', $turniere_mannschaften->anzahl),
+			array('&raquo; &raquo; davon unbekannte Turnierart', $turniere_sonstige->anzahl),
+			array('&raquo; &raquo; davon mit Meldeschluss in der Zukunft', $turniere_meldeschluss->anzahl),
+			array('<b>Anzahl aller Meldungen</b>', $meldungen->anzahl),
+			array('&raquo; davon veröffentlicht', $meldungen_veroeffentlicht->anzahl),
+			array('<b>Anzahl aller Bewerbungen</b>', $bewerbungen->anzahl),
+			array('&raquo; davon veröffentlicht', $bewerbungen_veroeffentlicht->anzahl),
 		);
 
 		$Template->Datumsstatistik = $datumsstatistik;
