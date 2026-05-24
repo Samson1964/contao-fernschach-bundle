@@ -64,7 +64,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_to'] = array('Bis', 'Fo
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membership_status'] = array('Bemerkungen', 'Freies Textfeld für Bemerkungen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['verein'] = array('Verein', 'Verein in der DFMM oder im Pokal');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck'] = array('Mitgliedschaften geprüft', 'Mitgliedschaften geprüft');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck_date'] = array('Prüfdatum', 'Prüfdatum');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck_date'] = array('Prüfdatum', 'Prüfdatum im Format TT.MM.JJJJ, MM.JJJJ oder JJJJ');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['membercheck_info'] = array('Bemerkung', 'Bemerkung');
 
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['alternativ_legend'] = 'Alternative Spielernummern';

@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.4 (2026-05-24)
+
+* Fix: Spieler - Mitgliedschaft geprüft -> Datum wird in einem unzulässigen Format gespeichert
+* Change: tl_fernschach_spieler.membercheck_date Hilfetext und Parameter verbessert
+* Change: tl_fernschach_spieler.birthday -> Datepicker aktiviert
+* Change: tl_fernschach_spieler.deathday -> Datepicker aktiviert
+* Change: tl_fernschach_spieler.streichung -> Datepicker aktiviert
+
 ## Version 1.9.3 (2026-04-12)
 
 * Change: EventListener ProcessFormDataListener umbenannt in Beitrittsformularpuefung

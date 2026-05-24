@@ -404,8 +404,9 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
+				'rgxp'                => 'alnum',
+				'tl_class'            => 'w50 wizard',
+				'datepicker'          => true
 			),
 			'load_callback'           => array
 			(
@@ -465,7 +466,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'eval'                    => array
 			(
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
+				'tl_class'            => 'w50 wizard',
+				'datepicker'          => true,
 				'rgxp'                => 'alnum'
 			),
 			'load_callback'           => array
@@ -764,7 +766,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'mandatory'           => true,
 				'rgxp'                => 'alnum',
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
+				'tl_class'            => 'w50 wizard',
+				'datepicker'          => true
 			),
 			'load_callback'           => array
 			(
@@ -797,12 +800,11 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'filter'                  => true,
 			'search'                  => false,
 			'sorting'                 => false,
-			'flag'                    => 11,
+			//'flag'                    => 11,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
 				'mandatory'           => true,
-				'rgxp'                => 'date',
 				'maxlength'           => 10,
 				'tl_class'            => 'w50 wizard',
 				'datepicker'          => true
