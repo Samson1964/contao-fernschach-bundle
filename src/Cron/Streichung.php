@@ -42,22 +42,26 @@ class Streichung
 					                        ->execute($objPlayer->id);
 					\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') gestrichen, aber ohne Datum &#10142; Streichung deaktiviert');
 				}
-				elseif(!$objPlayer->isDeletion && $objPlayer->streichung > 0)
-				{
-					// =======================================================================
-					// Spieler hat ein Streichdatum, die Streichung wurde aber nicht aktiviert
-					// Streichung deshalb jetzt aktivieren
-					// =======================================================================
-					$set = array
-					(
-						'tstamp'     => time(),
-						'isDeletion' => true,
-					);
-					\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
-					                        ->set($set)
-					                        ->execute($objPlayer->id);
-					\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), wurde aber nicht gestrichen &#10142; Streichung aktiviert');
-				}
+				// ************************************************
+				// Codeblock deaktiviert, weil fälschlicherweise Streichungen aktiviert werden,
+				// obwohl sie manuell ausgeschaltet wurden
+				// ************************************************
+				//elseif(!$objPlayer->isDeletion && $objPlayer->streichung > 0)
+				//{
+				//	// =======================================================================
+				//	// Spieler hat ein Streichdatum, die Streichung wurde aber nicht aktiviert
+				//	// Streichung deshalb jetzt aktivieren
+				//	// =======================================================================
+				//	$set = array
+				//	(
+				//		'tstamp'     => time(),
+				//		'isDeletion' => true,
+				//	);
+				//	\Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				//	                        ->set($set)
+				//	                        ->execute($objPlayer->id);
+				//	\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), wurde aber nicht gestrichen &#10142; Streichung aktiviert');
+				//}
 				elseif($objPlayer->isDeletion && $objPlayer->streichung > 0)
 				{
 					// =======================================================================

@@ -68,12 +68,6 @@ class Helper extends \Backend
 		//print_r($mitgliedschaften);
 		$return = false;
 
-		// Streichung prüfen
-		if($playerRecord->isDeletion && $playerRecord->streichung <= $heute)
-		{
-			return false;
-		}
-
 		if(is_array($mitgliedschaften))
 		{
 			//print_r($mitgliedschaften);
@@ -90,7 +84,7 @@ class Helper extends \Backend
 					{
 						// Mitgliedschaft zum Zeitpunkt von $heute gefunden
 						//echo 'OK '.$heute.'<br>';
-						return true;
+						$return = true;
 					}
 				}
 				elseif($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
@@ -100,12 +94,37 @@ class Helper extends \Backend
 					{
 						// Endedatum nicht gesetzt oder größer aktuellem Tag, also Mitglied
 						//echo 'OK '.$heute.'<br>';
-						return true;
+						$return = true;
 					}
 				}
 			}
 		}
-		//echo 'ERROR '.$heute.'<br>';
+
+		// Verstorben- und Streichung-Prüfung unter Mitgliedschaftsprüfung gesetzt, damit
+		// der Status geloggt werden kann
+		// ==============================================================================
+		// Verstorben prüfen
+		if($playerRecord->death)
+		{
+			if($return)
+			{
+				// Mitgliedschaftszeitraum noch aktiv, aber verstorben = Fehler
+				\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist tot, hat aber eine aktive Mitgliedschaft.');
+			}
+			$return = false; // Spieler ist tot
+		}
+
+		// Streichung prüfen
+		if($playerRecord->isDeletion && $playerRecord->streichung <= $heute)
+		{
+			if($return)
+			{
+				// Mitgliedschaftszeitraum noch aktiv, aber gestrichen = Fehler
+				\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist gestrichen, hat aber eine aktive Mitgliedschaft.');
+			}
+			$return = false;
+		}
+
 		return $return;
 	}
 

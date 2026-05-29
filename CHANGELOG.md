@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.5 (2026-05-29)
+
+* Fix: Streichung-Cron aktiviert fälschlicherweise isDeletion -> Codeblock im Cron Streichung auskommentiert
+* Fix: Verstorben-Checkbox wird bei der Mitgliedschaftsprüfung ignoriert -> Helper::checkMembership geändert
+* Change: Verstorben aktiviert, aber kein Mitgliedschaftsende vorhanden -> Helper::checkMembership schreibt Hinweis in das System-Log
+* Change: Streichung aktiviert (mit Datum), aber kein Mitgliedschaftsende vorhanden -> Helper::checkMembership schreibt Hinweis in das System-Log
+
 ## Version 1.9.4 (2026-05-24)
 
 * Fix: Spieler - Mitgliedschaft geprüft -> Datum wird in einem unzulässigen Format gespeichert
