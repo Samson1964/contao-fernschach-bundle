@@ -76,7 +76,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter'],
 				'icon'                => 'bundles/contaofernschach/images/serienmail.png',
 				'href'                => 'key=setNewsletter',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'all' => array
 			(
@@ -120,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.svg',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 				'button_callback'     => array('tl_fernschach_spieler', 'generateDeleteButton')
 			),
 			'konto' => array

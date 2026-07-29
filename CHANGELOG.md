@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 1.9.6 (2026-07-29)
+
+* Fix: Warning: Undefined array key "deleteConfirm", "initAccounts_confirm", "moveBeitragConfirm", "moveHauptConfirm" u. a. bei contao:migrate -> Lesezugriffe auf $GLOBALS['TL_LANG'] in den DCA-Dateien mit `?? null` bzw. `?? array()` abgesichert, da der DcaLoader die Sprachdateien noch nicht geladen hat
+
 ## Version 1.9.5 (2026-05-29)
 
 * Fix: Streichung-Cron aktiviert fälschlicherweise isDeletion -> Codeblock im Cron Streichung auskommentiert

@@ -89,7 +89,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_beitrag'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.svg',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 				'button_callback'     => array('tl_fernschach_spieler_konto_beitrag', 'generateDeleteButton')
 			),
 			'toggle' => array
@@ -120,14 +120,14 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_beitrag'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveHaupt'],
 				'href'                => 'key=moveBuchung&source=b&target=h',
 				'icon'                => 'bundles/contaofernschach/images/konto_haupt_move.png',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveHauptConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveHauptConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'moveNenngeld' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveNenngeld'],
 				'href'                => 'key=moveBuchung&source=b&target=n',
 				'icon'                => 'bundles/contaofernschach/images/konto_nenngeld_move.png',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveNenngeldConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_beitrag']['moveNenngeldConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 			),
 			'markiertIcon' => array
 			(

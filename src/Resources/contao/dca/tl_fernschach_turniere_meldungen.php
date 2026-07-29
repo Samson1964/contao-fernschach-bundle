@@ -85,7 +85,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'].' '.@$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['deleteConfirm'].'\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).' '.@($GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['deleteConfirm'] ?? null).'\'))return false;Backend.getScrollOffset()"',
 			),
 			'toggle' => array
 			(
