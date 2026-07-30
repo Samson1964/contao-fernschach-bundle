@@ -1,7 +1,15 @@
 {
     "name": "schachbulle/contao-fernschach-bundle",
     "type": "contao-bundle",
-    "description": "Fernschach-Verwaltung für Contao 4",
+    "description": "Verwaltet den Fernschachbetrieb mit Meldeformularen für Einzel- und Mannschaftsturniere, Titeln, Titelnormen und Kontoauszügen.",
+    "keywords": [
+        "contao",
+        "schach",
+        "fernschach",
+        "turnier",
+        "bdf"
+    ],
+    "homepage": "https://github.com/Samson1964/contao-fernschach-bundle",
     "license": "LGPL-3.0-or-later",
     "authors": [
         {
