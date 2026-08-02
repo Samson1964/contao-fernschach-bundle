@@ -2,10 +2,20 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class Statistik
   */
-class Statistik extends \Backend
+class Statistik extends Backend
 {
 
 	function __construct()
@@ -18,19 +28,19 @@ class Statistik extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'statistik')
+		if(Input::get('key') != 'statistik')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
 		// Objekt BackendUser importieren
-		$this->import('BackendUser','User');
+		$this->import(BackendUser::class,'User');
 
 		// Formular wurde abgeschickt, Wortliste importieren
-		if(\Input::post('FORM_SUBMIT') == 'tl_fernschach_mitgliederstatistik')
+		if(Input::post('FORM_SUBMIT') == 'tl_fernschach_mitgliederstatistik')
 		{
-			$statistik = self::getStatistik(\Input::post('stichtag'), \Input::post('altersstruktur')); // Statistik ermitteln
+			$statistik = self::getStatistik(Input::post('stichtag'), Input::post('altersstruktur')); // Statistik ermitteln
 			$recordCount = '';
 
 			//print_r($statistik);
@@ -93,7 +103,7 @@ class Statistik extends \Backend
 			$spreadsheet->getActiveSheet()->getStyle('A1:A1')->applyFromArray($styleArray); // Um Markierung zurückzusetzen
 			$spreadsheet->getActiveSheet()->mergeCells('A1:K1');
 			$spreadsheet->getActiveSheet()->setTitle('Statistik')
-			            ->setCellValue('A1', 'BdF-Mitgliederstatistik Stichtag: '.\Input::post('stichtag'))
+			            ->setCellValue('A1', 'BdF-Mitgliederstatistik Stichtag: '.Input::post('stichtag'))
 			            ->setCellValue('A3', 'Altersbereich')
 			            ->setCellValue('B3', 'Alle')
 			            ->setCellValue('C3', 'Männlich')
@@ -136,7 +146,7 @@ class Statistik extends \Backend
 			$spreadsheet->removeSheetByIndex($sheetIndex);
 
 			// Dateiname festlegen
-			$datum = substr(\Input::post('stichtag'), 6, 4).substr(\Input::post('stichtag'), 3, 2).substr(\Input::post('stichtag'), 0, 2);
+			$datum = substr(Input::post('stichtag'), 6, 4).substr(Input::post('stichtag'), 3, 2).substr(Input::post('stichtag'), 0, 2);
 			$dateiname = 'BdF-Mitgliederstatistik_'.$datum.'_erstellt_am_'.date('Ymd-Hi').'.xls';
 
 			$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
@@ -159,32 +169,41 @@ class Statistik extends \Backend
 
 
 			$dauer = sprintf('%f0.4', microtime(true) - $start);
-			//\System::log('Spielerimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
+			//Scope::log('Spielerimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, ContaoContext::GENERAL);
 
 			// Cookie setzen und zurückkehren zur Adressenliste (key=import aus URL entfernen)
-			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			//$this->redirect(str_replace('&key=statistik', '', \Environment::get('request')));
+			System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			//$this->redirect(str_replace('&key=statistik', '', Environment::get('request')));
 		}
 
 		// Formularfelder generieren
 		$liste = '<select name="altersstruktur">';
-		$objListe = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE published=?")
+		$objListe = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE published=?")
 		                                    ->execute(1);
 		$arrPlayers = array();
 		if($objListe->numRows)
 		{
 			while($objListe->next())
 			{
-				$struktur = unserialize($objListe->ageperiods);
+				// StringUtil::deserialize() kommt mit einem leeren Feld zurecht;
+				// unserialize(null) wäre unter PHP 8.1 eine Verfallswarnung.
+				$struktur = StringUtil::deserialize($objListe->ageperiods, true);
 				$temp = '';
-				if(is_array($struktur))
+
+				// Ohne Altersstufen bleibt der Zusatz hinter dem Titel leer —
+				// bis Version 1.9.6 blieb $titel hier undefiniert.
+				$titel = '';
+
+				foreach($struktur as $item)
 				{
-					foreach($struktur as $item)
-					{
-						$temp .= $item['from'].'-'.$item['to'].', ';
-					}
+					$temp .= $item['from'].'-'.$item['to'].', ';
+				}
+
+				if($temp)
+				{
 					$titel = ' ('.substr($temp, 0, -2).')';
 				}
+
 				$liste .= '<option value="'.$objListe->id.'">'.$objListe->title.$titel.'</option>';
 			}
 		}
@@ -193,21 +212,21 @@ class Statistik extends \Backend
 		// Return form
 		return '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=statistik', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.StringUtil::ampersand(str_replace('&key=statistik', '', Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-'.\Message::generate().'
-<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_fernschach_mitgliederstatistik" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
+'.Message::generate().'
+<form action="'.StringUtil::ampersand(Environment::get('request'), true).'" id="tl_fernschach_mitgliederstatistik" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
 
 <div class="tl_formbody_edit">
 	<input type="hidden" name="FORM_SUBMIT" value="tl_fernschach_mitgliederstatistik">
-	<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">
+	<input type="hidden" name="REQUEST_TOKEN" value="'.Scope::getRequestToken().'">
 
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['headline'].'</h2>
 	<div class="tl_tbox">
 		<div class="widget">
 			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['stichtag'][0].'</h3>
-			<input type="text" name="stichtag" value="'.(\Input::post('stichtag') ? \Input::post('stichtag') : date('d.m.Y')).'">
+			<input type="text" name="stichtag" value="'.(Input::post('stichtag') ? Input::post('stichtag') : date('d.m.Y')).'">
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['stichtag'][1].'</p>
 		</div>
 		<div class="widget">
@@ -227,7 +246,7 @@ class Statistik extends \Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-	<input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start']).'">
+	<input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['start']).'">
 </div>
 
 </div>
@@ -240,12 +259,12 @@ class Statistik extends \Backend
 	public function getStatistik($stichtag, $altersstrukturId)
 	{
 		// Gewünschte Altersstruktur laden
-		$objStruktur = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE id = ?")
+		$objStruktur = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_mitgliederstatistik WHERE id = ?")
 		                                       ->execute($altersstrukturId);
 		$altersstruktur = array();
 		if($objStruktur->numRows)
 		{
-			$altersstruktur = unserialize($objStruktur->ageperiods);
+			$altersstruktur = StringUtil::deserialize($objStruktur->ageperiods, true);
 			// Geschlechter hinzufügen
 			for($x = 0; $x < count($altersstruktur); $x++)
 			{
@@ -266,14 +285,14 @@ class Statistik extends \Backend
 		}
 
 		// Mitgliederdatenbank durchsuchen
-		if(\Input::post('aktiviert'))
+		if(Input::post('aktiviert'))
 		{
-			$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published=?")
+			$objPlayer = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published=?")
 			                                     ->execute(1);
 		}
 		else
 		{
-			$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+			$objPlayer = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 			                                     ->execute();
 		}
 
@@ -289,7 +308,7 @@ class Statistik extends \Backend
 					$alter = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAlter($objPlayer->birthday, $datum);
 					if($alter == 0)
 					{
-						\System::log('BdF-Mitgliederstatistik: '.$objPlayer->nachname.','.$objPlayer->vorname.' ohne Geburtstag -> nicht mitgezählt', __METHOD__, TL_GENERAL);
+						Scope::log('BdF-Mitgliederstatistik: '.$objPlayer->nachname.','.$objPlayer->vorname.' ohne Geburtstag -> nicht mitgezählt', __METHOD__, ContaoContext::GENERAL);
 					}
 					for($x = 0; $x < count($altersstruktur); $x++)
 					{
@@ -306,7 +325,7 @@ class Statistik extends \Backend
 							else
 							{
 								$altersstruktur[$x]['m']++;
-								\System::log('BdF-Mitgliederstatistik: '.$objPlayer->nachname.','.$objPlayer->vorname.' ohne Geschlecht -> als männlich gezählt', __METHOD__, TL_GENERAL);
+								Scope::log('BdF-Mitgliederstatistik: '.$objPlayer->nachname.','.$objPlayer->vorname.' ohne Geschlecht -> als männlich gezählt', __METHOD__, ContaoContext::GENERAL);
 							}
 							$altersstruktur[$x]['alle']++;
 						}

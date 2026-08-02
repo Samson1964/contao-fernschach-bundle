@@ -2,10 +2,14 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes\Accounts;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Input;
+
 /**
  * Class Init
   */
-class Init extends \Backend
+class Init extends Backend
 {
 
 	function __construct()
@@ -18,14 +22,14 @@ class Init extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'initAccounts')
+		if(Input::get('key') != 'initAccounts')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
 		// Objekt BackendUser importieren
-		$this->import('BackendUser','User');
+		$this->import(BackendUser::class,'User');
 
 	}
 

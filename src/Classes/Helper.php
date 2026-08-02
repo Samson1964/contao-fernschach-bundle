@@ -2,7 +2,15 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
-class Helper extends \Backend
+use Contao\Backend;
+use Contao\Config;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Image;
+use Contao\StringUtil;
+use Contao\System;
+
+class Helper extends Backend
 {
 
 	var $spieler = array();
@@ -22,7 +30,7 @@ class Helper extends \Backend
 	{
 		if(!$playerRecord->published) return false; // Datensatz nicht veröffentlicht
 
-		$qualifikationen = unserialize($playerRecord->qualifikationen); // String umwandeln
+		$qualifikationen = StringUtil::deserialize($playerRecord->qualifikationen); // String umwandeln
 		$return = array();
 
 		if(is_array($qualifikationen))
@@ -64,7 +72,7 @@ class Helper extends \Backend
 		
 		if(!$heute) $heute = date('Ymd');
 
-		$mitgliedschaften = unserialize($playerRecord->memberships); // String umwandeln
+		$mitgliedschaften = StringUtil::deserialize($playerRecord->memberships); // String umwandeln
 		//print_r($mitgliedschaften);
 		$return = false;
 
@@ -109,7 +117,7 @@ class Helper extends \Backend
 			if($return)
 			{
 				// Mitgliedschaftszeitraum noch aktiv, aber verstorben = Fehler
-				\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist tot, hat aber eine aktive Mitgliedschaft.');
+				System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist tot, hat aber eine aktive Mitgliedschaft.');
 			}
 			$return = false; // Spieler ist tot
 		}
@@ -120,7 +128,7 @@ class Helper extends \Backend
 			if($return)
 			{
 				// Mitgliedschaftszeitraum noch aktiv, aber gestrichen = Fehler
-				\System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist gestrichen, hat aber eine aktive Mitgliedschaft.');
+				System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$playerRecord->nachname.','.$playerRecord->vorname.' (ID '.$playerRecord->id.') ist gestrichen, hat aber eine aktive Mitgliedschaft.');
 			}
 			$return = false;
 		}
@@ -154,7 +162,7 @@ class Helper extends \Backend
 				return 0;
 			}
 		}
-		catch(Exception $e)
+		catch(\Exception $e)
 		{
 			return 0;
 		}
@@ -172,7 +180,7 @@ class Helper extends \Backend
 	public static function searchMembership($value, $datum)
 	{
 		$heute = date('Ymd');
-		$mitgliedschaften = unserialize($value); // String umwandeln
+		$mitgliedschaften = StringUtil::deserialize($value); // String umwandeln
 		if(is_array($mitgliedschaften))
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
@@ -203,7 +211,7 @@ class Helper extends \Backend
 	 */
 	public static function isMemberBegin($value, $jahr)
 	{
-		$mitgliedschaften = unserialize($value); // String umwandeln
+		$mitgliedschaften = StringUtil::deserialize($value); // String umwandeln
 
 		// Mitgliedschaft in diesem Jahr suchen
 		if(is_array($mitgliedschaften))
@@ -234,7 +242,7 @@ class Helper extends \Backend
 	{
 		$startdatum = strtotime('-'.$monate.' months');
 
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND typ = ? AND datum >= ? AND published = ?")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND typ = ? AND datum >= ? AND published = ?")
 		                                        ->execute($spieler, 'h', $startdatum, 1);
 		if($objBuchungen->numRows == 0)
 		{
@@ -261,7 +269,7 @@ class Helper extends \Backend
 		$to = 0; // Bis-Datum speichern
 		$datum_gefunden = false; // Speichert true, wenn das gesuchte $datum gefunden wurde
 
-		$mitgliedschaften = unserialize($value); // String umwandeln
+		$mitgliedschaften = StringUtil::deserialize($value); // String umwandeln
 		if(is_array($mitgliedschaften))
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
@@ -294,7 +302,7 @@ class Helper extends \Backend
 	public static function Mitgliedschaft($value, $typ)
 	{
 		$heute = date('Ymd');
-		$mitgliedschaften = unserialize($value); // String umwandeln
+		$mitgliedschaften = StringUtil::deserialize($value); // String umwandeln
 		$return = false;
 		$beginn = 0;
 		$ende = 0;
@@ -346,7 +354,7 @@ class Helper extends \Backend
 		}
 
 		// Buchungen des Spielers laden
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE pid=? AND published=? ORDER BY datum ASC, sortierung ASC")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE pid=? AND published=? ORDER BY datum ASC, sortierung ASC")
 		                                        ->execute($id, 1);
 
 		$saldo = 0;
@@ -393,7 +401,7 @@ class Helper extends \Backend
 	public static function getSaldo($pid, $konto = '', $datum = false, $sitzung = true)
 	{
 		$salden = array();
-		if($sitzung) $session = \Contao\Session::getInstance()->getData(); // Sitzung laden
+		if($sitzung) $session = Scope::getBackendSession(); // Sitzung laden
 		$sql = ''; // SQL-String Filter und Suche initialisieren
 
 		// konto-Variable prüfen und ggfs. korrigieren
@@ -434,7 +442,7 @@ class Helper extends \Backend
 		}
 
 		// Buchungen des Spielers laden
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$konto." WHERE pid=? AND published=?".$sql.' ORDER BY datum ASC, sortierung ASC')
 		                                        ->execute($pid, 1);
 
 		// Datum umwandeln
@@ -510,17 +518,17 @@ class Helper extends \Backend
 	 * Überprüft tl_fernschach_spieler_konto_nenngeld auf die Gültigkeit der globalen Resetbuchung
 	 * Überprüft tl_fernschach_spieler_konto_beitrag auf die Gültigkeit der globalen Resetbuchung
 	 */
-	public function updateResetbuchungen(\DataContainer $dc)
+	public function updateResetbuchungen(DataContainer $dc)
 	{
-		$update = (int)$GLOBALS['TL_CONFIG']['fernschach_resetUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_resetUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
+		$update = (int)Config::get('fernschach_resetUpdate') + Config::get('fernschach_resetUpdate_time'); // Letztes Updatedatum + eingestellter Rhythmus
 
 		// Aktualisierung notwendig
 		if($update < time())
 		{
 			// Buchungen prüfen
-			if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+			if(Config::get('fernschach_resetActive'))
 			{
-				$resetRecords = (array)unserialize($GLOBALS['TL_CONFIG']['fernschach_resetRecords']); // Reset-Datensätze einlesen
+				$resetRecords = StringUtil::deserialize(Config::get('fernschach_resetRecords'), true); // Reset-Datensätze einlesen
 
 				// Alle Reset-Datensätze auswerten
 				foreach($resetRecords as $resetRecord)
@@ -543,11 +551,11 @@ class Helper extends \Backend
 			else
 			{
 				// Globaler Reset-Datensatz ist nicht aktiviert, deshalb alle Reset-Buchungen löschen
-				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE resetRecord != ?")
+				$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE resetRecord != ?")
 				                                       ->execute('');
-				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE resetRecord != ?")
+				$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE resetRecord != ?")
 				                                       ->execute('');
-				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_beitrag WHERE resetRecord != ?")
+				$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_beitrag WHERE resetRecord != ?")
 				                                       ->execute('');
 			}
 
@@ -579,7 +587,7 @@ class Helper extends \Backend
 		}
 
 		// Alle Buchungen vom ältesten bis zum jüngsten Datensatz sortiert einlesen
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." ORDER BY pid ASC, datum ASC, sortierung ASC")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." ORDER BY pid ASC, datum ASC, sortierung ASC")
 		                                        ->execute();
 		if($objBuchungen->numRows)
 		{
@@ -602,16 +610,16 @@ class Helper extends \Backend
 					if($resetDatensaetze == 1 && !$juengereBuchungen && !$aeltereBuchungen)
 					{
 						// Reset-Datensatz löschen, da keine Buchungen davor oder danach existieren
-						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
+						$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
 						                                       ->execute($objBuchungen->id);
-						$this->createNewVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
+						Scope::createVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
 					}
 					elseif($resetDatensaetze > 1)
 					{
 						// Überflüssigen Reset-Datensatz löschen
-						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
+						$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
 						                                       ->execute($objBuchungen->id);
-						$this->createNewVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
+						Scope::createVersion('tl_fernschach_spieler_konto'.$suffix, $objBuchungen->id);
 					}
 				}
 				else
@@ -633,7 +641,7 @@ class Helper extends \Backend
 							'typ'              => $typ,
 							'verwendungszweck' => 'Saldo global neu gesetzt',
 						);
-						$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$suffix." %s")
+						$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$suffix." %s")
 						                                     ->set($set)
 						                                     ->execute();
 						$resetDatensaetze++;
@@ -657,14 +665,14 @@ class Helper extends \Backend
 		$resetDatensaetze = 0; // Zähler, um festzustellen wieviel Reset-Datensätze existieren. Erlaubt ist max. 1
 
 		// Reset-Datensatz-Werte setzen
-		if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+		if(Config::get('fernschach_resetActive'))
 		{
-			$typGlobal = $GLOBALS['TL_CONFIG']['fernschach_resetSaldo'] < 0 ? 's' : 'h';
-			$betragGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetSaldo']);
-			$datumGlobal = abs($GLOBALS['TL_CONFIG']['fernschach_resetDate']);
+			$typGlobal = Config::get('fernschach_resetSaldo') < 0 ? 's' : 'h';
+			$betragGlobal = abs(Config::get('fernschach_resetSaldo'));
+			$datumGlobal = abs(Config::get('fernschach_resetDate'));
 
 			// Reset-Buchungen suchen
-			$objResets = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? AND resetRecord = ?")
+			$objResets = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? AND resetRecord = ?")
 			                                     ->execute($id, 1);
 			if($objResets->numRows)
 			{
@@ -682,25 +690,25 @@ class Helper extends \Backend
 							'datum'            => $datumGlobal,
 							'typ'              => $typGlobal,
 						);
-						$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+						$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
 						                                     ->set($set)
 						                                     ->execute($objResets->id);
-						$this->createNewVersion('tl_fernschach_spieler_konto', $objResets->id);
+						Scope::createVersion('tl_fernschach_spieler_konto', $objResets->id);
 						$resetDatensaetze++;
 					}
 					elseif($resetDatensaetze > 1)
 					{
 						// Überflüssige Reset-Buchung löschen
-						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
+						$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objResets->id);
-						$this->createNewVersion('tl_fernschach_spieler_konto', $objResets->id);
+						Scope::createVersion('tl_fernschach_spieler_konto', $objResets->id);
 					}
 				}
 			}
 		}
 
 		// Alle Buchungen des Spielers vom ältesten bis zum jüngsten Datensatz sortiert einlesen
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? ORDER BY datum ASC, sortierung ASC")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? ORDER BY datum ASC, sortierung ASC")
 		                                        ->execute($playerId);
 		if($objBuchungen->numRows)
 		{
@@ -710,15 +718,15 @@ class Helper extends \Backend
 				if($objBuchungen->resetRecord && !$BuchungenJuenger && !$BuchungenAelter)
 				{
 					// Reset-Datensatz hier unnötig, da es keine jüngeren oder älteren Buchungen gibt -> also löschen
-					$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
+					$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 					                                       ->execute($objBuchungen->id);
-					$this->createNewVersion('tl_fernschach_spieler', $objBuchungen->id);
+					Scope::createVersion('tl_fernschach_spieler', $objBuchungen->id);
 				}
 				elseif($objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter)
 				{
 					$resetDatensaetze++;
 					// Reset-Datensatz gefunden, und es gibt jüngeren oder älteren Buchungen -> also aktualisieren/löschen
-					if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+					if(Config::get('fernschach_resetActive'))
 					{
 						if($datumGlobal != $objBuchungen->datum || $betragGlobal != $objBuchungen->betrag || $typGlobal != $objBuchungen->typ)
 						{
@@ -730,21 +738,21 @@ class Helper extends \Backend
 								'datum'            => $datumGlobal,
 								'typ'              => $typGlobal,
 							);
-							$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
+							$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto %s WHERE id = ?")
 							                                     ->set($set)
 							                                     ->execute($objBuchungen->id);
-							$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
+							Scope::createVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 						}
 					}
 					else
 					{
 						// Reset-Datensatz löschen, da unerwünscht
-						$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
+						$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto WHERE id = ?")
 						                                       ->execute($objBuchungen->id);
-						$this->createNewVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
+						Scope::createVersion('tl_fernschach_spieler_konto', $objBuchungen->id);
 					}
 				}
-				elseif(!$objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter && !$resetDatensaetze && $GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+				elseif(!$objBuchungen->resetRecord && $BuchungenJuenger && $BuchungenAelter && !$resetDatensaetze && Config::get('fernschach_resetActive'))
 				{
 					// Reset-Buchung anlegen
 					$set = array
@@ -758,7 +766,7 @@ class Helper extends \Backend
 						'typ'              => $typGlobal,
 						'verwendungszweck' => 'Saldo global neu gesetzt',
 					);
-					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
+					$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto %s")
 					                                     ->set($set)
 					                                     ->execute();
 					$resetDatensaetze++;
@@ -766,7 +774,7 @@ class Helper extends \Backend
 				elseif(!$objBuchungen->resetRecord)
 				{
 					// Normaler Datensatz, Buchungsdatum vergleichen mit Resetdatum
-					if($GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+					if(Config::get('fernschach_resetActive'))
 					{
 						if($datumGlobal > $objBuchungen->datum) $BuchungenAelter = true;
 						if($datumGlobal < $objBuchungen->datum) $BuchungenJuenger = true;
@@ -792,7 +800,7 @@ class Helper extends \Backend
 		// Spielerdaten laden, wenn noch nicht geschehen
 		if(!$spieler);
 		{
-			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler ORDER BY nachname ASC, vorname ASC")
+			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler ORDER BY nachname ASC, vorname ASC")
 			                                      ->execute();
 
 			$spieler = array();
@@ -842,7 +850,7 @@ class Helper extends \Backend
 		if($id)
 		{
 			// Suche anhand ID
-			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
 			                                      ->execute($id);
 			return $objSpieler;
 		}
@@ -850,7 +858,7 @@ class Helper extends \Backend
 		if($member)
 		{
 			// Suche anhand Mitgliedsnummer
-			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
 			                                      ->limit(1)
 			                                      ->execute($member);
 			return $objSpieler;
@@ -870,7 +878,7 @@ class Helper extends \Backend
 
 		if(!$spieler);
 		{
-			$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen ORDER BY nachname ASC, vorname ASC")
+			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen ORDER BY nachname ASC, vorname ASC")
 			                                      ->execute();
 
 			$spieler = array();
@@ -895,7 +903,7 @@ class Helper extends \Backend
 		if($id)
 		{
 			// Suche anhand ID
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 			return $objTurnier;
 		}
@@ -909,21 +917,15 @@ class Helper extends \Backend
 	 */
 	public static function getAnmeldungenBewerbungen($id)
 	{
-		// Link-Prefixe generieren, ab C4 ist das ein symbolischer Link zu "contao"
-		if(version_compare(VERSION, '4.0', '>='))
-		{
-			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
-			$imageEdit = \Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
-		}
-		else
-		{
-			$linkprefix = 'contao/main.php';
-			$imageEdit = \Image::getHtml('edit.gif', 'Bewerbung des Mitglieds bearbeiten');
-		}
+		// Der Backend-Einstieg heißt seit Contao 4 "contao" und wird über den
+		// Router ermittelt. Die frühere Fallunterscheidung über die Konstante
+		// VERSION ist entfallen — es gibt sie in Contao 5 nicht mehr.
+		$linkprefix = System::getContainer()->get('router')->generate('contao_backend');
+		$imageEdit = Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
 
-		$objAnmeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
+		$objAnmeldungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
 		                                          ->execute($id);
-		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
+		$objBewerbungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
 		                                          ->execute($id);
 
 		// Datensätze zusammenfassen
@@ -940,7 +942,7 @@ class Helper extends \Backend
 					'turnier'    => $objTurnier ? $objTurnier->title : '',
 					'status'     => 0,
 					'id'         => $objAnmeldungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
 				);
 			}
 		}
@@ -956,7 +958,7 @@ class Helper extends \Backend
 					'turnier'    => $objTurnier ? $objTurnier->title : '',
 					'status'     => 0,
 					'id'         => $objBewerbungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
 				);
 			}
 		}
@@ -1004,19 +1006,19 @@ class Helper extends \Backend
 		);
 
 		$ausgabe = '';
-		
+
 		if($template)
 		{
 			// Template auswerten
-			$ausgabe = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($template, $arrTokens);
+			$ausgabe = Tokens::replace($template, $arrTokens);
 		}
 		else
 		{
-			// Ohne Template 
-			$ausgabe = \Haste\Util\StringUtil::recursiveReplaceTokensAndTags($content.$signatur, $arrTokens);
+			// Ohne Template
+			$ausgabe = Tokens::replace($content.$signatur, $arrTokens);
 		}
 
-		$ausgabe = \StringUtil::restoreBasicEntities($ausgabe); // [nbsp] und Co. ersetzen
+		$ausgabe = StringUtil::restoreBasicEntities($ausgabe); // [nbsp] und Co. ersetzen
 		//$ausgabe = nl2br($ausgabe);
 		return $ausgabe;
 	}

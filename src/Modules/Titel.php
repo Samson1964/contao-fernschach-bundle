@@ -13,7 +13,12 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class Titel extends \Module
+use Contao\BackendTemplate;
+use Contao\Database;
+use Contao\Module;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class Titel extends Module
 {
 
 	/**
@@ -28,9 +33,9 @@ class Titel extends \Module
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
+		if (Scope::isBackendRequest())
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			$objTemplate = new BackendTemplate('be_wildcard');
 
 			$objTemplate->wildcard = '### FERNSCHACH-VERWALTUNG - LISTE TITELTRÄGER ###';
 			$objTemplate->title = $this->name;
@@ -49,7 +54,7 @@ class Titel extends \Module
 	{
 
 		// Gewünschten Titel laden
-		$objTitel = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ? ORDER BY datum DESC')
+		$objTitel = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ? ORDER BY datum DESC')
 		                                    ->execute($this->fernschachverwaltung_titel);
 
 		$daten = array();
@@ -62,7 +67,7 @@ class Titel extends \Module
 			while($objTitel->next())
 			{
 				// Gewünschten Titel laden
-				$objSpieler = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
+				$objSpieler = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
 				                                      ->execute($objTitel->pid);
 				$daten[] = array
 				(

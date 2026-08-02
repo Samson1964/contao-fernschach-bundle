@@ -2,10 +2,23 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Controller;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Database;
+use Contao\DropZone;
+use Contao\Environment;
+use Contao\File;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class Import
   */
-class ImportSpieler extends \Backend
+class ImportSpieler extends Backend
 {
 
 	function __construct()
@@ -18,48 +31,51 @@ class ImportSpieler extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'importSpieler')
+		if(Input::get('key') != 'importSpieler')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
 		// Objekt BackendUser importieren
-		$this->import('BackendUser','User');
+		$this->import(BackendUser::class,'User');
 		$class = $this->User->uploader;
 
-		// See #4086
-		if (!class_exists($class))
+		// Contao merkt sich am Benutzer, welchen Datei-Uploader er benutzt. Dort
+		// steht ein Klassenname ohne Namensraum ("DropZone"), den es als
+		// globalen Alias nur bis Contao 4.13 gab. Fällt die Prüfung deshalb
+		// negativ aus, greift derselbe Standard wie im Contao-Kern.
+		if (!$class || !class_exists($class))
 		{
-			$class = 'FileUpload';
+			$class = DropZone::class;
 		}
 
 		$objUploader = new $class();
 
 		// Formular wurde abgeschickt, Wortliste importieren
-		if (\Input::post('FORM_SUBMIT') == 'tl_fernschach_import_spieler')
+		if (Input::post('FORM_SUBMIT') == 'tl_fernschach_import_spieler')
 		{
 			$arrUploaded = $objUploader->uploadTo('system/tmp');
 
 			if(empty($arrUploaded))
 			{
-				\Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
+				Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
 				$this->reload();
 			}
 
-			$this->import('Database');
+			$this->import(Database::class);
 
 			foreach ($arrUploaded as $txtFile)
 			{
-				$objFile = new \File($txtFile, true);
+				$objFile = new File($txtFile, true);
 
 				if ($objFile->extension != 'csv')
 				{
-					\Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
+					Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
 					continue;
 				}
 
-				log_message('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
+				Scope::logToFile('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
 				$resFile = $objFile->handle;
 				$record_count = 0;
 				$neu_count = 0;
@@ -75,11 +91,11 @@ class ImportSpieler extends \Backend
 					{
 						// Kopfzeile auslesen
 						$kopf = $spalte;
-						log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+						Scope::logToFile('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 					}
 					else
 					{
-						log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+						Scope::logToFile('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 						// Datensatz auslesen
 						$set = array();
 						$mitgliedsdaten = array();
@@ -228,7 +244,7 @@ class ImportSpieler extends \Backend
 						if($set['memberId'])
 						{
 							// Nach Mitgliedsnummer suchen
-							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
+							$objResult = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberId = ?")
 							                                     ->limit(1)
 							                                     ->execute($set['memberId']);
 							
@@ -238,7 +254,7 @@ class ImportSpieler extends \Backend
 								// Zuvor die Mitgliedschaften ergänzen bzw. überschreiben
 								if($mitgliedsdaten)
 								{
-									$mitgliedsdaten_alt = unserialize($objResult->memberships);
+									$mitgliedsdaten_alt = StringUtil::deserialize($objResult->memberships);
 									if($mitgliedsdaten_alt)
 									{
 										// Neue Mitgliedsdaten hinzufügen und doppelte Einträge löschen
@@ -264,12 +280,12 @@ class ImportSpieler extends \Backend
 								unset($set['titelhalter']);
 								unset($set['iccftitel']);
 
-								log_message('Set-Array Update:','fernschach-verwaltung.log');
-								log_message(print_r($set,true),'fernschach-verwaltung.log');
-								$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id = ?")
+								Scope::logToFile('Set-Array Update:','fernschach-verwaltung.log');
+								Scope::logToFile(print_r($set,true),'fernschach-verwaltung.log');
+								$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id = ?")
 								                                     ->set($set)
 								                                     ->execute($objResult->id);
-								\Controller::createNewVersion('tl_fernschach_spieler', $objResult->id);
+								Scope::createVersion('tl_fernschach_spieler', $objResult->id);
 								$update_count++;
 							}
 							else
@@ -286,10 +302,10 @@ class ImportSpieler extends \Backend
 								unset($set['titelhalter']);
 								unset($set['iccftitel']);
 
-								log_message('Set-Array Insert:','fernschach-verwaltung.log');
-								log_message(print_r($set,true),'fernschach-verwaltung.log');
+								Scope::logToFile('Set-Array Insert:','fernschach-verwaltung.log');
+								Scope::logToFile(print_r($set,true),'fernschach-verwaltung.log');
 								// Neues Mitglied
-								$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
+								$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler %s")
 								                                     ->set($set)
 								                                     ->execute();
 								$neu_count++;
@@ -300,26 +316,26 @@ class ImportSpieler extends \Backend
 				}
 
 				$dauer = sprintf('%f0.4', microtime(true) - $start);
-				\System::log('Spielerimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
+				Scope::log('Spielerimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, ContaoContext::GENERAL);
 			}
 
 			// Cookie setzen und zurückkehren zur Adressenliste (key=import aus URL entfernen)
-			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			$this->redirect(str_replace('&key=importSpieler', '', \Environment::get('request')));
+			System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			$this->redirect(str_replace('&key=importSpieler', '', Environment::get('request')));
 		}
 
 		// Return form
 		return '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=importSpieler', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.StringUtil::ampersand(str_replace('&key=importSpieler', '', Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-'.\Message::generate().'
-<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_fernschach_spieler_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
+'.Message::generate().'
+<form action="'.StringUtil::ampersand(Environment::get('request'), true).'" id="tl_fernschach_spieler_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
 
 <div class="tl_formbody_edit">
 	<input type="hidden" name="FORM_SUBMIT" value="tl_fernschach_import_spieler">
-	<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">
+	<input type="hidden" name="REQUEST_TOKEN" value="'.Scope::getRequestToken().'">
 	<input type="hidden" name="MAX_FILE_SIZE" value="8048000">
 	
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_spieler_import']['headline'].'</h2>
@@ -337,7 +353,7 @@ class ImportSpieler extends \Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-  <input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['MSC']['tw_import'][0]).'">
+  <input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['tw_import'][0]).'">
 </div>
 
 </div>

@@ -13,7 +13,15 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class Kontoauszug extends \Module
+use Contao\BackendTemplate;
+use Contao\Config;
+use Contao\Database;
+use Contao\FrontendUser;
+use Contao\Module;
+use Contao\StringUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class Kontoauszug extends Module
 {
 
 	/**
@@ -28,9 +36,9 @@ class Kontoauszug extends \Module
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
+		if (Scope::isBackendRequest())
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			$objTemplate = new BackendTemplate('be_wildcard');
 
 			$objTemplate->wildcard = '### FERNSCHACH-VERWALTUNG - KONTOAUSZUG ###';
 			$objTemplate->title = $this->name;
@@ -49,7 +57,7 @@ class Kontoauszug extends \Module
 	{
 
 		// Objekt FrontendUser importieren
-		$this->import('FrontendUser','User');
+		$this->import(FrontendUser::class,'User');
 
 		$kontoauszug = false;
 		$kontostand = false;
@@ -61,7 +69,7 @@ class Kontoauszug extends \Module
 		{
 			if($this->User->fernschach_memberId)
 			{
-				$objPlayer = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published=? AND id=?')
+				$objPlayer = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published=? AND id=?')
 				                                     ->execute(1, $this->User->fernschach_memberId);
 				if($objPlayer->numRows)
 				{
@@ -85,7 +93,7 @@ class Kontoauszug extends \Module
 						$kontostand = $this->fernschachverwaltung_kontostand ? true : false;
 					}
 
-					$konten = (array)unserialize($this->fernschachverwaltung_konten);
+					$konten = StringUtil::deserialize($this->fernschachverwaltung_konten, true);
 
 					$kontoauszug = array();
 					foreach($konten as $konto)
@@ -111,7 +119,7 @@ class Kontoauszug extends \Module
 			}
 			else
 			{
-				$fehler = $GLOBALS['TL_CONFIG']['fernschach_hinweis_kontoauszug'];
+				$fehler = Config::get('fernschach_hinweis_kontoauszug');
 			}
 
 		}
@@ -191,7 +199,7 @@ class Kontoauszug extends \Module
 			//print_r($salden);
 			foreach(array_reverse($salden, true) as $id => $value)
 			{
-				$objBuchung = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto'.$kontoname.' WHERE id=? AND published=?')
+				$objBuchung = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_konto'.$kontoname.' WHERE id=? AND published=?')
 				                                      ->execute($id, 1);
 				if($objBuchung->numRows)
 				{

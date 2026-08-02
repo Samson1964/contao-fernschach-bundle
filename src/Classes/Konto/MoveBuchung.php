@@ -2,10 +2,16 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes\Konto;
 
+use Contao\Backend;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 /**
  * Class VerschiebeBuchungen
   */
-class MoveBuchung extends \Backend
+class MoveBuchung extends Backend
 {
 
 	function __construct()
@@ -18,37 +24,37 @@ class MoveBuchung extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'moveBuchung')
+		if(Input::get('key') != 'moveBuchung')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
-		if(\Input::get('source') == false)
+		if(Input::get('source') == false)
 		{
 			// Beenden, wenn keine Quelle angegeben
 			return '';
 		}
-		if(\Input::get('target') == false)
+		if(Input::get('target') == false)
 		{
 			// Beenden, wenn kein Ziel angegeben
 			return '';
 		}
 
-		$id = \Input::get('id'); // ID der Buchung
-		switch(\Input::get('source'))
+		$id = Input::get('id'); // ID der Buchung
+		switch(Input::get('source'))
 		{
 			case 'h': $source = ''; break;
 			case 'b': $source = '_beitrag'; break;
 			case 'n': $source = '_nenngeld'; break;
 		}
-		switch(\Input::get('target'))
+		switch(Input::get('target'))
 		{
 			case 'h': $target = ''; break;
 			case 'b': $target = '_beitrag'; break;
 			case 'n': $target = '_nenngeld'; break;
 		}
 
-		$objBuchung = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$source." WHERE id = ?")
+		$objBuchung = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$source." WHERE id = ?")
 		                                      ->execute($id);
 
 		if($objBuchung->numRows)
@@ -57,9 +63,9 @@ class MoveBuchung extends \Backend
 		}
 
 		// Request bearbeiten
-		$request = \Environment::get('request');
-		$request = str_replace('&id='.\Input::get('id'), '&id='.$objBuchung->pid, $request); // Buchungs-ID durch Spieler-ID ersetzen
-		$request = str_replace('&key=moveBuchung&source='.\Input::get('source').'&target='.\Input::get('target'), '', $request); // Funktionsaufruf entfernen
+		$request = Environment::get('request');
+		$request = str_replace('&id='.Input::get('id'), '&id='.$objBuchung->pid, $request); // Buchungs-ID durch Spieler-ID ersetzen
+		$request = str_replace('&key=moveBuchung&source='.Input::get('source').'&target='.Input::get('target'), '', $request); // Funktionsaufruf entfernen
 		// Zurück auf die zuletzt aufgerufene Seite
 		$this->redirect($request);
 
@@ -87,11 +93,11 @@ class MoveBuchung extends \Backend
 			'meldungId'        => $objBuchung->meldungId,
 			'published'        => $objBuchung->published
 		);
-		//log_message('Verschiebe Buchung '.print_r($set, true),'fernschach-buchungen.log');
-		$objInsert = \Database::getInstance()->prepare("INSERT INTO ".$ziel." %s")
+		//Scope::logToFile('Verschiebe Buchung '.print_r($set, true),'fernschach-buchungen.log');
+		$objInsert = Database::getInstance()->prepare("INSERT INTO ".$ziel." %s")
 		                                     ->set($set)
 		                                     ->execute();
-		$objDelete = \Database::getInstance()->prepare("DELETE FROM ".$quelle." WHERE id = ?")
+		$objDelete = Database::getInstance()->prepare("DELETE FROM ".$quelle." WHERE id = ?")
 		                                     ->execute($objBuchung->id);
 		
 		return;

@@ -13,7 +13,17 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class Meldeformular_Spieler extends \Module
+use Contao\BackendTemplate;
+use Contao\Config;
+use Contao\Controller;
+use Contao\Database;
+use Contao\Email;
+use Contao\FrontendUser;
+use Contao\Input;
+use Contao\Module;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class Meldeformular_Spieler extends Module
 {
 
 	protected $strTemplate = 'mod_fernschach';
@@ -24,9 +34,9 @@ class Meldeformular_Spieler extends \Module
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
+		if (Scope::isBackendRequest())
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			$objTemplate = new BackendTemplate('be_wildcard');
 
 			$objTemplate->wildcard = '### FERNSCHACH MELDEFORMULAR SPIELER ###';
 			$objTemplate->title = $this->name;
@@ -50,10 +60,10 @@ class Meldeformular_Spieler extends \Module
 		{
 			// Das Formular darf nur BdF-Mitgliedern angezeigt werden
 			// Jetzt auf BdF-Mitglied prüfen
-			$this->import('FrontendUser','User'); // Frontend-Mitglied laden
+			$this->import(FrontendUser::class,'User'); // Frontend-Mitglied laden
 			if($this->User)
 			{
-				if(!$this->User->isMemberOf($GLOBALS['TL_CONFIG']['fernschach_memberFernschach']))
+				if(!$this->User->isMemberOf(Config::get('fernschach_memberFernschach')))
 				{
 					// Frontend-Mitglied gehört nicht zur Gruppe BdF-Mitglied
 					$fehler = true;
@@ -81,27 +91,30 @@ class Meldeformular_Spieler extends \Module
 
 	protected function Formular()
 	{
-
-		// Der 1. Parameter ist die Formular-ID (hier "linkform")
-		// Der 2. Parameter ist GET oder POST
-		// Der 3. Parameter ist eine Funktion, die entscheidet wann das Formular gesendet wird (Third is a callable that decides when your form is submitted)
-		// Der optionale 4. Parameter legt fest, ob das ausgegebene Formular auf Tabellen basiert (true)
-		// oder nicht (false) (You can pass an optional fourth parameter (true by default) to turn the form into a table based one)
-		$objForm = new \Haste\Form\Form('meldeform', 'POST', function($objHaste)
-		{
-			return \Input::post('FORM_SUBMIT') === $objHaste->getFormId();
-		});
+		// Hinweis zur Version 2.0.0: Hier wurde früher zusätzlich ein
+		// \Haste\Form\Form erzeugt, das anschließend nie benutzt wurde — das
+		// eigentliche Formular baut weiter unten die Klasse Form aus dem
+		// Helper-Bundle. Der tote Aufruf ist entfallen, weil sich
+		// codefog/contao-haste unter Contao 5 nicht mehr installieren lässt.
 
 		// BdF-Mitgliedsdaten laden
-		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
-		$salden_haupt = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, '');
-		$salden_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'beitrag');
-		$salden_nenngeld = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(\FrontendUser::getInstance()->fernschach_memberId, 'nenngeld');
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
+
+		// Ohne zugeordneten Spielerdatensatz gibt es nichts anzumelden. Vor der
+		// Version 2.0.0 lief die Methode trotzdem weiter und erzeugte unter
+		// PHP 8 für jedes Feld eine Warnung.
+		if(!$mitglied || !$mitglied->numRows)
+		{
+			return '<p class="error">Ihrem Benutzerkonto ist kein BdF-Mitglied zugeordnet. Bitte wenden Sie sich an die Geschäftsstelle.</p>';
+		}
+		$salden_haupt = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, '');
+		$salden_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'beitrag');
+		$salden_nenngeld = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'nenngeld');
 		$mitgliedsdaten = '<h4>Angemeldeter Benutzer</h4>';
 		$mitgliedsdaten .= '<ul>';
-		$mitgliedsdaten .= '<li>Anmeldename: <b>'.\FrontendUser::getInstance()->username.'</b></li>';
-		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.\FrontendUser::getInstance()->firstname.' '.\FrontendUser::getInstance()->lastname.'</b></li>';
-		$mitgliedsdaten .= '<li>E-Mail-Adresse: <b>'.\FrontendUser::getInstance()->email.'</b></li>';
+		$mitgliedsdaten .= '<li>Anmeldename: <b>'.FrontendUser::getInstance()->username.'</b></li>';
+		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.FrontendUser::getInstance()->firstname.' '.FrontendUser::getInstance()->lastname.'</b></li>';
+		$mitgliedsdaten .= '<li>E-Mail-Adresse: <b>'.FrontendUser::getInstance()->email.'</b></li>';
 		$mitgliedsdaten .= '</ul>';
 		$mitgliedsdaten .= '<h4>Zugeordnetes BdF-Mitglied</h4>';
 		$mitgliedsdaten .= '<ul>';
@@ -240,7 +253,7 @@ class Meldeformular_Spieler extends \Module
 
 		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
 		$form->addField(array('typ' => 'hidden', 'name' => 'FORM_SUBMIT', 'value' => 'form_turnieranmeldung'));
-		$form->addField(array('typ' => 'hidden', 'name' => 'REQUEST_TOKEN', 'value' => REQUEST_TOKEN));
+		$form->addField(array('typ' => 'hidden', 'name' => 'REQUEST_TOKEN', 'value' => Scope::getRequestToken()));
 		$form->addField(array('typ' => 'fieldset', 'label' => 'Persönliche Daten'));
 		$form->addField(array('typ' => 'explanation', 'label' => $mitgliedsdaten));
 		$form->addField(array('typ' => 'fieldset', 'label' => ''));
@@ -266,8 +279,8 @@ class Meldeformular_Spieler extends \Module
 			$arrData = $form->fetchAll();
 			self::saveMeldung($arrData); // Daten sichern
 			// Seite neu laden
-			\Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
-			\Controller::reload();
+			Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
+			Controller::reload();
 		}
 
 		// Formular als String zurückgeben
@@ -283,7 +296,7 @@ class Meldeformular_Spieler extends \Module
 		$zeit = time();
 
 		// Mitgliedsdaten laden
-		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(\FrontendUser::getInstance()->fernschach_memberId);
+		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
 
 		// Turnier prüfen
 		if($data['turnier'])
@@ -303,7 +316,7 @@ class Meldeformular_Spieler extends \Module
 					'bemerkungen'       => $data['bemerkungen'],
 					'published'         => 1
 				);
-				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_bewerbungen %s')
+				$objInsert = Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_bewerbungen %s')
 				                                     ->set($set)
 				                                     ->execute();
 				$meldungId = $objInsert->insertId;
@@ -333,7 +346,7 @@ class Meldeformular_Spieler extends \Module
 					'bemerkungen'       => $data['bemerkungen'],
 					'published'         => 1
 				);
-				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_meldungen %s')
+				$objInsert = Database::getInstance()->prepare('INSERT INTO tl_fernschach_turniere_meldungen %s')
 				                                     ->set($set)
 				                                     ->execute();
 				$meldungId = $objInsert->insertId;
@@ -357,7 +370,7 @@ class Meldeformular_Spieler extends \Module
 					'meldungId'         => $meldungId,
 					'published'         => '1'
 				);
-				$objInsert = \Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
+				$objInsert = Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
 				                                     ->set($set)
 				                                     ->execute(); 
 			}
@@ -369,11 +382,11 @@ class Meldeformular_Spieler extends \Module
 		if(isset($turnierleiter[0]))
 		{
 			// Email verschicken
-			$objEmail = new \Email();
+			$objEmail = new Email();
 			$objEmail->charset = 'utf-8';
-			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
-			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
-			$objEmail->sendBcc($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
+			$objEmail->from = Config::get('fernschach_emailAdresse');
+			$objEmail->fromName = Config::get('fernschach_emailVon');
+			$objEmail->sendBcc(Config::get('fernschach_emailVon').' <'.Config::get('fernschach_emailAdresse').'>');
 			if($this->fernschachverwaltung_bewerbung) $objEmail->subject = 'Turnierbewerbung '.$objTurnier->title;
 			else $objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
 			$objEmail->replyTo($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>');
@@ -389,7 +402,7 @@ class Meldeformular_Spieler extends \Module
 				$objEmail->sendCc($cc);
 			}
 			// Backend-Link zum Turnier generieren
-			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=fernschach-turniere&table=tl_fernschach_turniere_meldungen&rt='.REQUEST_TOKEN.'&id='.$objTurnier->id;
+			$backendlink = Scope::replaceInsertTags('{{env::url}}').'/contao?do=fernschach-turniere&table=tl_fernschach_turniere_meldungen&rt='.Scope::getRequestToken().'&id='.$objTurnier->id;
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
 			if($this->fernschachverwaltung_bewerbung) $text .= '<p>Eine neue Turnierbewerbung wurde abgegeben:</p>';
@@ -429,10 +442,10 @@ class Meldeformular_Spieler extends \Module
 		if(isset($mitglied->email1))
 		{
 			// Email verschicken
-			$objEmail = new \Email();
+			$objEmail = new Email();
 			$objEmail->charset = 'utf-8';
-			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
-			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
+			$objEmail->from = Config::get('fernschach_emailAdresse');
+			$objEmail->fromName = Config::get('fernschach_emailVon');
 			if($this->fernschachverwaltung_bewerbung) $objEmail->subject = 'Turnierbewerbung '.$objTurnier->title;
 			else $objEmail->subject = 'Turnieranmeldung '.$objTurnier->title;
 			// Kommentar zusammenbauen
@@ -495,12 +508,12 @@ class Meldeformular_Spieler extends \Module
 		// Meldefähige Turniere laden
 		if($this->fernschachverwaltung_bewerbung)
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
+			$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND bewerbungErlaubt = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
 			                                       ->execute($aktuellesDatum, 0, 1, 1, 'm', 1);
 		}
 		else
 		{
-			$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
+			$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE (registrationDate >= ? OR registrationDate = ?) AND onlineAnmeldung = ? AND typ != ? AND published = ? ORDER BY art ASC, title ASC")
 			                                       ->execute($aktuellesDatum, 0, 1, 'm', 1);
 		}
 
@@ -519,7 +532,7 @@ class Meldeformular_Spieler extends \Module
 				if($objTurniere->spielerMax > 0)
 				{
 					// Ein Spielermaximum ist gesetzt, jetzt prüfen ob noch Anmeldungen möglich sind
-					$objMeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? AND published = ?")
+					$objMeldungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? AND published = ?")
 					                                        ->execute($objTurniere->id, 1);
 					if($objMeldungen->numRows >= $objTurniere->spielerMax)
 					{
@@ -614,7 +627,7 @@ class Meldeformular_Spieler extends \Module
 	{
 		while($id > 0)
 		{
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
 			if($objTurnier->published)
@@ -640,7 +653,7 @@ class Meldeformular_Spieler extends \Module
 
 		while($id > 0)
 		{
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
 			// Gruppenname ermitteln
@@ -670,28 +683,10 @@ class Meldeformular_Spieler extends \Module
 		return false;
 	}
 
-	/*
-	 * Confirmation
-	 */
-	private function sendNotification($arrData, $objMember)
-	{
-		$arrTokens['member_id'] = $objMember->id;
-		$arrTokens['member_email'] = $objMember->email;
-		$arrTokens['member_firstname'] = $objMember->firstname;
-		$arrTokens['member_lastname'] = $objMember->lastname;
-
-		foreach ($arrData as $key => $data) {
-			$arrTokens['form_' . $key] = $data;
-		}
-
-		$calendar = CalendarModel::findOneById($arrData['calendar_id']);
-		$arrTokens['form_calendar_title'] = $calendar->title;
-
-		$objNotification = Notification::findByPk($this->nc_notification);
-		if (null !== $objNotification) {
-			$objNotification->send($arrTokens);
-		}
-	}
+	// Hinweis zur Version 2.0.0: An dieser Stelle stand eine Methode
+	// sendNotification(), die nie aufgerufen wurde und beim ersten Aufruf
+	// abgestürzt wäre — sie griff auf CalendarModel und Notification zu, also
+	// auf Klassen, die dieses Bundle gar nicht voraussetzt. Sie ist entfallen.
 
 	/*
 	 * Funktion DatumToZeitstempel

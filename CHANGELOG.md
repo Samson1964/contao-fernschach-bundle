@@ -1,5 +1,70 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.0.0 (2026-08-02)
+
+Portierung auf Contao 4.13 **und** Contao 5 sowie auf PHP 8. An der Datenbank ändert sich nichts.
+
+### Contao 5
+
+* Change: composer.json -> `contao/core-bundle: ^4.13 || ^5.0`, `php: ^7.4 || ^8.0`; `contao/newsletter-bundle` und `menatwork/contao-multicolumnwizard-bundle` ausdrücklich aufgenommen, `phpoffice/phpspreadsheet` auf `^1.29 || ^2.0 || ^3.0` gehoben
+* Change: Rund 800 Verweise auf die globalen Contao-Klassenaliasse (`\Database`, `\Input`, `\System`, `\Image`, `\Backend` u. a.) durch importierte Klassen aus dem Namensraum `Contao\` ersetzt — in Contao 5 gibt es die Aliasse nicht mehr
+* Change: `'dataContainer' => 'Table'` in allen 17 DCA-Dateien durch `DC_Table::class` ersetzt
+* Change: Neue Klasse `Classes\Scope` als Ersatz für das, was in Contao 5 entfallen ist: `TL_MODE`, `REQUEST_TOKEN`, `Contao\Session`, `Controller::replaceInsertTags()`, `Controller::createNewVersion()`, `Controller::createInitialVersion()`, `System::log()` und `log_message()`
+* Fix: `TL_MODE` in den sechs Frontend-Modulen und in der config.php durch eine Abfrage des Dienstes `contao.routing.scope_matcher` ersetzt
+* Fix: `$this->Session` und `$dc->Session` (Klasse `Contao\Session`) durch den Sitzungsbeutel `contao_backend` ersetzt — in Contao 5 lieferte der Zugriff null und führte zum Absturz
+* Fix: `$this->import('BackendUser')` u. a. auf `::class` umgestellt; mit Zeichenketten wirft `System::import()` in Contao 5 eine Ausnahme
+* Fix: `ampersand()`, `specialchars()` und `array_insert()` durch `StringUtil`- bzw. `ArrayUtil`-Methoden ersetzt
+* Fix: `log_message()` an 25 aktiven Stellen durch `Scope::logToFile()` ersetzt; die Importe hätten unter Contao 5 sonst mit „undefined function" abgebrochen
+* Fix: `TL_GENERAL`/`TL_ERROR` durch die Konstanten aus `ContaoContext` ersetzt
+* Fix: Die Fallunterscheidungen über die Konstante `VERSION` (Contao 3 gegen Contao 4) entfernt
+* Fix: `Environment::getInstance()->request` durch `Environment::get('request')` ersetzt
+* Fix: `tl_member.locked` gibt es in Contao 5 nicht mehr — die Mitgliederprüfung und die Wartung fragen die Spalte jetzt nur noch ab, wenn es sie gibt
+* Fix: `\BackendModule` in Dokumentation, ZeigeTurniere und ZeigeTeilnehmer auf `Contao\BackendModule` umgestellt
+* Fix: Fehlende `use`-Anweisungen in 13 DCA- und Klassendateien ergänzt (u. a. `Backend` in tl_settings.php, `DataContainer` in tl_fernschach_mitgliederstatistik.php)
+
+### Haste entfällt
+
+* Change: `codefog/contao-haste` ist keine Abhängigkeit mehr — Haste 4 lässt sich unter Contao 5 nicht installieren
+* Change: Die 22 `haste_ajax_operation`-Schnellschalter in den DCA-Dateien laufen jetzt über das Contao-eigene `act=toggle`; die geschalteten Felder haben dafür `'toggle' => true` erhalten
+* Add: Symbole `sepa_on_.png` und `fertig_.png` für den ausgeschalteten Zustand der Schnellschalter (Contao erwartet den Unterstrich vor der Dateiendung)
+* Add: Neue Klasse `Classes\Tokens` als Ersatz für `\Haste\Util\StringUtil::recursiveReplaceTokensAndTags()`; sie benutzt die Contao-Dienste `contao.string.simple_token_parser` und `contao.insert_tag.parser`
+* Fix: Ein nie benutztes `\Haste\Form\Form` im Meldeformular Spieler-Turnieranmeldung entfernt
+
+### ICCF-Import
+
+* Change: Die direkt aufrufbare Datei `Resources/public/Import_ICCF_Rating.php` ist entfallen; an ihre Stelle tritt der Controller `Controller\IccfImportController` unter der Route `/contao/fernschach/iccf-import`
+* Change: `import_iccf.js` ruft die neue Route auf, meldet Fehler in der Fortschrittsanzeige und bricht ab, statt endlos weiterzufragen, wenn der Zähler stehenbleibt
+* Fix: Zeilen ohne die erwarteten acht Spalten werden übersprungen, statt eine unvollständige Wertung anzulegen
+* Fix: Der Sitzungszugriff läuft über die Anfrage; den Container-Dienst `session` gibt es seit Symfony 6 nicht mehr
+
+### PHP 8
+
+* Fix: 19 `unserialize()`-Aufrufe durch `StringUtil::deserialize()` ersetzt — `unserialize(null)` ist seit PHP 8.1 verfallen
+* Fix: 67 Lesezugriffe auf `$GLOBALS['TL_CONFIG'][…]` durch `Config::get()` ersetzt; nicht gesetzte Schlüssel sind unter PHP 8 eine Warnung
+* Fix: `ResetUtil` legte die Eigenschaft `resets` dynamisch an (deklariert war `Resets`) — unter PHP 8.2 eine Verfallswarnung
+* Fix: `array|null` in der Signatur der Beitrittsformularprüfung durch `?array` ersetzt, damit die Datei auch unter PHP 7.4 lädt
+* Fix: `strtotime(null)` in den beiden Titelnormen-Modulen abgesichert
+* Fix: Die Meldeformulare brechen mit einem Hinweis ab, wenn dem Benutzerkonto kein Spielerdatensatz zugeordnet ist — vorher gab es für jedes Feld eine Warnung
+* Fix: ZeigeTurniere und ZeigeTeilnehmer setzen ihre Template-Variablen auch dann, wenn keine ID übergeben wurde
+* Fix: Undefinierte Variable `$titel` in der Mitgliederstatistik
+* Fix: `catch(Exception $e)` in `Helper::getAlter()` fing wegen des fehlenden Namensraum-Präfixes nie etwas
+
+### Weitere Korrekturen
+
+* Fix: `Resources/contao/languages/de/tl_fernschach_konten_buchungen.php` war eine Kopie der DCA-Datei — dadurch wurde beim Laden der Sprachdatei die Klasse `tl_fernschach_konten_buchungen` ein zweites Mal deklariert und sämtliche Beschriftungen der Buchungstabelle fehlten
+* Fix: Die fünf Cronjobs waren über die Annotation `@CronJob` angemeldet, die Contao nur bei Diensten mit `autoconfigure` auswertet — sie liefen deshalb nie. Sie stehen jetzt mit dem Tag `contao.cronjob` in der services.yaml
+* Fix: Der Konstruktor der Cron-Klassen nahm das Framework entgegen, ohne es zuzuweisen; `Streichung` hatte gar keinen. Die Aufträge initialisieren das Framework jetzt selbst
+* Fix: `MoveBuchungen` prüft den als Parameter übergebenen Tabellennamen, statt ihn ungeprüft in die Abfrage zu setzen
+* Change: Der Benachrichtigungstyp fürs Notification Center und das zugehörige Auswahlfeld `nc_notification` sind entfallen — die Methode, die sie benutzt hätte, wurde nie aufgerufen und hätte auf nicht vorhandene Klassen zugegriffen
+* Change: `services.yml` heißt jetzt `services.yaml`; der `_instanceof`-Block mit `ContainerAwareInterface` ist entfallen (in Symfony 7 gibt es die Schnittstelle nicht mehr)
+* Change: Sechs Dateien von ISO-8859-1 nach UTF-8 umgestellt, Zeilenenden vereinheitlicht
+
+### Dokumentation und Tests
+
+* Add: Ausführliche README mit Installation, Einstellungen, allen Backend- und Frontend-Modulen, Rechten, Cronjobs, Import-/Exportformaten und Umstiegshinweisen
+* Add: Unit-Tests für `ContaoFernschachBundle`, `Classes\Scope` und `Classes\Tokens` samt `phpunit.xml.dist`
+* Add: Deutsche Kommentarblöcke an allen im Zuge der Portierung angefassten Methoden
+
 ## Version 1.9.6 (2026-07-29)
 
 * Fix: Warning: Undefined array key "deleteConfirm", "initAccounts_confirm", "moveBeitragConfirm", "moveHauptConfirm" u. a. bei contao:migrate -> Lesezugriffe auf $GLOBALS['TL_LANG'] in den DCA-Dateien mit `?? null` bzw. `?? array()` abgesichert, da der DcaLoader die Sprachdateien noch nicht geladen hat

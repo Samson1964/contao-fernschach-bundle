@@ -2,7 +2,10 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
-class Turnier extends \Backend
+use Contao\Backend;
+use Contao\Database;
+
+class Turnier extends Backend
 {
 
 	public function __construct()
@@ -31,7 +34,7 @@ class Turnier extends \Backend
 		
 		while($id > 0)
 		{
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
 			if($objTurnier->published && $objTurnier->nenngeldActive) 
@@ -61,7 +64,7 @@ class Turnier extends \Backend
 		$arr = array();
 		while($id > 0)
 		{
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($id);
 
 			if($objTurnier->published && $objTurnier->turnierleiterInfo && $objTurnier->turnierleiterEmail)

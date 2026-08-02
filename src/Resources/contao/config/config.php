@@ -1,14 +1,22 @@
 <?php
 
 /**
- * Backend-Bereich fernschach (an erster Stelle) anlegen
+ * Grundkonfiguration der Fernschach-Verwaltung
+ *
+ * Diese Datei wird von Contao beim Aufbau des Caches eingelesen — einmal für das
+ * Backend und einmal für das Frontend. Sie darf deshalb nichts enthalten, was
+ * eine laufende Anfrage voraussetzt.
  */
+
+use Contao\ArrayUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 if(!isset($GLOBALS['BE_MOD']['fernschach']))
 {
 	$fernschach = array(
 		'fernschach' => array()
 	);
-	array_insert($GLOBALS['BE_MOD'], 0, $fernschach);
+	ArrayUtil::arrayInsert($GLOBALS['BE_MOD'], 0, $fernschach);
 }
 
 /**
@@ -101,13 +109,20 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 	),
 );
 
-if(TL_MODE == 'BE')
+/**
+ * Eigene Stylesheets und Skripte einbinden
+ *
+ * Die frühere Fallunterscheidung über die Konstante TL_MODE ist entfallen, weil
+ * es sie in Contao 5 nicht mehr gibt. Die Auskunft, ob gerade das Backend läuft,
+ * kommt jetzt vom Routing-Dienst; im Cronjob und auf der Kommandozeile liefert
+ * er "kein Backend", was richtig ist, weil dort ohnehin nichts ausgegeben wird.
+ */
+if(Scope::isBackendRequest())
 {
 	$GLOBALS['TL_CSS'][] = 'bundles/contaofernschach/css/backend.css';
-	//$GLOBALS['TL_JAVASCRIPT'][] = 'assets/jquery/js/jquery.min.js';
 	$GLOBALS['TL_JAVASCRIPT'][] = 'bundles/contaofernschach/js/backend.js';
 }
-elseif(TL_MODE == 'FE')
+else
 {
 	$GLOBALS['TL_CSS'][] = 'bundles/contaofernschach/css/frontend.css';
 }
@@ -125,19 +140,15 @@ $GLOBALS['FE_MOD']['fernschachverwaltung'] = array
 	'fernschachverwaltung_kontoauszug'          => 'Schachbulle\ContaoFernschachBundle\Modules\Kontoauszug',
 );
 
-/**
- * Notification-Center
+/*
+ * Hinweis zur Version 2.0.0: Hier war ein Benachrichtigungstyp
+ * "fernschach/meldeformular" für das Notification Center angemeldet und im
+ * Meldeformular-Modul stand das zugehörige Auswahlfeld nc_notification. Beides
+ * ist entfallen: Die Methode, die die Benachrichtigung hätte verschicken
+ * sollen, wurde nie aufgerufen — das Meldeformular verschickt seine E-Mails
+ * selbst. Das Bundle setzt terminal42/notification_center folgerichtig auch
+ * nicht voraus.
  */
-$GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['fernschach'] = array
-(
-	'meldeformular'     => array
-	(
-		'recipients'    => array('admin_email', 'form_*', 'member_*'),
-		'email_subject' => array('form_*', 'member_*'),
-		'email_text'    => array('form_*', 'member_*'),
-		'email_html'    => array('form_*', 'member_*'),
-	),
-);
 
 /**
  * Inhaltselemente

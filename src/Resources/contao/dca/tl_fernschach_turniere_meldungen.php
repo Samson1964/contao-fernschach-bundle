@@ -4,6 +4,19 @@
 /**
  * Tabelle tl_fernschach_turniere_meldungen
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Email;
+use Contao\Input;
+use Contao\System;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 (
 
@@ -11,7 +24,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 	'config' => array
 	(
 		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['mainTitle'],
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_fernschach_turniere',
 		'onload_callback' => array
@@ -91,15 +104,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -410,6 +416,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_meldungen']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -427,7 +434,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 /**
  * Class tl_member_aktivicon
  */
-class tl_fernschach_turniere_meldungen extends \Backend
+class tl_fernschach_turniere_meldungen extends Backend
 {
 
 	/**
@@ -436,7 +443,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	/**
@@ -463,14 +470,14 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			case 'create': // Turnieranmeldung anlegen
 				if(!$this->User->hasAccess('create', 'fernschach_turniere_meldungen'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine neue Turnieranmeldung anzulegen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine neue Turnieranmeldung anzulegen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
 			case 'delete': // Turnieranmeldung löschen
 				if(!$this->User->hasAccess('delete', 'fernschach_turniere_meldungen'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Turnieranmeldung zu löschen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Turnieranmeldung zu löschen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -521,13 +528,13 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		$temp .= '</span>';
 
 		// Verlinkung des zugeordneten Spielers vorbereiten
-		$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
+		$linkprefix = System::getContainer()->get('router')->generate('contao_backend');
 
 		// Zuordnung Mitglied
 		$temp .= '<span style="display:inline-block; width:290px;" title="Mitglied">Mitglied:';
 		if($arrRow['spielerId'])
 		{
-			$temp .= ' <a style="color:blue;" href="'.$linkprefix.'?do=fernschach-spieler&amp;act=edit&amp;id='.$arrRow['spielerId'].'&amp;popup=1&amp;rt='.REQUEST_TOKEN.' " onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Spieler bearbeiten\',\'url\':this.href});return false">'.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].'</a>';
+			$temp .= ' <a style="color:blue;" href="'.$linkprefix.'?do=fernschach-spieler&amp;act=edit&amp;id='.$arrRow['spielerId'].'&amp;popup=1&amp;rt='.Scope::getRequestToken().' " onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Spieler bearbeiten\',\'url\':this.href});return false">'.$spieler[$arrRow['spielerId']]['vorname'].' '.$spieler[$arrRow['spielerId']]['nachname'].'</a>';
 			if($spieler[$arrRow['spielerId']]['sepaNenngeld'])
 			{
 				$temp .= ' (SEPA <img src="bundles/contaofernschach/images/ja.png" width="12">)';
@@ -547,7 +554,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			if($arrRow['playerIn'])
 			{
 				$temp .= '<img src="bundles/contaofernschach/images/ja.png" width="12">';
-				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id=?")
+				$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id=?")
 				                                      ->execute($arrRow['playerIn']);
 
 				if($objTurnier->numRows)
@@ -571,7 +578,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 
 	}
 
-	public function getInfo(\DataContainer $dc)
+	public function getInfo(DataContainer $dc)
 	{
 
 		$string = '
@@ -583,10 +590,10 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		return $string;
 	}
 
-	public function AktualisiereBuchungen(\DataContainer $dc)
+	public function AktualisiereBuchungen(DataContainer $dc)
 	{
-		//log_message('dc->activeRecord:','fernschach.log');
-		//log_message(print_r($dc->activeRecord,true),'fernschach.log');
+		//Scope::logToFile('dc->activeRecord:','fernschach.log');
+		//Scope::logToFile(print_r($dc->activeRecord,true),'fernschach.log');
 
 		// ************************************************************
 		// Turnier laden
@@ -613,7 +620,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		// ************************************************************
 		// Suche nach Sollbuchung für diese Meldung
 		// ************************************************************
-		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ? AND typ = ?")
+		$result = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ? AND typ = ?")
 		                                  ->execute($dc->activeRecord->id, 's');
 		if($result->numRows)
 		{
@@ -628,12 +635,12 @@ class tl_fernschach_turniere_meldungen extends \Backend
 				'turnier'          => $turnier->id,
 				'comment'          => $result->comment .= "\nDatensatz automatisch aktualisiert am ".date('d.m.Y H:i'),
 			);
-			//log_message('set (UPDATE):','fernschach.log');
-			//log_message(print_r($set,true),'fernschach.log');
-			$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto_nenngeld %s WHERE id = ?")
+			//Scope::logToFile('set (UPDATE):','fernschach.log');
+			//Scope::logToFile(print_r($set,true),'fernschach.log');
+			$objInsert = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto_nenngeld %s WHERE id = ?")
 			                                     ->set($set)
 			                                     ->execute($result->id);
-			$this->createNewVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
+			Scope::createVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
 		}
 		else
 		{
@@ -653,9 +660,9 @@ class tl_fernschach_turniere_meldungen extends \Backend
 				'comment'          => 'Datensatz automatisch erzeugt am '.date('d.m.Y H:i'),
 				'published'        => 1,
 			);
-			//log_message('set (INSERT):','fernschach.log');
-			//log_message(print_r($set,true),'fernschach.log');
-			$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto_nenngeld %s")
+			//Scope::logToFile('set (INSERT):','fernschach.log');
+			//Scope::logToFile(print_r($set,true),'fernschach.log');
+			$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto_nenngeld %s")
 			                                     ->set($set)
 			                                     ->execute();
 		}
@@ -663,7 +670,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		// ************************************************************
 		// Suche nach Habenbuchung für diese Meldung
 		// ************************************************************
-		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ? AND typ = ?")
+		$result = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ? AND typ = ?")
 		                                  ->execute($dc->activeRecord->id, 'h');
 		if($result->numRows)
 		{
@@ -680,19 +687,19 @@ class tl_fernschach_turniere_meldungen extends \Backend
 					'turnier'          => $turnier->id,
 					'comment'          => $result->comment .= "\nDatensatz automatisch aktualisiert am ".date('d.m.Y H:i'),
 				);
-				//log_message('set (UPDATE):','fernschach.log');
-				//log_message(print_r($set,true),'fernschach.log');
-				$objInsert = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto_nenngeld %s WHERE id = ?")
+				//Scope::logToFile('set (UPDATE):','fernschach.log');
+				//Scope::logToFile(print_r($set,true),'fernschach.log');
+				$objInsert = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_konto_nenngeld %s WHERE id = ?")
 				                                     ->set($set)
 				                                     ->execute($result->id);
-				$this->createNewVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
+				Scope::createVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
 			}
 			// Buchung löschen, da kein Überweisungsdatum gesetzt ist
 			else
 			{
-				$answer = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE id = ?")
+				$answer = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE id = ?")
 				                                  ->execute($result->id);
-				$this->createNewVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
+				Scope::createVersion('tl_fernschach_spieler_konto_nenngeld', $result->id);
 			}
 		}
 		else
@@ -715,9 +722,9 @@ class tl_fernschach_turniere_meldungen extends \Backend
 					'comment'          => 'Datensatz automatisch erzeugt am '.date('d.m.Y H:i'),
 					'published'        => 1,
 				);
-				//log_message('set (INSERT):','fernschach.log');
-				//log_message(print_r($set,true),'fernschach.log');
-				$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto_nenngeld %s")
+				//Scope::logToFile('set (INSERT):','fernschach.log');
+				//Scope::logToFile(print_r($set,true),'fernschach.log');
+				$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto_nenngeld %s")
 				                                     ->set($set)
 				                                     ->execute();
 			}
@@ -730,12 +737,12 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	 * ondelete_callback: Wird ausgeführt bevor ein Datensatz aus der Datenbank entfernt wird.
 	 * @param $dc
 	 */
-	public function LoescheBuchungen(\DataContainer $dc)
+	public function LoescheBuchungen(DataContainer $dc)
 	{
-		$this->import(\BackendUser::class, 'User');
+		$this->import(BackendUser::class, 'User');
 
 		// Löscht alle Buchungen zu dieser Meldung
-		$result = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ?")
+		$result = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ?")
 		                                  ->execute($dc->activeRecord->id);
 
 		return;
@@ -751,7 +758,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			'data'         => serialize($data)
 		);
 
-		$undoset = \Database::getInstance()->prepare("INSERT INTO tl_undo %s")
+		$undoset = Database::getInstance()->prepare("INSERT INTO tl_undo %s")
 		                                   ->set($set)
 		                                   ->execute();
 
@@ -761,7 +768,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	 * ondelete_callback: Wird ausgeführt bevor ein Datensatz aus der Datenbank entfernt wird.
 	 * @param $dc
 	 */
-	public function InfoTurnierleiter(\DataContainer $dc)
+	public function InfoTurnierleiter(DataContainer $dc)
 	{
 		// E-Mail für Turnierleiter zusammenbauen, da eine Anmeldung gelöscht wird
 		$turnierleiter = \Schachbulle\ContaoFernschachBundle\Classes\Turnier::getTurnierleiter($dc->activeRecord->pid);
@@ -771,11 +778,11 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		if(isset($turnierleiter[0]))
 		{
 			// Email verschicken
-			$objEmail = new \Email();
+			$objEmail = new Email();
 			$objEmail->charset = 'utf-8';
-			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
-			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
-			$objEmail->sendBcc($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
+			$objEmail->from = Config::get('fernschach_emailAdresse');
+			$objEmail->fromName = Config::get('fernschach_emailVon');
+			$objEmail->sendBcc(Config::get('fernschach_emailVon').' <'.Config::get('fernschach_emailAdresse').'>');
 			$objEmail->subject = 'Turnieranmeldung von '.$dc->activeRecord->vorname.' '.$dc->activeRecord->nachname.' gelöscht';
 			$objEmail->replyTo($turnierleiter[0]['name'].' <'.$turnierleiter[0]['email'].'>');
 			// Weitere Empfänger einbauen
@@ -790,7 +797,7 @@ class tl_fernschach_turniere_meldungen extends \Backend
 				$objEmail->sendCc($cc);
 			}
 			// Backend-Link zum Turnier generieren
-			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=undo';
+			$backendlink = Scope::replaceInsertTags('{{env::url}}').'/contao?do=undo';
 			// Kommentar zusammenbauen
 			$text = '<html><head><title></title></head><body>';
 			$text .= '<p>Eine Turnieranmeldung wurde gelöscht.</p>';
@@ -817,11 +824,11 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	/**
 	 * Setzt die Felder Vorname und Nachname, wenn diese nicht gefüllt sind
 	 * @param mixed
-	 * @param \DataContainer
+	 * @param DataContainer
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function setSpielername(\DataContainer $dc)
+	public function setSpielername(DataContainer $dc)
 	{
 		$nachname = $dc->activeRecord->nachname;
 		$vorname = $dc->activeRecord->vorname;
@@ -830,18 +837,18 @@ class tl_fernschach_turniere_meldungen extends \Backend
 		{
 			// Kein Nachname, dann Nachname aus Spielertabelle holen
 			$nachname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
-			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET nachname = ? WHERE id = ?")
+			Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET nachname = ? WHERE id = ?")
 			                        ->execute($nachname, $dc->id);
-			$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->id);
+			Scope::createVersion('tl_fernschach_turniere_meldungen', $dc->id);
 		}
 
 		if(!$vorname && $dc->activeRecord->spielerId)
 		{
 			// Kein Vorname, dann Vorname aus Spielertabelle holen
 			$vorname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
-			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET vorname = ? WHERE id = ?")
+			Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen SET vorname = ? WHERE id = ?")
 			                        ->execute($vorname, $dc->id);
-			$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->id);
+			Scope::createVersion('tl_fernschach_turniere_meldungen', $dc->id);
 		}
 
 	}
@@ -851,10 +858,10 @@ class tl_fernschach_turniere_meldungen extends \Backend
 	 * @param  $dc
 	 * @return array
 	 */
-	public function getTurniere(\DataContainer $dc)
+	public function getTurniere(DataContainer $dc)
 	{
 		$arr = array();
-		$act = \Input::get('act');
+		$act = Input::get('act');
 
 		if($act)
 		{
@@ -862,14 +869,14 @@ class tl_fernschach_turniere_meldungen extends \Backend
 			{
 				case 'edit': // Bearbeitungsformular der Meldung  
 					// Nach Turnieren suchen, deren übergeordnetes Turnier gleich der pid ist
-					$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
+					$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
 					                                       ->execute($dc->activeRecord->pid);
 					break;
 				case 'editAll': // Mehrere bearbeiten
 				case 'overrideAll': // Mehrere überschreiben
 					// Nach Turnieren suchen, deren übergeordnetes Turnier gleich der pid ist
-					$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
-					                                       ->execute(\Input::get('id'));
+					$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE pid=? ORDER BY title ASC")
+					                                       ->execute(Input::get('id'));
 					break;
 				default:
 			}

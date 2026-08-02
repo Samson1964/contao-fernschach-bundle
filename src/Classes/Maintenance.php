@@ -2,7 +2,18 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
-class Maintenance extends \Backend
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+use Contao\Versions;
+
+class Maintenance extends Backend
 {
 
 	var $spieler = array();
@@ -17,20 +28,20 @@ class Maintenance extends \Backend
 	 * ============================
 	 * Wartungsfunktionen ausführen
 	 */
-	public function getMaintenance(\DataContainer $dc)
+	public function getMaintenance(DataContainer $dc)
 	{
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
 		// Nächsten Wartungszeitpunkt berechnen
-		$nextUpdate = (int)$GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate'] + $GLOBALS['TL_CONFIG']['fernschach_maintenanceUpdate_time']; // Letztes Updatedatum + eingestellter Rhythmus
+		$nextUpdate = (int)Config::get('fernschach_maintenanceUpdate') + Config::get('fernschach_maintenanceUpdate_time'); // Letztes Updatedatum + eingestellter Rhythmus
 		$aktuelleZeit = time();
 
 		// Aktualisierung notwendig, da der Wartungszeitpunkt überschritten wurde
 		if($nextUpdate < $aktuelleZeit)
 		{
 			$meldung = 'Wartung erforderlich: Wartungszeitpunkt ('.date('d.m.Y H:i:s', $nextUpdate).') kleiner als aktuelle Zeit ('.date('d.m.Y H:i:s', $aktuelleZeit).').<br>';
-			$wartungszeit = $aktuelleZeit - $GLOBALS['TL_CONFIG']['fernschach_intervall_memberbridgeCheck']; // Aktuelle Zeit minus eingestelltem Intervall
-			$updatezeit = $aktuelleZeit - $GLOBALS['TL_CONFIG']['fernschach_intervall_memberbridgeCheck']; // Aktuelle Zeit minus eingestelltem Intervall
+			$wartungszeit = $aktuelleZeit - Config::get('fernschach_intervall_memberbridgeCheck'); // Aktuelle Zeit minus eingestelltem Intervall
+			$updatezeit = $aktuelleZeit - Config::get('fernschach_intervall_memberbridgeCheck'); // Aktuelle Zeit minus eingestelltem Intervall
 
 			//echo 'Aktuelle Zeit: '.date('d.m.Y H:i:s', $aktuelleZeit)."<br>";
 			//echo 'Wartungszeit_: '.date('d.m.Y H:i:s', $wartungszeit)."<br>";
@@ -38,8 +49,16 @@ class Maintenance extends \Backend
 			// Alle Mitgliederkonten suchen, 
 			// 1) deren letzte Aktualisierung vor der letzten Wartung (fernschach_memberbridgeTime) erfolgte
 			// 2) die nach der letzten Wartung aktualisiert (tstamp) wurden 
-			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_member WHERE fernschach_memberbridgeTime <= ? AND tstamp <= ? AND locked = ? AND disable = ? AND username != ?")
-			                                     ->execute($updatezeit, $updatezeit,'', '', '');
+			// Die Spalte tl_member.locked (Sperre nach zu vielen Fehlanmeldungen)
+			// gibt es nur bis Contao 4.13. Unter Contao 5 entfällt die Bedingung,
+			// sonst bräche die Abfrage mit "Unknown column" ab.
+			$locked = Database::getInstance()->fieldExists('locked', 'tl_member') ? ' AND locked = ?' : '';
+			$parameter = $locked
+				? array($updatezeit, $updatezeit, '', '', '')
+				: array($updatezeit, $updatezeit, '', '');
+
+			$objMember = Database::getInstance()->prepare("SELECT * FROM tl_member WHERE fernschach_memberbridgeTime <= ? AND tstamp <= ? AND disable = ? AND username != ?".$locked)
+			                                     ->execute(...$parameter);
 			$meldung .= $objMember->numRows.' Frontend-Mitglieder müssen geprüft werden.<br>';
 
 			if($objMember->numRows)
@@ -48,7 +67,7 @@ class Maintenance extends \Backend
 				while($objMember->next())
 				{
 					// E-Mail-Adresse in Fernschach-Verwaltung suchen
-					$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE (email1 = ? OR email2 = ?) AND published = ?")
+					$objPlayer = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE (email1 = ? OR email2 = ?) AND published = ?")
 					                                     ->execute($objMember->email, $objMember->email, 1);
 
 					if($objPlayer->numRows)
@@ -78,16 +97,16 @@ class Maintenance extends \Backend
 												'fernschach_memberbridgeTime' => $aktuelleZeit,
 												'groups'                      => $gruppen
 											);
-											\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+											Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 											                        ->set($set)
 											                        ->execute($objMember->id);
-											$version = new \Versions('tl_member', $objMember->id);
+											$version = new Versions('tl_member', $objMember->id);
 											$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 											$version->create();
 
 											// Zuordnung entfernen
 											$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.<br>';
-											\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+											Scope::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu Gruppe BdF-Mitglied hinzugefügt.', __CLASS__.'::'.__FUNCTION__, ContaoContext::GENERAL);
 										}
 									}
 									else
@@ -102,13 +121,13 @@ class Maintenance extends \Backend
 											'groups'                      => $gruppen,
 											'fernschach_memberId'         => $objPlayer->id
 										);
-										\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+										Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 										                        ->set($set)
 										                        ->execute($objMember->id);
-										$version = new \Versions('tl_member', $objMember->id);
+										$version = new Versions('tl_member', $objMember->id);
 										$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 										$version->create();
-										\System::log('[Fernschach-Wartung] tl_member.fernschach_memberId ('.$objMember->fernschach_memberId.') <> tl_fernschach_spieler.id ('.$objPlayer->id.'). Geändert von '.$objMember->fernschach_memberId.' auf '.$objPlayer->id.'.', __CLASS__.'::'.__FUNCTION__, TL_ERROR);
+										Scope::log('[Fernschach-Wartung] tl_member.fernschach_memberId ('.$objMember->fernschach_memberId.') <> tl_fernschach_spieler.id ('.$objPlayer->id.'). Geändert von '.$objMember->fernschach_memberId.' auf '.$objPlayer->id.'.', __CLASS__.'::'.__FUNCTION__, ContaoContext::ERROR);
 									}
 								}
 								else
@@ -124,16 +143,16 @@ class Maintenance extends \Backend
 										'groups'                      => $gruppen,
 										'fernschach_memberId'         => $objPlayer->id
 									);
-									\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+									Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 									                        ->set($set)
 									                        ->execute($objMember->id);
-									$version = new \Versions('tl_member', $objMember->id);
+									$version = new Versions('tl_member', $objMember->id);
 									$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 									$version->create();
 
 									// Zuordnung noch nicht vorhanden, jetzt vornehmen
 									$meldung .= 'Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.' ['.$objPlayer->id.']) vorgenommen.<br>';
-									\System::log('[Fernschach-Wartung] Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.' ['.$objPlayer->id.']) vorgenommen.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+									Scope::log('[Fernschach-Wartung] Neue Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied ('.$objPlayer->vorname.' '.$objPlayer->nachname.' ['.$objPlayer->id.']) vorgenommen.', __CLASS__.'::'.__FUNCTION__, ContaoContext::GENERAL);
 								}
 							}
 							else
@@ -150,16 +169,16 @@ class Maintenance extends \Backend
 										'groups'                      => $gruppen,
 										'fernschach_memberId'         => 0
 									);
-									\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+									Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 									                        ->set($set)
 									                        ->execute($objMember->id);
-									$version = new \Versions('tl_member', $objMember->id);
+									$version = new Versions('tl_member', $objMember->id);
 									$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 									$version->create();
 
 									// Zuordnung entfernen
 									$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.<br>';
-									\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+									Scope::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt, da ausgetreten.', __CLASS__.'::'.__FUNCTION__, ContaoContext::GENERAL);
 								}
 							}
 						}
@@ -178,16 +197,16 @@ class Maintenance extends \Backend
 								'groups'                      => $gruppen,
 								'fernschach_memberId'         => 0
 							);
-							\Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
+							Database::getInstance()->prepare("UPDATE tl_member %s WHERE id=?")
 							                        ->set($set)
 							                        ->execute($objMember->id);
-							$version = new \Versions('tl_member', $objMember->id);
+							$version = new Versions('tl_member', $objMember->id);
 							$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 							$version->create();
 
 							// Zuordnung entfernen
 							$meldung .= 'Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.';
-							\System::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.', __CLASS__.'::'.__FUNCTION__, TL_GENERAL);
+							Scope::log('[Fernschach-Wartung] Zuordnung FE-Mitglied ('.$objMember->username.' - '.$objMember->firstname.' '.$objMember->lastname.') zu BdF-Mitglied entfernt.', __CLASS__.'::'.__FUNCTION__, ContaoContext::GENERAL);
 						}
 					}
 				}
@@ -196,7 +215,7 @@ class Maintenance extends \Backend
 			// Alle Spielerdatensätze suchen, 
 			// 1) deren letzte Aktualisierung vor der letzten Wartung (fernschach_memberbridgeTime) erfolgte
 			// 2) die nach der letzten Wartung aktualisiert (tstamp) wurden 
-			$objMember = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberbridgeTime <= ? AND tstamp >= ?")
+			$objMember = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberbridgeTime <= ? AND tstamp >= ?")
 			                                     ->execute($wartungszeit, $wartungszeit);
 			//$meldung .= $objMember->numRows.' BdF-Spieler müssen geprüft werden.<br>';
 			// ==========================================================
@@ -207,8 +226,8 @@ class Maintenance extends \Backend
 			// Ja, Konfiguration aktualisieren
 			\Contao\Config::persist('fernschach_maintenanceUpdate', time()); // Siehe https://community.contao.org/de/showthread.php?83934-In-die-localconfig-php-schreiben
 			// Meldung ausgeben
-			$backendlink = $this->replaceInsertTags('{{env::url}}').'/contao?do=log';
-			\Message::addConfirmation($meldung.'<b>Wartung wurde ausgeführt (Details im <a href="'.$backendlink.'">System-Log</a></b>)');
+			$backendlink = Scope::replaceInsertTags('{{env::url}}').'/contao?do=log';
+			Message::addConfirmation($meldung.'<b>Wartung wurde ausgeführt (Details im <a href="'.$backendlink.'">System-Log</a></b>)');
 
 			//$zeitmessung->Stop();
 		}
@@ -224,22 +243,22 @@ class Maintenance extends \Backend
 	 */
 	public function setGroups($value, $status)
 	{
-		$gruppen = (array)unserialize($value); // Mitgliedergruppen in Array umwandeln
+		$gruppen = StringUtil::deserialize($value, true); // Mitgliedergruppen in Array umwandeln
 
 		if($status)
 		{
 			// BdF-Mitgliedschaft eintragen
-			if($GLOBALS['TL_CONFIG']['fernschach_memberFernschach']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberFernschach'];
+			if(Config::get('fernschach_memberFernschach')) $gruppen[] = Config::get('fernschach_memberFernschach');
 			// Standard-Mitgliedschaft entfernen
-			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberDefault'], $gruppen);
+			$key = array_search(Config::get('fernschach_memberDefault'), $gruppen);
 			if(isset($key)) unset($gruppen[$key]);
 		}
 		else
 		{
 			// Standard-Mitgliedschaft eintragen
-			if($GLOBALS['TL_CONFIG']['fernschach_memberDefault']) $gruppen[] = $GLOBALS['TL_CONFIG']['fernschach_memberDefault'];
+			if(Config::get('fernschach_memberDefault')) $gruppen[] = Config::get('fernschach_memberDefault');
 			// BdF-Mitgliedschaft entfernen
-			$key = array_search($GLOBALS['TL_CONFIG']['fernschach_memberFernschach'], $gruppen);
+			$key = array_search(Config::get('fernschach_memberFernschach'), $gruppen);
 			if(isset($key)) unset($gruppen[$key]);
 		}
 

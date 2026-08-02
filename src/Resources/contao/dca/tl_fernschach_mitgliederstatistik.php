@@ -3,13 +3,20 @@
 /**
  * Tabelle tl_fernschach_mitgliederstatistik
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\StringUtil;
+
 $GLOBALS['TL_DCA']['tl_fernschach_mitgliederstatistik'] = array
 (
 
 	// Konfiguration
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'enableVersioning'            => true,
 		'sql'                         => array
 		(
@@ -79,15 +86,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_mitgliederstatistik'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -182,6 +182,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_mitgliederstatistik'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_mitgliederstatistik']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -203,7 +204,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_mitgliederstatistik'] = array
 /**
  * Class tl_member_aktivicon
  */
-class tl_fernschach_mitgliederstatistik extends \Backend
+class tl_fernschach_mitgliederstatistik extends Backend
 {
 
 	/**
@@ -212,13 +213,13 @@ class tl_fernschach_mitgliederstatistik extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	public function convertAgeperiods($row, $label, DataContainer $dc, $args) 
 	{ 
 		// Altersstruktur für Anzeige aufbereiten
-		$struktur = unserialize($row['ageperiods']);
+		$struktur = StringUtil::deserialize($row['ageperiods']);
 		$temp = '';
 		if(is_array($struktur))
 		{

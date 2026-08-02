@@ -1,0 +1,51 @@
+# Dienste der Fernschach-Verwaltung
+#
+# Die Cronjobs werden hier ausdrücklich mit dem Tag "contao.cronjob" versehen
+# statt über die Annotation @CronJob bzw. das Attribut #[AsCronJob]. Contao wertet
+# beide nur bei Diensten mit "autoconfigure: true" aus; Attribute setzen zudem
+# PHP 8 voraus. Der ausdrückliche Tag funktioniert dagegen unter Contao 4.13 wie
+# unter Contao 5 und ebenso unter PHP 7.4.
+services:
+    _defaults:
+        autowire: false
+        autoconfigure: false
+        public: false
+
+    Schachbulle\ContaoFernschachBundle\Cron\Mitgliedschaftscheck:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: hourly, method: onHourly }
+
+    Schachbulle\ContaoFernschachBundle\Cron\Mitgliedschaftsende:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: daily, method: onDaily }
+
+    Schachbulle\ContaoFernschachBundle\Cron\Mitgliederpruefung:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: hourly, method: onHourly }
+
+    Schachbulle\ContaoFernschachBundle\Cron\Nenngeld:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: hourly, method: onHourly }
+
+    Schachbulle\ContaoFernschachBundle\Cron\Streichung:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: daily, method: onDaily }
+
+    # Der schrittweise ICCF-Import wird vom Backend aus per fetch() angesprochen
+    # und muss deshalb als öffentlicher Dienst unter seinem Klassennamen
+    # erreichbar sein — so lautet der _controller-Eintrag in der routes.yaml.
+    Schachbulle\ContaoFernschachBundle\Controller\IccfImportController:
+        arguments:
+            - '@contao.framework'
+            - '@request_stack'
+        public: true

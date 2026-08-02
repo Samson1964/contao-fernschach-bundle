@@ -8,7 +8,7 @@ use Contao\Model;
  * 
  * @property string $hash
  */
-class Beitragskonto extends \Model
+class Beitragskonto extends Model
 {
 	protected static $strTable = 'tl_fernschach_spieler_konto_beitrag';
 	//protected static $strTable = 'tl_fernschach_spieler';

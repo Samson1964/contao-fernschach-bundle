@@ -2,57 +2,66 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\Config;
+use Contao\Controller;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Contao\System;
+
 /*
  * Lädt die aktuelle Spielerliste und überschreibt die E-Mail-Adressen im definierten Newsletter-Archiv
  */
 
-class Newsletter extends \Backend
+class Newsletter extends Backend
 {
-	public function setNewsletter(\DataContainer $dc)
+	public function setNewsletter(DataContainer $dc)
 	{
-		if(\Input::get('key') != 'setNewsletter')
+		if(Input::get('key') != 'setNewsletter')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
-		if(isset($GLOBALS['TL_CONFIG']['fernschach_newsletter']) && $GLOBALS['TL_CONFIG']['fernschach_newsletter'] > 0)
+		if(Config::get('fernschach_newsletter') > 0)
 		{
 			// Nur aktualisieren, wenn ein Newsletter-Archiv ausgewählt ist
 			$arrExport = self::getRecords($dc); // Spieler auslesen
 
 			// Aktiven Verteiler löschen 
-			\Database::getInstance()->prepare("DELETE FROM tl_newsletter_recipients WHERE pid=?")
-			                        ->execute($GLOBALS['TL_CONFIG']['fernschach_newsletter']);
+			Database::getInstance()->prepare("DELETE FROM tl_newsletter_recipients WHERE pid=?")
+			                        ->execute(Config::get('fernschach_newsletter'));
 
 			foreach($arrExport as $email)
 			{
 				// Adresse eintragen
 				$set = array
 				(
-					'pid'           => $GLOBALS['TL_CONFIG']['fernschach_newsletter'],
+					'pid'           => Config::get('fernschach_newsletter'),
 					'tstamp'        => time(),
 					'email'         => $email,
 					'active'        => 1
 				);
-				\Database::getInstance()->prepare("INSERT INTO tl_newsletter_recipients %s")
+				Database::getInstance()->prepare("INSERT INTO tl_newsletter_recipients %s")
 				                        ->set($set)
 				                        ->execute();
 			}
 		}
 		
 		// Cookie setzen und zurückkehren (key=setDefault aus URL entfernen)
-		\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-		\Controller::redirect(str_replace('&key=setNewsletter', '', \Environment::get('request')));
+		System::setCookie('BE_PAGE_OFFSET', 0, 0);
+		Controller::redirect(str_replace('&key=setNewsletter', '', Environment::get('request')));
 
 	}
 
-	public function getRecords(\DataContainer $dc)
+	public function getRecords(DataContainer $dc)
 	{
 		// Liest die Datensätze der Fernschachverwaltung in ein Array
 
 		// Suchbegriff in aktueller Ansicht laden
-		$search = $dc->Session->get('search');
+		$search = Scope::getBackendSessionValue('search');
 		$search = isset($search[$dc->table]) ? $search[$dc->table] : array(); // Das Array enthält field und value
 		//if($search['field']) $sql = " WHERE ".$search['field']." LIKE '%%".$search['value']."%%'"; // findet auch Umlaute, Suche nach "ba" findet auch "bä"
 		if(isset($search['field']) && isset($search['value'])) $sql = " WHERE LOWER(CAST(".$search['field']." AS CHAR)) REGEXP LOWER('".$search['value']."')"; // Contao-Standard, ohne Umlaute, Suche nach "ba" findet nicht "bä"
@@ -74,9 +83,9 @@ class Newsletter extends \Backend
 		//               )
 		//
 		//       )
-		$filter = $dc->Session->get('filter');
+		$filter = Scope::getBackendSessionValue('filter');
 		$filter = isset($filter[$dc->table]) ? $filter[$dc->table] : array(); // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
-		log_message(print_r($filter, true), 'fernschachverwaltung.log');
+		Scope::logToFile(print_r($filter, true), 'fernschachverwaltung.log');
 		foreach($filter as $key => $value)
 		{
 			if($key != 'limit')
@@ -87,7 +96,7 @@ class Newsletter extends \Backend
 		}
 
 		// Spezialfilter berücksichtigen
-		$filter = $dc->Session->get('filter');
+		$filter = Scope::getBackendSessionValue('filter');
 		$filter = $filter[$dc->table.'Filter'] = array('tfs_filter'); // Wert aus Spezialfilter
 		switch($filter)
 		{
@@ -113,9 +122,9 @@ class Newsletter extends \Backend
 
 		$sql = "SELECT * FROM tl_fernschach_spieler".$sql;
 
-		log_message('E-Mail-Export mit: '.$sql, 'fernschachverwaltung.log');
+		Scope::logToFile('E-Mail-Export mit: '.$sql, 'fernschachverwaltung.log');
 		// Datensätze laden
-		$records = \Database::getInstance()->prepare($sql)
+		$records = Database::getInstance()->prepare($sql)
 		                                   ->execute();
 
 		// Datensätze umwandeln

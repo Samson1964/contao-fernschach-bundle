@@ -2,7 +2,10 @@
 
 namespace Schachbulle\ContaoFernschachBundle\ContentElements;
 
-class Zusagen extends \ContentElement
+use Contao\ContentElement;
+use Contao\Database;
+
+class Zusagen extends ContentElement
 {
 
 	/**
@@ -21,13 +24,13 @@ class Zusagen extends \ContentElement
 		if($this->fernschachverwaltung_id)
 		{
 			// Nur ein Turnier gewünscht
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 			                                      ->execute($this->fernschachverwaltung_id);
 		}
 		else
 		{
 			// Alle aktiven Einladungsturniere mit Startdatum in der Zukunft gewünscht
-			$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate >= ? AND typ = ? ORDER BY startDate ASC")
+			$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE published = ? AND startDate >= ? AND typ = ? ORDER BY startDate ASC")
 			                                      ->execute(1, time(), 'e');
 		}
 
@@ -40,7 +43,7 @@ class Zusagen extends \ContentElement
 			{
 				// Turnierzusagen einlesen
 				$zusagen = array();
-				$objSpieler = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.stateOrganizer as veranstalter, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=? AND b.state=? AND b.stateOrganizer=? ORDER BY m.nachname ASC, m.vorname ASC")
+				$objSpieler = Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachname, m.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.stateOrganizer as veranstalter, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=? AND b.state=? AND b.stateOrganizer=? ORDER BY m.nachname ASC, m.vorname ASC")
 				                                      ->execute($objTurnier->id, 1, 1);
 
 				if($objSpieler->numRows)

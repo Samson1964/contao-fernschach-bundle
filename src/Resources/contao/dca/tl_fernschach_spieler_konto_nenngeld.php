@@ -3,13 +3,27 @@
 /**
  * Table tl_fernschach_spieler_konto_nenngeld
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Controller;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Image;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 (
 
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_fernschach_spieler',
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
@@ -96,15 +110,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['toggle'],
 				'attributes'          => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'           => 'published',
-					'options'         => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 				//'button_callback'     => array('tl_fernschach_spieler_konto_nenngeld', 'generateToggleButton')
 			),
 			'show' => array
@@ -133,15 +140,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['markiertIcon'],
 				'attributes'          => 'onclick="markiertSetzen(this, %s); javascript:alert(\'Hallo\'); Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'           => 'markierung',
-					'options'         => array
-					(
-						array('value' => '', 'icon' => 'bundles/contaofernschach/images/unfertig.png'),
-						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/fertig.png'),
-					)
-				),
+				'href'                => 'act=toggle&amp;field=markierung',
+				'icon'                => 'bundles/contaofernschach/images/fertig.png',
 			),
 		)
 	),
@@ -290,6 +290,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		'markierung' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['markierung'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'inputType'               => 'checkbox',
 			'exclude'                 => true,
 			'default'                 => '',
@@ -350,6 +351,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'default'                 => 1,
@@ -372,7 +374,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_fernschach_spieler_konto_nenngeld extends \Backend
+class tl_fernschach_spieler_konto_nenngeld extends Backend
 {
 
 	var $turniere = array();
@@ -385,7 +387,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 		//$this->Template->headline = 'New Headline'; // oder besser: Referenziere das Sprachen-Array 
 		//$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['headline'] = 'Test';
 	}
@@ -394,9 +396,9 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 * onload_callback: Fuehrt eine Aktion bei der Initialisierung des DataContainer-Objekts aus.
 	 * @param $dc
 	 */
-	public function checkSaldo(\DataContainer $dc)
+	public function checkSaldo(DataContainer $dc)
 	{
-		$id = strlen(\Input::get('id')) ? \Input::get('id') : $dc->currentPid;
+		$id = strlen(Input::get('id')) ? Input::get('id') : $dc->currentPid;
 
 		// Globale Resetbuchungen prüfen
 		$reset = new \Schachbulle\ContaoFernschachBundle\Classes\Konto\ResetUtil();
@@ -413,7 +415,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 *
 	 * @throws AccessDeniedException
 	 */
-	public function checkPermission(\DataContainer $dc)
+	public function checkPermission(DataContainer $dc)
 	{
 		if($this->User->isAdmin)
 		{
@@ -426,12 +428,12 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 		if(!$this->User->hasAccess('create', 'fernschach_konto')) $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld']['config']['closed'] = true;
 
 		// Aktuelle Aktion von act prüfen
-		switch(\Input::get('act'))
+		switch(Input::get('act'))
 		{
 			case 'create': // Buchung anlegen
 				if(!$this->User->hasAccess('create', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine neue Buchung anzulegen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine neue Buchung anzulegen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -439,7 +441,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 			case 'copy': // Buchung kopieren
 				if(!$this->User->hasAccess('copy', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu kopieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu kopieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -447,7 +449,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 			case 'toggle': // Buchung aktivieren/deaktivieren
 				if(!$this->User->hasAccess('toggle', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu (de)aktivieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu (de)aktivieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -455,7 +457,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 			case 'show': // Infobox
 				if(!$this->User->hasAccess('show', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung-Infobox anzuzeigen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung-Infobox anzuzeigen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -463,7 +465,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 			case 'edit': // Buchung bearbeiten
 				if(!$this->User->hasAccess('edit', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu bearbeiten.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu bearbeiten.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -471,12 +473,12 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 			default:
 
 				// Aktuelle Aktion von key prüfen
-				switch(\Input::get('key'))
+				switch(Input::get('key'))
 				{
 					case 'import': // Buchungen importieren
 						if(!$this->User->hasAccess('import', 'fernschach_konto'))
 						{
-							$this->log('Fernschach-Verwaltung: Keine Rechte, um Buchungen zu importieren.', __METHOD__, TL_ERROR);
+							Scope::log('Fernschach-Verwaltung: Keine Rechte, um Buchungen zu importieren.', __METHOD__, ContaoContext::ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
 						break;
@@ -494,7 +496,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 * @param array $args      Array mit dem Teildatensatz (gewünschte Felder in gewünschter Reihenfolge)
 	 * @return array
 	 */
-	public function getLabel($arrRow, $label, \DataContainer $dc, $args)
+	public function getLabel($arrRow, $label, DataContainer $dc, $args)
 	{
 		if(!count($this->salden)) self::checkSaldo($dc);
 
@@ -576,9 +578,9 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 * @param  $dc
 	 * @return array
 	 */
-	public function getTurniere(\DataContainer $dc)
+	public function getTurniere(DataContainer $dc)
 	{
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY title ASC")
+		$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere ORDER BY title ASC")
 		                                       ->execute();
 
 		$arr = array();
@@ -594,7 +596,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 
 	public function getTurnier($id)
 	{
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+		$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 		                                       ->execute($id);
 
 		if($objTurniere->numRows)
@@ -640,7 +642,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_konto')) ? '<a href="'.Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.Scope::getRequestToken()).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -655,7 +657,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_konto')) ? '<a href="'.Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.Scope::getRequestToken()).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -670,7 +672,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_konto')) ? '<a href="'.Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.Scope::getRequestToken()).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -685,7 +687,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_konto')) ? '<a href="'.Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.Scope::getRequestToken()).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -700,10 +702,10 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.\Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.REQUEST_TOKEN).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_konto')) ? '<a href="'.Controller::addToUrl($href.'&amp;id='.$row['id'].'&amp;rt='.Scope::getRequestToken()).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
-	public function getInfo(\DataContainer $dc)
+	public function getInfo(DataContainer $dc)
 	{
 		if($_POST || Input::get('act') != 'edit')
 		{
@@ -718,7 +720,7 @@ class tl_fernschach_spieler_konto_nenngeld extends \Backend
 	
 		if($objRecord->resetRecord)
 		{
-			\Message::addInfo($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['message_resetRecord']);
+			Message::addInfo($GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['message_resetRecord']);
 			//Message::addError("Fehlermeldung.");
 			//Message::addConfirmation("Bestätigungsmeldung");
 		}

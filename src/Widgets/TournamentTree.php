@@ -10,6 +10,14 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Widgets;
 
+use Contao\Database;
+use Contao\Image;
+use Contao\PageModel;
+use Contao\StringUtil;
+use Contao\System;
+use Contao\Widget;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 /**
  * Provide methods to handle input field "page tree".
  *
@@ -18,7 +26,7 @@ namespace Schachbulle\ContaoFernschachBundle\Widgets;
  * @property array   $rootNodes
  * @property string  $fieldType
  */
-class TournamentTree extends \Widget
+class TournamentTree extends Widget
 {
 	/**
 	 * Submit user input
@@ -51,7 +59,7 @@ class TournamentTree extends \Widget
 	 */
 	public function __construct($arrAttributes=null)
 	{
-		$this->import(\Database::class, 'Database');
+		$this->import(Database::class, 'Database');
 		parent::__construct($arrAttributes);
 	}
 
@@ -132,7 +140,7 @@ class TournamentTree extends \Widget
 		// $this->varValue can be an array, so use empty() here
 		if (!empty($this->varValue))
 		{
-			$objPages = \PageModel::findMultipleByIds((array) $this->varValue);
+			$objPages = PageModel::findMultipleByIds((array) $this->varValue);
 
 			if ($objPages !== null)
 			{
@@ -141,7 +149,7 @@ class TournamentTree extends \Widget
 					$objPage->loadDetails();
 
 					$arrSet[] = $objPage->id;
-					$arrValues[$objPage->id] = \Image::getHtml($this->getPageStatusIcon($objPage)) . ' ' . $objPage->title . ' (' . ($objPage->urlPrefix ? ($objPage->urlPrefix . '/') : '') . $objPage->alias . $objPage->urlSuffix . ')';
+					$arrValues[$objPage->id] = Image::getHtml($this->getPageStatusIcon($objPage)) . ' ' . $objPage->title . ' (' . ($objPage->urlPrefix ? ($objPage->urlPrefix . '/') : '') . $objPage->alias . $objPage->urlSuffix . ')';
 				}
 			}
 		}
@@ -158,7 +166,7 @@ class TournamentTree extends \Widget
 
 		$return .= '</ul>';
 
-		if (!\System::getContainer()->get('contao.picker.builder')->supportsContext('page'))
+		if (!System::getContainer()->get('contao.picker.builder')->supportsContext('page'))
 		{
 			$return .= '
 	<p><button class="tl_submit" disabled>' . $GLOBALS['TL_LANG']['MSC']['changeSelection'] . '</button></p>';
@@ -168,7 +176,7 @@ class TournamentTree extends \Widget
 			$extras = $this->getPickerUrlExtras($arrValues);
 
 			$return .= '
-    <p><a href="' . \StringUtil::ampersand(\System::getContainer()->get('contao.picker.builder')->getUrl('page', $extras)) . '" class="tl_submit" id="pt_' . $this->strName . '">' . $GLOBALS['TL_LANG']['MSC']['changeSelection'] . '</a></p>
+    <p><a href="' . StringUtil::ampersand(System::getContainer()->get('contao.picker.builder')->getUrl('page', $extras)) . '" class="tl_submit" id="pt_' . $this->strName . '">' . $GLOBALS['TL_LANG']['MSC']['changeSelection'] . '</a></p>
     <script>
       $("pt_' . $this->strName . '").addEvent("click", function(e) {
         e.preventDefault();
@@ -186,7 +194,7 @@ class TournamentTree extends \Widget
                 evt.initEvent("change", true, true);
                 $("ctrl_' . $this->strId . '").dispatchEvent(evt);
               }
-            }).post({"action":"reloadPagetree", "name":"' . $this->strName . '", "value":value.join("\t"), "REQUEST_TOKEN":"' . REQUEST_TOKEN. '"});
+            }).post({"action":"reloadPagetree", "name":"' . $this->strName . '", "value":value.join("\t"), "REQUEST_TOKEN":"' . Scope::getRequestToken(). '"});
           }
         });
       });
@@ -194,7 +202,7 @@ class TournamentTree extends \Widget
     <script>Backend.makeMultiSrcSortable("sort_' . $this->strId . '", "ctrl_' . $this->strId . '", "ctrl_' . $this->strId . '")</script>' : '');
 		}
 
-//            }).post({"action":"reloadPagetree", "name":"' . $this->strName . '", "value":value.join("\t"), "REQUEST_TOKEN":"' . \System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue() . '"});
+//            }).post({"action":"reloadPagetree", "name":"' . $this->strName . '", "value":value.join("\t"), "REQUEST_TOKEN":"' . System::getContainer()->get('contao.csrf.token_manager')->getDefaultTokenValue() . '"});
 
 		$return = '<div>' . $return . '</div></div>';
 

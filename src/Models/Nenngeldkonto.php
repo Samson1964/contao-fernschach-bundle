@@ -8,7 +8,7 @@ use Contao\Model;
  * 
  * @property string $hash
  */
-class Nenngeldkonto extends \Model
+class Nenngeldkonto extends Model
 {
 	protected static $strTable = 'tl_fernschach_spieler_konto_nenngeld';
 	//protected static $strTable = 'tl_fernschach_spieler';

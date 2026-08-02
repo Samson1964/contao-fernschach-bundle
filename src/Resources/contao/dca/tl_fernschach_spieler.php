@@ -3,13 +3,29 @@
 /**
  * Tabelle tl_fernschach_spieler
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\FilesModel;
+use Contao\Image;
+use Contao\Input;
+use Contao\MemberModel;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 (
 
 	// Konfiguration
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'enableVersioning'            => true,
 		'ctable'                      => array('tl_fernschach_spieler_mails', 'tl_fernschach_spieler_konto_beitrag', 'tl_fernschach_spieler_konto_nenngeld'),
 		'onload_callback'             => array
@@ -148,15 +164,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -170,29 +179,15 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitragIcon'],
 				'attributes'          => 'onclick="Backend.getScrollOffset();"',
-				'haste_ajax_operation' => array
-				(
-					'field'                     => 'sepaBeitrag',
-					'options'                   => array
-					(
-						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/sepa_on.png'),
-						array('value' => '', 'icon' => 'bundles/contaofernschach/images/sepa_off.png'),
-					)
-				)
+				'href'                => 'act=toggle&amp;field=sepaBeitrag',
+				'icon'                => 'bundles/contaofernschach/images/sepa_on.png',
 			),
 			'sepaNenngeldIcon' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeldIcon'],
 				'attributes'          => 'onclick="Backend.getScrollOffset();"',
-				'haste_ajax_operation' => array
-				(
-					'field'           => 'sepaNenngeld',
-					'options'         => array
-					(
-						array('value' => '1', 'icon' => 'bundles/contaofernschach/images/sepa_on.png'),
-						array('value' => '', 'icon' => 'bundles/contaofernschach/images/sepa_off.png'),
-					)
-				)
+				'href'                => 'act=toggle&amp;field=sepaNenngeld',
+				'icon'                => 'bundles/contaofernschach/images/sepa_on.png',
 			),
 			//'fertigIcon' => array
 			//(
@@ -1584,6 +1579,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'sepaBeitrag' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaBeitrag'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'filter'                  => true,
@@ -1618,6 +1614,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'sepaNenngeld' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['sepaNenngeld'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'filter'                  => true,
@@ -1744,6 +1741,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -1780,7 +1778,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 /**
  * Class tl_member_aktivicon
  */
-class tl_fernschach_spieler extends \Backend
+class tl_fernschach_spieler extends Backend
 {
 
 	public $Titeltraeger = array();
@@ -1791,7 +1789,7 @@ class tl_fernschach_spieler extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 		$this->Titeltraeger = array
 		(
 			'500' => 'FSGM',
@@ -1817,19 +1815,19 @@ class tl_fernschach_spieler extends \Backend
 		if($this->User->hasAccess('viewNegative', 'fernschach_spieler'))
 		{
 			// Benutzer hat die Erlaubnis, das Ergebnis der letzten Nenngeldprüfung anzusehen
-			$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_nenngeld.txt';
+			$file = System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_nenngeld.txt';
 			if(file_exists($file))
 			{
 				$content = file_get_contents($file);
-				\Message::addConfirmation($content);
+				Message::addConfirmation($content);
 			}
 		}
 
-		$file = \System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_mitgliederpruefung.txt';
+		$file = System::getContainer()->getParameter('kernel.project_dir').'/system/tmp/contao-fernschach-bundle_mitgliederpruefung.txt';
 		if(file_exists($file))
 		{
 			$content = file_get_contents($file);
-			\Message::addConfirmation($content);
+			Message::addConfirmation($content);
 		}
 	}
 
@@ -1857,7 +1855,7 @@ class tl_fernschach_spieler extends \Backend
 			case 'create': // Spieler anlegen
 				if(!$this->User->hasAccess('create', 'fernschach_spieler'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen neuen Spieler anzulegen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um einen neuen Spieler anzulegen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -1865,7 +1863,7 @@ class tl_fernschach_spieler extends \Backend
 			case 'copy': // Spieler kopieren
 				if(!$this->User->hasAccess('copy', 'fernschach_spieler'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu kopieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu kopieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -1873,7 +1871,7 @@ class tl_fernschach_spieler extends \Backend
 			case 'toggle': // Spieler aktivieren/deaktivieren
 				if(!$this->User->hasAccess('toggle', 'fernschach_spieler'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler zu (de)aktivieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler zu (de)aktivieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -1881,7 +1879,7 @@ class tl_fernschach_spieler extends \Backend
 			case 'show': // Infobox
 				if(!$this->User->hasAccess('show', 'fernschach_spieler'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler-Infobox anzuzeigen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Spieler-Infobox anzuzeigen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -1889,7 +1887,7 @@ class tl_fernschach_spieler extends \Backend
 			case 'edit': // Spieler bearbeiten
 				if(!$this->User->hasAccess('edit', 'fernschach_spieler'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu bearbeiten.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um einen Spieler zu bearbeiten.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -1901,7 +1899,7 @@ class tl_fernschach_spieler extends \Backend
 					case 'importSpieler': // Spieler importieren
 						if(!$this->User->hasAccess('import', 'fernschach_spieler'))
 						{
-							$this->log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu importieren.', __METHOD__, TL_ERROR);
+							Scope::log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu importieren.', __METHOD__, ContaoContext::ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
 						break;
@@ -1909,7 +1907,7 @@ class tl_fernschach_spieler extends \Backend
 					case 'exportXLS': // Spieler exportieren
 						if(!$this->User->hasAccess('export', 'fernschach_spieler'))
 						{
-							$this->log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu exportieren.', __METHOD__, TL_ERROR);
+							Scope::log('Fernschach-Verwaltung: Keine Rechte, um Spieler zu exportieren.', __METHOD__, ContaoContext::ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
 						break;
@@ -1918,11 +1916,11 @@ class tl_fernschach_spieler extends \Backend
 				}
 
 				// Buchungen eines Spielers aufgerufen?
-				if(Input::get('do') == 'fernschach-spieler' && \Input::get('table') == 'tl_fernschach_spieler_konto' && \Input::get('id') > 0 && !Input::get('act'))
+				if(Input::get('do') == 'fernschach-spieler' && Input::get('table') == 'tl_fernschach_spieler_konto' && Input::get('id') > 0 && !Input::get('act'))
 				{
 					if(!$this->User->hasAccess('konto', 'fernschach_spieler'))
 					{
-						$this->log('Fernschach-Verwaltung: Keine Rechte, um die Buchungen eines Spieler anzusehen.', __METHOD__, TL_ERROR);
+						Scope::log('Fernschach-Verwaltung: Keine Rechte, um die Buchungen eines Spieler anzusehen.', __METHOD__, ContaoContext::ERROR);
 						$this->redirect('contao/main.php?act=error');
 					}
 				}
@@ -1968,7 +1966,7 @@ class tl_fernschach_spieler extends \Backend
 	 * @param array
 	 * @return string
 	 */
-	public function listMembers($row, $label, \DataContainer $dc, $args)
+	public function listMembers($row, $label, DataContainer $dc, $args)
 	{
 		//echo "<pre>";
 		//print_r($args);
@@ -2094,7 +2092,7 @@ class tl_fernschach_spieler extends \Backend
 		if(!$this->User->hasAccess('accountChecked', 'fernschach_spieler')) $args[11] = '<span title="Kein Zugriff">&bull;&bull;&bull;</span>';
 
 		// Zugriffsrechte auf weitere Sortierfelder prüfen
-		$session = \Session::getInstance()->getData();
+		$session = Scope::getBackendSession();
 		switch(isset($session['sorting']['tl_fernschach_spieler']))
 		{
 			case 'fremdspielerNummer':
@@ -2113,9 +2111,9 @@ class tl_fernschach_spieler extends \Backend
 	public function generateAdvancedFilter(DataContainer $dc)
 	{
 
-		if(\Input::get('id') > 0) return '';
+		if(Input::get('id') > 0) return '';
 
-		$session = \Session::getInstance()->getData();
+		$session = Scope::getBackendSession();
 
 		// Filters
 		$arrFilters = array
@@ -2228,7 +2226,7 @@ class tl_fernschach_spieler extends \Backend
 	public function applyAdvancedFilter()
 	{
 
-		$session = \Session::getInstance()->getData();
+		$session = Scope::getBackendSession();
 
 		// Filterwerte in der Sitzung speichern
 		foreach($_POST as $k => $v)
@@ -2239,20 +2237,20 @@ class tl_fernschach_spieler extends \Backend
 			}
 
 			// Filter zurücksetzen
-			if($k == \Input::post($k))
+			if($k == Input::post($k))
 			{
 				unset($session['filter']['tl_fernschach_spielerFilter'][$k]);
 			}
 			// Filter zuweisen
 			else
 			{
-				$session['filter']['tl_fernschach_spielerFilter'][$k] = \Input::post($k);
+				$session['filter']['tl_fernschach_spielerFilter'][$k] = Input::post($k);
 			}
 		}
 
-		$this->Session->setData($session);
+		Scope::setBackendSession($session);
 
-		if(\Input::get('id') > 0 || !isset($session['filter']['tl_fernschach_spielerFilter']))
+		if(Input::get('id') > 0 || !isset($session['filter']['tl_fernschach_spielerFilter']))
 		{
 			return;
 		}
@@ -2264,25 +2262,25 @@ class tl_fernschach_spieler extends \Backend
 			switch($session['filter']['tl_fernschach_spielerFilter']['tfs_filter'])
 			{
 				case '2': // Geburtsdatum fehlt
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE birthday = ? OR birthday = ?")
 					                                      ->execute(0, '');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
 
 				case '3': // ICCF-Nummer fehlt
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE memberInternationalId = ?")
 					                                      ->execute('');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
 
 				case '4': // E-Mail fehlt
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 = ? AND email2 = ?")
 					                                      ->execute('', '');
 					$arrPlayers = is_array($arrPlayers) ? array_intersect($arrPlayers, $objPlayers->fetchEach('id')) : $objPlayers->fetchEach('id');
 					break;
 
 				case '6': // Doppelte 1. E-Mail-Adressen suchen
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 != ? AND email1 IN (SELECT email1 FROM tl_fernschach_spieler GROUP BY email1 HAVING COUNT(*) > 1) ORDER BY email1")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE email1 != ? AND email1 IN (SELECT email1 FROM tl_fernschach_spieler GROUP BY email1 HAVING COUNT(*) > 1) ORDER BY email1")
 					                                      ->execute('');
 					if($objPlayers->numRows)
 					{
@@ -2295,7 +2293,7 @@ class tl_fernschach_spieler extends \Backend
 					break;
 
 				case '5': // Spieler mit Beitrag im Minus
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2320,7 +2318,7 @@ class tl_fernschach_spieler extends \Backend
 				case '93': // Mitgliedsende 31.12. minus 7 Jahre
 				case '92': // Mitgliedsende 31.12. minus 8 Jahre
 				case '91': // Mitgliedsende 31.12. minus 9 Jahre
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2353,7 +2351,7 @@ class tl_fernschach_spieler extends \Backend
 				case '186': // Nicht Mitglied nach 31.12. minus 14 Jahre
 				case '185': // Nicht Mitglied nach 31.12. minus 15 Jahre
 				case '184': // Nicht Mitglied nach 31.12. minus 16 Jahre
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2379,7 +2377,7 @@ class tl_fernschach_spieler extends \Backend
 				case '293': // Mitgliedsbeginn minus 7 Jahre
 				case '292': // Mitgliedsbeginn minus 8 Jahre
 				case '291': // Mitgliedsbeginn minus 9 Jahre
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2397,7 +2395,7 @@ class tl_fernschach_spieler extends \Backend
 				case '406': // Keine Nenngeldzahlungen letzte 6 Monate
 				case '412': // Keine Nenngeldzahlungen letzte 12 Monate
 				case '424': // Keine Nenngeldzahlungen letzte 24 Monate
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler")
 					                                      ->execute();
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2413,7 +2411,7 @@ class tl_fernschach_spieler extends \Backend
 					break;
 
 				case '8': // Alle Nichtmitglieder
-					$objPlayers = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
+					$objPlayers = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE archived = ?")
 					                                      ->execute('');
 					$arrPlayers = array();
 					if($objPlayers->numRows)
@@ -2442,7 +2440,7 @@ class tl_fernschach_spieler extends \Backend
 				case '512': // Alle Titelträger NSFM = Nationaler Senioren-Fernschachmeister
 				case '513': // Alle Titelträger NMK  = Nationaler Fernschachmeisterkandidat
 				case '514': // Alle Titelträger NJFM = Nationaler Junioren-Fernschachmeister
-					$objTitel = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ?")
+					$objTitel = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ?")
 					                                    ->execute($this->Titeltraeger[$session['filter']['tl_fernschach_spielerFilter']['tfs_filter']]);
 					$arrPlayers = array();
 					if($objTitel->numRows)
@@ -2455,7 +2453,7 @@ class tl_fernschach_spieler extends \Backend
 					break;
 
 				case '600': // Alle Spieler mit E-Mails (unbearbeitet und versendet)
-					$objMails = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails")
+					$objMails = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails")
 					                                    ->execute();
 					$arrPlayers = array();
 					if($objMails->numRows)
@@ -2479,7 +2477,7 @@ class tl_fernschach_spieler extends \Backend
 		}
 
 		$log = print_r($arrPlayers, true);
-		//log_message($log, 'fernschachverwaltung.log');
+		//Scope::logToFile($log, 'fernschachverwaltung.log');
 
 		$GLOBALS['TL_DCA']['tl_fernschach_spieler']['list']['sorting']['root'] = $arrPlayers;
 
@@ -2496,7 +2494,7 @@ class tl_fernschach_spieler extends \Backend
 		if($dc->activeRecord->id)
 		{
 			// Spieler-ID in tl_member.fernschach_memberId suchen
-			$objMembers = \MemberModel::findBy('fernschach_memberId', $dc->activeRecord->id);
+			$objMembers = MemberModel::findBy('fernschach_memberId', $dc->activeRecord->id);
 			$status = '';
 			$zaehler = 0;
 			if($objMembers)
@@ -2539,7 +2537,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('edit', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2554,7 +2552,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('copy', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2569,7 +2567,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('delete', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2584,7 +2582,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('toggle', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 	}
 
 	/**
@@ -2599,7 +2597,7 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
 	{
-		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'&amp;popup=1" title="'.specialchars($title).'"'.$attributes.' onclick="Backend.openModalIframe({\'title\':\''.str_replace('%s', $row['id'], $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'][1]).'\',\'url\':this.href});return false" >'.\Image::getHtml($icon, $label).'</a> ' : \Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
+		return($this->User->isAdmin || $this->User->hasAccess('show', 'fernschach_spieler')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'&amp;popup=1" title="'.StringUtil::specialchars($title).'"'.$attributes.' onclick="Backend.openModalIframe({\'title\':\''.str_replace('%s', $row['id'], $GLOBALS['TL_LANG']['tl_fernschach_spieler']['show'][1]).'\',\'url\':this.href});return false" >'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.svg$/i', '_.svg', $icon)).' ';
 
 
 	}
@@ -2623,19 +2621,19 @@ class tl_fernschach_spieler extends \Backend
 			$tabelle = substr($href, 6); // Ermitteln anhand Tabellenname, welches Icon gerade geprüft wird
 			if($row['id'])
 			{
-				$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM ".$tabelle." WHERE pid = ?")
+				$objBuchungen = Database::getInstance()->prepare("SELECT * FROM ".$tabelle." WHERE pid = ?")
 				                                        ->execute($row['id']);
 				$title .= ' ('.$objBuchungen->numRows.' Buchungen)';
 			}
 			if($objBuchungen->numRows)
-				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 			else
-				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon), $label).'</a> ';
+				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon), $label).'</a> ';
 		}
 		else
 		{
 			// Benutzer kein Admin oder berechtigter Benutzer, dann graues unverlinktes Icon anzeigen
-			$string = \Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon)).' ';
+			$string = Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon)).' ';
 		}
 		return $string;
 	}
@@ -2651,7 +2649,7 @@ class tl_fernschach_spieler extends \Backend
 		$ausgabe = '';
 		if($dc->activeRecord->sepaBeitragDatei)
 		{
-			$file = \FilesModel::findByUuid($dc->activeRecord->sepaBeitragDatei);
+			$file = FilesModel::findByUuid($dc->activeRecord->sepaBeitragDatei);
 			// Vorschau anzeigen
 			if($file)
 			{
@@ -2691,7 +2689,7 @@ class tl_fernschach_spieler extends \Backend
 		$ausgabe = '';
 		if($dc->activeRecord->sepaNenngeldDatei)
 		{
-			$file = \FilesModel::findByUuid($dc->activeRecord->sepaNenngeldDatei);
+			$file = FilesModel::findByUuid($dc->activeRecord->sepaNenngeldDatei);
 			// Vorschau anzeigen
 			if($file)
 			{
@@ -2759,26 +2757,20 @@ class tl_fernschach_spieler extends \Backend
 		return $content;
 	}
 
-	public function getTournaments(\DataContainer $dc)
+	public function getTournaments(DataContainer $dc)
 	{
 
-		// Link-Prefixe generieren, ab C4 ist das ein symbolischer Link zu "contao"
-		if(version_compare(VERSION, '4.0', '>='))
-		{
-			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
-			$imageEdit = \Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
-		}
-		else
-		{
-			$linkprefix = 'contao/main.php';
-			$imageEdit = \Image::getHtml('edit.gif', 'Bewerbung des Mitglieds bearbeiten');
-		}
+		// Der Backend-Einstieg heißt seit Contao 4 "contao" und wird über den
+		// Router ermittelt. Die frühere Fallunterscheidung über die Konstante
+		// VERSION ist entfallen — es gibt sie in Contao 5 nicht mehr.
+		$linkprefix = System::getContainer()->get('router')->generate('contao_backend');
+		$imageEdit = Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
 
 		$spieler_id = $dc->activeRecord->id;
 
-		$objAnmeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
+		$objAnmeldungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
 		                                          ->execute($spieler_id);
-		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
+		$objBewerbungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
 		                                          ->execute($spieler_id);
 
 		$ausgabe = '<div class="long widget" style="margin-top:10px;">'; // Wichtig damit das Auf- und Zuklappen funktioniert
@@ -2807,7 +2799,7 @@ class tl_fernschach_spieler extends \Backend
 					'turnier'    => $objTurnier ? $objTurnier->title : '',
 					'status'     => 0,
 					'id'         => $objAnmeldungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
 				);
 			}
 		}
@@ -2823,7 +2815,7 @@ class tl_fernschach_spieler extends \Backend
 					'turnier'    => $objTurnier ? $objTurnier->title : '',
 					'status'     => 0,
 					'id'         => $objBewerbungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
+					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
 				);
 			}
 		}
@@ -2866,11 +2858,11 @@ class tl_fernschach_spieler extends \Backend
 	 */
 	public function toggleEmail($row, $href, $label, $title, $icon, $attributes)
 	{
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
 		$href .= '&amp;id='.$row['id'];
 
-		$mail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
+		$mail = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
 		                                ->execute($row['id']);
 
 		$icon = 'bundles/contaofernschach/images/email_grau.png';
@@ -2881,7 +2873,7 @@ class tl_fernschach_spieler extends \Backend
 			$icon = 'bundles/contaofernschach/images/email.png';
 		}
 
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> ';
+		return '<a href="'.$this->addToUrl($href).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 }

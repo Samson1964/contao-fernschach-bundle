@@ -2,32 +2,44 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\Controller;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Email;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class Mailer
   */
-class Mailer extends \Backend
+class Mailer extends Backend
 {
 
 	/**
 	 * Versenden einer E-Mail
 	 */
 
-	public function send(\DataContainer $dc)
+	public function send(DataContainer $dc)
 	{
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
 		// E-Mail-Datensatz einlesen
-		$mail = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE id = ?")
+		$mail = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE id = ?")
 		                                ->execute($dc->id);
 		// Spieler-Datensatz einlesen
-		$spieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+		$spieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
 		                                   ->execute($mail->pid);
 
 		// Template aus Datenbank laden
 		$template = '';
 		if($mail->template)
 		{
-			$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
+			$result = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
 			                                  ->execute($mail->template);
 			if($result->numRows)
 			{
@@ -50,19 +62,19 @@ class Mailer extends \Backend
 		$preview = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getPreview($template, $mail->content, $signatur, $spieler);
 
 		// E-Mail versenden
-		if(\Input::get('token') != '' && \Input::get('token') == $this->Session->get('tl_fernschachverwaltung_send'))
+		if(Input::get('token') != '' && Input::get('token') == Scope::getBackendSessionValue('tl_fernschachverwaltung_send'))
 		{
 
-			$this->Session->set('tl_fernschachverwaltung_send', null);
-			$objEmail = new \Email();
+			Scope::setBackendSessionValue('tl_fernschachverwaltung_send', null);
+			$objEmail = new Email();
 
 			// Absender "Name <email>" in ein Array $arrFrom aufteilen
 			//preg_match('~(?:([^<]*?)\s*)?<(.*)>~', LIZENZVERWALTUNG_ABSENDER, $arrFrom);
 
 			// Empfänger-Adressen in ein Array packen
-			$to = explode(',', html_entity_decode(\Input::get('an')));
-			$cc = explode(',', html_entity_decode(\Input::get('cc')));
-			$bcc = explode(',', html_entity_decode(\Input::get('bcc')));
+			$to = explode(',', html_entity_decode(Input::get('an')));
+			$cc = explode(',', html_entity_decode(Input::get('cc')));
+			$bcc = explode(',', html_entity_decode(Input::get('bcc')));
 
 			// Führende und abschließende Leerzeichen entfernen, und leere Elemente entfernen
 			$to = array_filter(array_map('trim', $to));
@@ -101,8 +113,8 @@ class Mailer extends \Backend
 				}
 			}
 
-			$objEmail->from = $GLOBALS['TL_CONFIG']['fernschach_emailAdresse'];
-			$objEmail->fromName = $GLOBALS['TL_CONFIG']['fernschach_emailVon'];
+			$objEmail->from = Config::get('fernschach_emailAdresse');
+			$objEmail->fromName = Config::get('fernschach_emailVon');
 			$objEmail->subject = $mail->subject;
 			$objEmail->logFile = 'fernschachverwaltung_email.log';
 			$objEmail->html = $preview;
@@ -114,11 +126,11 @@ class Mailer extends \Backend
 			{
 				$sendezeit = time();
 				// Header
-				$header = '<b>From: '.$GLOBALS['TL_CONFIG']['fernschach_emailVon'].' &lt;'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'&gt;'."\n";
-				$header .= 'To: '.\Input::get('an')."\n";
+				$header = '<b>From: '.Config::get('fernschach_emailVon').' &lt;'.Config::get('fernschach_emailAdresse').'&gt;'."\n";
+				$header .= 'To: '.Input::get('an')."\n";
 				$header .= 'Reply-To: '.$this->User->name.' &lt;'.$this->User->email.'&gt;'."\n";
-				$header .= 'Cc: '.\Input::get('cc')."\n";
-				$header .= 'Bcc: '.\Input::get('bcc')."\n\n";
+				$header .= 'Cc: '.Input::get('cc')."\n";
+				$header .= 'Bcc: '.Input::get('bcc')."\n\n";
 				$header .= 'Subject: '.$mail->subject."\n";
 				$header .= 'Date: '.date('d.m.Y H:i:s', $sendezeit)."</b>\n\n";
 
@@ -129,27 +141,21 @@ class Mailer extends \Backend
 					'sent_state' => 1,
 					'sent_text'  => $header.$preview
 				);
-				$mailstatus = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_mails %s WHERE id = ?")
+				$mailstatus = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler_mails %s WHERE id = ?")
 				                                      ->set($set)
 				                                      ->execute($dc->id);
 				// Email-Versand bestätigen und weiterleiten
-				\Message::addConfirmation('E-Mail versendet');
-				// Zurücklink generieren, ab C4 ist das ein symbolischer Link zu "contao"
-				if (version_compare(VERSION, '4.0', '>='))
-				{
-					$backlink = \System::getContainer()->get('router')->generate('contao_backend');
-				}
-				else
-				{
-					$backlink = 'contao/main.php';
-				}
-				\Controller::redirect($backlink.'?do='.\Input::get('do').'&table='.\Input::get('table').'&id='.$mail->pid);
+				Message::addConfirmation('E-Mail versendet');
+				// Der Backend-Einstieg heißt seit Contao 4 "contao"; die frühere
+				// Abfrage der Konstante VERSION ist entfallen.
+				$backlink = System::getContainer()->get('router')->generate('contao_backend');
+				Controller::redirect($backlink.'?do='.Input::get('do').'&table='.Input::get('table').'&id='.$mail->pid);
 			}
 			exit;
 		}
 
 		// Absender ermitteln
-		$from = htmlentities($GLOBALS['TL_CONFIG']['fernschach_emailVon'].' <'.$GLOBALS['TL_CONFIG']['fernschach_emailAdresse'].'>');
+		$from = htmlentities(Config::get('fernschach_emailVon').' <'.Config::get('fernschach_emailAdresse').'>');
 		$replyto = htmlentities($this->User->name.' <'.$this->User->email.'>');
 		// E-Mail-Empfänger festlegen
 		$email_an = '';
@@ -167,16 +173,16 @@ class Mailer extends \Backend
 			$email_cc .= $replyto;
 		}
 		$strToken = md5(uniqid(mt_rand(), true));
-		$this->Session->set('tl_fernschachverwaltung_send', $strToken);
+		Scope::setBackendSessionValue('tl_fernschachverwaltung_send', $strToken);
 
 		if($mail->sent_state)
 		{
 			// E-Mail wurde bereits versendet, deshalb nur E-Mail-Daten anzeigen
 		$return =
 		'<div id="tl_buttons">
-<a href="'.$this->getReferer(true).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.$this->getReferer(true).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
-'.\Message::generate().'
+'.Message::generate().'
 <div class="tl_formbody_edit tl_fernschachverwaltung_send">
 <div class="tl_preview">' .nl2br($mail->sent_text). '</div>
 <div class="tl_formbody_submit">
@@ -191,15 +197,15 @@ class Mailer extends \Backend
 			// E-Mail-Sendeformular anzeigen
 		$return =
 		'<div id="tl_buttons">
-<a href="'.$this->getReferer(true).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.$this->getReferer(true).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
-'.\Message::generate().'
+'.Message::generate().'
 <form action="'.TL_SCRIPT.'" id="tl_fernschachverwaltung_send" class="tl_form" method="get">
 <div class="tl_formbody_edit tl_fernschachverwaltung_send">
-<input type="hidden" name="do" value="' . \Input::get('do') . '">
-<input type="hidden" name="table" value="' . \Input::get('table') . '">
-<input type="hidden" name="key" value="' . \Input::get('key') . '">
-<input type="hidden" name="id" value="' . \Input::get('id') . '">
+<input type="hidden" name="do" value="' . Input::get('do') . '">
+<input type="hidden" name="table" value="' . Input::get('table') . '">
+<input type="hidden" name="key" value="' . Input::get('key') . '">
+<input type="hidden" name="id" value="' . Input::get('id') . '">
 <input type="hidden" name="token" value="' . $strToken . '">
 <div class="tl_preview">
 <table class="prev_header">

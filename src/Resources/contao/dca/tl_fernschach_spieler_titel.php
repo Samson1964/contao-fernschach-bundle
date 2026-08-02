@@ -10,6 +10,14 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\DC_Table;
+use Contao\Input;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+
 
 /**
  * Table tl_fernschach_spieler_titel
@@ -20,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_titel'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_fernschach_spieler',
 		'enableVersioning'            => true,
 		//'onload_callback'             => array
@@ -93,15 +101,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_titel'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['toggle'],
 				'attributes'          => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'           => 'published',
-					'options'         => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -182,6 +183,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_titel'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_titel']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'inputType'               => 'checkbox',
 			'default'                 => 1,
@@ -201,7 +203,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_titel'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_fernschach_spieler_titel extends \Backend
+class tl_fernschach_spieler_titel extends Backend
 {
 
 	/**
@@ -210,7 +212,7 @@ class tl_fernschach_spieler_titel extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
 	}
 
@@ -237,7 +239,7 @@ class tl_fernschach_spieler_titel extends \Backend
 			case 'create': // Buchung anlegen
 				if(!$this->User->hasAccess('create', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine neue Buchung anzulegen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine neue Buchung anzulegen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -245,7 +247,7 @@ class tl_fernschach_spieler_titel extends \Backend
 			case 'copy': // Buchung kopieren
 				if(!$this->User->hasAccess('copy', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu kopieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu kopieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -253,7 +255,7 @@ class tl_fernschach_spieler_titel extends \Backend
 			case 'toggle': // Buchung aktivieren/deaktivieren
 				if(!$this->User->hasAccess('toggle', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu (de)aktivieren.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu (de)aktivieren.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -261,7 +263,7 @@ class tl_fernschach_spieler_titel extends \Backend
 			case 'show': // Infobox
 				if(!$this->User->hasAccess('show', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung-Infobox anzuzeigen.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung-Infobox anzuzeigen.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -269,7 +271,7 @@ class tl_fernschach_spieler_titel extends \Backend
 			case 'edit': // Buchung bearbeiten
 				if(!$this->User->hasAccess('edit', 'fernschach_konto'))
 				{
-					$this->log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu bearbeiten.', __METHOD__, TL_ERROR);
+					Scope::log('Fernschach-Verwaltung: Keine Rechte, um eine Buchung zu bearbeiten.', __METHOD__, ContaoContext::ERROR);
 					$this->redirect('contao/main.php?act=error');
 				}
 				break;
@@ -282,7 +284,7 @@ class tl_fernschach_spieler_titel extends \Backend
 					case 'import': // Buchungen importieren
 						if(!$this->User->hasAccess('import', 'fernschach_konto'))
 						{
-							$this->log('Fernschach-Verwaltung: Keine Rechte, um Buchungen zu importieren.', __METHOD__, TL_ERROR);
+							Scope::log('Fernschach-Verwaltung: Keine Rechte, um Buchungen zu importieren.', __METHOD__, ContaoContext::ERROR);
 							$this->redirect('contao/main.php?act=error');
 						}
 						break;

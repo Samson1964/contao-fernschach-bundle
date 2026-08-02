@@ -1,3 +1,13 @@
-app.controller:
-    resource: ../../src/Controller
-    type: attribute
+# Routen der Fernschach-Verwaltung
+#
+# Die Route wird ausdrücklich beschrieben und nicht über ein #[Route]-Attribut
+# eingesammelt: Der dafür nötige Lader heißt in Symfony 5.4 (Contao 4.13)
+# "annotation" und in Symfony 7 (Contao 5) "attribute", eine für beide Seiten
+# gültige Schreibweise gibt es nicht.
+contao_fernschach_iccf_import:
+    path: /contao/fernschach/iccf-import
+    defaults:
+        _controller: Schachbulle\ContaoFernschachBundle\Controller\IccfImportController
+        _scope: backend
+        _token_check: false
+    methods: [GET]

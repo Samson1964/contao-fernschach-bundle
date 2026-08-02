@@ -10,6 +10,14 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+
 
 /**
  * Table tl_fernschach_turniere_bewerbungen
@@ -20,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_fernschach_turniere',
 		'enableVersioning'            => true,
 		'onsubmit_callback'           => array
@@ -87,15 +95,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -272,6 +273,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'inputType'               => 'checkbox',
 			'default'                 => 1,
 			'filter'                  => true,
@@ -303,7 +305,7 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
 	}
 
@@ -352,11 +354,11 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 	/**
 	 * Setzt die Felder Vorname und Nachname, wenn diese nicht gefüllt sind
 	 * @param mixed
-	 * @param \DataContainer
+	 * @param DataContainer
 	 * @return string
 	 * @throws \Exception
 	 */
-	public function setSpielername(\DataContainer $dc)
+	public function setSpielername(DataContainer $dc)
 	{
 		$nachname = $dc->activeRecord->nachname;
 		$vorname = $dc->activeRecord->vorname;
@@ -365,18 +367,18 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 		{
 			// Kein Nachname, dann Nachname aus Spielertabelle holen
 			$nachname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'nachname');
-			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET nachname = ? WHERE id = ?")
+			Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET nachname = ? WHERE id = ?")
 			                        ->execute($nachname, $dc->id);
-			$this->createNewVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
+			Scope::createVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
 		}
 
 		if(!$vorname && $dc->activeRecord->spielerId)
 		{
 			// Kein Vorname, dann Vorname aus Spielertabelle holen
 			$vorname = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpieler($dc->activeRecord->spielerId, 'vorname');
-			\Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET vorname = ? WHERE id = ?")
+			Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_bewerbungen SET vorname = ? WHERE id = ?")
 			                        ->execute($vorname, $dc->id);
-			$this->createNewVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
+			Scope::createVersion('tl_fernschach_turniere_bewerbungen', $dc->id);
 		}
 
 	}

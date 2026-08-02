@@ -1,7 +1,7 @@
 <div class="tl_listing_container parent_view">
 
 	<div id="tl_buttons">
-		<a href="contao?do=fernschach-turniere&amp;rt=<?= REQUEST_TOKEN ?>" class="header_back" title="" accesskey="b" onclick="Backend.getScrollOffset()"><?= $GLOBALS['TL_LANG']['MSC']['backBT'] ?></a> 
+		<a href="contao?do=fernschach-turniere&amp;rt=<?= $this->RequestToken ?>" class="header_back" title="" accesskey="b" onclick="Backend.getScrollOffset()"><?= $GLOBALS['TL_LANG']['MSC']['backBT'] ?></a>
 	</div>
 
 	<div onmouseout="Theme.hoverDiv(this,0)" onmouseover="Theme.hoverDiv(this,1)" class="tl_header click2edit toggle_select" style="">

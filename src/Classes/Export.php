@@ -2,10 +2,21 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Controller;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class dsb_trainerlizenzExport
   */
-class Export extends \Backend
+class Export extends Backend
 {
 
 	public $Titeltraeger = array();
@@ -16,7 +27,7 @@ class Export extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 		$this->Titeltraeger = array
 		(
 			'500' => 'FSGM',
@@ -43,15 +54,15 @@ class Export extends \Backend
 	 * @return string
 	 */
 
-	public function exportXLS(\DataContainer $dc)
+	public function exportXLS(DataContainer $dc)
 	{
-		if($this->Input->get('key') != 'exportXLS' || !$this->User->hasAccess('export', 'fernschach_spieler'))
+		if(Input::get('key') != 'exportXLS' || !$this->User->hasAccess('export', 'fernschach_spieler'))
 		{
 			return '';
 		}
 
 		// Formular wurde abgeschickt
-		if(\Input::post('FORM_SUBMIT') == 'tl_fernschach_exportexcel')
+		if(Input::post('FORM_SUBMIT') == 'tl_fernschach_exportexcel')
 		{
 			$arrExport = self::getRecords($dc); // Spieler auslesen
 			$recordCount = count($arrExport) + 1;
@@ -109,7 +120,7 @@ class Export extends \Backend
 			            ->setCellValue('A1', 'Datensatz')
 			            ->setCellValue('B1', 'Letzte Änderung')
 			            ->setCellValue('C1', 'Archiviert')
-			            ->setCellValue('D1', 'Kenncode '.\Input::post('kenncode_stichtag'))
+			            ->setCellValue('D1', 'Kenncode '.Input::post('kenncode_stichtag'))
 			            ->setCellValue('E1', 'Name')
 			            ->setCellValue('F1', 'Vorname')
 			            ->setCellValue('G1', 'Titel')
@@ -153,9 +164,9 @@ class Export extends \Backend
 			            ->setCellValue('AS1', 'Inhaber')
 			            ->setCellValue('AT1', 'IBAN')
 			            ->setCellValue('AU1', 'BIC')
-			            ->setCellValue('AV1', 'Saldo Hauptkonto '.\Input::post('saldo_stichtag'))
-			            ->setCellValue('AW1', 'Saldo Beitrag '.\Input::post('saldo_stichtag'))
-			            ->setCellValue('AX1', 'Saldo Nenngeld '.\Input::post('saldo_stichtag'))
+			            ->setCellValue('AV1', 'Saldo Hauptkonto '.Input::post('saldo_stichtag'))
+			            ->setCellValue('AW1', 'Saldo Beitrag '.Input::post('saldo_stichtag'))
+			            ->setCellValue('AX1', 'Saldo Nenngeld '.Input::post('saldo_stichtag'))
 			            ->setCellValue('AY1', 'Veröffentlicht')
 			            ->setCellValue('AZ1', 'Fertig');
 
@@ -259,9 +270,9 @@ class Export extends \Backend
 
 			$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xls');
 			$writer->save('php://output'); // An Browser schicken
-			//\Message::addConfirmation('Excel-Export ausgeführt');
-			//\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			//\Controller::redirect(str_replace('&key=exportXLS', '', \Environment::get('request')));
+			//Message::addConfirmation('Excel-Export ausgeführt');
+			//System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			//Controller::redirect(str_replace('&key=exportXLS', '', Environment::get('request')));
 
 		}
 
@@ -269,21 +280,21 @@ class Export extends \Backend
 		// Return form
 		$ausgabe = '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=exportXLS', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.StringUtil::ampersand(str_replace('&key=exportXLS', '', Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-'.\Message::generate().'
-<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_fernschach_mitgliederstatistik" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
+'.Message::generate().'
+<form action="'.StringUtil::ampersand(Environment::get('request'), true).'" id="tl_fernschach_mitgliederstatistik" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
 
 <div class="tl_formbody_edit">
 	<input type="hidden" name="FORM_SUBMIT" value="tl_fernschach_exportexcel">
-	<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">
+	<input type="hidden" name="REQUEST_TOKEN" value="'.Scope::getRequestToken().'">
 
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['headline'].'</h2>
 	<div class="tl_tbox">
 		<div class="widget clr long">
 			<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][0].'</h3>
-			<input type="text" name="kenncode_stichtag" value="'.(\Input::post('kenncode_stichtag') ? \Input::post('kenncode_stichtag') : date('d.m.Y')).'">
+			<input type="text" name="kenncode_stichtag" value="'.(Input::post('kenncode_stichtag') ? Input::post('kenncode_stichtag') : date('d.m.Y')).'">
 			<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['kenncode_stichtag'][1].'</p>
 		</div>';
 		
@@ -292,7 +303,7 @@ class Export extends \Backend
 			$ausgabe .= '
 			<div class="widget clr long">
 				<h3>'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][0].'</h3>
-				<input type="text" name="saldo_stichtag" value="'.(\Input::post('saldo_stichtag') ? \Input::post('saldo_stichtag') : date('d.m.Y')).'">
+				<input type="text" name="saldo_stichtag" value="'.(Input::post('saldo_stichtag') ? Input::post('saldo_stichtag') : date('d.m.Y')).'">
 				<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['saldo_stichtag'][1].'</p>
 			</div>';
 		}
@@ -303,7 +314,7 @@ class Export extends \Backend
 
 <div class="tl_formbody_submit">
 <div class="tl_submit_container">
-	<input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'][0]).'">
+	<input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'][0]).'">
 	<p class="tl_help tl_tip">'.$GLOBALS['TL_LANG']['tl_fernschach_exportexcel']['start'][1].'</p>
 </div>
 </div>
@@ -315,12 +326,12 @@ class Export extends \Backend
 
 	}
 
-	public function getRecords(\DataContainer $dc)
+	public function getRecords(DataContainer $dc)
 	{
 		// Liest die Datensätze der Fernschachverwaltung in ein Array
 
 		// Suchbegriff in aktueller Ansicht laden
-		$search = $dc->Session->get('search');
+		$search = Scope::getBackendSessionValue('search');
 		$search = $search[$dc->table]; // Das Array enthält field und value
 		//if($search['field']) $sql = " WHERE ".$search['field']." LIKE '%%".$search['value']."%%'"; // findet auch Umlaute, Suche nach "ba" findet auch "bä"
 		if($search['field'] && $search['value']) $sql = " WHERE LOWER(CAST(".$search['field']." AS CHAR)) REGEXP LOWER('".$search['value']."')"; // Contao-Standard, ohne Umlaute, Suche nach "ba" findet nicht "bä"
@@ -342,7 +353,7 @@ class Export extends \Backend
 		//               )
 		//
 		//       )
-		$filter = $dc->Session->get('filter');
+		$filter = Scope::getBackendSessionValue('filter');
 		$filter = $filter[$dc->table]; // Das Array enthält limit (Wert meistens = 0,30) und alle Feldnamen mit den Werten
 		foreach($filter as $key => $value)
 		{
@@ -354,7 +365,7 @@ class Export extends \Backend
 		}
 
 		// Spezialfilter berücksichtigen
-		$filter = $dc->Session->get('filter');
+		$filter = Scope::getBackendSessionValue('filter');
 		$filter = isset($filter[$dc->table.'Filter']['tfs_filter']) ? $filter[$dc->table.'Filter']['tfs_filter'] : ''; // Wert aus Spezialfilter
 		switch($filter)
 		{
@@ -380,9 +391,9 @@ class Export extends \Backend
 
 		$sql = "SELECT * FROM tl_fernschach_spieler".$sql;
 
-		//log_message('Excel-Export mit: '.$sql, 'fernschachverwaltung.log');
+		//Scope::logToFile('Excel-Export mit: '.$sql, 'fernschachverwaltung.log');
 		// Datensätze laden
-		$records = \Database::getInstance()->prepare($sql)
+		$records = Database::getInstance()->prepare($sql)
 		                                   ->execute();
 
 		// Datensätze umwandeln
@@ -480,7 +491,7 @@ class Export extends \Backend
 					case '513': // Alle Titelträger NMK  = Nationaler Fernschachmeisterkandidat
 					case '514': // Alle Titelträger NJFM = Nationaler Junioren-Fernschachmeister
 						$exportieren = false;
-						$objTitel = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ? AND pid = ?")
+						$objTitel = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_titel WHERE titel = ? AND pid = ?")
 						                                    ->execute($this->Titeltraeger[$filter], $records->id);
 						if($objTitel->numRows)
 						{
@@ -490,7 +501,7 @@ class Export extends \Backend
 
 					case '600': // Alle Spieler mit E-Mails (unbearbeitet und versendet)
 						$exportieren = false;
-						$objMails = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
+						$objMails = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mails WHERE pid = ?")
 						                                    ->execute($records->id);
 						if($objMails->numRows)
 						{
@@ -502,15 +513,15 @@ class Export extends \Backend
 				}
 				if($exportieren)
 				{
-					$saldo_h = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, '', \Input::post('saldo_stichtag')));
-					$saldo_b = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'beitrag', \Input::post('saldo_stichtag')));
-					$saldo_n = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'nenngeld', \Input::post('saldo_stichtag')));
+					$saldo_h = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, '', Input::post('saldo_stichtag')));
+					$saldo_b = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'beitrag', Input::post('saldo_stichtag')));
+					$saldo_n = end(\Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($records->id, 'nenngeld', Input::post('saldo_stichtag')));
 					$arrExport[] = array
 					(
 						'id'                      => $records->id,
 						'tstamp'                  => $records->tstamp ? date("d.m.Y H:i:s",$records->tstamp) : '',
 						'archived'                => $records->archived,
-						'kenncode'                => self::getCode($records->id, \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->birthday), $records->memberId, \Input::post('kenncode_stichtag')),
+						'kenncode'                => self::getCode($records->id, \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($records->birthday), $records->memberId, Input::post('kenncode_stichtag')),
 						'nachname'                => $records->nachname,
 						'vorname'                 => $records->vorname,
 						'titel'                   => $records->titel,

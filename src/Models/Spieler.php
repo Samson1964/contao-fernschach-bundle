@@ -8,7 +8,7 @@ use Contao\Model;
  * 
  * @property string $hash
  */
-class Spieler extends \Model
+class Spieler extends Model
 {
 	protected static $strTable = 'tl_fernschach_spieler';
 	//protected static $strTable = 'tl_fernschach_spieler';

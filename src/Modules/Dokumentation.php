@@ -10,10 +10,14 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
+use Contao\BackendModule;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Back end module "maintenance".
  */
-class Dokumentation extends \BackendModule
+class Dokumentation extends BackendModule
 {
 	/**
 	 * Template
@@ -28,11 +32,11 @@ class Dokumentation extends \BackendModule
 	 */
 	protected function compile()
 	{
-		\System::loadLanguageFile('tl_fernschach_dokumentation');
+		System::loadLanguageFile('tl_fernschach_dokumentation');
 
 		$this->Template->content = '<div class="fernschach-doku">';
 		$this->Template->href = $this->getReferer(true);
-		$this->Template->title = \StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']);
+		$this->Template->title = StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']);
 		$this->Template->button = $GLOBALS['TL_LANG']['MSC']['backBT'];
 
 		$this->Template->content .= '<h1>'.$GLOBALS['TL_LANG']['tl_fernschach_dokumentation']['title'].'</h1>';

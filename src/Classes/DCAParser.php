@@ -2,7 +2,12 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
-class DCAParser extends \Backend
+use Contao\Backend;
+use Contao\Date;
+use Contao\Input;
+use Contao\StringUtil;
+
+class DCAParser extends Backend
 {
 
 	protected $dca;
@@ -30,12 +35,12 @@ class DCAParser extends \Backend
 		$content = '';
 		$content .= '<div class="content">';
 		$content .= '  <div id="tl_buttons">';
-		$content .= '    <a href="'.$this->backlink.'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>';
+		$content .= '    <a href="'.$this->backlink.'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>';
 		$content .= '  </div>';
 		$content .= '  <form id="'.$this->formId.'" class="tl_form tl_edit_form" method="post" enctype="application/x-www-form-urlencoded">';
 		$content .= '    <div class="tl_formbody_edit">';
 		$content .= '      <input type="hidden" name="FORM_SUBMIT" value="'.$this->formId.'">';
-		$content .= '      <input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">';
+		$content .= '      <input type="hidden" name="REQUEST_TOKEN" value="'.Scope::getRequestToken().'">';
 		if(isset($this->dca['info']))
 		{
 			$content .= '      <div class="long widget">';
@@ -148,7 +153,7 @@ class DCAParser extends \Backend
 	 */
 	public function isSubmitted()
 	{
-		return (\Input::post('FORM_SUBMIT') == $this->formId);
+		return (Input::post('FORM_SUBMIT') == $this->formId);
 	}
 
 	/**
@@ -162,10 +167,10 @@ class DCAParser extends \Backend
 		{
 			foreach($this->dca['fieldsets'][$key]['fields'] as $field => $value)
 			{
-				$arrData[$field] = \Input::post($field);
+				$arrData[$field] = Input::post($field);
 			}
 		}
-		$arrData['FORM_SUBMIT'] = \Input::post('FORM_SUBMIT');
+		$arrData['FORM_SUBMIT'] = Input::post('FORM_SUBMIT');
 		return $arrData;
 	}
 

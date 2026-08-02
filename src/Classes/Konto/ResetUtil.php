@@ -2,14 +2,34 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes\Konto;
 
-class ResetUtil extends \Backend
+use Contao\Backend;
+use Contao\Config;
+use Contao\Database;
+use Contao\StringUtil;
+use Contao\Versions;
+
+class ResetUtil extends Backend
 {
 
-	var $Resets = array();
+	/**
+	 * Die in den Einstellungen definierten globalen Resetbuchungen.
+	 *
+	 * Die Eigenschaft hieß bis Version 2.0.0 "Resets", beschrieben und gelesen
+	 * wurde aber durchgehend "resets" — also eine dynamisch angelegte
+	 * Eigenschaft, für die PHP 8.2 eine Verfallswarnung ausgibt.
+	 *
+	 * @var array
+	 */
+	public $resets = array();
 
+	/**
+	 * Liest beim Erzeugen sofort die definierten Resetbuchungen ein.
+	 */
 	public function __construct()
 	{
-		self::getResets();
+		parent::__construct();
+
+		$this->getResets();
 	}
 
 	/**
@@ -41,7 +61,7 @@ class ResetUtil extends \Backend
 		$BuchungJung = array('id'=>0, 'datum'=>0); // Speichert Datum und ID der jüngsten Buchung
 
 		// Alle Buchungen des Spielers aufsteigend nach Datum laden
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." WHERE pid = ? AND resetRecord = ? ORDER BY datum ASC, sortierung ASC")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." WHERE pid = ? AND resetRecord = ? ORDER BY datum ASC, sortierung ASC")
 		                                        ->execute($id, '');
 		if($objBuchungen->numRows)
 		{
@@ -74,7 +94,7 @@ class ResetUtil extends \Backend
 		// Alle globalen Resetbuchungen des Spielers laden
 		// ======================================================
 		$Resetbuchungen = array();
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." WHERE pid = ? AND resetRecord != ?")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$suffix." WHERE pid = ? AND resetRecord != ?")
 		                                        ->execute($id, '');
 		if($objBuchungen->numRows)
 		{
@@ -159,7 +179,7 @@ class ResetUtil extends \Backend
 						'typ'              => $this->resets[$y]['typ'],
 						'verwendungszweck' => 'Saldo global neu gesetzt',
 					);
-					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$suffix." %s")
+					$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_spieler_konto".$suffix." %s")
 					                                     ->set($set)
 					                                     ->execute();
 				}
@@ -180,9 +200,9 @@ class ResetUtil extends \Backend
 			if(!$Resetbuchungen[$x]['correctly'])
 			{
 				// Löschbare Buchung gefunden
-				$objLoeschen = \Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
+				$objLoeschen = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto".$suffix." WHERE id = ?")
 				                                       ->execute($Resetbuchungen[$x]['id']);
-				$version = new \Versions('tl_fernschach_spieler_konto'.$suffix, $Resetbuchungen[$x]['id']);
+				$version = new Versions('tl_fernschach_spieler_konto'.$suffix, $Resetbuchungen[$x]['id']);
 				$version->setUsername($GLOBALS['TL_LANG']['fernschachverwaltung']['botname']);
 				$version->create();
 			}
@@ -222,19 +242,22 @@ class ResetUtil extends \Backend
 		$arr = array();
 
 		// Reset-Datensätze einlesen, wenn eingeschaltet
-		if(isset($GLOBALS['TL_CONFIG']['fernschach_resetActive']) && $GLOBALS['TL_CONFIG']['fernschach_resetActive'])
+		if(Config::get('fernschach_resetActive'))
 		{
-			$resetRecords = (array)unserialize($GLOBALS['TL_CONFIG']['fernschach_resetRecords']); // Reset-Datensätze einlesen
+			// StringUtil::deserialize() kommt auch mit einem leeren Wert zurecht;
+			// unserialize(null) wäre unter PHP 8.1 eine Verfallswarnung.
+			$resetRecords = StringUtil::deserialize(Config::get('fernschach_resetRecords'), true);
 
 			// Alle Reset-Datensätze auswerten
 			foreach($resetRecords as $resetRecord)
 			{
-				$nummer = abs($resetRecord['nummer']);
+				$nummer = abs((int) $resetRecord['nummer']);
 				$typ = $resetRecord['saldo'] < 0 ? 's' : 'h';
-				$betrag = abs($resetRecord['saldo']);
-				$datum = abs($resetRecord['datum']);
-				$konten = $resetRecord['konten'];
-				if(count($konten))
+				$betrag = abs((float) $resetRecord['saldo']);
+				$datum = abs((int) $resetRecord['datum']);
+				$konten = is_array($resetRecord['konten'] ?? null) ? $resetRecord['konten'] : array();
+
+				if($konten)
 				{
 					foreach($konten as $konto)
 					{

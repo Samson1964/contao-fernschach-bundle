@@ -1,5 +1,15 @@
 <?php
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Date;
+use Contao\StringUtil;
+
+
 //$this->Template->headline = 'Hallo';
 
 /**
@@ -20,7 +30,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mails'] = array
 	'config' => array
 	(
 		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mails']['main'],
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_fernschach_spieler',
 		'enableVersioning'            => true,
 		'markAsCopy'                  => 'subject',
@@ -284,7 +294,7 @@ class tl_fernschach_spieler_mails extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	/**
@@ -296,7 +306,7 @@ class tl_fernschach_spieler_mails extends Backend
 	 */
 	public function listEmails($arrRow)
 	{
-		$content = \StringUtil::insertTagToSrc($arrRow['content']);
+		$content = StringUtil::insertTagToSrc($arrRow['content']);
 		
 		return '
 <div class="cte_type '.(($arrRow['sent_state'] && $arrRow['sent_date']) ? 'published' : 'unpublished').'"><strong>'.$arrRow['subject'].'</strong> - '.(($arrRow['sent_state'] && $arrRow['sent_date']) ? 'Versendet am '.Date::parse(Config::get('datimFormat'), $arrRow['sent_date']) : 'Nicht versendet'). '</div>
@@ -325,11 +335,11 @@ class tl_fernschach_spieler_mails extends Backend
 		}
 	}
 
-	public function getTemplates(\DataContainer $dc)
+	public function getTemplates(DataContainer $dc)
 	{
 
 		// Neue Templates laden
-		$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE published = ?")
+		$result = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE published = ?")
 		                                  ->execute(1);
 
 		$options = array();
@@ -341,13 +351,13 @@ class tl_fernschach_spieler_mails extends Backend
 		return $options;
 	}
 
-	public function getPreview(\DataContainer $dc)
+	public function getPreview(DataContainer $dc)
 	{
 		// Template aus Datenbank laden
 		$template = '';
 		if($dc->activeRecord->template)
 		{
-			$result = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
+			$result = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_mailtemplates WHERE id=?")
 			                                  ->execute($dc->activeRecord->template);
 			if($result->numRows)
 			{
@@ -356,11 +366,11 @@ class tl_fernschach_spieler_mails extends Backend
 		}
 
 		// Spielerdatensatz laden
-		$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
+		$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
 		                                      ->execute($dc->activeRecord->pid);
 		
 		// Vorschau generieren
-		// Signatur einfügen, wenn aktiviert
+		// Signatur einfÃ¼gen, wenn aktiviert
 		$signatur = '';
 		if($dc->activeRecord->signatur)
 		{

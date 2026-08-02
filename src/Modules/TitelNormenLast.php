@@ -13,7 +13,13 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class TitelNormenLast extends \Module
+use Contao\BackendTemplate;
+use Contao\Database;
+use Contao\Module;
+use Contao\StringUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class TitelNormenLast extends Module
 {
 
 	/**
@@ -28,9 +34,9 @@ class TitelNormenLast extends \Module
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
+		if (Scope::isBackendRequest())
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			$objTemplate = new BackendTemplate('be_wildcard');
 
 			$objTemplate->wildcard = '### FERNSCHACH-VERWALTUNG - LETZTE TITEL UND NORMEN ###';
 			$objTemplate->title = $this->name;
@@ -63,11 +69,14 @@ class TitelNormenLast extends \Module
 		$daten = array();
 		$titel = array();
 		$normen = array();
-		$mindate = date('Ymd', strtotime($this->fernschachverwaltung_zeitraum)); // Nur Normen/Titel eines bestimmten Zeitraums
+		// Ist im Modul kein Zeitraum eingestellt, wird alles ausgegeben. Der
+		// leere Wert kommt als null aus der Datenbank, und strtotime(null)
+		// wäre unter PHP 8.1 eine Verfallswarnung.
+		$mindate = $this->fernschachverwaltung_zeitraum ? date('Ymd', (int) strtotime((string) $this->fernschachverwaltung_zeitraum)) : '00000000';
 		$maxdate = date('Ymd'); // Heutiges Datum setzen
 		
 		// Aktive Mitglieder laden
-		$objMembers = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
+		$objMembers = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
 		                                      ->execute(1);
 
 		// Normen auslesen
@@ -76,7 +85,7 @@ class TitelNormenLast extends \Module
 			while($objMembers->next())
 			{
 				// Normen suchen
-				$normenMember = unserialize($objMembers->normen); // Normen extrahieren
+				$normenMember = StringUtil::deserialize($objMembers->normen); // Normen extrahieren
 				if(is_array($normenMember))
 				{
 					for($x = 0; $x < count($normenMember); $x++)
@@ -101,7 +110,7 @@ class TitelNormenLast extends \Module
 		}
 
 		// Aktive Titel-Datensätze laden
-		$objTitel = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE published = ?')
+		$objTitel = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE published = ?')
 		                                    ->execute(1);
 
 		// Titel auslesen
@@ -110,7 +119,7 @@ class TitelNormenLast extends \Module
 			while($objTitel->next())
 			{
 				// Spielerdatensatz laden
-				$objMember = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
+				$objMember = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
 				                                     ->execute($objTitel->pid);
 				// Nur Titel von veröffentlichten Spielern berücksichtigen
 				if($objMember->published)

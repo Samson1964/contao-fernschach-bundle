@@ -9,11 +9,16 @@
  * @license    http://opensource.org/licenses/lgpl-3.0.html LGPL
  */
 
+use Contao\Backend;
+use Contao\DataContainer;
+use Contao\Database;
+
+
 /**
  * Add palette to tl_module
  */
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,fernschachverwaltung_tournamentRoot,fernschachverwaltung_tournamentText,fernschachverwaltung_bewerbung,fernschachverwaltung_radio,nc_notification;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers,fernschachverwaltung_tournamentRoot,fernschachverwaltung_tournamentText,fernschachverwaltung_bewerbung,fernschachverwaltung_radio;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_meldeformular_team'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_linkingMembers;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titel'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_titel;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['fernschachverwaltung_titelnormen'] = '{title_legend},name,headline,type;{options_legend},fernschachverwaltung_zeitraum;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID';
@@ -246,16 +251,16 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['fernschachverwaltung_titel'] = array
 	'sql'                     => "varchar(4) NOT NULL default ''"
 );
 
-class tl_module_fernschach extends \Backend
+class tl_module_fernschach extends Backend
 {
 	/**
-	 * options_callback: Ermöglicht das Befüllen eines Drop-Down-Menüs oder einer Checkbox-Liste mittels einer individuellen Funktion.
+	 * options_callback: ErmÃ¶glicht das BefÃ¼llen eines Drop-Down-MenÃ¼s oder einer Checkbox-Liste mittels einer individuellen Funktion.
 	 * @param  $dc
 	 * @return array
 	 */
-	public function getTurniere(\DataContainer $dc)
+	public function getTurniere(DataContainer $dc)
 	{
-		$objTurniere = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE titleView = ? ORDER BY title ASC")
+		$objTurniere = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE titleView = ? ORDER BY title ASC")
 		                                       ->execute(1);
 
 		$arr = array();

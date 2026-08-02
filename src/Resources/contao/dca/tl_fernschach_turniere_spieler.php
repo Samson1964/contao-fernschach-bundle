@@ -3,13 +3,21 @@
 /**
  * Tabelle tl_fernschach_turniere_spieler
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Input;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
 $GLOBALS['TL_DCA']['tl_fernschach_turniere_spieler'] = array
 (
 
 	// Konfiguration
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'enableVersioning'            => true,
 		'ptable'                      => 'tl_fernschach_turniere',
 		'onload_callback'             => array
@@ -78,15 +86,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_spieler'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_spieler']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -137,6 +138,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_spieler'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_spieler']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -154,7 +156,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_spieler'] = array
 /**
  * Class tl_member_aktivicon
  */
-class tl_fernschach_turniere_spieler extends \Backend
+class tl_fernschach_turniere_spieler extends Backend
 {
 
 	/**
@@ -163,7 +165,7 @@ class tl_fernschach_turniere_spieler extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	/**
@@ -234,13 +236,13 @@ class tl_fernschach_turniere_spieler extends \Backend
 
 	public function cacheMeldung(DataContainer $dc)
 	{
-		//log_message('Sichere alte Zuordnung','fernschach.log');
-		//log_message('tl_fernschach_turniere_spieler.id = '.$this->Input->get('id'),'fernschach.log');
+		//Scope::logToFile('Sichere alte Zuordnung','fernschach.log');
+		//Scope::logToFile('tl_fernschach_turniere_spieler.id = '.Input::get('id'),'fernschach.log');
     	$row = $this->Database->prepare("SELECT meldungId FROM tl_fernschach_turniere_spieler WHERE id=?")
-    	                      ->execute($this->Input->get('id'));
+    	                      ->execute(Input::get('id'));
 
-		//log_message('meldungId = '.$row->meldungId,'fernschach.log');
-    	$this->Session->set('tl_fernschach_turniere_spieler.meldungId', $row->meldungId);
+		//Scope::logToFile('meldungId = '.$row->meldungId,'fernschach.log');
+    	Scope::setBackendSessionValue('tl_fernschach_turniere_spieler.meldungId', $row->meldungId);
 
 	}
 
@@ -252,13 +254,13 @@ class tl_fernschach_turniere_spieler extends \Backend
 	{
 		// Turnier-ID in der Meldung eintragen
 
-		//log_message('Neue Zuordnung','fernschach.log');
-		//log_message('meldungId aus Session = '.$this->Session->get('tl_fernschach_turniere_spieler.meldungId'),'fernschach.log');
-		//log_message('meldungId aus Bearbeitung = '.$dc->activeRecord->meldungId,'fernschach.log');
+		//Scope::logToFile('Neue Zuordnung','fernschach.log');
+		//Scope::logToFile('meldungId aus Session = '.Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId'),'fernschach.log');
+		//Scope::logToFile('meldungId aus Bearbeitung = '.$dc->activeRecord->meldungId,'fernschach.log');
 
-    	if($this->Session->get('tl_fernschach_turniere_spieler.meldungId') !== $dc->activeRecord->meldungId)
+    	if(Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId') !== $dc->activeRecord->meldungId)
     	{
-			$this->createInitialVersion('tl_fernschach_turniere_meldungen', $this->Session->get('tl_fernschach_turniere_spieler.meldungId'));
+			Scope::initializeVersion('tl_fernschach_turniere_meldungen', Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId'));
 			$set = array
 			(
 				'tstamp'     => time(),
@@ -266,12 +268,12 @@ class tl_fernschach_turniere_spieler extends \Backend
 			);
 			$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 			                            ->set($set)
-			                            ->execute($this->Session->get('tl_fernschach_turniere_spieler.meldungId'));
+			                            ->execute(Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId'));
 
-			$this->createNewVersion('tl_fernschach_turniere_meldungen', $this->Session->get('tl_fernschach_turniere_spieler.meldungId'));
+			Scope::createVersion('tl_fernschach_turniere_meldungen', Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId'));
     	}
 
-		$this->createInitialVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
+		Scope::initializeVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
 		$set = array
 		(
 			'tstamp'     => time(),
@@ -280,7 +282,7 @@ class tl_fernschach_turniere_spieler extends \Backend
 		$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 		                            ->set($set)
 		                            ->execute($dc->activeRecord->meldungId);
-		$this->createNewVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
+		Scope::createVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);
 
 	}
 }

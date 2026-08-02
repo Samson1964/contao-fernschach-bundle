@@ -2,7 +2,12 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes\Konto;
 
-class Resetbuchung_2023 extends \Backend
+use Contao\Backend;
+use Contao\Controller;
+use Contao\Database;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class Resetbuchung_2023 extends Backend
 {
 
 	var $konto = '';
@@ -31,7 +36,7 @@ class Resetbuchung_2023 extends \Backend
 	/**
 	 * function getResetbuchung
 	 * =================================================================
-	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurück
+	 * Sucht nach einer Resetbuchung nach dem 01.04.2023 und gibt true/false zurÃ¼ck
 	 *
 	 * @param integer $id         ID des Spielers
 	 * @param string  $konto      b, n oder h (Beitrag-, Nenngeld- oder Hauptkonto)
@@ -40,14 +45,14 @@ class Resetbuchung_2023 extends \Backend
 	 */
 	public function getResetbuchung()
 	{
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$this->konto." WHERE pid=? AND saldoReset=? AND datum>=? AND published=? AND resetRecord=?")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$this->konto." WHERE pid=? AND saldoReset=? AND datum>=? AND published=? AND resetRecord=?")
 		                                        ->execute($this->spieler, 1, $this->zeitstempel, 1, '');
 
 		if($objBuchungen->numRows) $resetVorhanden = true;
 		else $resetVorhanden =  false;
 
-		// Spielerdatensatz prüfen, ob accountChecked richtig gesetzt ist
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
+		// Spielerdatensatz prÃ¼fen, ob accountChecked richtig gesetzt ist
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id=?")
 		                                        ->execute($this->spieler);
 
 		//echo "<pre>";
@@ -70,41 +75,41 @@ class Resetbuchung_2023 extends \Backend
 		{
 			if($this->konto == '_beitrag' && ($resetVorhanden != $objBuchungen->beitragChecked))
 			{
-				// Status paßt nicht zueinander, jetzt aktualisieren
+				// Status paÃŸt nicht zueinander, jetzt aktualisieren
 				$set = array
 				(
 					'beitragChecked'   => $resetVorhanden,
 				);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 			elseif($this->konto == '_nenngeld' && ($resetVorhanden != $objBuchungen->nenngeldChecked))
 			{
-				// Status paßt nicht zueinander, jetzt aktualisieren
+				// Status paÃŸt nicht zueinander, jetzt aktualisieren
 				$set = array
 				(
 					'nenngeldChecked'   => $resetVorhanden,
 				);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 			elseif($this->konto == '' && $resetVorhanden != $objBuchungen->accountChecked)
 			{
-				// Status paßt nicht zueinander, jetzt aktualisieren
+				// Status paÃŸt nicht zueinander, jetzt aktualisieren
 				$set = array
 				(
 					'accountChecked'   => $resetVorhanden,
 				);              
 				//echo "Update Hauptkonto\n";
 				//print_r($set);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 		}
 		else
@@ -117,10 +122,10 @@ class Resetbuchung_2023 extends \Backend
 				(
 					'beitragChecked'   => false,
 				);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 			elseif($this->konto == '_nenngeld' && $objBuchungen->nenngeldChecked)
 			{
@@ -129,10 +134,10 @@ class Resetbuchung_2023 extends \Backend
 				(
 					'nenngeldChecked'   => false,
 				);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 			elseif($this->konto == '' && $objBuchungen->accountChecked)
 			{
@@ -141,10 +146,10 @@ class Resetbuchung_2023 extends \Backend
 				(
 					'accountChecked'   => false,
 				);
-				$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
+				$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_spieler %s WHERE id=?")
 				                                     ->set($set)
 				                                     ->execute($this->spieler);
-				\Controller::createNewVersion('tl_fernschach_spieler', $this->spieler);
+				Scope::createVersion('tl_fernschach_spieler', $this->spieler);
 			}
 		}
 

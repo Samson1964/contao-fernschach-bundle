@@ -1,3 +1,400 @@
 # Fernschach-Verwaltung
 
+Contao-Erweiterung für den Fernschachbetrieb eines Verbandes: Mitglieder- und
+Spielerverwaltung, Turniere mit Online-Anmeldung und -Bewerbung, drei getrennte
+Beitrags- und Nenngeldkonten je Spieler, Titel und Titelnormen, Serienmails
+sowie der Import der ICCF-Wertungslisten.
+
+Entwickelt für und im Einsatz beim [Deutschen Fernschachbund (BdF)](https://www.bdf-fernschachbund.de/).
+
+---
+
+## Inhalt
+
+* [Voraussetzungen](#voraussetzungen)
+* [Installation](#installation)
+* [Ersteinrichtung](#ersteinrichtung)
+* [Einstellungen](#einstellungen)
+* [Backend-Module](#backend-module)
+* [Frontend-Module](#frontend-module)
+* [Inhaltselement](#inhaltselement)
+* [Rechteverwaltung](#rechteverwaltung)
+* [Cronjobs](#cronjobs)
+* [Import und Export](#import-und-export)
+* [Serienmails](#serienmails)
+* [Beitrittsformular](#beitrittsformular)
+* [Datenbanktabellen](#datenbanktabellen)
+* [Umstieg von 1.9.x auf 2.0.0](#umstieg-von-19x-auf-200)
+* [Entwicklung](#entwicklung)
+* [Weiterführende Dokumentation](#weiterführende-dokumentation)
+* [Lizenz](#lizenz)
+
+---
+
+## Voraussetzungen
+
+| Baustein | Version |
+| --- | --- |
+| PHP | 7.4 oder 8.x |
+| Contao | 4.13 LTS oder 5.x |
+
+Mitinstalliert werden:
+
+* `schachbulle/contao-helper-bundle` — gemeinsame Hilfsfunktionen und der
+  Formularbaukasten der Meldeformulare
+* `menatwork/contao-multicolumnwizard-bundle` — mehrspaltige Eingabefelder
+  (Mitgliedschaften, Normen, Reset-Buchungen)
+* `contao/newsletter-bundle` — Grundlage der Serienmail-Funktion
+* `phpoffice/phpspreadsheet` — Excel-Ausgabe von Spieler- und Statistikdaten
+
+## Installation
+
+Über den **Contao Manager**: nach `schachbulle/contao-fernschach-bundle` suchen
+und installieren.
+
+Auf der Kommandozeile:
+
+```bash
+composer require schachbulle/contao-fernschach-bundle
+```
+
+Anschließend die Datenbank aktualisieren — im Contao Manager unter
+„System-Wartung → Datenbank aktualisieren“ oder auf der Kommandozeile:
+
+```bash
+vendor/bin/contao-console contao:migrate
+```
+
+## Ersteinrichtung
+
+1. **Datenbank aktualisieren** (siehe oben). Dabei entstehen 17 eigene Tabellen
+   sowie zusätzliche Felder in `tl_member`, `tl_user`, `tl_user_group`,
+   `tl_module`, `tl_content` und `tl_newsletter_recipients`.
+2. **Einstellungen pflegen** unter *System → Einstellungen → Fernschach-Verwaltung*.
+   Ohne Absenderangaben verschickt die Erweiterung keine brauchbaren E-Mails.
+3. **Rechte vergeben** in den Benutzergruppen (siehe [Rechteverwaltung](#rechteverwaltung)).
+   Ohne Rechte sind die Schaltflächen in den Listen ausgegraut.
+4. **Frontend-Module anlegen**, sofern Turnieranmeldung oder Kontoauszug im
+   Frontend angeboten werden sollen.
+
+## Einstellungen
+
+Alle Einstellungen stehen unter *System → Einstellungen* in der Legende
+**Fernschach-Verwaltung**.
+
+| Einstellung | Bedeutung |
+| --- | --- |
+| Beitrittsformular | Contao-Formular, dessen Absendungen automatisch einen Spielerdatensatz anlegen (siehe [Beitrittsformular](#beitrittsformular)) |
+| Globalen Reset-Buchungsdatensatz aktivieren | Schaltet die verbandsweiten Saldo-Resets ein. Ist die Option aus, werden vorhandene Reset-Buchungen beim Aufruf der Buchungen eines Spielers gelöscht |
+| Reset-Buchungsdatensätze | Beliebig viele Resets mit Nummer, Datum, Saldo und den betroffenen Konten (Haupt-, Beitrags-, Nenngeldkonto). Sie gelten für **alle** Spieler |
+| Standard-Mitgliedergruppe | Frontend-Mitgliedergruppe für Konten ohne BdF-Mitgliedschaft. Leer lassen, wenn nicht gewünscht |
+| BdF-Mitgliedergruppe | Frontend-Mitgliedergruppe für Konten mit BdF-Mitgliedschaft. Der Cronjob *Mitgliederprüfung* trägt sie automatisch ein und aus |
+| Serienmail-Verteiler | Newsletter-Archiv, dessen Empfängerliste für Serienmails benutzt wird |
+| E-Mail-Absender / E-Mail-Adresse | Absender aller automatisch verschickten E-Mails |
+| Name / E-Mail-Adresse Turnierdirektor | Empfänger der Mannschaftsmeldungen |
+| Hinweis Kontoauszug | Text, der im Frontend statt des Kontoauszugs erscheint, wenn der angemeldete Benutzer kein BdF-Mitglied ist |
+| Turnieranmeldung | Prüfoptionen für Anmeldungen — **noch nicht implementiert** |
+
+## Backend-Module
+
+Alle Module liegen im eigenen Backend-Bereich **Fernschach-Verwaltung**, der an
+erster Stelle der Navigation eingefügt wird.
+
+### Spieler
+
+Die zentrale Personendatenbank: Stammdaten, zwei Anschriften, Kontaktdaten,
+BdF- und ICCF-Mitgliedsnummer, Mitgliedschaftszeiträume, Spielberechtigungen,
+Qualifikationen, Ehrungen, Titelnormen und SEPA-Mandate.
+
+Untertabellen zu jedem Spieler:
+
+* **Hauptkonto**, **Beitragskonto**, **Nenngeldkonto** — drei getrennte
+  Buchungskonten mit Soll/Haben, Kategorie, Verwendungszweck und laufendem Saldo
+* **Titel** — verliehene Titel mit Datum
+* **E-Mails** — an den Spieler verschickte Nachrichten samt Versandstatus
+* **E-Mail-Vorlagen** — wiederverwendbare Textbausteine für den Mailversand
+
+Zusätzliche Schaltflächen in der Kopfzeile:
+
+| Schaltfläche | Wirkung |
+| --- | --- |
+| Excel-Export | Ausgewählte Spieler als Excel-Datei ausgeben |
+| Spieler importieren | Spieler aus einer CSV-Datei anlegen oder ergänzen |
+| Buchungen importieren | Kontobuchungen aus einer CSV-Datei einlesen |
+| Buchungen verschieben | Buchungen zwischen den drei Konten aller Spieler sortieren |
+| Serienmail-Empfänger setzen | Empfängerliste des gewählten Newsletter-Archivs aus den Spielerdaten aufbauen |
+
+### Turniere
+
+Turnierkategorien und Turniere in einer Baumstruktur. Je Turnier: Kennziffer,
+Klassenzuordnung, Melde- und Startdatum, Nenngeld, Teilnehmerhöchstzahl,
+Beschränkungen nach Geschlecht und Alter, Turnierleitung sowie die Schalter für
+Online-Anmeldung und Bewerbung.
+
+Untertabellen: **Meldungen**, **Bewerbungen** und die **Teilnehmerliste**.
+
+Die Schaltfläche **Turnierstatistik** wertet Turniere, Meldungen und
+Bewerbungen nach Tag, Monat und Jahr sowie nach Turniertyp aus.
+
+### Konten
+
+Freier Kontenrahmen mit Buchungen — als **Entwicklungsversion** gekennzeichnet
+und noch nicht für den Wirkbetrieb gedacht. Die Schaltfläche *Standardkonten
+anlegen* erzeugt einen einfachen Kontenrahmen, solange noch keine Konten
+vorhanden sind.
+
+### ICCF-Rating
+
+Wertungslisten, ICCF-Spieler und deren Wertungszahlen. Eine Liste wird als
+CSV-Datei hochgeladen und anschließend blockweise eingelesen; eine
+Fortschrittsanzeige hält den Vorgang nach (siehe
+[Import und Export](#import-und-export)).
+
+### Mitgliederstatistik
+
+Altersstrukturen definieren und die Mitgliederzahlen zu einem Stichtag nach
+Altersgruppe und Geschlecht als Excel-Datei ausgeben.
+
+### Dokumentation
+
+Zeigt die Kurzdokumentation der Erweiterung im Backend an.
+
+## Frontend-Module
+
+| Modul | Zweck |
+| --- | --- |
+| Meldeformular Spieler-Turnieranmeldung | Anmeldung des angemeldeten Mitglieds zu einem Turnier |
+| Meldeformular Mannschaftsanmeldung | Meldung einer kompletten Mannschaft durch den Mannschaftsführer |
+| Liste der Titelträger | Alle Spieler mit einem bestimmten Titel |
+| Titel und Normen ausgeben | Titel und Normen eines wählbaren Zeitraums |
+| Glückwunschliste Titel und Normen | Wie oben, zusätzlich auf eine Höchstzahl begrenzt |
+| Kontoauszug BdF-Mitglied | Buchungen und Kontostand des angemeldeten Mitglieds |
+
+### Meldeformular Spieler-Turnieranmeldung
+
+| Einstellung | Bedeutung |
+| --- | --- |
+| Formular an Mitglied binden | Nur verifizierte BdF-Mitglieder dürfen das Formular sehen |
+| Turnierkategorie | Oberste Kategorie, aus der Turniere angeboten werden. Ohne Auswahl gelten alle Kategorien |
+| Einleitungstext | Text über der Turnierauswahl |
+| Bewerbungsformular | Speichert die Eingabe als Bewerbung statt als Anmeldung |
+| Radio-Buttons bei Turnierauswahl | Turnierauswahl als Radio-Buttons statt als Auswahlliste |
+
+Angeboten werden nur Turniere, die veröffentlicht sind, deren übergeordnete
+Kategorien ebenfalls veröffentlicht sind, deren Meldeschluss noch nicht
+verstrichen ist und deren Beschränkungen (Klasse, Geschlecht, Alter,
+Teilnehmerhöchstzahl) zum Spieler passen. Ohne SEPA-Mandat entscheidet der
+Kontostand darüber, ob eine Anmeldung möglich ist.
+
+Nach dem Absenden entstehen die Meldung, die Nenngeld-Sollbuchung und je eine
+E-Mail an die Turnierleitung und an den Spieler.
+
+### Kontoauszug BdF-Mitglied
+
+| Einstellung | Bedeutung |
+| --- | --- |
+| Buchungen Minimum / Maximum | Wie viele Buchungen mindestens und höchstens erscheinen (0 = alle) |
+| Ab Datum | Frühestes Buchungsdatum, das angezeigt werden darf |
+| Kontostand anzeigen | Blendet den Saldo ein |
+| Resetbuchung Pflicht | Zeigt Kontostand und Auszug nur, wenn es eine Resetbuchung ab dem 01.04.2023 gibt |
+| Konten auswählen | Welche der drei Konten erscheinen — Reihenfolge per Drag & Drop |
+| Hauptkonto ausblenden | Blendet das Hauptkonto aus, wenn dessen Saldo 0 ist |
+
+### Titel und Normen
+
+Beide Normen-Module haben eine Auswahl **Zeitraum** (letzter Monat bis
+unbegrenzt); die Glückwunschliste zusätzlich eine **maximale Anzahl**.
+Das Modul *Liste der Titelträger* erwartet die Auswahl eines Titels.
+
+## Inhaltselement
+
+**Zusagen zu Einladungsturnieren** (`fernschachverwaltung_zusagen`) gibt die
+Teilnehmer aus, die einem Einladungsturnier zugesagt haben. Ohne Auswahl eines
+Turniers erscheinen alle aktiven, noch nicht gestarteten Einladungsturniere.
+
+## Rechteverwaltung
+
+Die Erweiterung meldet zwei eigene Rechtegruppen an, die in Benutzern und
+Benutzergruppen gepflegt werden.
+
+**Spieler-Rechte** (`fernschach_spieler`): Anlegen, Importieren, Exportieren,
+Mehrfachbearbeitung, Bearbeiten, Kopieren, Löschen, Buchungen anzeigen,
+Veröffentlichen-Status setzen, Infobox anzeigen, Fertig-Status setzen.
+
+**Buchungen-Rechte** (`fernschach_konto`): Importieren, Anlegen, Bearbeiten,
+Löschen, Kopieren, Veröffentlichen-Status setzen, Infobox anzeigen,
+Fertig-Status setzen, Mehrfachbearbeitung.
+
+Zusätzlich gibt es die Rechte **Meldungen** (Anlegen, Löschen) und das Feld
+**Signatur**, das im Serienmailversand unter den Text gesetzt wird.
+
+## Cronjobs
+
+Alle Aufträge hängen am Contao-Cron und laufen ohne weitere Einrichtung, sobald
+der Contao-Cron eingerichtet ist.
+
+| Auftrag | Takt | Aufgabe |
+| --- | --- | --- |
+| Mitgliedschaftsprüfung | stündlich | Setzt am Spieler das Feld „Mitglied“ passend zu seinen Mitgliedschaftszeiträumen |
+| Mitgliederprüfung | stündlich | Gleicht Frontend-Mitglieder mit Spielerdatensätzen ab und pflegt die BdF-Mitgliedergruppe |
+| Nenngeldprüfung | stündlich | Sucht Nenngeldkonten mit negativem Saldo |
+| Mitgliedschaftsende | täglich | Beendet zum Vortag ausgelaufene Mitgliedschaften |
+| Streichung | täglich | Hält Streichungsdatum und Mitgliedschaftsende widerspruchsfrei |
+
+Die Intervalle einiger Prüfungen lassen sich über die Voreinstellungen
+`fernschach_intervall_memberbridgeCheck` und `fernschach_intervall_membershipsCheck`
+steuern.
+
+## Import und Export
+
+### Spieler importieren
+
+CSV-Datei mit Kopfzeile, Felder durch **senkrechte Striche** (`|`) getrennt. Die
+Namen in der Kopfzeile bestimmen die Zuordnung, unter anderem `mitgliednr`,
+`mitgliednr_int`, `nachname`, `vorname`, `geburtstag`, `strasse`, `plz`, `ort`,
+`email1`. Bereits vorhandene Spieler werden anhand der Mitgliedsnummer ergänzt
+statt doppelt angelegt. Der Vorgang wird nach `var/logs/fernschach-verwaltung.log`
+mitgeschrieben.
+
+### Buchungen importieren
+
+CSV-Datei mit Kopfzeile, Felder durch **Semikolon** getrennt. Buchungen werden
+dem Spieler über seine Mitgliedsnummer zugeordnet; unbekannte Mitgliedsnummern
+legen einen neuen Spieler an. Anschließend empfiehlt sich *Buchungen
+verschieben*, damit Beitrags- und Nenngeldbuchungen in den richtigen Konten
+landen.
+
+### Spieler exportieren
+
+Excel-Datei der in der Liste gefilterten Spieler. Auf Wunsch enthält sie einen
+aus Geburtsdatum und Mitgliedsnummer gebildeten Kenncode zu einem Stichtag.
+
+### ICCF-Wertungsliste importieren
+
+Im Modul *ICCF-Rating* eine Wertungsliste anlegen, deren Zeile aufrufen und
+*CSV importieren* wählen. Erwartet wird eine semikolongetrennte Datei mit den
+Spalten
+
+```text
+ICCF-ID;Land;Titel;Name (Nachname, Vorname);Partien;Wertung;Abweichung;Kennzeichen
+```
+
+Die Datei wird nach `system/tmp` hochgeladen; anschließend liest die Route
+`/contao/fernschach/iccf-import` sie in Blöcken zu 500 Zeilen ein und die
+Fortschrittsanzeige zeigt den Stand. Alle bisherigen Wertungen der Liste werden
+vorher auf „nicht veröffentlicht“ gesetzt, sodass nach dem Import nur der Inhalt
+der neuen Datei aktiv ist. Bekannte Spieler werden nur aktualisiert, wenn die
+Liste jünger ist als ihr letzter Stand; jede Änderung wird im internen Feld des
+Spielers protokolliert.
+
+## Serienmails
+
+E-Mails an Spieler entstehen in der Untertabelle **E-Mails** eines Spielers oder
+über den Serienmailversand. In Betreff, Text und Signatur dürfen Platzhalter der
+Form `##name##` sowie Contao-Insert-Tags stehen. Zur Verfügung stehen unter
+anderem:
+
+| Platzhalter | Inhalt |
+| --- | --- |
+| `##content##` | Der eingegebene Nachrichtentext |
+| `##signatur##` | Die Signatur des Backend-Benutzers |
+| `##spieler_nachname##`, `##spieler_vorname##` | Name des Spielers |
+| `##spieler_titel##`, `##spieler_anrede##`, `##spieler_briefanrede##` | Anrede und Titel |
+| `##spieler_geschlecht##` | Geschlecht |
+| `##spieler_geburtstag##`, `##spieler_geburtsort##` | Geburtsdaten |
+| `##spieler_verstorben##`, `##spieler_sterbetag##`, `##spieler_sterbeort##` | Sterbedaten |
+
+Die Vorschaufunktion im Bearbeitungsformular zeigt die fertige Nachricht mit
+aufgelösten Platzhaltern.
+
+Über *Serienmail-Empfänger setzen* wird die Empfängerliste des in den
+Einstellungen gewählten Newsletter-Archivs aus den Spielerdaten aufgebaut. Ein
+`parseTemplate`-Hook ergänzt beim Newsletterversand die spielerbezogenen
+Platzhalter.
+
+## Beitrittsformular
+
+Wird in den Einstellungen ein Contao-Formular als Beitrittsformular hinterlegt,
+legt jede Absendung dieses Formulars automatisch einen veröffentlichten
+Spielerdatensatz an. Ausgewertet werden die Formularfelder `nachname`,
+`vorname`, `strasse`, `plz`, `ort`, `telefon`, `email` und `mitgliedsnummer`.
+Alle weiteren bekannten Felder — `geburtstag`, `staat`, `bdf_mitglied`,
+`fernschach_erfolge`, `nahschach_erfolge`, `elo`, `dwz`, `beitrittsmonat`,
+`beitrittszustimmung` — sammelt die Erweiterung als Fließtext im Feld
+*Informationen zum Beitritt*. Der Vorgang wird im Systemprotokoll vermerkt.
+
+## Datenbanktabellen
+
+| Tabelle | Inhalt |
+| --- | --- |
+| `tl_fernschach_spieler` | Spieler- und Mitgliederstammdaten |
+| `tl_fernschach_spieler_konto` | Hauptkonto |
+| `tl_fernschach_spieler_konto_beitrag` | Beitragskonto |
+| `tl_fernschach_spieler_konto_nenngeld` | Nenngeldkonto |
+| `tl_fernschach_spieler_titel` | Verliehene Titel |
+| `tl_fernschach_spieler_mails` | Verschickte E-Mails |
+| `tl_fernschach_spieler_mailtemplates` | E-Mail-Vorlagen |
+| `tl_fernschach_turniere` | Turnierkategorien und Turniere |
+| `tl_fernschach_turniere_meldungen` | Anmeldungen |
+| `tl_fernschach_turniere_bewerbungen` | Bewerbungen |
+| `tl_fernschach_turniere_spieler` | Teilnehmerzuordnung |
+| `tl_fernschach_konten` | Kontenrahmen (Entwicklungsversion) |
+| `tl_fernschach_konten_buchungen` | Buchungen des Kontenrahmens |
+| `tl_fernschach_mitgliederstatistik` | Altersstrukturen |
+| `tl_fernschach_iccf_ratinglists` | ICCF-Wertungslisten |
+| `tl_fernschach_iccf_players` | ICCF-Spieler |
+| `tl_fernschach_iccf_ratings` | ICCF-Wertungszahlen |
+
+## Umstieg von 1.9.x auf 2.0.0
+
+Version 2.0.0 läuft unter Contao 4.13 **und** Contao 5 sowie unter PHP 8. An der
+Datenbank ändert sich nichts, an zwei Stellen aber am Verhalten:
+
+* **codefog/contao-haste entfällt.** Die Erweiterung braucht Haste nicht mehr.
+  Wird Haste von keiner anderen Erweiterung benutzt, kann es entfernt werden.
+* **Der ICCF-Import läuft über eine Route.** Die direkt aufrufbare Datei
+  `bundles/contaofernschach/Import_ICCF_Rating.php` ist entfallen; an ihre Stelle
+  tritt `/contao/fernschach/iccf-import`. Nach dem Update ist ein
+  Cache-Neuaufbau nötig, damit die Route bekannt wird:
+
+  ```bash
+  vendor/bin/contao-console cache:clear
+  vendor/bin/contao-console cache:warmup
+  ```
+
+* **Das Auswahlfeld für das Notification Center ist entfallen.** Es war ohne
+  Funktion — das Meldeformular verschickt seine E-Mails selbst.
+* **Die Importprotokolle liegen jetzt unter `var/logs/`.** Sie hießen und heißen
+  `fernschach-verwaltung.log`, `fernschachverwaltung.log` und
+  `fernschachverwaltung_buchungen.log`; nur der Weg dorthin ist ein anderer,
+  weil die Contao-Funktion `log_message()` entfallen ist.
+
+Der vollständige Änderungsstand steht in der [CHANGELOG.md](CHANGELOG.md).
+
+## Entwicklung
+
+Die Erweiterung bringt kein eigenes `vendor/`-Verzeichnis mit. Die Unit-Tests
+laufen mit einem separat installierten PHPUnit 9; die Contao-Klassen kommen über
+die Umgebungsvariable `CONTAO_AUTOLOAD` aus einer beliebigen
+Contao-Installation:
+
+```bash
+CONTAO_AUTOLOAD=/pfad/zur/contao-installation/vendor/autoload.php vendor/bin/phpunit
+```
+
+Ohne `CONTAO_AUTOLOAD` überspringen sich die Tests, die Contao brauchen, statt
+mit einem Fehler abzubrechen.
+
+## Weiterführende Dokumentation
+
+* [Überblick](docs/README.md)
+* [Turnierarten](docs/TURNIERARTEN.md)
+* [Anmeldungen zu Turnieren](docs/TURNIERANMELDUNGEN.md)
+* [Meldungen zuweisen](docs/MELDUNGEN_ZUWEISEN.md)
+* [Wartungsarbeiten](docs/WARTUNG.md)
+
+## Lizenz
+
+LGPL-3.0-or-later — siehe [LICENSE](LICENSE).
+
 **Frank Hoppe**

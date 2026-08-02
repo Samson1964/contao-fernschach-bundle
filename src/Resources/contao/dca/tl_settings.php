@@ -11,6 +11,9 @@
  * @copyright Frank Hoppe 2022
  */
 
+use Contao\Backend;
+
+
 /**
  * Paletten
  */

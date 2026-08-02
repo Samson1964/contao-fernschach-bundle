@@ -4,4 +4,3 @@ $GLOBALS['TL_DCA']['tl_newsletter_recipients']['fields']['fernschach_id'] = arra
 (
 	'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
-

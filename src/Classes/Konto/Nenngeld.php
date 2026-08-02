@@ -2,10 +2,13 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes\Konto;
 
+use Contao\Backend;
+use Contao\Database;
+
 /**
  * Class Nenngeld
   */
-class Nenngeld extends \Backend
+class Nenngeld extends Backend
 {
 
 	function __construct()
@@ -23,7 +26,7 @@ class Nenngeld extends \Backend
 		$anzahl_mitglieder = 0;
 		$summe_mitglieder = 0;
 
-		$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ?")
+		$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ?")
 		                                      ->execute(1);
 
 		if($objSpieler->numRows)

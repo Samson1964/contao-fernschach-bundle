@@ -10,6 +10,11 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\DC_Table;
+
+
 
 /**
  * Table tl_fernschach_spieler_mailtemplates
@@ -20,7 +25,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mailtemplates'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'switchToEdit'                => true, 
 		'enableVersioning'            => true,
 		'sql' => array
@@ -60,7 +65,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mailtemplates'] = array
 			),
 			'back' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['MSC']['backBT'], // z.B. "Zur�ck"
+				'label'               => &$GLOBALS['TL_LANG']['MSC']['backBT'], // z.B. "Zurück"
 				'href'                => 'table=tl_fernschach_spieler_mails', // Ziel-Tabelle
 				'class'               => 'header_back',
 				'attributes'          => 'onclick="Backend.getScrollOffset();"'
@@ -89,15 +94,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mailtemplates'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mailtemplates']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -176,6 +174,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_mailtemplates'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_mailtemplates']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'inputType'               => 'checkbox',
 			'exclude'                 => true,
 			'default'                 => 1,
@@ -208,7 +207,7 @@ class tl_fernschach_spieler_mailtemplates extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 }

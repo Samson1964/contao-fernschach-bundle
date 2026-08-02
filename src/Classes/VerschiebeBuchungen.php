@@ -2,10 +2,20 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Controller;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class VerschibeBuchungen
   */
-class VerschiebeBuchungen extends \Backend
+class VerschiebeBuchungen extends Backend
 {
 
 	function __construct()
@@ -18,18 +28,18 @@ class VerschiebeBuchungen extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'verschiebeBuchungen')
+		if(Input::get('key') != 'verschiebeBuchungen')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
 		// Objekt BackendUser importieren
-		$this->import('BackendUser','User');
+		$this->import(BackendUser::class,'User');
 
 		$verwendungszweck = array();
 		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
 		                                        ->execute();
 		if($objBuchungen->numRows)
 		{
@@ -47,7 +57,7 @@ class VerschiebeBuchungen extends \Backend
 			}
 			arsort($verwendungszweck); // Array nach Werten absteigend sortieren
 		}
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag")
 		                                        ->execute();
 		if($objBuchungen->numRows)
 		{
@@ -65,7 +75,7 @@ class VerschiebeBuchungen extends \Backend
 			}
 			arsort($verwendungszweck); // Array nach Werten absteigend sortieren
 		}
-		$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld")
+		$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld")
 		                                        ->execute();
 		if($objBuchungen->numRows)
 		{
@@ -91,7 +101,7 @@ class VerschiebeBuchungen extends \Backend
 		}
 		
 		$form = new \Schachbulle\ContaoFernschachBundle\Classes\DCAParser('tl_dca');
-		$form->setBacklink(ampersand(str_replace('&key=verschiebeBuchungen', '', \Environment::get('request'))));   
+		$form->setBacklink(StringUtil::ampersand(str_replace('&key=verschiebeBuchungen', '', Environment::get('request'))));   
 		$dca = array
 		(
 			'submit' => 'Verschiebung starten',
@@ -149,9 +159,9 @@ class VerschiebeBuchungen extends \Backend
 			$return = self::getImport($daten); // Daten sichern
 			// Seite neu laden
 			// Cookie setzen und zurückkehren zur Buchungsliste
-			\Message::addConfirmation('Buchungen global verschieben: '.$return[0].' gefunden, '.$return[1].' verschoben.');
-			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			\Controller::redirect(str_replace('&key=verschiebeBuchungen', '', \Environment::get('request')));
+			Message::addConfirmation('Buchungen global verschieben: '.$return[0].' gefunden, '.$return[1].' verschoben.');
+			System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			Controller::redirect(str_replace('&key=verschiebeBuchungen', '', Environment::get('request')));
 		}
 		return $form->parse();
 
@@ -207,14 +217,14 @@ class VerschiebeBuchungen extends \Backend
 		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
 		if($sql)
 		{
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE".$sql)
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE".$sql)
 			                                        ->execute();
 		}
 		else
 		{
 			// SQL-String leer, jetzt prüfen ob Zielkonto nicht gesetzt ist
 			if($zielkonto) return array($found, $moved); // Abbruch, da ein Zielkonto ausgewählt ist (alle Buchungen würden dorthin verschoben werden!)
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto")
 			                                        ->execute();
 		}
 
@@ -222,7 +232,7 @@ class VerschiebeBuchungen extends \Backend
 		{
 			if($objBuchungen->numRows)
 			{
-				log_message('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Hauptkonto', 'fernschachverwaltung_buchungen.log');
+				Scope::logToFile('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Hauptkonto', 'fernschachverwaltung_buchungen.log');
 				$i = 0;
 				$found += $objBuchungen->numRows;
 				while($objBuchungen->next())
@@ -235,7 +245,7 @@ class VerschiebeBuchungen extends \Backend
 					$meldung .= 'Typ='.$objBuchungen->typ.' | ';
 					$meldung .= 'Kategorie='.$objBuchungen->kategorie.' | ';
 					$meldung .= 'VZ='.$objBuchungen->verwendungszweck;
-					log_message($meldung, 'fernschachverwaltung_buchungen.log');
+					Scope::logToFile($meldung, 'fernschachverwaltung_buchungen.log');
 					if($zielkonto && $zielkonto != 'tl_fernschach_spieler_konto')
 					{
 						// Buchung in das Zielkonto verschieben, wenn Quellkonto unterschiedlich
@@ -262,14 +272,14 @@ class VerschiebeBuchungen extends \Backend
 		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
 		if($sql)
 		{
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE".$sql)
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag WHERE".$sql)
 			                                        ->execute();
 		}
 		else
 		{
 			// SQL-String leer, jetzt prüfen ob Zielkonto nicht gesetzt ist
 			if($zielkonto) return array($found, $moved); // Abbruch, da ein Zielkonto ausgewählt ist (alle Buchungen würden dorthin verschoben werden!)
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag")
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_beitrag")
 			                                        ->execute();
 		}
 
@@ -277,7 +287,7 @@ class VerschiebeBuchungen extends \Backend
 		{
 			if($objBuchungen->numRows)
 			{
-				log_message('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Beitragskonto', 'fernschachverwaltung_buchungen.log');
+				Scope::logToFile('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Beitragskonto', 'fernschachverwaltung_buchungen.log');
 				$i = 0;
 				$found += $objBuchungen->numRows;
 				while($objBuchungen->next())
@@ -290,7 +300,7 @@ class VerschiebeBuchungen extends \Backend
 					$meldung .= 'Typ='.$objBuchungen->typ.' | ';
 					$meldung .= 'Kategorie='.$objBuchungen->kategorie.', ';
 					$meldung .= 'VZ='.$objBuchungen->verwendungszweck;
-					log_message($meldung, 'fernschachverwaltung_buchungen.log');
+					Scope::logToFile($meldung, 'fernschachverwaltung_buchungen.log');
 					if($zielkonto && $zielkonto != 'tl_fernschach_spieler_konto_beitrag')
 					{
 						// Buchung in das Zielkonto verschieben, wenn Quellkonto unterschiedlich
@@ -317,14 +327,14 @@ class VerschiebeBuchungen extends \Backend
 		// Verwendungszwecke finden und sortieren nach Anzahl Vorkommen
 		if($sql)
 		{
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE".$sql)
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld WHERE".$sql)
 			                                        ->execute();
 		}
 		else
 		{
 			// SQL-String leer, jetzt prüfen ob Zielkonto nicht gesetzt ist
 			if($zielkonto) return array($found, $moved); // Abbruch, da ein Zielkonto ausgewählt ist (alle Buchungen würden dorthin verschoben werden!)
-			$objBuchungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld")
+			$objBuchungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto_nenngeld")
 			                                        ->execute();
 		}
 
@@ -332,7 +342,7 @@ class VerschiebeBuchungen extends \Backend
 		{
 			if($objBuchungen->numRows)
 			{
-				log_message('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Nenngeldkonto', 'fernschachverwaltung_buchungen.log');
+				Scope::logToFile('Buchungen suchen: SQL ('.trim($sql).') | '.$objBuchungen->numRows.' Datensätze im Nenngeldkonto', 'fernschachverwaltung_buchungen.log');
 				$i = 0;
 				$found += $objBuchungen->numRows;
 				while($objBuchungen->next())
@@ -345,7 +355,7 @@ class VerschiebeBuchungen extends \Backend
 					$meldung .= 'Typ='.$objBuchungen->typ.' | ';
 					$meldung .= 'Kategorie='.$objBuchungen->kategorie.' | ';
 					$meldung .= 'VZ='.$objBuchungen->verwendungszweck;
-					log_message($meldung, 'fernschachverwaltung_buchungen.log');
+					Scope::logToFile($meldung, 'fernschachverwaltung_buchungen.log');
 					if($zielkonto && $zielkonto != 'tl_fernschach_spieler_konto_nenngeld')
 					{
 						// Buchung in das Zielkonto verschieben, wenn Quellkonto unterschiedlich
@@ -394,11 +404,11 @@ class VerschiebeBuchungen extends \Backend
 			'meldungId'        => $objBuchung->meldungId,
 			'published'        => $objBuchung->published
 		);
-		log_message('Verschiebe Buchung '.$quelle.' => '.$ziel.': '.print_r($set, true),'fernschachverwaltung_buchungen.log');
-		$objInsert = \Database::getInstance()->prepare("INSERT INTO ".$ziel." %s")
+		Scope::logToFile('Verschiebe Buchung '.$quelle.' => '.$ziel.': '.print_r($set, true),'fernschachverwaltung_buchungen.log');
+		$objInsert = Database::getInstance()->prepare("INSERT INTO ".$ziel." %s")
 		                                     ->set($set)
 		                                     ->execute();
-		$objDelete = \Database::getInstance()->prepare("DELETE FROM ".$quelle." WHERE id = ?")
+		$objDelete = Database::getInstance()->prepare("DELETE FROM ".$quelle." WHERE id = ?")
 		                                     ->execute($objBuchung->id);
 		
 		return;

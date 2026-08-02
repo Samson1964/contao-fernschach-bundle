@@ -12,6 +12,12 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\BackendTemplate;
+use Contao\Database;
+use Contao\Environment;
+use Contao\Input;
+use Contao\StringUtil;
+
 class Turnierstatistik
 {
 
@@ -37,8 +43,8 @@ class Turnierstatistik
 			'12' => 'Dezember',
 		);
 		
-		$Template = new \BackendTemplate('be_turnierstatistik');
-		$Template->request = ampersand(\Environment::getInstance()->request, true);
+		$Template = new BackendTemplate('be_turnierstatistik');
+		$Template->request = StringUtil::ampersand(Environment::get('request'), true);
 
 		// Aktuelles Datum ermitteln
 		$aktJahr  = date('Y');
@@ -46,10 +52,10 @@ class Turnierstatistik
 		$aktTag   = date('j');
 
 		// Datum und Datumsrichtung aus URL ermitteln
-		$urlJahr = (int)\Input::get('jahr');
-		$urlMonat = (int)\Input::get('monat');
-		$urlTag = (int)\Input::get('tag');
-		$differenz = \Input::get('differenz');
+		$urlJahr = (int)Input::get('jahr');
+		$urlMonat = (int)Input::get('monat');
+		$urlTag = (int)Input::get('tag');
+		$differenz = Input::get('differenz');
 
 		// Neues Datum für anzuzeigende Daten ermitteln
 		if(!$urlJahr && !$urlMonat && !$urlTag)
@@ -108,8 +114,8 @@ class Turnierstatistik
 		}
 
 		// Vor- und Zurücklinks generieren
-		$vorLink = '<a href="contao?do=fernschach-turniere&key=statistik&jahr='.$viewJahr.'&monat='.$viewMonat.'&tag='.$viewTag.'&differenz=1&rt='.REQUEST_TOKEN.'"><img src="bundles/contaofernschach/images/plus.png"></a>';
-		$zurueckLink = '<a href="contao?do=fernschach-turniere&key=statistik&jahr='.$viewJahr.'&monat='.$viewMonat.'&tag='.$viewTag.'&differenz=-1&rt='.REQUEST_TOKEN.'"><img src="bundles/contaofernschach/images/minus.png"></a>';
+		$vorLink = '<a href="contao?do=fernschach-turniere&key=statistik&jahr='.$viewJahr.'&monat='.$viewMonat.'&tag='.$viewTag.'&differenz=1&rt='.Scope::getRequestToken().'"><img src="bundles/contaofernschach/images/plus.png"></a>';
+		$zurueckLink = '<a href="contao?do=fernschach-turniere&key=statistik&jahr='.$viewJahr.'&monat='.$viewMonat.'&tag='.$viewTag.'&differenz=-1&rt='.Scope::getRequestToken().'"><img src="bundles/contaofernschach/images/minus.png"></a>';
 
 		// Anzuzeigendes Datum erstellen
 		if($viewJahr) $datum = $viewJahr;
@@ -147,7 +153,7 @@ class Turnierstatistik
 		$aktTagLink = 'jahr='.$aktJahr.'&monat='.$aktMonat.'&tag='.$aktTag;
 
 		// Datumsstatistik erstellen (für den aktuellen Zeitraum)
-		$objMeldungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
+		$objMeldungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
 		                                        ->execute($von, $bis, 1);
 		$arrMeldungen = array
 		(
@@ -176,12 +182,12 @@ class Turnierstatistik
 			while($objMeldungen->next())
 			{
 				// Spielerdatensatz laden
-				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+				$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
 				                                      ->execute($objMeldungen->spielerId);
 				// Mitgliedsstatus prüfen (hier muß noch das Datum rein)
 				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler, $referenzdatum);
 				// Turnierdatensatz laden
-				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 				                                      ->execute($objMeldungen->pid);
 				if($objTurnier->numRows)
 				{
@@ -226,11 +232,11 @@ class Turnierstatistik
 				}
 			}
 		}
-		$meldungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ?")
+		$meldungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ?")
 		                                     ->execute($von, $bis);
-		$meldungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
+		$meldungen_veroeffentlicht = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE meldungDatum >= ? AND meldungDatum <= ? AND published = ?")
 		                                                     ->execute($von, $bis, 1);
-		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
+		$objBewerbungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
 		                                          ->execute($von, $bis, 1);
 		$arrBewerbungen = array
 		(
@@ -259,12 +265,12 @@ class Turnierstatistik
 			while($objBewerbungen->next())
 			{
 				// Spielerdatensatz laden
-				$objSpieler = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
+				$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE id = ?")
 				                                      ->execute($objBewerbungen->spielerId);
 				// Mitgliedsstatus prüfen (hier muß noch das Datum rein)
 				$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::checkMembership($objSpieler, $referenzdatum);
 				// Turnierdatensatz laden
-				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 				                                      ->execute($objBewerbungen->pid);
 				if($objTurnier->numRows)
 				{
@@ -315,7 +321,7 @@ class Turnierstatistik
 			// Veröffentlichte Bewerbungen für diesen Zeitraum im Detail auswerten
 			while($objBewerbungen->next())
 			{
-				$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+				$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 				                                      ->execute($objBewerbungen->pid);
 				if($objTurnier->numRows)
 				{
@@ -323,9 +329,9 @@ class Turnierstatistik
 				}
 			}
 		}
-		$bewerbungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ?")
+		$bewerbungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ?")
 		                                       ->execute($von, $bis);
-		$bewerbungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
+		$bewerbungen_veroeffentlicht = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE applicationDate >= ? AND applicationDate <= ? AND published = ?")
 		                                                       ->execute($von, $bis, 1);
 
 		$datumsstatistik = array
@@ -346,29 +352,29 @@ class Turnierstatistik
 			array('&raquo; &raquo; davon für unbekannte Turniertypen', sprintf('%s (davon %s BdF-Mitglieder mit %s Bewerbungen)', $arrBewerbungen['count'][''], count($arrBewerbungen['players']['']['player']), $arrBewerbungen['players']['']['meldungen'])),
 		);
 
-		$turniere = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere")
+		$turniere = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere")
 		                                    ->execute();
-		$turniere_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ?")
+		$turniere_veroeffentlicht = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ?")
 		                                                    ->execute(1);
-		$turniere_national = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		$turniere_national = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
 		                                             ->execute(1, 'n');
-		$turniere_international = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		$turniere_international = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
 		                                                  ->execute(1, 'i');
-		$turniere_einladungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		$turniere_einladungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
 		                                                ->execute(1, 'e');
-		$turniere_mannschaften = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		$turniere_mannschaften = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
 		                                             ->execute(1, 'm');
-		$turniere_sonstige = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
+		$turniere_sonstige = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE published = ? AND typ = ?")
 		                                             ->execute(1, '');
-		$turniere_meldeschluss = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE registrationDate >= ?")
+		$turniere_meldeschluss = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere WHERE registrationDate >= ?")
 		                                                 ->execute(time());
-		$meldungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen")
+		$meldungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen")
 		                                     ->execute();
-		$meldungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE published = ?")
+		$meldungen_veroeffentlicht = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE published = ?")
 		                                                     ->execute(1);
-		$bewerbungen = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen")
+		$bewerbungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen")
 		                                       ->execute();
-		$bewerbungen_veroeffentlicht = \Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE published = ?")
+		$bewerbungen_veroeffentlicht = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_bewerbungen WHERE published = ?")
 		                                                       ->execute(1);
 
 		$gesamtstatistik = array
@@ -393,9 +399,13 @@ class Turnierstatistik
 		$Template->Datumtext = $datumtext;
 		$Template->VorLink = $vorLink;
 		$Template->ZurueckLink = $zurueckLink;
-		$Template->LinkAktuellesJahr = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktJahrLink.'&rt='.REQUEST_TOKEN.'">'.$aktJahr.'</a>';
-		$Template->LinkAktuellerMonat = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktMonatLink.'&rt='.REQUEST_TOKEN.'">'.$aktMonat.'.'.$aktJahr.'</a>';
-		$Template->LinkAktuellerTag = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktTagLink.'&rt='.REQUEST_TOKEN.'">'.$aktTag.'.'.$aktMonat.'.'.$aktJahr.'</a>';
+		$Template->LinkAktuellesJahr = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktJahrLink.'&rt='.Scope::getRequestToken().'">'.$aktJahr.'</a>';
+		$Template->LinkAktuellerMonat = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktMonatLink.'&rt='.Scope::getRequestToken().'">'.$aktMonat.'.'.$aktJahr.'</a>';
+		$Template->LinkAktuellerTag = '<a href="contao?do=fernschach-turniere&key=statistik&'.$aktTagLink.'&rt='.Scope::getRequestToken().'">'.$aktTag.'.'.$aktMonat.'.'.$aktJahr.'</a>';
+
+		// Der Zurück-Knopf im Template brauchte bis Version 1.9.6 die Konstante
+		// REQUEST_TOKEN, die es in Contao 5 nicht mehr gibt.
+		$Template->RequestToken = Scope::getRequestToken();
 
 		return $Template->parse();
 	}

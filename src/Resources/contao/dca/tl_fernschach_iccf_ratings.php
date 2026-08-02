@@ -11,6 +11,11 @@
  * @copyright Frank Hoppe 2016
  */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\DC_Table;
+
+
 
 /**
  * Table tl_elo
@@ -21,7 +26,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_iccf_ratings'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'             => 'Table',
+		'dataContainer'             => DC_Table::class,
 		'ptable'                    => 'tl_fernschach_iccf_players',
 		'enableVersioning'          => true,
 		'sql' => array
@@ -97,15 +102,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_iccf_ratings'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_iccf_ratings']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -237,6 +235,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_iccf_ratings'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_iccf_ratings']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'search'                  => false,
 			'sorting'                 => false,
@@ -264,11 +263,11 @@ class tl_fernschach_iccf_ratings extends Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	/**
-	 * Datens�tze auflisten
+	 * Datensätze auflisten
 	 * @param array
 	 * @return string
 	 */

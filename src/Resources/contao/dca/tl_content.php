@@ -3,6 +3,11 @@
 /**
  * Paletten
  */
+
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Database;
+
 $GLOBALS['TL_DCA']['tl_content']['palettes']['fernschachverwaltung_zusagen'] = '{type_legend},type,headline;{fernschachverwaltung_legend},fernschachverwaltung_id;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},cssID;{invisible_legend:hide},invisible,start,stop';
 
 /**
@@ -31,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['fernschachverwaltung_id'] = array
  * Klasse tl_content_mitgliederverwaltung
  *****************************************/
 
-class tl_content_fernschachverwaltung extends \Backend
+class tl_content_fernschachverwaltung extends Backend
 {
 
 	/**
@@ -40,7 +45,7 @@ class tl_content_fernschachverwaltung extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 	}
 
 	/**
@@ -48,7 +53,7 @@ class tl_content_fernschachverwaltung extends \Backend
 	 */
 	public static function getTournaments()
 	{
-		$objRegister = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE type=? AND typ=? ORDER BY startDate DESC")
+		$objRegister = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE type=? AND typ=? ORDER BY startDate DESC")
 		                                       ->execute('tournament', 'e');
 		$array = array();
 		while($objRegister->next())

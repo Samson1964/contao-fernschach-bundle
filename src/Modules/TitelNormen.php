@@ -13,7 +13,13 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Modules;
 
-class TitelNormen extends \Module
+use Contao\BackendTemplate;
+use Contao\Database;
+use Contao\Module;
+use Contao\StringUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+class TitelNormen extends Module
 {
 
 	/**
@@ -28,9 +34,9 @@ class TitelNormen extends \Module
 	 */
 	public function generate()
 	{
-		if (TL_MODE == 'BE')
+		if (Scope::isBackendRequest())
 		{
-			$objTemplate = new \BackendTemplate('be_wildcard');
+			$objTemplate = new BackendTemplate('be_wildcard');
 
 			$objTemplate->wildcard = '### FERNSCHACH-VERWALTUNG - TITEL UND NORMEN ###';
 			$objTemplate->title = $this->name;
@@ -49,13 +55,16 @@ class TitelNormen extends \Module
 	{
 
 		// Aktive Mitglieder laden
-		$objMembers = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
+		$objMembers = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE published = ?')
 		                                      ->execute(1);
 
 		$daten = array();
 		$titel = array();
 		$normen = array();
-		$mindate = date('Ymd', strtotime($this->fernschachverwaltung_zeitraum)); // Nur Normen/Titel eines bestimmten Zeitraums
+		// Ist im Modul kein Zeitraum eingestellt, wird alles ausgegeben. Der
+		// leere Wert kommt als null aus der Datenbank, und strtotime(null)
+		// wäre unter PHP 8.1 eine Verfallswarnung.
+		$mindate = $this->fernschachverwaltung_zeitraum ? date('Ymd', (int) strtotime((string) $this->fernschachverwaltung_zeitraum)) : '00000000';
 		$maxdate = date('Ymd'); // Heutiges Datum setzen
 		
 		$titel = \Schachbulle\ContaoFernschachBundle\Classes\Titel::get(); // Titel der veröffentlichten Spieler laden
@@ -66,7 +75,7 @@ class TitelNormen extends \Module
 			while($objMembers->next())
 			{
 				// Normen suchen
-				$normenMember = unserialize($objMembers->normen); // Normen extrahieren
+				$normenMember = StringUtil::deserialize($objMembers->normen); // Normen extrahieren
 				if(is_array($normenMember))
 				{
 					for($x = 0; $x < count($normenMember); $x++)

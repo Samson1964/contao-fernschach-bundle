@@ -1,11 +1,17 @@
 <?php
+
+use Contao\Backend;
+use Contao\Config;
+use Contao\Input;
+use Contao\Message;
+
 // Onload_Callback hinzufügen, um einen Hinweis anzuzeigen
 $GLOBALS['TL_DCA']['tl_newsletter']['config']['onload_callback'][] = array('tl_newsletter_fernschach', 'addTemplateWarning');
 
 /**
  * Class tl_newsletter_fernschach
  */
-class tl_newsletter_fernschach extends \Backend
+class tl_newsletter_fernschach extends Backend
 {
 
 	/**
@@ -13,9 +19,9 @@ class tl_newsletter_fernschach extends \Backend
 	 */
 	public function addTemplateWarning()
 	{
-		if((\Input::get('table') == 'tl_newsletter' || \Input::get('table') == 'tl_newsletter_recipients') && \Input::get('id') == $GLOBALS['TL_CONFIG']['fernschach_newsletter'] && !\Input::get('act'))
+		if((Input::get('table') == 'tl_newsletter' || Input::get('table') == 'tl_newsletter_recipients') && Input::get('id') == Config::get('fernschach_newsletter') && !Input::get('act'))
 		{
-			\Message::addInfo($GLOBALS['TL_LANG']['tl_newsletter']['fernschach_hinweis']);
+			Message::addInfo($GLOBALS['TL_LANG']['tl_newsletter']['fernschach_hinweis']);
 		}
 
 	}

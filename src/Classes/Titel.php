@@ -2,7 +2,10 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
-class Titel extends \Backend
+use Contao\Backend;
+use Contao\Database;
+
+class Titel extends Backend
 {
 
 	public function __construct()
@@ -32,7 +35,7 @@ class Titel extends \Backend
 
 		$titel = array();
 		// Aktive Titel-Datensätze laden
-		$objTitel = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE published = ?')
+		$objTitel = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler_titel WHERE published = ?')
 		                                    ->execute(1);
 
 		// Titel auslesen
@@ -41,7 +44,7 @@ class Titel extends \Backend
 			while($objTitel->next())
 			{
 				// Spielerdatensatz laden
-				$objMember = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
+				$objMember = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_spieler WHERE id = ?')
 				                                     ->execute($objTitel->pid);
 				// Nur Titel von veröffentlichten Spielern berücksichtigen
 				if($objMember->published)

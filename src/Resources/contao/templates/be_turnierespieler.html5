@@ -2,6 +2,9 @@
 	<a href="<?= $this->href ?>" class="header_back" title="<?= $this->title ?>" accesskey="b" onclick="Backend.getScrollOffset()"><?= $this->button ?></a>
 </div>
 <div class="tl_listing_container">
+<?php if (!$this->Meldung): ?>
+	<p class="tl_empty">Es wurde keine Anmeldung übergeben.</p>
+<?php else: ?>
 	<h2 style="margin-bottom:10px;">Aktuelle Anmeldung</h2>
 	<div class="tl_header">
 		<table class="tl_header_table fernschach_kopf" width="100%">
@@ -78,4 +81,5 @@
 			</tbody>
 		</table>
 	</div>
+<?php endif; ?>
 </div>

@@ -10,6 +10,22 @@
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\Controller;
+use Contao\CoreBundle\Exception\AccessDeniedException;
+use Contao\DC_Table;
+use Contao\DataContainer;
+use Contao\Database;
+use Contao\Image;
+use Contao\Input;
+use Contao\PageModel;
+use Contao\StringUtil;
+use Contao\System;
+use Schachbulle\ContaoFernschachBundle\Classes\Scope;
+
+
 
 /**
  * Table tl_fernschach_turniere
@@ -21,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	'config' => array
 	(
 		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'],
-		'dataContainer'               => 'Table',
+		'dataContainer'               => DC_Table::class,
 		'ctable'                      => array('tl_fernschach_turniere_meldungen', 'tl_fernschach_turniere_spieler', 'tl_fernschach_turniere_bewerbungen'),
 		'enableVersioning'            => true,
 		'onload_callback'             => array
@@ -136,15 +152,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			(
 				'label'                => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['toggle'],
 				'attributes'           => 'onclick="Backend.getScrollOffset()"',
-				'haste_ajax_operation' => array
-				(
-					'field'            => 'published',
-					'options'          => array
-					(
-						array('value' => '', 'icon' => 'invisible.svg'),
-						array('value' => '1', 'icon' => 'visible.svg'),
-					),
-				),
+				'href'                => 'act=toggle&amp;field=published',
+				'icon'                => 'visible.svg',
 			),
 			'show' => array
 			(
@@ -626,6 +635,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['published'],
+			'toggle'                  => true, // Aktiviert den Contao-eigenen Schnellschalter in der Übersicht
 			'exclude'                 => true,
 			'filter'                  => true,
 			'default'                 => 1,
@@ -648,7 +658,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    Core
  */
-class tl_fernschach_turniere extends \Backend
+class tl_fernschach_turniere extends Backend
 {
 
 	var $bewerbungen = array(); // Nimmt die Daten aus tl_fernschach_turniere_bewerbungen auf
@@ -659,9 +669,9 @@ class tl_fernschach_turniere extends \Backend
 	public function __construct()
 	{
 		parent::__construct();
-		$this->import('BackendUser', 'User');
+		$this->import(BackendUser::class, 'User');
 
-		$objBewerbungen = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE published=?")
+		$objBewerbungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE published=?")
 		                                          ->execute(1);
 		if($objBewerbungen->numRows)
 		{
@@ -925,10 +935,10 @@ class tl_fernschach_turniere extends \Backend
 		// Knoten in Session speichern
 		if (isset($_GET['node']))
 		{
-			$this->Session->set('tl_fernschach_turniere_node', $this->Input->get('node'));
+			Scope::setBackendSessionValue('tl_fernschach_turniere_node', Input::get('node'));
 			$this->redirect(preg_replace('/&node=[^&]*/', '', $this->Environment->request));
 		}
-		$cat = $this->Session->get('tl_fernschach_turniere_node');
+		$cat = Scope::getBackendSessionValue('tl_fernschach_turniere_node');
 
 		// Breadcrumb-Navigation erstellen
 		$breadcrumb = array();
@@ -938,7 +948,7 @@ class tl_fernschach_turniere extends \Backend
 			$GLOBALS['TL_DCA']['tl_fernschach_turniere']['list']['sorting']['root'] = array($cat);
 		
 			// Infos zur aktuellen Kategorie laden
-			$objActual = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_turniere WHERE published = ? AND id = ?')
+			$objActual = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_turniere WHERE published = ? AND id = ?')
 			                                     ->execute(1, $cat);
 			$breadcrumb[] = '<img src="bundles/contaofernschach/images/ordner_gelb.png" width="18" height="18" alt=""> ' . $objActual->title;
 			
@@ -946,12 +956,12 @@ class tl_fernschach_turniere extends \Backend
 			$pid = $objActual->pid;
 			while($pid > 0)
 			{
-				$objTemp = \Database::getInstance()->prepare('SELECT * FROM tl_fernschach_turniere WHERE published = ? AND id = ?')
+				$objTemp = Database::getInstance()->prepare('SELECT * FROM tl_fernschach_turniere WHERE published = ? AND id = ?')
 				                                   ->execute(1, $pid);
-				$breadcrumb[] = '<img src="bundles/contaofernschach/images/ordner_gelb.png" width="18" height="18" alt=""> <a href="' . \Controller::addToUrl('node='.$objTemp->id) . '" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'">' . $objTemp->title . '</a>';
+				$breadcrumb[] = '<img src="bundles/contaofernschach/images/ordner_gelb.png" width="18" height="18" alt=""> <a href="' . Controller::addToUrl('node='.$objTemp->id) . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'">' . $objTemp->title . '</a>';
 				$pid = $objTemp->pid;
 			}
-			$breadcrumb[] = '<img src="' . TL_FILES_URL . 'system/themes/' . \Backend::getTheme() . '/images/pagemounts.gif" width="18" height="18" alt=""> <a href="' . \Controller::addToUrl('node=0') . '" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
+			$breadcrumb[] = '<img src="' . TL_FILES_URL . 'system/themes/' . Backend::getTheme() . '/images/pagemounts.gif" width="18" height="18" alt=""> <a href="' . Controller::addToUrl('node=0') . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
 		}
 		$breadcrumb = array_reverse($breadcrumb);
 
@@ -992,7 +1002,7 @@ class tl_fernschach_turniere extends \Backend
 		// Return the image only
 		if ($blnReturnImage)
 		{
-			return \Image::getHtml($image, '', $imageAttribute);
+			return Image::getHtml($image, '', $imageAttribute);
 		}
 
 		// Markiere Root-Kategorien
@@ -1019,28 +1029,22 @@ class tl_fernschach_turniere extends \Backend
 		}
 
 		// Rückgabe der Zeile
-		return \Image::getHtml($image, '', $imageAttribute) . '<a href="' . \Controller::addToUrl('node='.$row['id']) . '" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'"> ' . $label . '</a>'; 
+		return Image::getHtml($image, '', $imageAttribute) . '<a href="' . Controller::addToUrl('node='.$row['id']) . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'"> ' . $label . '</a>'; 
 
 	}
 
-	public function getApplications(\DataContainer $dc)
+	public function getApplications(DataContainer $dc)
 	{
 
-		// Link-Prefixe generieren, ab C4 ist das ein symbolischer Link zu "contao"
-		if(version_compare(VERSION, '4.0', '>='))
-		{
-			$linkprefix = \System::getContainer()->get('router')->generate('contao_backend');
-			$imageEdit = \Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
-		}
-		else
-		{
-			$linkprefix = 'contao/main.php';
-			$imageEdit = \Image::getHtml('edit.gif', 'Bewerbung des Mitglieds bearbeiten');
-		}
+		// Der Backend-Einstieg heißt seit Contao 4 "contao" und wird über den
+		// Router ermittelt. Die frühere Fallunterscheidung über die Konstante
+		// VERSION ist entfallen — es gibt sie in Contao 5 nicht mehr.
+		$linkprefix = System::getContainer()->get('router')->generate('contao_backend');
+		$imageEdit = Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
 
 		$turnier_id = $dc->activeRecord->id;
 
-		$objApplications = \Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachnameM, m.vorname AS vornameM, b.nachname AS nachname, b.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=?")
+		$objApplications = Database::getInstance()->prepare("SELECT m.id AS mitglied_id, m.nachname AS nachnameM, m.vorname AS vornameM, b.nachname AS nachname, b.vorname AS vorname, b.id AS bewerbung_id, b.applicationDate AS bewerbungsdatum, b.state AS status, b.promiseDate AS zusagedatum FROM tl_fernschach_turniere_bewerbungen AS b LEFT JOIN tl_fernschach_spieler AS m ON b.spielerId = m.id WHERE b.pid=?")
 		                                           ->execute($turnier_id);
 		$ausgabe = '<div class="long widget" style="margin-top:10px;">'; // Wichtig damit das Auf- und Zuklappen funktioniert
 		$ausgabe .= '<table class="tl_listing showColumns">';
@@ -1072,7 +1076,7 @@ class tl_fernschach_turniere extends \Backend
 			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.($objApplications->status == 0 ? 'ohne Entscheidung' : ($objApplications->status == 1 ? 'Zusage' : 'Absage')).'</td>';
 			$ausgabe .= '<td class="tl_file_list"'.$style.'>'.($objApplications->zusagedatum ? date('d.m.Y', $objApplications->zusagedatum) : '-').'</td>';
 			$ausgabe .= '<td class="tl_file_list tl_right_nowrap">';
-			$ausgabe .= '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objApplications->bewerbung_id.'&amp;popup=1&amp;rt='.REQUEST_TOKEN.'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>';
+			$ausgabe .= '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objApplications->bewerbung_id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>';
 			$ausgabe .= '</td>';
 			$ausgabe .= '</tr>';
 		}
@@ -1099,7 +1103,7 @@ class tl_fernschach_turniere extends \Backend
 
 	/**
 	 * Liefert die Liste der in der aktuellen Kategorie möglichen Typen
-	 * @param \DataContainer
+	 * @param DataContainer
 	 * @return array
 	 */
 	public function getTypen(DataContainer $dc)
@@ -1113,7 +1117,7 @@ class tl_fernschach_turniere extends \Backend
 		elseif(isset($dc->activeRecord->pid) && $dc->activeRecord->pid > 0)
 		{
 			// 2. - x. Ebene, dann Eltern-Typ prüfen
-			$objTyp = \Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
+			$objTyp = Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
 			                                  ->execute($dc->activeRecord->pid);
 			if($objTyp->numRows)
 			{
@@ -1151,7 +1155,7 @@ class tl_fernschach_turniere extends \Backend
 	 *
 	 * @return string
 	 */
-	public function pasteTournament(\DataContainer $dc, $row, $table, $cr, $arrClipboard=null)
+	public function pasteTournament(DataContainer $dc, $row, $table, $cr, $arrClipboard=null)
 	{
 		$disablePA = false;
 		$disablePI = false;
@@ -1168,15 +1172,15 @@ class tl_fernschach_turniere extends \Backend
 
 		// Return the buttons
 
-		$imagePasteAfter = \Image::getHtml('pasteafter.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id']));
-		$imagePasteInto = \Image::getHtml('pasteinto.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1], $row['id']));
+		$imagePasteAfter = Image::getHtml('pasteafter.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id']));
+		$imagePasteInto = Image::getHtml('pasteinto.svg', sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][1], $row['id']));
 
 		if ($row['id'] > 0)
 		{
-			$return = $disablePA ? \Image::getHtml('pasteafter_.svg') . ' ' : '<a href="' . $this->addToUrl('act=' . $arrClipboard['mode'] . '&amp;mode=1&amp;pid=' . $row['id'] . (!is_array($arrClipboard['id']) ? '&amp;id=' . $arrClipboard['id'] : '')) . '" title="' . StringUtil::specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id'])) . '" onclick="Backend.getScrollOffset()">' . $imagePasteAfter . '</a> ';
+			$return = $disablePA ? Image::getHtml('pasteafter_.svg') . ' ' : '<a href="' . $this->addToUrl('act=' . $arrClipboard['mode'] . '&amp;mode=1&amp;pid=' . $row['id'] . (!is_array($arrClipboard['id']) ? '&amp;id=' . $arrClipboard['id'] : '')) . '" title="' . StringUtil::specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteafter'][1], $row['id'])) . '" onclick="Backend.getScrollOffset()">' . $imagePasteAfter . '</a> ';
 		}
 
-		return $return . ($disablePI ? \Image::getHtml('pasteinto_.svg') . ' ' : '<a href="' . $this->addToUrl('act=' . $arrClipboard['mode'] . '&amp;mode=2&amp;pid=' . $row['id'] . (!is_array($arrClipboard['id']) ? '&amp;id=' . $arrClipboard['id'] : '')) . '" title="' . StringUtil::specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][$row['id'] > 0 ? 1 : 0], $row['id'])) . '" onclick="Backend.getScrollOffset()">' . $imagePasteInto . '</a> ');
+		return $return . ($disablePI ? Image::getHtml('pasteinto_.svg') . ' ' : '<a href="' . $this->addToUrl('act=' . $arrClipboard['mode'] . '&amp;mode=2&amp;pid=' . $row['id'] . (!is_array($arrClipboard['id']) ? '&amp;id=' . $arrClipboard['id'] : '')) . '" title="' . StringUtil::specialchars(sprintf($GLOBALS['TL_LANG'][$table]['pasteinto'][$row['id'] > 0 ? 1 : 0], $row['id'])) . '" onclick="Backend.getScrollOffset()">' . $imagePasteInto . '</a> ');
 	}
 
 	/**
@@ -1195,14 +1199,14 @@ class tl_fernschach_turniere extends \Backend
 		if($row['bewerbungErlaubt'] && $row['type'] == 'tournament')
 		{
 			// Bewerbungen können bearbeitet werden
-			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> '; 
+			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> '; 
 		}
 		else
 		{
 			// Keine Bearbeitung von Bewerbungen
 			$icon = 'bundles/contaofernschach/images/turnier_bewerbungen_inaktiv.png';
 			$title = 'Keine Bewerbungen möglich bei diesem Eintrag';
-			return '<span>'.\Image::getHtml($icon, $label).'</span> ';
+			return '<span>'.Image::getHtml($icon, $label).'</span> ';
 		}
 
 	}
@@ -1259,12 +1263,12 @@ class tl_fernschach_turniere extends \Backend
 			// Keine Bearbeitung von Meldungen bei Kategorien und Gruppen
 			$icon = 'bundles/contaofernschach/images/turnier_meldungen_inaktiv.png';
 			$title = 'Keine Meldungen möglich bei diesem Eintrag';
-			return '<span>'.\Image::getHtml($icon, $label).'</span> ';
+			return '<span>'.Image::getHtml($icon, $label).'</span> ';
 		}
 		else
 		{
 			// Meldungen können bearbeitet werden
-			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> '; 
+			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> '; 
 		}
 
 	}
@@ -1287,12 +1291,12 @@ class tl_fernschach_turniere extends \Backend
 			// Keine Bearbeitung von Spielern bei Kategorien und meldefähigen Turnieren
 			$icon = 'bundles/contaofernschach/images/turnier_gruppe_inaktiv.png';
 			$title = 'Keine Spieler möglich bei diesem Eintrag';
-			return '<span>'.\Image::getHtml($icon, $label).'</span> ';
+			return '<span>'.Image::getHtml($icon, $label).'</span> ';
 		}
 		else
 		{
 			// Spieler können bearbeitet werden
-			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.specialchars($title).'"'.$attributes.'>'.\Image::getHtml($icon, $label).'</a> '; 
+			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> '; 
 		}
 
 	}

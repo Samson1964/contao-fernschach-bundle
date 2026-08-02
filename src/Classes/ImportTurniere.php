@@ -2,10 +2,24 @@
 
 namespace Schachbulle\ContaoFernschachBundle\Classes;
 
+use Contao\Backend;
+use Contao\BackendUser;
+use Contao\Config;
+use Contao\Controller;
+use Contao\CoreBundle\Monolog\ContaoContext;
+use Contao\Database;
+use Contao\DropZone;
+use Contao\Environment;
+use Contao\File;
+use Contao\Input;
+use Contao\Message;
+use Contao\StringUtil;
+use Contao\System;
+
 /**
  * Class ImportTournaments
   */
-class ImportTurniere extends \Backend
+class ImportTurniere extends Backend
 {
 
 	function __construct()
@@ -18,48 +32,51 @@ class ImportTurniere extends \Backend
 	public function run()
 	{
 
-		if(\Input::get('key') != 'importTurniere')
+		if(Input::get('key') != 'importTurniere')
 		{
 			// Beenden, wenn der Parameter nicht übereinstimmt
 			return '';
 		}
 
 		// Objekt BackendUser importieren
-		$this->import('BackendUser','User');
+		$this->import(BackendUser::class,'User');
 		$class = $this->User->uploader;
 
-		// See #4086
-		if (!class_exists($class))
+		// Contao merkt sich am Benutzer, welchen Datei-Uploader er benutzt. Dort
+		// steht ein Klassenname ohne Namensraum ("DropZone"), den es als
+		// globalen Alias nur bis Contao 4.13 gab. Fällt die Prüfung deshalb
+		// negativ aus, greift derselbe Standard wie im Contao-Kern.
+		if (!$class || !class_exists($class))
 		{
-			$class = 'FileUpload';
+			$class = DropZone::class;
 		}
 
 		$objUploader = new $class();
 
 		// Formular wurde abgeschickt, Wortliste importieren
-		if (\Input::post('FORM_SUBMIT') == 'tl_fernschach_import_turniere')
+		if (Input::post('FORM_SUBMIT') == 'tl_fernschach_import_turniere')
 		{
 			$arrUploaded = $objUploader->uploadTo('system/tmp');
 
 			if(empty($arrUploaded))
 			{
-				\Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
+				Message::addError($GLOBALS['TL_LANG']['ERR']['all_fields']);
 				$this->reload();
 			}
 
-			$this->import('Database');
+			$this->import(Database::class);
 
 			foreach ($arrUploaded as $txtFile)
 			{
-				$objFile = new \File($txtFile, true);
+				$objFile = new File($txtFile, true);
 
 				if ($objFile->extension != 'csv')
 				{
-					\Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
+					Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
 					continue;
 				}
 
-				log_message('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
+				Scope::logToFile('Importiere Datei: '.$txtFile,'fernschach-verwaltung.log');
 				$resFile = $objFile->handle;
 				$record_count = 0;
 				$neu_count = 0;
@@ -75,11 +92,11 @@ class ImportTurniere extends \Backend
 					{
 						// Kopfzeile auslesen
 						$kopf = $spalte;
-						log_message('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+						Scope::logToFile('Lese Kopfzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 					}
 					else
 					{
-						log_message('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
+						Scope::logToFile('Importiere Datenzeile '.$record_count.': '.$zeile,'fernschach-verwaltung.log');
 						// Datensatz auslesen
 						$set = array();
 						$mitgliedsdaten = array();
@@ -119,12 +136,12 @@ class ImportTurniere extends \Backend
 						{
 							unset($set['pid']); // pid-Feld löschen, da nicht benötigt
 							// ID ist gesetzt, vorhandenes Turnier mit dieser ID überschreiben/ergänzen
-							log_message('Set-Array Update tl_fernschach_turniere:','fernschach-verwaltung.log');
-							log_message(print_r($set,true),'fernschach-verwaltung.log');
-							$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_turniere %s WHERE id = ?")
+							Scope::logToFile('Set-Array Update tl_fernschach_turniere:','fernschach-verwaltung.log');
+							Scope::logToFile(print_r($set,true),'fernschach-verwaltung.log');
+							$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_turniere %s WHERE id = ?")
 							                                     ->set($set)
 							                                     ->execute($set['id']);
-							\Controller::createNewVersion('tl_fernschach_turniere', $set['id']);
+							Scope::createVersion('tl_fernschach_turniere', $set['id']);
 							$update_count++;
 						}
 						elseif($set['title'])
@@ -132,7 +149,7 @@ class ImportTurniere extends \Backend
 							unset($set['id']); // ID-Feld muß gelöscht werden, sonst funktioniert das Update nicht
 							// Nur Turniere mit gesetztem Titel importieren
 							// Nach Titel suchen
-							$objResult = \Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE title = ?")
+							$objResult = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE title = ?")
 							                                     ->limit(1)
 							                                     ->execute($set['titel']);
 
@@ -141,12 +158,12 @@ class ImportTurniere extends \Backend
 							if($objResult->numRows)
 							{
 								// Turniertitel bereits vorhanden, dann überschreiben/ergänzen
-								log_message('Set-Array Update tl_fernschach_turniere:','fernschach-verwaltung.log');
-								log_message(print_r($set,true),'fernschach-verwaltung.log');
-								$objUpdate = \Database::getInstance()->prepare("UPDATE tl_fernschach_turniere %s WHERE id = ?")
+								Scope::logToFile('Set-Array Update tl_fernschach_turniere:','fernschach-verwaltung.log');
+								Scope::logToFile(print_r($set,true),'fernschach-verwaltung.log');
+								$objUpdate = Database::getInstance()->prepare("UPDATE tl_fernschach_turniere %s WHERE id = ?")
 								                                     ->set($set)
 								                                     ->execute($objResult->id);
-								\Controller::createNewVersion('tl_fernschach_turniere', $objResult->id);
+								Scope::createVersion('tl_fernschach_turniere', $objResult->id);
 								$update_count++;
 							}
 							else
@@ -154,10 +171,10 @@ class ImportTurniere extends \Backend
 								// Turniertitel noch nicht vorhanden, dann neu anlegen
 								if($set)
 								{
-									log_message('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
-									log_message(print_r($set,true),'fernschach-verwaltung.log');
+									Scope::logToFile('Set-Array Insert tl_fernschach_turniere:','fernschach-verwaltung.log');
+									Scope::logToFile(print_r($set,true),'fernschach-verwaltung.log');
 									// Neues Turnier
-									$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_fernschach_turniere %s")
+									$objInsert = Database::getInstance()->prepare("INSERT INTO tl_fernschach_turniere %s")
 									                                     ->set($set)
 									                                     ->execute();
 									$neu_count++;
@@ -170,28 +187,28 @@ class ImportTurniere extends \Backend
 				}
 
 				$dauer = sprintf('%f0.4', microtime(true) - $start);
-				\System::log('Turnierimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, TL_GENERAL);
+				Scope::log('Turnierimport aus Datei '.$objFile->name.' - '.($neu_count+$update_count).' Datensätze - '.$neu_count.' neu, '.$update_count.' überschrieben - Dauer: '.$dauer.'s', __METHOD__, ContaoContext::GENERAL);
 			}
 
 			// Cookie setzen und zurückkehren zur Turnierliste (key=importTurniere aus URL entfernen)
-			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-			$this->redirect(str_replace('&key=importTurniere', '', \Environment::get('request')));
+			System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			$this->redirect(str_replace('&key=importTurniere', '', Environment::get('request')));
 		}
 
 		// Return form
 		return '
 <div id="tl_buttons">
-<a href="'.ampersand(str_replace('&key=importTurniere', '', \Environment::get('request'))).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
+<a href="'.StringUtil::ampersand(str_replace('&key=importTurniere', '', Environment::get('request'))).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-'.\Message::generate().'
-<form action="'.ampersand(\Environment::get('request'), true).'" id="tl_fernschach_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
+'.Message::generate().'
+<form action="'.StringUtil::ampersand(Environment::get('request'), true).'" id="tl_fernschach_import" class="tl_form tl_edit_form" method="post" enctype="multipart/form-data">
 
 <div class="tl_formbody_edit">
 
 	<input type="hidden" name="FORM_SUBMIT" value="tl_fernschach_import_turniere">
-	<input type="hidden" name="REQUEST_TOKEN" value="'.REQUEST_TOKEN.'">
-	<input type="hidden" name="MAX_FILE_SIZE" value="' . \Config::get('maxFileSize') . '">
+	<input type="hidden" name="REQUEST_TOKEN" value="'.Scope::getRequestToken().'">
+	<input type="hidden" name="MAX_FILE_SIZE" value="' . Config::get('maxFileSize') . '">
 
 	<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_fernschach_turniere_import']['headline'].'</h2>
 	<p style="margin: 18px;">'.$GLOBALS['TL_LANG']['tl_fernschach_turniere_import']['format'].'
@@ -206,7 +223,7 @@ class ImportTurniere extends \Backend
 <div class="tl_formbody_submit">
 
 <div class="tl_submit_container">
-  <input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.specialchars($GLOBALS['TL_LANG']['MSC']['tw_import'][0]).'">
+  <input type="submit" name="save" id="save" class="tl_submit" accesskey="s" value="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['tw_import'][0]).'">
 </div>
 
 </div>
