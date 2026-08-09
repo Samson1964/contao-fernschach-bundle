@@ -11,3 +11,6 @@
 /.vscode/
 Thumbs.db
 .DS_Store
+
+# Eigene Arbeitsnotizen, gehören nicht ins Paket
+/TODO.md
