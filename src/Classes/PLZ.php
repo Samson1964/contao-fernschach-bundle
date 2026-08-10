@@ -28,10 +28,11 @@ class PLZ extends Backend
 
 	/**
 	 * Ermittelt aus der PLZ das Bundesland, wenn das Bundesland nicht ausgewählt wurde
-	 * @param mixed
-	 * @param DataContainer
-	 * @return string
 	 * @throws \Exception
+	 *
+	 * @param DataContainer $dc
+	 *
+	 * @return string
 	 */
 	public function setBundesland(DataContainer $dc)
 	{

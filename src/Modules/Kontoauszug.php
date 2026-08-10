@@ -169,13 +169,12 @@ class Kontoauszug extends Module
 	{
 
 		$buchungen = array();
+		$saldo_raw = 0;
 
-		switch($typ)
-		{
-			case 'h': $kontoname = ''; break;
-			case 'b': $kontoname = '_beitrag'; break;
-			case 'n': $kontoname = '_nenngeld'; break;
-		}
+		// Kontosuffix der Tabelle. Ein unbekannter Typ führt auf das Hauptkonto,
+		// statt eine undefinierte Variable in die Abfrage zu geben.
+		$konten = array('h' => '', 'b' => '_beitrag', 'n' => '_nenngeld');
+		$kontoname = $konten[$typ] ?? '';
 
 		// Salden laden
 		$salden = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo($spieler->id, $kontoname);

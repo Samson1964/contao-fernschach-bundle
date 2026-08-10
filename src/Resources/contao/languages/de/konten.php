@@ -1,6 +1,23 @@
 <?php
 
 /**
+ * Gemeinsame Beschriftungen der vier Buchungstabellen
+ *
+ * Diese Datei wird nicht eigenständig geladen, sondern von den Sprachdateien
+ * der einzelnen Tabellen eingebunden. Die einbindende Datei legt vorher fest,
+ * für welche Tabelle die Beschriftungen gelten:
+ *
+ *   $strTable = 'tl_fernschach_spieler_konto';
+ *   include_once('konten.php');
+ *
+ * Die Zuweisung unten fängt den Fall ab, dass die Datei ohne diese Vorgabe
+ * eingebunden wird — dann landen die Beschriftungen im Hauptkonto statt in
+ * einem Eintrag mit leerem Namen.
+ */
+
+$strTable = $strTable ?? 'tl_fernschach_spieler_konto';
+
+/**
  * Backend-Modul: Übersetzungen im Eingabeformular
  */
 $GLOBALS['TL_LANG'][$strTable]['buchung_legend'] = 'Buchung';

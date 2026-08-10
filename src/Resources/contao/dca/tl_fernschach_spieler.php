@@ -1963,7 +1963,12 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Datensätze auflisten
-	 * @param array
+	 *
+	 * @param mixed $row
+	 * @param mixed $label
+	 * @param DataContainer $dc
+	 * @param mixed $args
+	 *
 	 * @return string
 	 */
 	public function listMembers($row, $label, DataContainer $dc, $args)
@@ -2527,12 +2532,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Edit-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
@@ -2542,12 +2549,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Copy-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
@@ -2557,12 +2566,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Delete-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
@@ -2572,12 +2583,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Toggle-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
@@ -2587,12 +2600,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Show-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)
@@ -2604,12 +2619,14 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Gibt den Konto-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateKontoButton($row, $href, $label, $title, $icon, $attributes)
@@ -2619,13 +2636,17 @@ class tl_fernschach_spieler extends Backend
 			// Benutzer ist Admin oder berechtigter Benutzer, dann normales verlinktes Icon anzeigen
 			// Vorher prüfen, ob überhaupt Buchungen vorliegen
 			$tabelle = substr($href, 6); // Ermitteln anhand Tabellenname, welches Icon gerade geprüft wird
+			$anzahlBuchungen = 0;
+
 			if($row['id'])
 			{
 				$objBuchungen = Database::getInstance()->prepare("SELECT * FROM ".$tabelle." WHERE pid = ?")
 				                                        ->execute($row['id']);
-				$title .= ' ('.$objBuchungen->numRows.' Buchungen)';
+				$anzahlBuchungen = $objBuchungen->numRows;
+				$title .= ' ('.$anzahlBuchungen.' Buchungen)';
 			}
-			if($objBuchungen->numRows)
+
+			if($anzahlBuchungen)
 				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 			else
 				$string = '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml(preg_replace('/\.png$/i', '_.png', $icon), $label).'</a> ';
@@ -2640,7 +2661,9 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Vorschau und Link auf die Datei mit dem Sepa-Mandat Beiträge
-	 * @param array
+	 *
+	 * @param DataContainer $dc
+	 *
 	 * @return string
 	 */
 	public function getBeitragbox(DataContainer $dc)
@@ -2680,7 +2703,9 @@ class tl_fernschach_spieler extends Backend
 
 	/**
 	 * Vorschau und Link auf die Datei mit dem Sepa-Mandat Nenngelder
-	 * @param array
+	 *
+	 * @param DataContainer $dc
+	 *
 	 * @return string
 	 */
 	public function getNenngeldbox(DataContainer $dc)
@@ -2853,7 +2878,14 @@ class tl_fernschach_spieler extends Backend
 	 * Funktion toogleEmail (noch ohne Funktion, d.h. gibt nur den Standard-Button zurück)
 	 * ===================================================================
 	 * Gibt den E-Mail-Button zurück, aufgrund der vorhandenen E-Mails des Spielers
-	 * @param array
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function toggleEmail($row, $href, $label, $title, $icon, $attributes)

@@ -280,6 +280,17 @@ class tl_fernschach_konten extends Backend
 {
 
 	/**
+	 * Anzahl der Bewerbungen je Turnier.
+	 *
+	 * Wird von infoBewerbungen() ausgewertet. Die Methode ist ein Überbleibsel
+	 * aus der Turnier-DCA und in dieser Tabelle nirgends als Rückruffunktion
+	 * eingetragen — das Feld bleibt deshalb leer.
+	 *
+	 * @var array
+	 */
+	public $bewerbungen = array();
+
+	/**
 	 * Import the back end user object
 	 */
 	public function __construct()
@@ -387,11 +398,15 @@ class tl_fernschach_konten extends Backend
 	}
 
 	/**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Setzt die Uhrzeit eines Datums auf 0:00 Uhr.
 	 *
-	 * @param integer $value
+	 * Contao speichert Datumsfelder als Zeitstempel. Ohne diese Umwandlung
+	 * enthielte ein am Nachmittag gespeichertes Datum auch die Uhrzeit, und
+	 * Vergleiche auf Tagesgrenzen gingen schief.
 	 *
-	 * @return integer
+	 * @param int|string $value Der gespeicherte Zeitstempel; 0 oder leer bleibt unverändert
+	 *
+	 * @return int|string Der Zeitstempel zur Mitternacht desselben Tages
 	 */
 	public function loadDate($value)
 	{
@@ -402,7 +417,9 @@ class tl_fernschach_konten extends Backend
 
 	/**
 	 * Liefert die Liste der in der aktuellen Kategorie möglichen Typen
-	 * @param DataContainer
+	 *
+	 * @param DataContainer $dc
+	 *
 	 * @return array
 	 */
 	public function getTypen(DataContainer $dc)
@@ -482,12 +499,14 @@ class tl_fernschach_konten extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Bewerbungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function buchungenIcon($row, $href, $label, $title, $icon, $attributes)
@@ -510,16 +529,20 @@ class tl_fernschach_konten extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Bewerbungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function infoBewerbungen($row, $href, $label, $title, $icon, $attributes)
 	{
+
+		$temp = '';
 
 		if($row['bewerbungErlaubt'] && $row['type'] == 'tournament')
 		{
@@ -544,12 +567,14 @@ class tl_fernschach_konten extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Meldungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function meldungenIcon($row, $href, $label, $title, $icon, $attributes)
@@ -571,12 +596,14 @@ class tl_fernschach_konten extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Spieler zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function spielerIcon($row, $href, $label, $title, $icon, $attributes)
@@ -609,9 +636,13 @@ class tl_fernschach_konten extends Backend
 	}
 
 	/**
-	 * Betrag aus der Datenbank umwandeln
-	 * @param $varValue       string      z.B. 9,12
-	 * @return                float       z.B. 9.12
+	 * Bereitet einen Betrag aus der Datenbank für die Anzeige auf.
+	 *
+	 * Gespeichert wird mit Punkt als Dezimaltrenner, angezeigt mit Komma.
+	 *
+	 * @param string $varValue Der gespeicherte Betrag, etwa "9.12"
+	 *
+	 * @return string Der Betrag in deutscher Schreibweise, etwa "9,12"
 	 */
 	public function getBetrag($varValue)
 	{

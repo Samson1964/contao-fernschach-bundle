@@ -15,8 +15,6 @@ class Titel extends Backend
 	/**
 	 * Lädt alle veröffentlichten Titel von veröffentlichten Spielern
 	 *
-	 * @param
-	 *
 	 * @return array
 	 */
 	public static function get()

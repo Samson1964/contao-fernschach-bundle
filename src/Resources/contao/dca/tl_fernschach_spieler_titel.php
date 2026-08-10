@@ -297,7 +297,9 @@ class tl_fernschach_spieler_titel extends Backend
 
 	/**
 	 * Datensätze auflisten
-	 * @param array
+	 *
+	 * @param mixed $arrRow
+	 *
 	 * @return string
 	 */
 	public function listTitel($arrRow)

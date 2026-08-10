@@ -1,5 +1,26 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.2.0 (2026-08-10)
+
+Das Meldeformular für Mannschaften ist neu gebaut. Bisher entstand es über die Formularklasse des Helper-Bundles und übernahm Gestaltung und Skripte vom jeweiligen Theme — es sah auf jeder Website anders aus, und die Spieler waren aus vier Auswahllisten mit sämtlichen Mitgliedern zu suchen.
+
+* Add: Eigenes Aussehen über `fernschach_formular.css`; die Farben und Abstände stehen als CSS-Variablen unter `.fernschach-formular` und lassen sich im Theme überschreiben
+* Add: Die Zahl der Bretteingaben richtet sich nach dem Feld **Bretter** des gewählten Turniers — vier Spieler ergeben Brett 1 bis 4, sechs Spieler Brett 1 bis 6. Beim Wechsel des Turniers bleiben bereits eingetragene Spieler erhalten
+* Add: Autovervollständigung der Spielerauswahl ab dem zweiten Zeichen über die neue Route `/fernschach/spieler-suche`. Gesucht wird in Nachname, Vorname, BdF-Mitgliedsnummer und ICCF-ID; mehrere Wörter müssen alle zutreffen. Die Vorschlagsliste ist auf 15 Einträge begrenzt und mit den Pfeiltasten bedienbar
+* Add: Die Suchroute gibt nur angemeldeten Frontend-Mitgliedern Auskunft und antwortet sonst mit HTTP 403
+* Add: Prüfung vor dem Abschicken auf gefüllte Pflichtfelder und doppelt aufgestellte Spieler, im Browser wie auf dem Server. Fehlerhafte Felder werden markiert, die Eingaben bleiben erhalten
+* Add: Bestätigungsseite nach dem Abschicken mit sämtlichen Angaben — Turnier, Nenngeld, Verein, Mannschaft, Mannschaftsführer, vollständige Aufstellung und Bemerkungen
+* Change: Nach dem Speichern wird umgeleitet (`send=1`), statt die Seite neu aufzubauen; ein Aktualisieren kann die Meldung nicht mehr wiederholen
+* Change: Alle vom Benutzer stammenden Werte laufen in der Vorlage durch `StringUtil::specialchars()`
+* Fix: `Helper::getSpieler()` hatte hinter der Bedingung des Zwischenspeichers ein Semikolon. Der Speicher war damit wirkungslos und die gesamte Spielertabelle wurde bei jedem Aufruf neu gelesen
+
+Außerdem in dieser Fassung, als Ergebnis einer statischen Prüfung des gesamten Bundles mit PHPStan:
+
+* Change: PHP 7 wird nicht mehr unterstützt, `composer.json` verlangt jetzt `^8.1`
+* Add: `phpstan.neon.dist` liegt dem Bundle bei (Stufe 4, PHP 8.3). Die Klassen mit magischem `__get()` — `Model`, `Template`, `DataContainer`, `Database\Result` und andere — sind dort als `universalObjectCratesClasses` eingetragen, sonst meldet jede Contao-Eigenschaft einen Fehler
+* Fix: Mehrere DCA-Klassen benutzten Eigenschaften, die nirgends deklariert waren; unter PHP 8.2 wären sie als „dynamische Eigenschaft" verwarnt worden
+* Change: Sämtliche Funktionen und Methoden haben einen deutschen Kommentarblock mit Zweck, Parametern, Rückgabe und den Fallstricken; die alten englischen Rumpfblöcke sind ersetzt
+
 ## Version 2.1.1 (2026-08-10)
 
 Ergebnis einer vollständigen Prüfung des Bundles mit PHP 8.3 (Syntax) und PHPStan gegen Contao 4.13.58 und Contao 5.7.7. Gefunden wurden mehrere Stellen, die unter Contao 5 zur Laufzeit abgestürzt wären, aber von den bisherigen Tests nicht berührt wurden, weil sie Daten voraussetzen.

@@ -1,0 +1,155 @@
+<?php
+/**
+ * Mannschaftsmeldung — eigenes Formular der Fernschach-Verwaltung
+ *
+ * Das Markup ist bewusst eigenständig und trägt durchgehend die Klasse
+ * "fernschach-formular", damit das Aussehen aus fernschach_formular.css kommt
+ * und nicht vom Theme der jeweiligen Website abhängt.
+ *
+ * Alle vom Benutzer stammenden Werte laufen durch StringUtil::specialchars().
+ * Ohne doppelte Kodierung, damit von Contao bereits maskierte Zeichen nicht ein
+ * zweites Mal maskiert werden und als "&#35;" auf dem Bildschirm landen.
+ */
+
+use Contao\StringUtil;
+?>
+<div class="<?= $this->class ?> fernschach-formular" <?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?>>
+
+<?php if ($this->headline): ?>
+	<<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
+<?php endif; ?>
+
+<?php if ($this->fehlertext): ?>
+
+	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+
+<?php elseif ($this->bestaetigung): ?>
+
+	<?php $b = $this->bestaetigung; ?>
+	<div class="fs-bestaetigung">
+		<p class="fs-hinweis fs-hinweis--erfolg"><strong>Ihre Mannschaftsmeldung ist eingegangen.</strong></p>
+		<p>Eine Bestätigung geht an <strong><?= StringUtil::specialchars($b['fuehrer_email']) ?></strong>. Bitte sehen Sie auch im Spam-Ordner nach — eine erneute Meldung für dasselbe Turnier ist nicht nötig.</p>
+
+		<h3>Ihre Angaben</h3>
+		<dl class="fs-liste">
+			<dt>Gemeldet am</dt><dd><?= date('d.m.Y H:i', $b['zeit']) ?> Uhr</dd>
+			<dt>Turnier</dt><dd><?= StringUtil::specialchars($b['turnier']) ?></dd>
+			<dt>Nenngeld</dt><dd><?= StringUtil::specialchars($b['nenngeld']) ?></dd>
+			<dt>Verein</dt><dd><?= StringUtil::specialchars($b['vereinsname']) ?></dd>
+			<?php if ($b['vereinsname_alt']): ?>
+			<dt>Alter Vereinsname</dt><dd><?= StringUtil::specialchars($b['vereinsname_alt']) ?></dd>
+			<?php endif; ?>
+			<dt>Mannschaft</dt><dd><?= StringUtil::specialchars($b['mannschaftsname']) ?></dd>
+			<dt>Mannschaftsführer</dt><dd><?= StringUtil::specialchars($b['fuehrer']) ?> (BdF-Nr. <?= StringUtil::specialchars($b['fuehrer_bdf']) ?>)</dd>
+		</dl>
+
+		<h3>Aufstellung</h3>
+		<ol class="fs-aufstellung">
+			<?php foreach ($b['aufstellung'] as $brett => $name): ?>
+			<li><span class="fs-brett">Brett <?= (int) $brett ?></span> <?= StringUtil::specialchars($name) ?></li>
+			<?php endforeach; ?>
+		</ol>
+
+		<?php if ($b['bemerkungen']): ?>
+		<h3>Bemerkungen</h3>
+		<p class="fs-bemerkungen"><?= nl2br(StringUtil::specialchars($b['bemerkungen'])) ?></p>
+		<?php endif; ?>
+	</div>
+
+<?php else: ?>
+
+	<?php if ($this->fehler): ?>
+	<p class="fs-hinweis fs-hinweis--fehler">Bitte prüfen Sie die rot gekennzeichneten Felder.</p>
+	<?php endif; ?>
+
+	<section class="fs-block">
+		<h3>Mannschaftsführer</h3>
+		<dl class="fs-liste">
+			<dt>Name</dt><dd><?= StringUtil::specialchars($this->mitglied->vorname) ?> <?= StringUtil::specialchars($this->mitglied->nachname) ?></dd>
+			<dt>BdF-Mitgliedsnummer</dt><dd><?= StringUtil::specialchars($this->mitglied->memberId) ?></dd>
+			<dt>E-Mail</dt><dd><?= StringUtil::specialchars($this->mitglied->email1) ?></dd>
+			<dt>Beitragssaldo</dt><dd><?= StringUtil::specialchars($this->beitragssaldo) ?></dd>
+		</dl>
+		<p class="fs-notiz">Das Nenngeld des ausgewählten Turniers wird mit Ihrem Nenngeldkonto verrechnet.</p>
+	</section>
+
+	<form method="post" class="fs-form" data-fernschach-mannschaft data-suche="<?= $this->suchadresse ?>" novalidate>
+		<input type="hidden" name="FORM_SUBMIT" value="fernschach_mannschaftsmeldung">
+		<input type="hidden" name="REQUEST_TOKEN" value="<?= $this->requestToken ?>">
+
+		<section class="fs-block">
+			<h3>Turnier</h3>
+
+			<div class="fs-feld<?= isset($this->fehler['turnier']) ? ' fs-feld--fehler' : '' ?>">
+				<label for="fs-turnier">Turnier <span class="fs-pflicht" title="Pflichtfeld">*</span></label>
+				<select name="turnier" id="fs-turnier" required data-fs-turnier>
+					<option value="">— bitte wählen —</option>
+					<?php foreach ($this->turniere as $t): ?>
+					<option value="<?= $t['id'] ?>" data-bretter="<?= $t['bretter'] ?>"<?= ($this->werte['turnier'] ?? 0) == $t['id'] ? ' selected' : '' ?>><?= StringUtil::specialchars($t['title']) ?> — Nenngeld <?= $t['nenngeld'] ?><?= $t['meldeschluss'] ? ', Meldeschluss '.$t['meldeschluss'] : '' ?></option>
+					<?php endforeach; ?>
+				</select>
+				<?php if (isset($this->fehler['turnier'])): ?><p class="fs-fehler"><?= $this->fehler['turnier'] ?></p><?php endif; ?>
+			</div>
+		</section>
+
+		<section class="fs-block">
+			<h3>Mannschaft</h3>
+
+			<div class="fs-feld<?= isset($this->fehler['vereinsname']) ? ' fs-feld--fehler' : '' ?>">
+				<label for="fs-verein">Name des Vereins oder der Spielgemeinschaft <span class="fs-pflicht" title="Pflichtfeld">*</span></label>
+				<input type="text" name="vereinsname" id="fs-verein" value="<?= StringUtil::specialchars($this->werte['vereinsname'] ?? '') ?>" required maxlength="255">
+				<?php if (isset($this->fehler['vereinsname'])): ?><p class="fs-fehler"><?= $this->fehler['vereinsname'] ?></p><?php endif; ?>
+			</div>
+
+			<div class="fs-feld">
+				<label for="fs-verein-alt">Alter Vereinsname <span class="fs-optional">(nur bei Namensänderung)</span></label>
+				<input type="text" name="vereinsname_alt" id="fs-verein-alt" value="<?= StringUtil::specialchars($this->werte['vereinsname_alt'] ?? '') ?>" maxlength="255">
+			</div>
+
+			<div class="fs-feld<?= isset($this->fehler['mannschaftsname']) ? ' fs-feld--fehler' : '' ?>">
+				<label for="fs-mannschaft">Bezeichnung der Mannschaft <span class="fs-pflicht" title="Pflichtfeld">*</span></label>
+				<input type="text" name="mannschaftsname" id="fs-mannschaft" value="<?= StringUtil::specialchars($this->werte['mannschaftsname'] ?? '') ?>" required maxlength="255">
+				<p class="fs-notiz">Bei mehreren Teams bitte mit römischer Ziffer, etwa „Musterstadt II".</p>
+				<?php if (isset($this->fehler['mannschaftsname'])): ?><p class="fs-fehler"><?= $this->fehler['mannschaftsname'] ?></p><?php endif; ?>
+			</div>
+		</section>
+
+		<section class="fs-block" data-fs-bretter hidden>
+			<h3>Aufstellung</h3>
+			<p class="fs-notiz">Tippen Sie ab dem zweiten Zeichen Name, BdF-Nummer oder ICCF-ID; die Vorschläge lassen sich mit den Pfeiltasten auswählen.</p>
+			<div data-fs-brettliste></div>
+		</section>
+
+		<section class="fs-block">
+			<h3>Bemerkungen</h3>
+			<div class="fs-feld">
+				<label for="fs-bemerkungen">Anmerkungen zur Meldung <span class="fs-optional">(freiwillig)</span></label>
+				<textarea name="bemerkungen" id="fs-bemerkungen" rows="4"><?= StringUtil::specialchars($this->werte['bemerkungen'] ?? '') ?></textarea>
+			</div>
+		</section>
+
+		<p class="fs-absenden">
+			<button type="submit" class="fs-knopf">Mannschaft melden</button>
+		</p>
+	</form>
+
+	<?php
+	// Bereits abgeschickte Aufstellung für das Skript bereitstellen, damit sie
+	// nach einem Fehler nicht verlorengeht.
+	$vorgaben = array();
+
+	foreach (($this->werte['spieler'] ?? array()) as $brett => $id)
+	{
+		$vorgaben[$brett] = array
+		(
+			'id'     => $id,
+			'name'   => $this->werte['namen'][$brett] ?? '',
+			'fehler' => $this->fehler['spieler_'.$brett] ?? '',
+		);
+	}
+	?>
+	<script type="application/json" data-fs-vorgaben><?= json_encode($vorgaben) ?></script>
+
+<?php endif; ?>
+
+</div>

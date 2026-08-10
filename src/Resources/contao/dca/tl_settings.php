@@ -273,9 +273,13 @@ class tl_settings_fernschach extends Backend
 	}
 
 	/**
-	 * Betrag aus der Datenbank umwandeln
-	 * @param $varValue       string      z.B. 9,12
-	 * @return                float       z.B. 9.12
+	 * Bereitet einen Betrag aus der Datenbank für die Anzeige auf.
+	 *
+	 * Gespeichert wird mit Punkt als Dezimaltrenner, angezeigt mit Komma.
+	 *
+	 * @param string $varValue Der gespeicherte Betrag, etwa "9.12"
+	 *
+	 * @return string Der Betrag in deutscher Schreibweise, etwa "9,12"
 	 */
 	public function getBetrag($varValue)
 	{

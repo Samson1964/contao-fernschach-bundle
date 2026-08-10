@@ -56,6 +56,7 @@ class Meldeformular_Spieler extends Module
 	{
 		global $objPage;
 		$fehler = false;
+		$fehlertext = '';
 
 		if($this->fernschachverwaltung_linkingMembers)
 		{

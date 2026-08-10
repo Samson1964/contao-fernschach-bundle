@@ -41,18 +41,20 @@ class MoveBuchung extends Backend
 		}
 
 		$id = Input::get('id'); // ID der Buchung
-		switch(Input::get('source'))
+
+		// Kontosuffixe der Quell- und Zieltabelle. Ein unbekannter Wert in der
+		// Adresse ergäbe sonst eine undefinierte Variable und damit einen
+		// Zugriff auf die Tabelle des Hauptkontos.
+		$konten = array('h' => '', 'b' => '_beitrag', 'n' => '_nenngeld');
+
+		if(!isset($konten[Input::get('source')]) || !isset($konten[Input::get('target')]))
 		{
-			case 'h': $source = ''; break;
-			case 'b': $source = '_beitrag'; break;
-			case 'n': $source = '_nenngeld'; break;
+			// Beenden, wenn Quelle oder Ziel kein bekanntes Konto bezeichnen
+			return '';
 		}
-		switch(Input::get('target'))
-		{
-			case 'h': $target = ''; break;
-			case 'b': $target = '_beitrag'; break;
-			case 'n': $target = '_nenngeld'; break;
-		}
+
+		$source = $konten[Input::get('source')];
+		$target = $konten[Input::get('target')];
 
 		$objBuchung = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto".$source." WHERE id = ?")
 		                                      ->execute($id);

@@ -11,3 +11,13 @@ contao_fernschach_iccf_import:
         _scope: backend
         _token_check: false
     methods: [GET]
+
+# Autovervollständigung der Spielerauswahl im Mannschaftsmeldeformular. Die
+# Route liegt im Frontend-Scope, gibt aber nur angemeldeten Mitgliedern Auskunft.
+contao_fernschach_spieler_suche:
+    path: /fernschach/spieler-suche
+    defaults:
+        _controller: Schachbulle\ContaoFernschachBundle\Controller\SpielerSucheController
+        _scope: frontend
+        _token_check: false
+    methods: [GET]

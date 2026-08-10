@@ -311,7 +311,9 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 
 	/**
 	 * Datensätze auflisten
-	 * @param array
+	 *
+	 * @param mixed $arrRow
+	 *
 	 * @return string
 	 */
 	public function listBewerbungen($arrRow)
@@ -339,11 +341,15 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 	}
 
 	/**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Setzt die Uhrzeit eines Datums auf 0:00 Uhr.
 	 *
-	 * @param integer $value
+	 * Contao speichert Datumsfelder als Zeitstempel. Ohne diese Umwandlung
+	 * enthielte ein am Nachmittag gespeichertes Datum auch die Uhrzeit, und
+	 * Vergleiche auf Tagesgrenzen gingen schief.
 	 *
-	 * @return integer
+	 * @param int|string $value Der gespeicherte Zeitstempel; 0 oder leer bleibt unverändert
+	 *
+	 * @return int|string Der Zeitstempel zur Mitternacht desselben Tages
 	 */
 	public function loadDate($value)
 	{
@@ -353,10 +359,11 @@ class tl_fernschach_turniere_bewerbungen extends Backend
 
 	/**
 	 * Setzt die Felder Vorname und Nachname, wenn diese nicht gefüllt sind
-	 * @param mixed
-	 * @param DataContainer
-	 * @return string
 	 * @throws \Exception
+	 *
+	 * @param DataContainer $dc
+	 *
+	 * @return string
 	 */
 	public function setSpielername(DataContainer $dc)
 	{

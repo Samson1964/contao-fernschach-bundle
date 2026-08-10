@@ -197,6 +197,67 @@ E-Mail an die Turnierleitung und an den Spieler. Anschließend erscheint eine
 **Bestätigungsseite** mit den letzten Meldungen des Spielers; ein erneutes
 Absenden durch Aktualisieren der Seite ist damit ausgeschlossen.
 
+### Meldeformular Mannschaftsanmeldung
+
+| Einstellung | Bedeutung |
+| --- | --- |
+| Formular an Mitglied binden | Nur verifizierte BdF-Mitglieder dürfen das Formular sehen |
+
+Der angemeldete Benutzer ist zugleich der Mannschaftsführer; seine Daten stehen
+über dem Formular und werden nicht abgefragt. Angeboten werden veröffentlichte
+Turniere vom Typ **Mannschaftsturnier** mit aktiver Online-Anmeldung, deren
+Meldeschluss noch nicht verstrichen ist.
+
+**Zahl der Bretter.** Wie viele Spieler zu melden sind, steht am Turnier im Feld
+**Bretter**. Sobald ein Turnier gewählt ist, entstehen genau so viele
+Eingabefelder — vier Bretter bei einem Vierermannschaftsturnier, sechs bei einem
+Sechsermannschaftsturnier. Ohne Angabe am Turnier bleibt es bei vier. Wechselt
+der Benutzer das Turnier, bleiben bereits eingetragene Spieler erhalten, soweit
+das neue Turnier genügend Bretter hat.
+
+**Spielerauswahl.** Ab dem zweiten Zeichen schlägt das Formular passende
+Mitglieder vor; gesucht wird gleichzeitig in Nachname, Vorname,
+BdF-Mitgliedsnummer und ICCF-ID. Mehrere durch Leerzeichen getrennte Wörter
+müssen alle zutreffen, sodass sich mit `Muster Anna` gezielt eine Person finden
+lässt. Die Liste ist auf 15 Einträge begrenzt und lässt sich mit den Pfeiltasten
+bedienen. Vorgeschlagen werden nur Spieler, die zum heutigen Tag Mitglied sind
+und deren Beitragskonto ausgeglichen ist (bzw. die ein SEPA-Mandat für den
+Beitrag hinterlegt haben).
+
+Die Vorschläge liefert die Route `/fernschach/spieler-suche`. Sie gibt nur
+angemeldeten Frontend-Mitgliedern Auskunft und antwortet sonst mit HTTP 403 —
+die Mitgliederliste ist kein öffentliches Verzeichnis.
+
+**Prüfung.** Vor dem Abschicken wird geprüft, ob Turnier, Vereinsname,
+Mannschaftsbezeichnung und alle Bretter ausgefüllt sind und ob ein Spieler
+doppelt aufgestellt wurde. Dieselbe Prüfung läuft anschließend noch einmal auf
+dem Server, ergänzt um die Frage, ob die gemeldeten Spieler überhaupt
+meldefähige BdF-Mitglieder sind. Fehlerhafte Felder werden rot markiert; die
+bereits gemachten Eingaben bleiben erhalten.
+
+**Bestätigung.** Nach dem Speichern leitet das Modul auf sich selbst um (`send=1`)
+und zeigt eine Bestätigungsseite, auf der Turnier, Nenngeld, Verein, Mannschaft,
+Mannschaftsführer, die vollständige Aufstellung und die Bemerkungen noch einmal
+aufgeführt sind. Das Aktualisieren der Seite kann die Meldung damit nicht
+wiederholen. Parallel gehen zwei E-Mails heraus: an den Mannschaftsführer und an
+den Turnierdirektor aus den Einstellungen.
+
+**Gestaltung.** Seit Version 2.2.0 bringt das Formular sein eigenes Aussehen und
+Verhalten mit (`fernschach_formular.css` und `mannschaftsmeldung.js` unter
+`bundles/contaofernschach/`); vom Theme wird nichts mehr übernommen. Die Farben
+und Abstände stehen als CSS-Variablen unter `.fernschach-formular` und lassen
+sich im Theme überschreiben, ohne die Regeln selbst anzufassen:
+
+```css
+.fernschach-formular {
+	--fs-farbe: #a0122b;
+	--fs-radius: 0;
+}
+```
+
+Ohne JavaScript zeigt das Formular keine Bretteingaben. Der Server weist eine
+solche Meldung ab, sodass keine unvollständige Aufstellung entstehen kann.
+
 ### Mehrfachmeldungen
 
 Am Turnier steht im Feld **Meldungen je Spieler**, wie oft sich derselbe Spieler

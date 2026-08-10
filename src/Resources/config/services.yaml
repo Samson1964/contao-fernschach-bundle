@@ -48,3 +48,10 @@ services:
         arguments:
             - '@contao.framework'
         public: true
+
+    # Autovervollständigung der Spielerauswahl im Mannschaftsmeldeformular
+    Schachbulle\ContaoFernschachBundle\Controller\SpielerSucheController:
+        arguments:
+            - '@contao.framework'
+            - '@security.token_storage'
+        public: true

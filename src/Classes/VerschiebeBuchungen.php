@@ -199,14 +199,14 @@ class VerschiebeBuchungen extends Backend
 		}
 		else $verwendungszweck_genau = false;
 			
-		// Zielkonto gesetzt
-		if($daten['zielkonto']) 
-		{
-			if($daten['zielkonto'] == 'h') $zielkonto = 'tl_fernschach_spieler_konto'; 
-			elseif($daten['zielkonto'] == 'b') $zielkonto = 'tl_fernschach_spieler_konto_beitrag'; 
-			elseif($daten['zielkonto'] == 'n') $zielkonto = 'tl_fernschach_spieler_konto_nenngeld'; 
-		}
-		else $zielkonto = false;
+		// Zielkonto gesetzt. Die Vorbelegung mit false deckt auch einen
+		// unbekannten Wert ab; dann wird nicht in ein bestimmtes Konto,
+		// sondern nach Kategorie verschoben.
+		$zielkonto = false;
+
+		if($daten['zielkonto'] == 'h') $zielkonto = 'tl_fernschach_spieler_konto';
+		elseif($daten['zielkonto'] == 'b') $zielkonto = 'tl_fernschach_spieler_konto_beitrag';
+		elseif($daten['zielkonto'] == 'n') $zielkonto = 'tl_fernschach_spieler_konto_nenngeld';
 		
 		$found = 0; // Anzahl gefundener Buchungen
 		$moved = 0; // Anzahl verschobener Buchungen

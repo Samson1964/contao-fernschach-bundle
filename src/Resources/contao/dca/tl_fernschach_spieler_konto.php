@@ -562,11 +562,15 @@ class tl_fernschach_spieler_konto extends Backend
 	}
 
 	/**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Setzt die Uhrzeit eines Datums auf 0:00 Uhr.
 	 *
-	 * @param integer $value
+	 * Contao speichert Datumsfelder als Zeitstempel. Ohne diese Umwandlung
+	 * enthielte ein am Nachmittag gespeichertes Datum auch die Uhrzeit, und
+	 * Vergleiche auf Tagesgrenzen gingen schief.
 	 *
-	 * @return integer
+	 * @param int|string $value Der gespeicherte Zeitstempel; 0 oder leer bleibt unverändert
+	 *
+	 * @return int|string Der Zeitstempel zur Mitternacht desselben Tages
 	 */
 	public function loadDate($value)
 	{
@@ -620,9 +624,13 @@ class tl_fernschach_spieler_konto extends Backend
 	}
 
 	/**
-	 * Betrag aus der Datenbank umwandeln
-	 * @param $varValue       string      z.B. 9,12
-	 * @return                float       z.B. 9.12
+	 * Bereitet einen Betrag aus der Datenbank für die Anzeige auf.
+	 *
+	 * Gespeichert wird mit Punkt als Dezimaltrenner, angezeigt mit Komma.
+	 *
+	 * @param string $varValue Der gespeicherte Betrag, etwa "9.12"
+	 *
+	 * @return string Der Betrag in deutscher Schreibweise, etwa "9,12"
 	 */
 	public function getBetrag($varValue)
 	{
@@ -633,12 +641,14 @@ class tl_fernschach_spieler_konto extends Backend
 
 	/**
 	 * Gibt den Edit-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateEditButton($row, $href, $label, $title, $icon, $attributes)
@@ -648,12 +658,14 @@ class tl_fernschach_spieler_konto extends Backend
 
 	/**
 	 * Gibt den Copy-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateCopyButton($row, $href, $label, $title, $icon, $attributes)
@@ -663,12 +675,14 @@ class tl_fernschach_spieler_konto extends Backend
 
 	/**
 	 * Gibt den Delete-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateDeleteButton($row, $href, $label, $title, $icon, $attributes)
@@ -678,12 +692,14 @@ class tl_fernschach_spieler_konto extends Backend
 
 	/**
 	 * Gibt den Toggle-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateToggleButton($row, $href, $label, $title, $icon, $attributes)
@@ -693,12 +709,14 @@ class tl_fernschach_spieler_konto extends Backend
 
 	/**
 	 * Gibt den Show-Button zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function generateShowButton($row, $href, $label, $title, $icon, $attributes)

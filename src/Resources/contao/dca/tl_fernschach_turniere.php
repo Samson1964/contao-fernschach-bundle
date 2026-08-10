@@ -1118,11 +1118,15 @@ class tl_fernschach_turniere extends Backend
 	}
 
 	/**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Setzt die Uhrzeit eines Datums auf 0:00 Uhr.
 	 *
-	 * @param integer $value
+	 * Contao speichert Datumsfelder als Zeitstempel. Ohne diese Umwandlung
+	 * enthielte ein am Nachmittag gespeichertes Datum auch die Uhrzeit, und
+	 * Vergleiche auf Tagesgrenzen gingen schief.
 	 *
-	 * @return integer
+	 * @param int|string $value Der gespeicherte Zeitstempel; 0 oder leer bleibt unverändert
+	 *
+	 * @return int|string Der Zeitstempel zur Mitternacht desselben Tages
 	 */
 	public function loadDate($value)
 	{
@@ -1315,12 +1319,14 @@ class tl_fernschach_turniere extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Bewerbungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function bewerbungenIcon($row, $href, $label, $title, $icon, $attributes)
@@ -1343,12 +1349,14 @@ class tl_fernschach_turniere extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Bewerbungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function infoBewerbungen($row, $href, $label, $title, $icon, $attributes)
@@ -1378,12 +1386,14 @@ class tl_fernschach_turniere extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Meldungen zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function meldungenIcon($row, $href, $label, $title, $icon, $attributes)
@@ -1405,12 +1415,14 @@ class tl_fernschach_turniere extends Backend
 
 	/**
 	 * Gibt den Button für die Bearbeitung der Spieler zurück
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
+	 *
+	 * @param mixed $row
+	 * @param mixed $href
+	 * @param mixed $label
+	 * @param mixed $title
+	 * @param mixed $icon
+	 * @param mixed $attributes
+	 *
 	 * @return string
 	 */
 	public function spielerIcon($row, $href, $label, $title, $icon, $attributes)

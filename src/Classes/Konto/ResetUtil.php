@@ -40,7 +40,7 @@ class ResetUtil extends Backend
 	 * @param string $konto          h, b oder n
 	 * @param integer $id            ID des Spielers (pid im Konto)
 	 *
-	 * @return -
+	 * @return void
 	 */
 	public function Pruefung($konto, $id)
 	{
@@ -215,7 +215,7 @@ class ResetUtil extends Backend
 	 * ===========================================================================================
 	 * Liefert ein Array mit den global definierten Resetbuchungen sortiert aufsteigend nach Datum
 	 *
-	 * @param -
+	 * @param void
 	 *
 	 * @return array
 	 * Beispiel:

@@ -50,7 +50,9 @@ class Export extends Backend
 
 	/**
 	 * Funktion exportTrainer_XLS
-	 * @param object
+	 *
+	 * @param DataContainer $dc
+	 *
 	 * @return string
 	 */
 
@@ -582,7 +584,9 @@ class Export extends Backend
 
 	/**
 	 * Datumswert aus Datenbank umwandeln
-	 * @param mixed
+	 *
+	 * @param mixed $varValue
+	 *
 	 * @return mixed
 	 */
 	public function getDate($varValue)

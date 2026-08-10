@@ -59,6 +59,19 @@ class Turnierstatistik
 		// Aufruf wie ?differenz[]=1 unter PHP 8 einen TypeError auslösen.
 		$differenz = (int) Input::get('differenz');
 
+		// Voreinstellungen. Die nachfolgende Fallunterscheidung deckt zwar alle
+		// sinnvollen Kombinationen ab, aber nicht jede denkbare — etwa einen
+		// Aufruf mit Monat ohne Jahr. Ohne die Vorbelegung stünden dann
+		// undefinierte Variablen in den Abfragen.
+		$viewJahr = (int) $aktJahr;
+		$viewMonat = 0;
+		$viewTag = 0;
+		$datum = '';
+		$datumtext = '';
+		$von = 0;
+		$bis = 0;
+		$referenzdatum = date('Ymd');
+
 		// Neues Datum für anzuzeigende Daten ermitteln
 		if(!$urlJahr && !$urlMonat && !$urlTag)
 		{

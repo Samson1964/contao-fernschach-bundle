@@ -1,0 +1,34 @@
+# Statische Analyse der Fernschach-Verwaltung
+#
+# Das Bundle hat kein eigenes vendor/-Verzeichnis. Die Contao-Klassen kommen
+# deshalb aus einer vorhandenen Installation; der Pfad wird über die Datei
+# phpstan.neon gesetzt, die diese hier einbindet:
+#
+#   includes:
+#       - phpstan.neon.dist
+#   parameters:
+#       bootstrapFiles:
+#           - /pfad/zur/contao-installation/vendor/autoload.php
+#
+# Aufruf: phpstan analyse
+parameters:
+    level: 4
+    phpVersion: 80300
+    paths:
+        - src
+
+    # Contao-Klassen mit magischem __get/__set. Ohne diese Liste meldet PHPStan
+    # jeden Spaltenzugriff auf einen Datenbanksatz als unbekannte Eigenschaft.
+    universalObjectCratesClasses:
+        - Contao\BackendModule
+        - Contao\ContentElement
+        - Contao\DataContainer
+        - Contao\Database\Result
+        - Contao\Model
+        - Contao\Module
+        - Contao\Template
+        - Contao\User
+        - Contao\Widget
+
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false

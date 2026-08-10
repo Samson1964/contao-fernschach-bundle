@@ -20,11 +20,15 @@ class Helper extends Backend
 	}
 
 	/**
-	 * Funktion checkMembership
+	 * Liefert die noch nicht genutzten Qualifikationen eines Spielers.
 	 *
-	 * @param integer $value
+	 * Berücksichtigt werden nur Qualifikationen, die weder für ein Turnier
+	 * verwendet noch angemeldet wurden.
 	 *
-	 * @return string
+	 * @param object $playerRecord Spielerdatensatz aus tl_fernschach_spieler
+	 *
+	 * @return array|false Liste der offenen Qualifikationen, oder false, wenn der
+	 *                     Spieler nicht veröffentlicht ist
 	 */
 	public static function getQualifikationen($playerRecord)
 	{
@@ -137,12 +141,13 @@ class Helper extends Backend
 	}
 
 	/**
-	 * Funktion getAlter
+	 * Berechnet das Alter eines Spielers zu einem Stichtag.
 	 *
-	 * @param integer $birthday      Geburtsdatum im Format JJJJMMTT
-	 * @param integer $datum         Datum (für Ermittlung des Alters) im Format JJJJMMTT
+	 * @param int|string $birthday Geburtsdatum im Format JJJJMMTT
+	 * @param int|string $datum    Stichtag im Format JJJJMMTT; ohne Angabe der heutige Tag
 	 *
-	 * @return string
+	 * @return int|string Das Alter in Jahren; 0, wenn kein Geburtsdatum vorliegt
+	 *                     oder sich die Angaben nicht als Datum lesen lassen
 	 */
 	public static function getAlter($birthday, $datum = false)
 	{
@@ -170,12 +175,12 @@ class Helper extends Backend
 	}
 
 	/**
-	 * Funktion searchMembership
+	 * Sucht in den Mitgliedschaften nach einem bestimmten Enddatum.
 	 *
-	 * @param integer $value
-	 * @param integer $datum     Datum des Mitgliedsendes
+	 * @param string $value Serialisiertes Feld mit den Mitgliedschaften
+	 * @param int    $datum Gesuchtes Mitgliedsende im Format JJJJMMTT
 	 *
-	 * @return string
+	 * @return bool True, wenn eine Mitgliedschaft mit diesem Ende vorliegt
 	 */
 	public static function searchMembership($value, $datum)
 	{
@@ -204,8 +209,8 @@ class Helper extends Backend
 	 * ======================
 	 * Sucht in den Mitgliedschaften nach einem Mitgliedschaftsbeginn im übergebenen Jahr
 	 *
-	 * @param (ser)array $value     Serialisiertes Array mit den Mitgliedschaften
-	 * @param integer    $jahr      Jahr des gesuchten Mitgliedschaftsbeginn
+	 * @param string $value Serialisiertes Feld mit den Mitgliedschaften
+	 * @param int    $jahr  Jahr des gesuchten Mitgliedschaftsbeginns
 	 *
 	 * @return boolean   true = Mitgliedschaftsbeginn gefunden / false = kein Mitgliedschaftsbeginn gefunden
 	 */
@@ -257,8 +262,8 @@ class Helper extends Backend
 	 * ===========================
 	 * Sucht in den Mitgliedschaften nach der letzten Mitgliedschaft
 	 *
-	 * @param (ser)array $value     Serialisiertes Array mit den Mitgliedschaften
-	 * @param integer    $datum     Datum des gesuchten Mitgliedsendes
+	 * @param string $value Serialisiertes Feld mit den Mitgliedschaften
+	 * @param int    $datum Gesuchtes Mitgliedsende im Format JJJJMMTT
 	 *
 	 * @return boolean   true = Letzte Mitgliedschaft endet am Datum / false = Nach dem Datum gibt es noch Mitgliedschaften
 	 */
@@ -499,11 +504,15 @@ class Helper extends Backend
 
 
 	/**
-	 * Set the timestamp to 00:00:00 (see #26)
+	 * Setzt die Uhrzeit eines Datums auf 0:00 Uhr.
 	 *
-	 * @param integer $value
+	 * Contao speichert Datumsfelder als Zeitstempel. Ohne diese Umwandlung
+	 * enthielte ein am Nachmittag gespeichertes Datum auch die Uhrzeit, und
+	 * Vergleiche auf Tagesgrenzen gingen schief.
 	 *
-	 * @return integer
+	 * @param int|string $value Der gespeicherte Zeitstempel; 0 oder leer bleibt unverändert
+	 *
+	 * @return int|string Der Zeitstempel zur Mitternacht desselben Tages
 	 */
 	public function loadDate($value)
 	{
@@ -592,6 +601,14 @@ class Helper extends Backend
 		if($objBuchungen->numRows)
 		{
 			$pid = 0; // Letzte Spieler-ID merken
+
+			// Vorbelegung für den ersten Durchlauf: Zurückgesetzt werden die
+			// drei Werte erst beim Wechsel auf einen neuen Spieler, beim ersten
+			// Datensatz hat dieser Wechsel aber noch nicht stattgefunden.
+			$resetDatensaetze = 0; // Bisher gefundene Reset-Datensätze
+			$juengereBuchungen = false; // Jüngere Buchungen vorhanden
+			$aeltereBuchungen = false; // Ältere Buchungen vorhanden
+
 			while($objBuchungen->next())
 			{
 				if($objBuchungen->pid != $pid)
@@ -794,15 +811,20 @@ class Helper extends Backend
 
 	/**
 	 * Spielernamen (id = Index) aus tl_fernschach_spieler laden
-	 * @param
-	 * @return    array
+	 *
+	 * @param bool $id
+	 * @param bool $feld
+	 *
+	 * @return array
 	 */
 	public static function getSpieler($id = false, $feld = false)
 	{
 		static $spieler;
 
-		// Spielerdaten laden, wenn noch nicht geschehen
-		if(!$spieler);
+		// Spielerdaten laden, wenn noch nicht geschehen. Das Semikolon hinter der
+		// Bedingung stand hier jahrelang und hat die Abfrage wirkungslos gemacht —
+		// die gesamte Spielertabelle wurde bei jedem Aufruf neu gelesen.
+		if (!$spieler)
 		{
 			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler ORDER BY nachname ASC, vorname ASC")
 			                                      ->execute();
@@ -846,8 +868,11 @@ class Helper extends Backend
 
 	/**
 	 * Spielerdatensatz anhand ID oder Mitgliedsnummer aus tl_fernschach_spieler laden
-	 * @param
-	 * @return    object
+	 *
+	 * @param bool $id
+	 * @param bool $member
+	 *
+	 * @return object
 	 */
 	public static function getSpielerdatensatz($id = false, $member = false)
 	{
@@ -908,8 +933,10 @@ class Helper extends Backend
 
 	/**
 	 * Turnierdatensatz anhand ID tl_fernschach_turniere laden
-	 * @param
-	 * @return    object
+	 *
+	 * @param mixed $id
+	 *
+	 * @return object
 	 */
 	public static function getTurnierdatensatz($id)
 	{
@@ -955,6 +982,97 @@ class Helper extends Backend
 		}
 
 		return $objMember->disable ? 'Ja (gesperrt)' : 'Ja';
+	}
+
+	/**
+	 * Sucht Spieler für die Autovervollständigung im Mannschaftsmeldeformular.
+	 *
+	 * Gesucht wird in Nachname, Vorname, BdF-Mitgliedsnummer und ICCF-ID. Ein
+	 * Suchbegriff aus mehreren Wörtern („muster max") wird dabei so behandelt,
+	 * dass jedes Wort irgendwo im Datensatz vorkommen muss — sonst fände die
+	 * Eingabe „Mustermann Max" nichts, weil in der Datenbank Vor- und Nachname
+	 * getrennt stehen.
+	 *
+	 * Angeboten werden nur veröffentlichte, nicht archivierte BdF-Mitglieder,
+	 * die auch tatsächlich gemeldet werden dürfen: entweder mit SEPA-Mandat für
+	 * den Beitrag oder mit ausgeglichenem Beitragskonto.
+	 *
+	 * @param string $suche      Der eingetippte Text
+	 * @param int    $hoechstzahl Wie viele Treffer höchstens zurückkommen
+	 *
+	 * @return array Liste mit den Schlüsseln 'id', 'text' und 'info'; leer, wenn
+	 *               nichts passt
+	 */
+	public static function sucheSpieler($suche, $hoechstzahl = 15)
+	{
+		$suche = trim((string) $suche);
+
+		if ('' === $suche)
+		{
+			return array();
+		}
+
+		// Suchbedingung je Wort zusammenbauen
+		$bedingungen = array();
+		$parameter = array();
+
+		foreach (preg_split('/\s+/', $suche) as $wort)
+		{
+			if ('' === $wort)
+			{
+				continue;
+			}
+
+			$bedingungen[] = '(nachname LIKE ? OR vorname LIKE ? OR memberId LIKE ? OR memberInternationalId LIKE ?)';
+			$muster = '%'.$wort.'%';
+			$parameter[] = $muster;
+			$parameter[] = $muster;
+			$parameter[] = $muster;
+			$parameter[] = $muster;
+		}
+
+		if (!$bedingungen)
+		{
+			return array();
+		}
+
+		$objSpieler = Database::getInstance()->prepare(
+			'SELECT id, nachname, vorname, memberId, memberInternationalId, sepaBeitrag, memberships, death, isDeletion, streichung, published'
+			.' FROM tl_fernschach_spieler'
+			.' WHERE published = ? AND archived = ? AND '.implode(' AND ', $bedingungen)
+			.' ORDER BY nachname ASC, vorname ASC'
+		)->execute('1', '', ...$parameter);
+
+		$treffer = array();
+
+		while ($objSpieler->next())
+		{
+			// Nur wirkliche Mitglieder anbieten
+			if (!self::checkMembership($objSpieler))
+			{
+				continue;
+			}
+
+			// Ohne SEPA-Mandat nur, wenn das Beitragskonto ausgeglichen ist
+			if (!$objSpieler->sepaBeitrag && self::getBeitragssaldo($objSpieler->id) < 0)
+			{
+				continue;
+			}
+
+			$treffer[] = array
+			(
+				'id'   => (int) $objSpieler->id,
+				'text' => $objSpieler->nachname.', '.$objSpieler->vorname,
+				'info' => 'BdF-Nr. '.$objSpieler->memberId.($objSpieler->memberInternationalId ? ' / ICCF-ID '.$objSpieler->memberInternationalId : ''),
+			);
+
+			if (count($treffer) >= $hoechstzahl)
+			{
+				break;
+			}
+		}
+
+		return $treffer;
 	}
 
 	/**
@@ -1025,8 +1143,10 @@ class Helper extends Backend
 
 	/**
 	 * Sucht für eine Spieler-ID alle Anmeldungen und Bewerbungen und gibt diese absteigend sortiert nach Meldedatum zurück
-	 * @param
-	 * @return    object
+	 *
+	 * @param mixed $id
+	 *
+	 * @return object
 	 */
 	public static function getAnmeldungenBewerbungen($id)
 	{
@@ -1095,8 +1215,13 @@ class Helper extends Backend
 	 * Funktion getPreview
 	 * ===================================================================
 	 * Erstellt eine E-Mail-Vorschau
-	 * @param
-	 * @return    string
+	 *
+	 * @param mixed $template
+	 * @param mixed $content
+	 * @param mixed $signatur
+	 * @param mixed $Spieler
+	 *
+	 * @return string
 	 */
 	public static function getPreview($template, $content, $signatur, $Spieler)
 	{

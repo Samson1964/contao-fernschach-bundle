@@ -268,7 +268,9 @@ class tl_fernschach_iccf_ratings extends Backend
 
 	/**
 	 * Datensätze auflisten
-	 * @param array
+	 *
+	 * @param mixed $arrRow
+	 *
 	 * @return string
 	 */
 	public function listRatings($arrRow)
