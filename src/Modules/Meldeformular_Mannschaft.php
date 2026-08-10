@@ -71,6 +71,8 @@ class Meldeformular_Mannschaft extends Module
 	protected function compile()
 	{
 		$this->Template->fehlertext = '';
+		$this->Template->gemeldet = array();
+		$this->Template->nachsatz = '';
 		$this->Template->fehler = array();
 		$this->Template->bestaetigung = null;
 		$this->Template->turniere = array();
@@ -124,7 +126,8 @@ class Meldeformular_Mannschaft extends Module
 			return;
 		}
 
-		$turniere = self::getTournaments($mitglied);
+		$gemeldet = array();
+		$turniere = self::getTournaments($mitglied, $gemeldet);
 		$this->Template->turniere = $turniere;
 
 		// Adresse der Autovervollständigung. Über den Router ermittelt, damit sie
@@ -133,7 +136,23 @@ class Meldeformular_Mannschaft extends Module
 
 		if (!$turniere)
 		{
-			$this->Template->fehlertext = 'Zurzeit steht kein Mannschaftsturnier zur Meldung offen. Möglicherweise haben Sie für alle offenen Turniere bereits gemeldet.';
+			// Zwei verschiedene Sachlagen, die früher denselben Satz bekamen: Es
+			// steht wirklich nichts offen, oder es steht etwas offen und der
+			// Mannschaftsleiter hat dafür bereits gemeldet. Der zweite Fall ist
+			// kein Fehler, deshalb bekommt er einen eigenen Text und die Liste
+			// der eigenen Meldungen dazu.
+			if ($gemeldet)
+			{
+				$this->Template->fehlertext = 1 === \count($gemeldet)
+					? 'Für das derzeit einzige offene Mannschaftsturnier haben Sie bereits gemeldet:'
+					: 'Für alle derzeit offenen Mannschaftsturniere haben Sie bereits gemeldet:';
+				$this->Template->gemeldet = $gemeldet;
+				$this->Template->nachsatz = 'Möchten Sie eine weitere Mannschaft zu einem dieser Turniere melden, wenden Sie sich bitte an den Turnierdirektor.';
+
+				return;
+			}
+
+			$this->Template->fehlertext = 'Zurzeit steht kein Mannschaftsturnier zur Meldung offen.';
 
 			return;
 		}
@@ -482,14 +501,20 @@ class Meldeformular_Mannschaft extends Module
 	 * für die der Mannschaftsführer die zulässige Zahl an Meldungen bereits
 	 * erreicht hat, fallen heraus.
 	 *
-	 * @param object $mitglied Spielerdatensatz des Mannschaftsführers
+	 * @param object     $mitglied Spielerdatensatz des Mannschaftsführers
+	 * @param array|null $gemeldet Nimmt die Turniere auf, die nur deshalb fehlen,
+	 *                             weil der Mannschaftsführer dafür bereits
+	 *                             gemeldet hat — je Eintrag 'title' und 'datum'.
+	 *                             Damit lässt sich unterscheiden, ob gar nichts
+	 *                             offen steht oder nur für diesen Benutzer nichts
 	 *
 	 * @return array Turnier-ID => Feld mit 'id', 'title', 'bretter', 'nenngeld'
 	 *               und 'meldeschluss'
 	 */
-	public function getTournaments($mitglied)
+	public function getTournaments($mitglied, &$gemeldet = null)
 	{
 		$turniere = array();
+		$gemeldet = array();
 		$heute = mktime(0, 0, 0);
 
 		$objTurniere = Database::getInstance()->prepare(
@@ -501,9 +526,16 @@ class Meldeformular_Mannschaft extends Module
 		while ($objTurniere->next())
 		{
 			// Turniere überspringen, für die dieser Mannschaftsführer schon
-			// gemeldet hat (siehe self::bereitsGemeldet)
+			// gemeldet hat (siehe self::bereitsGemeldet). Sie werden vermerkt,
+			// damit die Ausgabe erklären kann, warum die Auswahl leer ist.
 			if (self::bereitsGemeldet($objTurniere, $mitglied->id))
 			{
+				$gemeldet[] = array
+				(
+					'title' => $objTurniere->title,
+					'datum' => self::letzteMeldung((int) $objTurniere->id, $mitglied->id),
+				);
+
 				continue;
 			}
 
@@ -519,6 +551,35 @@ class Meldeformular_Mannschaft extends Module
 		}
 
 		return $turniere;
+	}
+
+	/**
+	 * Ermittelt, wann zuletzt für ein Turnier gemeldet wurde.
+	 *
+	 * Ausgewertet wird dieselbe Nenngeld-Sollbuchung, an der auch
+	 * bereitsGemeldet() eine Meldung erkennt. Fehlt ein Buchungsdatum, wird auf
+	 * den Änderungszeitpunkt der Buchung zurückgegriffen.
+	 *
+	 * @param int        $turnier ID des Turniers aus tl_fernschach_turniere
+	 * @param int|string $spieler ID des Mannschaftsführers aus tl_fernschach_spieler
+	 *
+	 * @return string Das Datum als TT.MM.JJJJ; leer, wenn sich keine Buchung
+	 *                finden lässt oder sie kein brauchbares Datum trägt
+	 */
+	protected static function letzteMeldung($turnier, $spieler)
+	{
+		$objBuchung = Database::getInstance()->prepare('SELECT datum, tstamp FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND turnier = ? AND typ = ? AND kategorie = ? ORDER BY datum DESC, id DESC')
+		                                      ->limit(1)
+		                                      ->execute($spieler, $turnier, 's', 's');
+
+		if (!$objBuchung->numRows)
+		{
+			return '';
+		}
+
+		$zeit = (int) ($objBuchung->datum ?: $objBuchung->tstamp);
+
+		return $zeit ? date('d.m.Y', $zeit) : '';
 	}
 
 	/**

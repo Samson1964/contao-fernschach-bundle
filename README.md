@@ -235,6 +235,12 @@ dem Server, ergänzt um die Frage, ob die gemeldeten Spieler überhaupt
 meldefähige BdF-Mitglieder sind. Fehlerhafte Felder werden rot markiert; die
 bereits gemachten Eingaben bleiben erhalten.
 
+**Leere Turnierauswahl.** Steht kein Turnier zur Auswahl, unterscheidet das Modul
+zwei Fälle. Ist wirklich keines offen, erscheint ein kurzer Hinweis. Sind welche
+offen, der Mannschaftsleiter hat für sie aber bereits gemeldet, werden sie
+namentlich mit dem Datum der eigenen Meldung aufgeführt — das ist kein Fehler und
+wird auch nicht als solcher dargestellt.
+
 **Bestätigung.** Nach dem Speichern leitet das Modul auf sich selbst um (`send=1`)
 und zeigt eine Bestätigungsseite, auf der Turnier, Nenngeld, Verein, Mannschaft,
 Mannschaftsführer, die vollständige Aufstellung und die Bemerkungen noch einmal

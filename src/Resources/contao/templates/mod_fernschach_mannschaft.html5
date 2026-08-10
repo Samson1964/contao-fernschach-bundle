@@ -21,7 +21,26 @@ use Contao\StringUtil;
 
 <?php if ($this->fehlertext): ?>
 
-	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+	<?php
+	// Wer bereits gemeldet hat, hat nichts falsch gemacht — dieser Fall wird
+	// deshalb als Auskunft ausgegeben und nicht als Fehler.
+	$art = $this->gemeldet ? 'info' : 'fehler';
+	?>
+	<div class="fs-hinweis fs-hinweis--<?= $art ?>">
+		<p><?= $this->fehlertext ?></p>
+
+		<?php if ($this->gemeldet): ?>
+		<ul class="fs-gemeldet">
+			<?php foreach ($this->gemeldet as $eintrag): ?>
+			<li><?= StringUtil::specialchars($eintrag['title']) ?><?php if ($eintrag['datum']): ?> <span class="fs-gemeldet-datum">(gemeldet am <?= $eintrag['datum'] ?>)</span><?php endif; ?></li>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
+
+		<?php if ($this->nachsatz): ?>
+		<p class="fs-nachsatz"><?= $this->nachsatz ?></p>
+		<?php endif; ?>
+	</div>
 
 <?php elseif ($this->bestaetigung): ?>
 

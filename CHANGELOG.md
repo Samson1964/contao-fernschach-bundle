@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.2.3 (2026-08-10)
+
+* Fix: Das Mannschaftsmeldeformular gab für zwei ganz verschiedene Sachlagen denselben Satz aus — „Zurzeit steht kein Mannschaftsturnier zur Meldung offen. Möglicherweise haben Sie für alle offenen Turniere bereits gemeldet." Wer bereits gemeldet hatte, bekam damit die Auskunft, es sei nichts offen, obwohl es das war. Beide Fälle sind jetzt getrennt: Steht wirklich nichts offen, bleibt der kurze Hinweis. Hat der Mannschaftsleiter für die offenen Turniere schon gemeldet, werden diese namentlich mit dem Datum seiner Meldung aufgeführt, dazu der Hinweis auf den Turnierdirektor
+* Change: Der zweite Fall wird als Auskunft dargestellt (`fs-hinweis--info`) und nicht mehr als Fehler — der Benutzer hat nichts falsch gemacht
+
 ## Version 2.2.2 (2026-08-10)
 
 * Change: Das Turnierfeld `maxMeldungen` heißt im Backend jetzt **Meldungen je Spieler/Mannschaftsleiter**. Die alte Beschriftung „Meldungen je Spieler" war beim Mannschaftsturnier irreführend: Gezählt werden dort nicht die Spieler der Aufstellung, sondern die Meldungen des Mannschaftsleiters — der Wert legt also fest, wie viele Mannschaften er für dieses Turnier melden darf. Der Hilfetext sagt das jetzt ausdrücklich
