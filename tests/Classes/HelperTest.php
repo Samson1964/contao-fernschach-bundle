@@ -115,4 +115,60 @@ class HelperTest extends TestCase
 		$this->assertSame('Nein', Helper::getInternerBereich(0));
 		$this->assertSame('Nein', Helper::getInternerBereich(null));
 	}
+
+	/**
+	 * Mit SEPA-Vereinbarung ist das Nenngeld immer gedeckt.
+	 *
+	 * Der Kontostand spielt dann keine Rolle, weil abgebucht wird. Auch ein
+	 * negativer Stand hindert die Meldung nicht.
+	 *
+	 * @return void
+	 */
+	public function testMitSepaIstDasNenngeldImmerGedeckt(): void
+	{
+		$objSpieler = new \stdClass();
+		$objSpieler->id = 7;
+		$objSpieler->sepaNenngeld = '1';
+
+		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 25.50, 0.0));
+		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 25.50, -100.0));
+	}
+
+	/**
+	 * Ohne SEPA-Vereinbarung entscheidet das Guthaben, auf den Cent genau.
+	 *
+	 * Der frühere Weg hat das Nenngeld mit (int) auf ganze Euro gekürzt — aus
+	 * 25,50 wurde 25, und mit 25,49 auf dem Konto war die Meldung fälschlich
+	 * möglich. Genau diese Grenze wird hier festgehalten.
+	 *
+	 * @return void
+	 */
+	public function testOhneSepaEntscheidetDasGuthabenAufDenCent(): void
+	{
+		$objSpieler = new \stdClass();
+		$objSpieler->id = 7;
+		$objSpieler->sepaNenngeld = '';
+
+		$this->assertFalse(Helper::nenngeldGedeckt($objSpieler, 25.50, 0.0));
+		$this->assertFalse(Helper::nenngeldGedeckt($objSpieler, 25.50, 25.49));
+		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 25.50, 25.50));
+		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 25.50, 100.0));
+	}
+
+	/**
+	 * Ein Nenngeld von 0 ist auch mit leerem Konto gedeckt.
+	 *
+	 * Turniere ohne Nenngeld gibt es; sie dürfen an der Prüfung nicht scheitern.
+	 *
+	 * @return void
+	 */
+	public function testNenngeldNullIstImmerGedeckt(): void
+	{
+		$objSpieler = new \stdClass();
+		$objSpieler->id = 7;
+		$objSpieler->sepaNenngeld = '';
+
+		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 0, 0.0));
+		$this->assertFalse(Helper::nenngeldGedeckt($objSpieler, 0.01, 0.0));
+	}
 }

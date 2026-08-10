@@ -90,6 +90,21 @@
 	margin-top: 0.5rem;
 }
 
+/* Turniere, deren Nenngeld nicht gedeckt ist */
+.fernschach-formular .fs-gesperrt {
+	padding-left: 1.25rem;
+}
+
+.fernschach-formular .fs-gesperrt-nenngeld,
+.fernschach-formular .fs-nachsatz {
+	color: var(--fs-text-leise);
+}
+
+.fernschach-formular .fs-negativ {
+	color: var(--fs-fehler);
+	font-weight: 600;
+}
+
 .fernschach-formular .fs-notiz,
 .fernschach-formular .fs-optional {
 	color: var(--fs-text-leise);

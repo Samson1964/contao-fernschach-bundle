@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.4.0 (2026-08-10)
+
+**Sicherheitsrelevant für die Kasse:** Das Mannschaftsmeldeformular hat seit 2.2.0 nicht mehr geprüft, ob der Mannschaftsleiter das Nenngeld überhaupt aufbringen kann. Jede Mannschaft ließ sich mit leerem Nenngeldkonto und ohne SEPA-Vereinbarung melden — die Sollbuchung entstand trotzdem. Bis 2.1.1 hatte das Formular an dieser Stelle den *Beitragssaldo* geprüft; beim Neubau des Formulars ist die Prüfung ersatzlos entfallen.
+
+* Fix: Ein Turnier wird nur noch angeboten, wenn der Mannschaftsleiter eine SEPA-Vereinbarung für das Nenngeld hat oder sein Nenngeldkonto das Nenngeld dieses Turniers deckt. Geprüft wird je Turnier, weil das Nenngeld verschieden ist
+* Fix: Unmittelbar vor der Buchung wird erneut geprüft. Zwischen dem Aufbau des Formulars und dem Absenden kann sich der Kontostand geändert haben, etwa durch eine Meldung in einem zweiten Browsertab
+* Add: `Helper::getNenngeldsaldo()` und `Helper::nenngeldGedeckt()` — der Vergleich läuft in Cent. Der ältere Weg im Spielerformular schneidet das Nenngeld mit `(int)` auf ganze Euro ab: Aus 25,50 wird 25, und mit 25,49 auf dem Konto war die Anmeldung möglich
+* Add: Bleibt die Turnierauswahl mangels Deckung leer, nennt das Formular die betroffenen Turniere mit ihrem Nenngeld und den eigenen Kontostand, statt nur „kein Turnier offen" zu melden
+* Change: Über dem Formular steht jetzt der Stand des **Nenngeldkontos** und ob eine SEPA-Vereinbarung für das Nenngeld vorliegt. Bisher stand dort der Beitragssaldo, der für die Mannschaftsmeldung nichts besagt
+
 ## Version 2.3.0 (2026-08-10)
 
 Ein Mannschaftsleiter darf beliebig viele Mannschaften seines Vereins zu einem Turnier melden. Die mit 2.1.0 eingeführte Begrenzung galt versehentlich auch für ihn: Weil `maxMeldungen` bei allen vorhandenen Turnieren auf 1 gesetzt wurde, verschwand ein Mannschaftsturnier nach der ersten Meldung aus der Auswahl, und eine zweite Mannschaft war nicht mehr zu melden.

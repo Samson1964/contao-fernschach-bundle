@@ -393,6 +393,58 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Liefert den aktuellen Stand des Nenngeldkontos.
+	 *
+	 * getSaldo() gibt den Verlauf über alle Buchungen zurück; hier interessiert
+	 * nur der Endstand. Die Sitzung wird ausdrücklich nicht ausgewertet — die
+	 * dort abgelegten Filter gehören ins Backend und dürfen den Kontostand im
+	 * Frontend nicht verfälschen.
+	 *
+	 * @param int|string $id ID des Spielers aus tl_fernschach_spieler
+	 *
+	 * @return float Der Saldo in Euro; 0.0, wenn es keine Buchungen gibt
+	 */
+	public static function getNenngeldsaldo($id)
+	{
+		$salden = self::getSaldo($id, 'nenngeld', false, false);
+
+		return (float) (end($salden) ?: 0);
+	}
+
+	/**
+	 * Prüft, ob ein Spieler das Nenngeld eines Turniers aufbringen kann.
+	 *
+	 * Zulässig ist die Meldung entweder mit einer SEPA-Vereinbarung für das
+	 * Nenngeld — dann wird abgebucht, der Kontostand spielt keine Rolle — oder
+	 * mit einem Guthaben, das das Nenngeld deckt.
+	 *
+	 * Verglichen wird in Cent. Ein Vergleich der Fließkommazahlen ginge bei
+	 * Beträgen wie 17,50 gelegentlich daneben, und der ältere Weg über
+	 * (int) $nenngeld hat die Nachkommastellen einfach abgeschnitten — aus 17,50
+	 * wurde 17, und mit 17,20 auf dem Konto war die Meldung fälschlich möglich.
+	 *
+	 * @param object     $playerRecord Spielerdatensatz mit dem Feld sepaNenngeld
+	 * @param float|int|string $nenngeld Das Nenngeld des Turniers in Euro
+	 * @param float|null $saldo Kontostand in Euro; ohne Angabe wird er ermittelt
+	 *
+	 * @return bool True, wenn gemeldet werden darf
+	 */
+	public static function nenngeldGedeckt($playerRecord, $nenngeld, $saldo = null)
+	{
+		if ($playerRecord->sepaNenngeld)
+		{
+			return true;
+		}
+
+		if (null === $saldo)
+		{
+			$saldo = self::getNenngeldsaldo($playerRecord->id);
+		}
+
+		return (int) round((float) $saldo * 100) >= (int) round((float) $nenngeld * 100);
+	}
+
+	/**
 	 * function getSaldo
 	 * =================================================================
 	 * Saldorechner für tl_fernschach_spieler_konto, tl_fernschach_spieler_konto_beitrag und tl_fernschach_spieler_konto_nenngeld

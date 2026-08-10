@@ -71,6 +71,8 @@ class Meldeformular_Mannschaft extends Module
 	protected function compile()
 	{
 		$this->Template->fehlertext = '';
+		$this->Template->gesperrt = array();
+		$this->Template->nachsatz = '';
 		$this->Template->fehler = array();
 		$this->Template->bestaetigung = null;
 		$this->Template->turniere = array();
@@ -113,7 +115,13 @@ class Meldeformular_Mannschaft extends Module
 		}
 
 		$this->Template->mitglied = $mitglied;
-		$this->Template->beitragssaldo = Helper::getBeitragssaldo($mitglied->id);
+
+		// Das Nenngeld der Mannschaftsmeldung geht zulasten des Mannschafts-
+		// leiters. Ohne SEPA-Vereinbarung muss sein Nenngeldkonto es decken.
+		$nenngeldsaldo = Helper::getNenngeldsaldo($mitglied->id);
+		$this->Template->nenngeldsaldo = self::formatBetrag($nenngeldsaldo);
+		$this->Template->nenngeldsaldoNegativ = $nenngeldsaldo < 0;
+		$this->Template->sepaNenngeld = (bool) $mitglied->sepaNenngeld;
 
 		// Rückkehr von der Umleitung nach dem Absenden
 		if (Input::get('send'))
@@ -124,7 +132,8 @@ class Meldeformular_Mannschaft extends Module
 			return;
 		}
 
-		$turniere = self::getTournaments($mitglied);
+		$gesperrt = array();
+		$turniere = self::getTournaments($mitglied, $nenngeldsaldo, $gesperrt);
 		$this->Template->turniere = $turniere;
 
 		// Adresse der Autovervollständigung. Über den Router ermittelt, damit sie
@@ -133,6 +142,17 @@ class Meldeformular_Mannschaft extends Module
 
 		if (!$turniere)
 		{
+			// Steht etwas offen und fehlt nur das Geld, hilft der Satz „nichts
+			// offen" niemandem weiter — dann wird gesagt, woran es liegt.
+			if ($gesperrt)
+			{
+				$this->Template->fehlertext = 'Für eine Mannschaftsmeldung brauchen Sie eine SEPA-Vereinbarung für das Nenngeld oder ein Guthaben auf Ihrem Nenngeldkonto, das das Nenngeld des Turniers deckt. Ihr Nenngeldkonto weist zurzeit '.self::formatBetrag($nenngeldsaldo).' aus.';
+				$this->Template->gesperrt = $gesperrt;
+				$this->Template->nachsatz = 'Bitte gleichen Sie Ihr Nenngeldkonto aus oder erteilen Sie der Geschäftsstelle eine SEPA-Vereinbarung für das Nenngeld.';
+
+				return;
+			}
+
 			$this->Template->fehlertext = 'Zurzeit steht kein Mannschaftsturnier zur Meldung offen.';
 
 			return;
@@ -156,9 +176,11 @@ class Meldeformular_Mannschaft extends Module
 			return;
 		}
 
-		if (!self::saveMeldung($werte, $turniere[$werte['turnier']], $mitglied))
+		$fehlschlag = self::saveMeldung($werte, $turniere[$werte['turnier']], $mitglied);
+
+		if ($fehlschlag)
 		{
-			$this->Template->fehler = array('turnier' => 'Ihre Meldung konnte nicht gespeichert werden, weil es das gewählte Turnier nicht mehr gibt. Bitte wählen Sie erneut.');
+			$this->Template->fehler = array('turnier' => $fehlschlag);
 
 			return;
 		}
@@ -302,8 +324,9 @@ class Meldeformular_Mannschaft extends Module
 	 * @param array  $turnier  Der gewählte Turniereintrag aus getTournaments()
 	 * @param object $mitglied Spielerdatensatz des Mannschaftsführers
 	 *
-	 * @return bool True, wenn gespeichert wurde. False, wenn es das gewählte
-	 *              Turnier nicht mehr gibt
+	 * @return string Leer, wenn gespeichert wurde. Sonst die Meldung, warum nicht —
+	 *                es gibt das Turnier nicht mehr, oder das Nenngeld ist nicht
+	 *                gedeckt
 	 */
 	protected function saveMeldung($werte, $turnier, $mitglied)
 	{
@@ -311,7 +334,15 @@ class Meldeformular_Mannschaft extends Module
 
 		if (!$objTurnier || !$objTurnier->numRows)
 		{
-			return false;
+			return 'Ihre Meldung konnte nicht gespeichert werden, weil es das gewählte Turnier nicht mehr gibt. Bitte wählen Sie erneut.';
+		}
+
+		// Letzte Prüfung unmittelbar vor der Buchung. Zwischen dem Aufbau des
+		// Formulars und dem Absenden kann sich der Kontostand geändert haben,
+		// etwa durch eine Meldung in einem zweiten Browsertab.
+		if (!Helper::nenngeldGedeckt($mitglied, $objTurnier->nenngeld))
+		{
+			return 'Das Nenngeld von '.self::formatBetrag($objTurnier->nenngeld).' ist nicht gedeckt. Bitte gleichen Sie Ihr Nenngeldkonto aus oder erteilen Sie eine SEPA-Vereinbarung für das Nenngeld.';
 		}
 
 		// Jede Meldung wird protokolliert. Eine Begrenzung gibt es nicht — ein
@@ -378,7 +409,7 @@ class Meldeformular_Mannschaft extends Module
 
 		self::sendeMails($zusammenfassung, $mitglied);
 
-		return true;
+		return '';
 	}
 
 	/**
@@ -482,17 +513,32 @@ class Meldeformular_Mannschaft extends Module
 	 * seines Vereins melden. Ein einmal gemeldetes Turnier bleibt deshalb in der
 	 * Auswahl stehen.
 	 *
-	 * @param object $mitglied Spielerdatensatz des Mannschaftsführers; wird für die
-	 *                         Auswahl nicht mehr ausgewertet und nur beibehalten,
-	 *                         damit der Aufruf unverändert bleibt
+	 * Angeboten wird ein Turnier aber nur, wenn der Mannschaftsleiter das Nenngeld
+	 * aufbringen kann — mit SEPA-Vereinbarung oder mit einem Guthaben, das es
+	 * deckt. Weil das Nenngeld je Turnier verschieden ist, wird das für jedes
+	 * Turnier einzeln entschieden.
+	 *
+	 * @param object     $mitglied Spielerdatensatz des Mannschaftsführers
+	 * @param float|null $saldo    Stand seines Nenngeldkontos; ohne Angabe wird er
+	 *                             je Turnier neu ermittelt
+	 * @param array|null $gesperrt Nimmt die Turniere auf, die nur am fehlenden
+	 *                             Nenngeld scheitern — je Eintrag 'title' und
+	 *                             'nenngeld'. Damit lässt sich unterscheiden, ob
+	 *                             gar nichts offen steht oder nur das Geld fehlt
 	 *
 	 * @return array Turnier-ID => Feld mit 'id', 'title', 'bretter', 'nenngeld'
 	 *               und 'meldeschluss'
 	 */
-	public function getTournaments($mitglied)
+	public function getTournaments($mitglied, $saldo = null, &$gesperrt = null)
 	{
 		$turniere = array();
+		$gesperrt = array();
 		$heute = mktime(0, 0, 0);
+
+		if (null === $saldo)
+		{
+			$saldo = Helper::getNenngeldsaldo($mitglied->id);
+		}
 
 		$objTurniere = Database::getInstance()->prepare(
 			'SELECT * FROM tl_fernschach_turniere'
@@ -502,18 +548,44 @@ class Meldeformular_Mannschaft extends Module
 
 		while ($objTurniere->next())
 		{
+			// Turniere überspringen, deren Nenngeld der Mannschaftsleiter nicht
+			// aufbringen kann. Sie werden vermerkt, damit die Ausgabe erklären
+			// kann, warum die Auswahl leer bleibt.
+			if (!Helper::nenngeldGedeckt($mitglied, $objTurniere->nenngeld, $saldo))
+			{
+				$gesperrt[] = array
+				(
+					'title'    => $objTurniere->title,
+					'nenngeld' => self::formatBetrag($objTurniere->nenngeld),
+				);
+
+				continue;
+			}
+
 			$turniere[(int) $objTurniere->id] = array
 			(
 				'id'           => (int) $objTurniere->id,
 				'title'        => $objTurniere->title,
 				// Ohne Angabe am Turnier bleibt es bei den üblichen vier Brettern
 				'bretter'      => max(1, (int) ($objTurniere->bretter ?: 4)),
-				'nenngeld'     => trim(str_replace('.', ',', sprintf('%0.2f', (float) $objTurniere->nenngeld))).' €',
+				'nenngeld'     => self::formatBetrag($objTurniere->nenngeld),
 				'meldeschluss' => $objTurniere->registrationDate ? date('d.m.Y', (int) $objTurniere->registrationDate) : '',
 			);
 		}
 
 		return $turniere;
+	}
+
+	/**
+	 * Formatiert einen Geldbetrag deutsch mit Euro-Zeichen.
+	 *
+	 * @param float|int|string $betrag Der Betrag in Euro
+	 *
+	 * @return string Der Betrag als „1.234,50 €"
+	 */
+	protected static function formatBetrag($betrag)
+	{
+		return number_format((float) $betrag, 2, ',', '.').' €';
 	}
 
 }

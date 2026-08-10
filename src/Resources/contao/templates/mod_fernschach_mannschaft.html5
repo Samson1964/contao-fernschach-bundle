@@ -21,7 +21,21 @@ use Contao\StringUtil;
 
 <?php if ($this->fehlertext): ?>
 
-	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+	<div class="fs-hinweis fs-hinweis--fehler">
+		<p><?= $this->fehlertext ?></p>
+
+		<?php if ($this->gesperrt): ?>
+		<ul class="fs-gesperrt">
+			<?php foreach ($this->gesperrt as $eintrag): ?>
+			<li><?= StringUtil::specialchars($eintrag['title']) ?> <span class="fs-gesperrt-nenngeld">(Nenngeld <?= $eintrag['nenngeld'] ?>)</span></li>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
+
+		<?php if ($this->nachsatz): ?>
+		<p class="fs-nachsatz"><?= $this->nachsatz ?></p>
+		<?php endif; ?>
+	</div>
 
 <?php elseif ($this->bestaetigung): ?>
 
@@ -68,9 +82,16 @@ use Contao\StringUtil;
 			<dt>Name</dt><dd><?= StringUtil::specialchars($this->mitglied->vorname) ?> <?= StringUtil::specialchars($this->mitglied->nachname) ?></dd>
 			<dt>BdF-Mitgliedsnummer</dt><dd><?= StringUtil::specialchars($this->mitglied->memberId) ?></dd>
 			<dt>E-Mail</dt><dd><?= StringUtil::specialchars($this->mitglied->email1) ?></dd>
-			<dt>Beitragssaldo</dt><dd><?= StringUtil::specialchars($this->beitragssaldo) ?></dd>
+			<dt>Nenngeldkonto</dt><dd<?= $this->nenngeldsaldoNegativ ? ' class="fs-negativ"' : '' ?>><?= $this->nenngeldsaldo ?></dd>
+			<dt>SEPA Nenngeld</dt><dd><?= $this->sepaNenngeld ? 'liegt vor' : 'liegt nicht vor' ?></dd>
 		</dl>
-		<p class="fs-notiz">Das Nenngeld des ausgewählten Turniers wird mit Ihrem Nenngeldkonto verrechnet.</p>
+		<p class="fs-notiz">
+			<?php if ($this->sepaNenngeld): ?>
+			Das Nenngeld des ausgewählten Turniers wird über Ihre SEPA-Vereinbarung eingezogen.
+			<?php else: ?>
+			Das Nenngeld des ausgewählten Turniers wird mit Ihrem Nenngeldkonto verrechnet. Angeboten werden nur Turniere, deren Nenngeld Ihr Guthaben deckt.
+			<?php endif; ?>
+		</p>
 	</section>
 
 	<form method="post" class="fs-form" data-fernschach-mannschaft data-suche="<?= $this->suchadresse ?>" novalidate>

@@ -239,6 +239,18 @@ bereits gemachten Eingaben bleiben erhalten.
 Mannschaften melden, wie er möchte. Ein Turnier verschwindet nach einer Meldung
 also nicht aus der Auswahl; das Feld *Meldungen je Spieler* wirkt hier nicht.
 
+**Nenngeld.** Das Nenngeld der Mannschaft geht zulasten des Mannschaftsleiters.
+Angeboten wird ein Turnier deshalb nur, wenn er es aufbringen kann — entweder mit
+einer **SEPA-Vereinbarung für das Nenngeld** (dann wird abgebucht, der Kontostand
+ist gleichgültig) oder mit einem **Guthaben auf dem Nenngeldkonto, das das
+Nenngeld deckt**. Da das Nenngeld je Turnier verschieden ist, wird das für jedes
+Turnier einzeln entschieden; verglichen wird auf den Cent genau.
+
+Fehlt beides, nennt das Formular die betroffenen Turniere mit ihrem Nenngeld und
+den aktuellen Kontostand, statt einfach nichts anzubieten. Unmittelbar vor der
+Buchung wird noch einmal geprüft — zwischen Aufbau und Absenden des Formulars
+kann sich der Kontostand geändert haben.
+
 **Bestätigung.** Nach dem Speichern leitet das Modul auf sich selbst um (`send=1`)
 und zeigt eine Bestätigungsseite, auf der Turnier, Nenngeld, Verein, Mannschaft,
 Mannschaftsführer, die vollständige Aufstellung und die Bemerkungen noch einmal
