@@ -1,5 +1,15 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.3.0 (2026-08-10)
+
+Ein Mannschaftsleiter darf beliebig viele Mannschaften seines Vereins zu einem Turnier melden. Die mit 2.1.0 eingeführte Begrenzung galt versehentlich auch für ihn: Weil `maxMeldungen` bei allen vorhandenen Turnieren auf 1 gesetzt wurde, verschwand ein Mannschaftsturnier nach der ersten Meldung aus der Auswahl, und eine zweite Mannschaft war nicht mehr zu melden.
+
+* Change: Für Mannschaftsmeldungen gibt es keine Begrenzung mehr. Ein einmal gemeldetes Turnier bleibt in der Auswahl stehen, eine zweite Mannschaft lässt sich sofort melden
+* Change: Das Turnierfeld heißt wieder **Meldungen je Spieler**. Der Hilfetext sagt jetzt ausdrücklich, dass es bei Mannschaftsturnieren ohne Wirkung ist. Der Wert braucht dort nicht geändert zu werden — er wird schlicht nicht mehr ausgewertet
+* Add: Jede Mannschaftsmeldung wird im Systemprotokoll vermerkt, mit Mannschaftsleiter, Bezeichnung der Mannschaft und Turnier. Da es keine Sperre mehr gibt, ist das die einzige Spur, an der sich eine versehentliche Doppelmeldung nachträglich erkennen lässt
+* Change: Die Unterscheidung der leeren Turnierauswahl aus 2.2.3 entfällt mit ihrem Anlass — die Auswahl kann nicht mehr dadurch leer werden, dass bereits gemeldet wurde. Bleibt sie leer, steht wirklich nichts offen
+* Fix: Schlägt das Speichern fehl, nannte die Meldung eine bereits vorhandene Mannschaftsmeldung als möglichen Grund. Den Fall gibt es nicht mehr; jetzt wird der tatsächliche genannt (das gewählte Turnier gibt es nicht mehr)
+
 ## Version 2.2.3 (2026-08-10)
 
 * Fix: Das Mannschaftsmeldeformular gab für zwei ganz verschiedene Sachlagen denselben Satz aus — „Zurzeit steht kein Mannschaftsturnier zur Meldung offen. Möglicherweise haben Sie für alle offenen Turniere bereits gemeldet." Wer bereits gemeldet hatte, bekam damit die Auskunft, es sei nichts offen, obwohl es das war. Beide Fälle sind jetzt getrennt: Steht wirklich nichts offen, bleibt der kurze Hinweis. Hat der Mannschaftsleiter für die offenen Turniere schon gemeldet, werden diese namentlich mit dem Datum seiner Meldung aufgeführt, dazu der Hinweis auf den Turnierdirektor

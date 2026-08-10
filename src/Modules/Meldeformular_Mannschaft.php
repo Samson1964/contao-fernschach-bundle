@@ -71,8 +71,6 @@ class Meldeformular_Mannschaft extends Module
 	protected function compile()
 	{
 		$this->Template->fehlertext = '';
-		$this->Template->gemeldet = array();
-		$this->Template->nachsatz = '';
 		$this->Template->fehler = array();
 		$this->Template->bestaetigung = null;
 		$this->Template->turniere = array();
@@ -126,8 +124,7 @@ class Meldeformular_Mannschaft extends Module
 			return;
 		}
 
-		$gemeldet = array();
-		$turniere = self::getTournaments($mitglied, $gemeldet);
+		$turniere = self::getTournaments($mitglied);
 		$this->Template->turniere = $turniere;
 
 		// Adresse der Autovervollständigung. Über den Router ermittelt, damit sie
@@ -136,22 +133,6 @@ class Meldeformular_Mannschaft extends Module
 
 		if (!$turniere)
 		{
-			// Zwei verschiedene Sachlagen, die früher denselben Satz bekamen: Es
-			// steht wirklich nichts offen, oder es steht etwas offen und der
-			// Mannschaftsleiter hat dafür bereits gemeldet. Der zweite Fall ist
-			// kein Fehler, deshalb bekommt er einen eigenen Text und die Liste
-			// der eigenen Meldungen dazu.
-			if ($gemeldet)
-			{
-				$this->Template->fehlertext = 1 === \count($gemeldet)
-					? 'Für das derzeit einzige offene Mannschaftsturnier haben Sie bereits gemeldet:'
-					: 'Für alle derzeit offenen Mannschaftsturniere haben Sie bereits gemeldet:';
-				$this->Template->gemeldet = $gemeldet;
-				$this->Template->nachsatz = 'Möchten Sie eine weitere Mannschaft zu einem dieser Turniere melden, wenden Sie sich bitte an den Turnierdirektor.';
-
-				return;
-			}
-
 			$this->Template->fehlertext = 'Zurzeit steht kein Mannschaftsturnier zur Meldung offen.';
 
 			return;
@@ -177,7 +158,7 @@ class Meldeformular_Mannschaft extends Module
 
 		if (!self::saveMeldung($werte, $turniere[$werte['turnier']], $mitglied))
 		{
-			$this->Template->fehler = array('turnier' => 'Ihre Meldung konnte nicht gespeichert werden. Möglicherweise haben Sie für dieses Turnier bereits eine Mannschaft gemeldet.');
+			$this->Template->fehler = array('turnier' => 'Ihre Meldung konnte nicht gespeichert werden, weil es das gewählte Turnier nicht mehr gibt. Bitte wählen Sie erneut.');
 
 			return;
 		}
@@ -321,8 +302,8 @@ class Meldeformular_Mannschaft extends Module
 	 * @param array  $turnier  Der gewählte Turniereintrag aus getTournaments()
 	 * @param object $mitglied Spielerdatensatz des Mannschaftsführers
 	 *
-	 * @return bool True, wenn gespeichert wurde. False, wenn es das Turnier nicht
-	 *              mehr gibt oder für dieses Turnier bereits gemeldet wurde
+	 * @return bool True, wenn gespeichert wurde. False, wenn es das gewählte
+	 *              Turnier nicht mehr gibt
 	 */
 	protected function saveMeldung($werte, $turnier, $mitglied)
 	{
@@ -333,18 +314,15 @@ class Meldeformular_Mannschaft extends Module
 			return false;
 		}
 
-		// Zweite Prüfung nach dem Absenden: Der Browser kann dieselbe Meldung
-		// über den Zurück-Knopf oder einen zweiten Tab erneut schicken.
-		if (self::bereitsGemeldet($objTurnier, $mitglied->id))
-		{
-			Scope::log(
-				'[Fernschach-Verwaltung] Mehrfache Mannschaftsmeldung abgewiesen: '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
-				__METHOD__,
-				ContaoContext::GENERAL
-			);
-
-			return false;
-		}
+		// Jede Meldung wird protokolliert. Eine Begrenzung gibt es nicht — ein
+		// Mannschaftsleiter darf beliebig viele Mannschaften melden —, deshalb
+		// ist das Protokoll die einzige Spur, an der sich eine versehentliche
+		// Doppelmeldung nachträglich erkennen lässt.
+		Scope::log(
+			'[Fernschach-Verwaltung] Mannschaftsmeldung: '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') meldet "'.$werte['mannschaftsname'].'" für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
+			__METHOD__,
+			ContaoContext::GENERAL
+		);
 
 		// Namen der gemeldeten Spieler nachschlagen
 		$aufstellung = array();
@@ -497,24 +475,23 @@ class Meldeformular_Mannschaft extends Module
 	 * Stellt die Turniere zusammen, für die gemeldet werden darf.
 	 *
 	 * Berücksichtigt werden veröffentlichte Mannschaftsturniere mit aktiver
-	 * Online-Anmeldung, deren Meldeschluss noch nicht verstrichen ist. Turniere,
-	 * für die der Mannschaftsführer die zulässige Zahl an Meldungen bereits
-	 * erreicht hat, fallen heraus.
+	 * Online-Anmeldung, deren Meldeschluss noch nicht verstrichen ist.
 	 *
-	 * @param object     $mitglied Spielerdatensatz des Mannschaftsführers
-	 * @param array|null $gemeldet Nimmt die Turniere auf, die nur deshalb fehlen,
-	 *                             weil der Mannschaftsführer dafür bereits
-	 *                             gemeldet hat — je Eintrag 'title' und 'datum'.
-	 *                             Damit lässt sich unterscheiden, ob gar nichts
-	 *                             offen steht oder nur für diesen Benutzer nichts
+	 * Anders als bei den Einzelturnieren wird nicht gezählt, wie oft der Benutzer
+	 * schon gemeldet hat: Ein Mannschaftsleiter darf beliebig viele Mannschaften
+	 * seines Vereins melden. Ein einmal gemeldetes Turnier bleibt deshalb in der
+	 * Auswahl stehen.
+	 *
+	 * @param object $mitglied Spielerdatensatz des Mannschaftsführers; wird für die
+	 *                         Auswahl nicht mehr ausgewertet und nur beibehalten,
+	 *                         damit der Aufruf unverändert bleibt
 	 *
 	 * @return array Turnier-ID => Feld mit 'id', 'title', 'bretter', 'nenngeld'
 	 *               und 'meldeschluss'
 	 */
-	public function getTournaments($mitglied, &$gemeldet = null)
+	public function getTournaments($mitglied)
 	{
 		$turniere = array();
-		$gemeldet = array();
 		$heute = mktime(0, 0, 0);
 
 		$objTurniere = Database::getInstance()->prepare(
@@ -525,20 +502,6 @@ class Meldeformular_Mannschaft extends Module
 
 		while ($objTurniere->next())
 		{
-			// Turniere überspringen, für die dieser Mannschaftsführer schon
-			// gemeldet hat (siehe self::bereitsGemeldet). Sie werden vermerkt,
-			// damit die Ausgabe erklären kann, warum die Auswahl leer ist.
-			if (self::bereitsGemeldet($objTurniere, $mitglied->id))
-			{
-				$gemeldet[] = array
-				(
-					'title' => $objTurniere->title,
-					'datum' => self::letzteMeldung((int) $objTurniere->id, $mitglied->id),
-				);
-
-				continue;
-			}
-
 			$turniere[(int) $objTurniere->id] = array
 			(
 				'id'           => (int) $objTurniere->id,
@@ -553,62 +516,4 @@ class Meldeformular_Mannschaft extends Module
 		return $turniere;
 	}
 
-	/**
-	 * Ermittelt, wann zuletzt für ein Turnier gemeldet wurde.
-	 *
-	 * Ausgewertet wird dieselbe Nenngeld-Sollbuchung, an der auch
-	 * bereitsGemeldet() eine Meldung erkennt. Fehlt ein Buchungsdatum, wird auf
-	 * den Änderungszeitpunkt der Buchung zurückgegriffen.
-	 *
-	 * @param int        $turnier ID des Turniers aus tl_fernschach_turniere
-	 * @param int|string $spieler ID des Mannschaftsführers aus tl_fernschach_spieler
-	 *
-	 * @return string Das Datum als TT.MM.JJJJ; leer, wenn sich keine Buchung
-	 *                finden lässt oder sie kein brauchbares Datum trägt
-	 */
-	protected static function letzteMeldung($turnier, $spieler)
-	{
-		$objBuchung = Database::getInstance()->prepare('SELECT datum, tstamp FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND turnier = ? AND typ = ? AND kategorie = ? ORDER BY datum DESC, id DESC')
-		                                      ->limit(1)
-		                                      ->execute($spieler, $turnier, 's', 's');
-
-		if (!$objBuchung->numRows)
-		{
-			return '';
-		}
-
-		$zeit = (int) ($objBuchung->datum ?: $objBuchung->tstamp);
-
-		return $zeit ? date('d.m.Y', $zeit) : '';
-	}
-
-	/**
-	 * Prüft, ob ein Mannschaftsführer für ein Turnier bereits gemeldet hat.
-	 *
-	 * Eine Mannschaftsmeldung legt keinen Datensatz in den Anmeldungen an — sie
-	 * hinterlässt als einzige Spur eine Nenngeld-Sollbuchung auf dem Konto des
-	 * Mannschaftsführers. Genau danach wird hier gesucht.
-	 *
-	 * Wie oft gemeldet werden darf, steht wie bei den Einzelturnieren am Turnier
-	 * im Feld maxMeldungen; 0 bedeutet unbegrenzt.
-	 *
-	 * @param object     $objTurnier Turnierdatensatz mit den Feldern id und maxMeldungen
-	 * @param int|string $spieler    ID des Mannschaftsführers aus tl_fernschach_spieler
-	 *
-	 * @return bool True, wenn die zulässige Zahl an Meldungen erreicht ist
-	 */
-	protected static function bereitsGemeldet($objTurnier, $spieler)
-	{
-		$intMax = (int) ($objTurnier->maxMeldungen ?? 0);
-
-		if ($intMax < 1 || !$spieler)
-		{
-			return false;
-		}
-
-		$objBuchungen = Database::getInstance()->prepare('SELECT COUNT(*) AS anzahl FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND turnier = ? AND typ = ? AND kategorie = ?')
-		                                        ->execute($spieler, $objTurnier->id, 's', 's');
-
-		return (int) $objBuchungen->anzahl >= $intMax;
-	}
 }

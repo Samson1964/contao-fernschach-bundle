@@ -80,34 +80,14 @@
 	color: var(--fs-erfolg);
 }
 
-.fernschach-formular .fs-hinweis--info {
-	border-color: var(--fs-farbe);
-	background: var(--fs-farbe-hell);
-	color: inherit;
-}
-
-/* Der Hinweis kann mehrere Absätze und eine Liste enthalten; der Abstand
-   entsteht nur zwischen den Kindern, nicht an den Rändern. */
+/* Der Hinweis kann mehrere Absätze enthalten; der Abstand entsteht nur
+   zwischen den Kindern, nicht an den Rändern. */
 .fernschach-formular .fs-hinweis > * {
 	margin: 0;
 }
 
 .fernschach-formular .fs-hinweis > * + * {
 	margin-top: 0.5rem;
-}
-
-/* Liste der Turniere, für die bereits gemeldet wurde */
-.fernschach-formular .fs-gemeldet {
-	padding-left: 1.25rem;
-}
-
-.fernschach-formular .fs-gemeldet-datum {
-	color: var(--fs-text-leise);
-}
-
-.fernschach-formular .fs-nachsatz {
-	color: var(--fs-text-leise);
-	font-size: 0.9375rem;
 }
 
 .fernschach-formular .fs-notiz,

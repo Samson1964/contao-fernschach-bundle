@@ -235,11 +235,9 @@ dem Server, ergänzt um die Frage, ob die gemeldeten Spieler überhaupt
 meldefähige BdF-Mitglieder sind. Fehlerhafte Felder werden rot markiert; die
 bereits gemachten Eingaben bleiben erhalten.
 
-**Leere Turnierauswahl.** Steht kein Turnier zur Auswahl, unterscheidet das Modul
-zwei Fälle. Ist wirklich keines offen, erscheint ein kurzer Hinweis. Sind welche
-offen, der Mannschaftsleiter hat für sie aber bereits gemeldet, werden sie
-namentlich mit dem Datum der eigenen Meldung aufgeführt — das ist kein Fehler und
-wird auch nicht als solcher dargestellt.
+**Mehrere Mannschaften.** Ein Mannschaftsleiter darf für dasselbe Turnier so viele
+Mannschaften melden, wie er möchte. Ein Turnier verschwindet nach einer Meldung
+also nicht aus der Auswahl; das Feld *Meldungen je Spieler* wirkt hier nicht.
 
 **Bestätigung.** Nach dem Speichern leitet das Modul auf sich selbst um (`send=1`)
 und zeigt eine Bestätigungsseite, auf der Turnier, Nenngeld, Verein, Mannschaft,
@@ -266,22 +264,21 @@ solche Meldung ab, sodass keine unvollständige Aufstellung entstehen kann.
 
 ### Mehrfachmeldungen
 
-Am Turnier steht im Feld **Meldungen je Spieler/Mannschaftsleiter**, wie oft sich
-derselbe Spieler für dieses Turnier melden darf. Die Voreinstellung ist **1**, der
-Wert 0 hebt die Begrenzung auf. Anmeldungen und Bewerbungen werden getrennt
-gezählt.
+Am Turnier steht im Feld **Meldungen je Spieler**, wie oft sich derselbe Spieler
+für dieses Turnier melden darf. Die Voreinstellung ist **1**, der Wert 0 hebt die
+Begrenzung auf. Anmeldungen und Bewerbungen werden getrennt gezählt.
 
 Ist die Zahl erreicht, taucht das Turnier im Meldeformular gar nicht mehr auf.
 Zusätzlich prüft das Speichern noch einmal — sonst ließe sich die Sperre über den
 Zurück-Knopf oder einen zweiten Browsertab umgehen. Eine abgewiesene Meldung wird
 im Systemprotokoll vermerkt.
 
-Für Mannschaftsmeldungen gilt dasselbe Feld, dort aber bezogen auf den
-**Mannschaftsleiter**: Die Zahl legt fest, wie viele Mannschaften er für dieses
-Turnier melden darf. Wer mehrere Teams eines Vereins meldet („Musterstadt I",
-„Musterstadt II"), braucht hier also einen Wert größer als 1 oder 0. Weil eine
-Mannschaftsmeldung keinen Datensatz in den Anmeldungen anlegt, wird als Nachweis
-die Nenngeld-Sollbuchung auf dem Konto des Mannschaftsleiters herangezogen.
+**Für Mannschaftsturniere gilt das Feld nicht.** Ein Mannschaftsleiter darf
+beliebig viele Mannschaften seines Vereins melden („Musterstadt I",
+„Musterstadt II", …); ein bereits gemeldetes Turnier bleibt in der Auswahl
+stehen. Da es dort keine Sperre gibt, wird jede Mannschaftsmeldung im
+Systemprotokoll vermerkt — nur daran lässt sich eine versehentliche
+Doppelmeldung nachträglich erkennen.
 
 ### Kontoauszug BdF-Mitglied
 
