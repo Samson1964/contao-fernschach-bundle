@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.2.2 (2026-08-10)
+
+* Change: Das Turnierfeld `maxMeldungen` heißt im Backend jetzt **Meldungen je Spieler/Mannschaftsleiter**. Die alte Beschriftung „Meldungen je Spieler" war beim Mannschaftsturnier irreführend: Gezählt werden dort nicht die Spieler der Aufstellung, sondern die Meldungen des Mannschaftsleiters — der Wert legt also fest, wie viele Mannschaften er für dieses Turnier melden darf. Der Hilfetext sagt das jetzt ausdrücklich
+
 ## Version 2.2.1 (2026-08-10)
 
 * Change: Die Hinweisfelder des Meldeformulars (Fehler und Bestätigung) haben statt des dicken farbigen Balkens an der linken Kante einen dünnen Rahmen ringsum. Die Farbe von Hintergrund und Schrift unterscheidet die beiden Fälle weiterhin
