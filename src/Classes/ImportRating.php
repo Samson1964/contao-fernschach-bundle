@@ -73,17 +73,29 @@ class ImportRating extends Backend
 				$this->reload();
 			}
 
+			// Die zuletzt hochgeladene CSV-Datei gewinnt. $objFile wird unterhalb
+			// der Schleife weiterbenutzt und muss deshalb auch dann gesetzt sein,
+			// wenn gar keine passende Datei dabei war — bis Version 2.1.0 lief
+			// der Ablauf in diesem Fall in einen Fatal Error.
+			$objFile = null;
+
 			foreach($arrUploaded as $strFile)
 			{
-				$objFile = new File($strFile, true);
+				$objDatei = new File($strFile);
 
-				if($objFile->extension != 'csv')
+				if($objDatei->extension != 'csv')
 				{
-					Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objFile->extension));
+					Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'], $objDatei->extension));
 					continue;
 				}
 
-				$resFile = $objFile->handle;
+				$objFile = $objDatei;
+			}
+
+			if(null === $objFile)
+			{
+				Message::addError(sprintf($GLOBALS['TL_LANG']['ERR']['filetype'] ?? 'Die Datei ist keine CSV-Datei (%s).', 'csv'));
+				$this->reload();
 			}
 
 			// Einstellungen der Ratingliste laden

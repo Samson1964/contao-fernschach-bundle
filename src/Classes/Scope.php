@@ -15,6 +15,7 @@ use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\System;
 use Contao\Versions;
 use Psr\Log\LogLevel;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 /**
  * Beantwortet die Frage, ob gerade das Backend oder das Frontend läuft.
@@ -295,10 +296,15 @@ class Scope
 	 * getBackendSession(). Der Beutel heißt in Contao 4.13 wie in Contao 5
 	 * "contao_backend".
 	 *
-	 * @return \Symfony\Component\HttpFoundation\Session\SessionBagInterface|null
-	 *         Der Beutel, oder null wenn es keine gestartete Sitzung gibt
+	 * Zurückgegeben wird nur ein AttributeBagInterface: Die allgemeine
+	 * Schnittstelle SessionBagInterface kennt weder get() noch set(). In der
+	 * Praxis liefert Contao dort einen ArrayAttributeBag, die Prüfung schützt
+	 * aber davor, dass eine abweichende Konfiguration in einen Fehler läuft.
+	 *
+	 * @return AttributeBagInterface|null Der Beutel, oder null wenn es keine
+	 *                                    gestartete Sitzung gibt
 	 */
-	private static function getBackendSessionBag()
+	private static function getBackendSessionBag(): ?AttributeBagInterface
 	{
 		$container = System::getContainer();
 
@@ -323,7 +329,9 @@ class Scope
 			return null;
 		}
 
-		return $session->getBag('contao_backend');
+		$bag = $session->getBag('contao_backend');
+
+		return $bag instanceof AttributeBagInterface ? $bag : null;
 	}
 
 	/**

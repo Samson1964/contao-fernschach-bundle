@@ -200,7 +200,7 @@ class Mailer extends Backend
 <a href="'.$this->getReferer(true).'" class="header_back" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 '.Message::generate().'
-<form action="'.TL_SCRIPT.'" id="tl_fernschachverwaltung_send" class="tl_form" method="get">
+<form action="'.System::getContainer()->get('router')->generate('contao_backend').'" id="tl_fernschachverwaltung_send" class="tl_form" method="get">
 <div class="tl_formbody_edit tl_fernschachverwaltung_send">
 <input type="hidden" name="do" value="' . Input::get('do') . '">
 <input type="hidden" name="table" value="' . Input::get('table') . '">

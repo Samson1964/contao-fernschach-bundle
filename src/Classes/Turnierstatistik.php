@@ -55,7 +55,9 @@ class Turnierstatistik
 		$urlJahr = (int)Input::get('jahr');
 		$urlMonat = (int)Input::get('monat');
 		$urlTag = (int)Input::get('tag');
-		$differenz = Input::get('differenz');
+		// Der Wert wandert in Rechnungen; ohne die Umwandlung könnte ein
+		// Aufruf wie ?differenz[]=1 unter PHP 8 einen TypeError auslösen.
+		$differenz = (int) Input::get('differenz');
 
 		// Neues Datum für anzuzeigende Daten ermitteln
 		if(!$urlJahr && !$urlMonat && !$urlTag)

@@ -8,6 +8,7 @@ use Contao\Backend;
 use Contao\BackendUser;
 use Contao\DC_Table;
 use Contao\DataContainer;
+use Contao\Database;
 use Contao\Input;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
 
@@ -188,10 +189,10 @@ class tl_fernschach_turniere_spieler extends Backend
 	public function getGemeldeteSpieler(DataContainer $dc)
 	{
 		// ID des meldefähigen Turniers ermitteln
-		$objTurnier = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
+		$objTurnier = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE id = ?")
 		                             ->execute($dc->activeRecord->pid);
 		// Alle Meldungen dieses Turniers laden
-		$objSpieler = $this->Database->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? ORDER BY teilnehmer ASC, nachname ASC, vorname ASC")
+		$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE pid = ? ORDER BY teilnehmer ASC, nachname ASC, vorname ASC")
 		                             ->execute($objTurnier->pid);
 
 		$spieler = array();
@@ -238,7 +239,7 @@ class tl_fernschach_turniere_spieler extends Backend
 	{
 		//Scope::logToFile('Sichere alte Zuordnung','fernschach.log');
 		//Scope::logToFile('tl_fernschach_turniere_spieler.id = '.Input::get('id'),'fernschach.log');
-    	$row = $this->Database->prepare("SELECT meldungId FROM tl_fernschach_turniere_spieler WHERE id=?")
+    	$row = Database::getInstance()->prepare("SELECT meldungId FROM tl_fernschach_turniere_spieler WHERE id=?")
     	                      ->execute(Input::get('id'));
 
 		//Scope::logToFile('meldungId = '.$row->meldungId,'fernschach.log');
@@ -266,7 +267,7 @@ class tl_fernschach_turniere_spieler extends Backend
 				'tstamp'     => time(),
 				'teilnehmer' => 0,
 			);
-			$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
+			$objInsert = Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 			                            ->set($set)
 			                            ->execute(Scope::getBackendSessionValue('tl_fernschach_turniere_spieler.meldungId'));
 
@@ -279,7 +280,7 @@ class tl_fernschach_turniere_spieler extends Backend
 			'tstamp'     => time(),
 			'teilnehmer' => $dc->activeRecord->pid,
 		);
-		$objInsert = $this->Database->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
+		$objInsert = Database::getInstance()->prepare("UPDATE tl_fernschach_turniere_meldungen %s WHERE id = ?")
 		                            ->set($set)
 		                            ->execute($dc->activeRecord->meldungId);
 		Scope::createVersion('tl_fernschach_turniere_meldungen', $dc->activeRecord->meldungId);

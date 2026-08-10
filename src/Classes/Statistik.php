@@ -37,6 +37,10 @@ class Statistik extends Backend
 		// Objekt BackendUser importieren
 		$this->import(BackendUser::class,'User');
 
+		// Startzeit für die Laufzeitmessung weiter unten. Bis Version 2.1.0
+		// fehlte sie, die Messung rechnete gegen eine undefinierte Variable.
+		$start = microtime(true);
+
 		// Formular wurde abgeschickt, Wortliste importieren
 		if(Input::post('FORM_SUBMIT') == 'tl_fernschach_mitgliederstatistik')
 		{

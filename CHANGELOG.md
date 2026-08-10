@@ -1,5 +1,25 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.1.1 (2026-08-10)
+
+Ergebnis einer vollständigen Prüfung des Bundles mit PHP 8.3 (Syntax) und PHPStan gegen Contao 4.13.58 und Contao 5.7.7. Gefunden wurden mehrere Stellen, die unter Contao 5 zur Laufzeit abgestürzt wären, aber von den bisherigen Tests nicht berührt wurden, weil sie Daten voraussetzen.
+
+* Fix: Der Bewerbungszähler in der Turnierliste benutzte `Controller::getImage()` und `Controller::generateImage()` — beide gibt es in Contao 5 nicht mehr. Sobald ein Turnier Bewerbungen hatte, war die Turnierliste dort nicht mehr aufrufbar. Ersetzt durch `Image::getHtml()`
+* Fix: Die Brotkrumennavigation der Turniere und der Konten benutzte die in Contao 5 entfallene Konstante `TL_FILES_URL`. Der Fehler trat auf, sobald ein Knoten geöffnet wurde
+* Fix: Das E-Mail-Sendeformular benutzte die in Contao 5 entfallene Konstante `TL_SCRIPT`
+* Fix: `$this->Database` in tl_fernschach_turniere und tl_fernschach_turniere_spieler sowie `$this->Environment` in tl_fernschach_turniere und tl_fernschach_konten waren nie über `import()` geladen. In Contao 5 liefert der Zugriff null, der nächste Methodenaufruf brach ab
+* Fix: `Helper::getMeldungen()` wurde statisch aufgerufen, war aber nicht als `static` deklariert — unter PHP 8 ein Fatal Error. Betroffen war die Teilnehmerliste eines Turniers. Zusätzlich stand hinter der if-Bedingung des Zwischenspeichers ein Semikolon, wodurch bei jedem Aufruf erneut abgefragt wurde
+* Fix: `Helper::checkResetbuchungen()` fragte mit der Variablen `$id` ab, die es in der Methode nicht gibt — die Prüfung der globalen Resetbuchungen lief damit stets ins Leere
+* Fix: Der Spezialfilter im Serienmail-Verteiler war wirkungslos: Eine Zuweisungskette überschrieb den gelesenen Wert mit einem festen Feld, sodass keine der Bedingungen zutreffen konnte und der Verteiler immer alle Datensätze enthielt
+* Fix: Der Turnierimport suchte nach `$set['titel']` statt `$set['title']` und fand deshalb nie ein vorhandenes Turnier — jeder Import legte Doppelgänger an, statt zu ergänzen
+* Fix: Der ICCF-Import brach ab, wenn die hochgeladene Datei keine CSV-Datei war
+* Fix: `tl_settings` enthielt den Schlüssel `mandatory` zweimal
+* Fix: Statistik-Laufzeitmessung rechnete gegen eine undefinierte Variable
+* Fix: Der Parameter `differenz` der Turnierstatistik wird jetzt in eine Zahl gewandelt, bevor damit gerechnet wird
+* Change: Der überflüssige zweite Parameter am Konstruktor von `Contao\File` ist entfallen; es gibt ihn seit Contao 4.0 nicht mehr
+* Change: Der ungenutzte Dienst `request_stack` ist aus dem ICCF-Import-Controller entfernt
+* Change: Fehlerhafte `@param`- und `@return`-Angaben an mehreren Methoden richtiggestellt
+
 ## Version 2.1.0 (2026-08-09)
 
 **Achtung beim Update:** Das neue Turnierfeld „Meldungen je Spieler" wird bei allen vorhandenen Turnieren auf **1** gesetzt. Ab sofort kann sich also jeder Spieler nur noch einmal je Turnier melden. Wo das nicht gewünscht ist, muss der Wert im Turnier auf 0 (unbegrenzt) oder auf die gewünschte Zahl gesetzt werden.

@@ -18,6 +18,7 @@ use Contao\CoreBundle\Exception\AccessDeniedException;
 use Contao\DC_Table;
 use Contao\DataContainer;
 use Contao\Database;
+use Contao\Environment;
 use Contao\Image;
 use Contao\Input;
 use Contao\Message;
@@ -767,7 +768,7 @@ class tl_fernschach_turniere extends Backend
 
 			foreach ($session['CURRENT']['IDS'] as $id)
 			{
-				$objPage = $this->Database->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
+				$objPage = Database::getInstance()->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
 										  ->limit(1)
 										  ->execute($id);
 
@@ -800,7 +801,7 @@ class tl_fernschach_turniere extends Backend
 
 			foreach ($session['CLIPBOARD']['tl_page']['id'] as $id)
 			{
-				$objPage = $this->Database->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
+				$objPage = Database::getInstance()->prepare("SELECT id, pid, type, includeChmod, chmod, cuser, cgroup FROM tl_page WHERE id=?")
 										  ->limit(1)
 										  ->execute($id);
 
@@ -824,7 +825,7 @@ class tl_fernschach_turniere extends Backend
 		// Check permissions to save and create new
 		if (Input::get('act') == 'edit')
 		{
-			$objPage = $this->Database->prepare("SELECT * FROM tl_page WHERE id=(SELECT pid FROM tl_page WHERE id=?)")
+			$objPage = Database::getInstance()->prepare("SELECT * FROM tl_page WHERE id=(SELECT pid FROM tl_page WHERE id=?)")
 									  ->limit(1)
 									  ->execute(Input::get('id'));
 
@@ -864,7 +865,7 @@ class tl_fernschach_turniere extends Backend
 					// Check the parent's parent page in "paste after" mode
 					else
 					{
-						$objPage = $this->Database->prepare("SELECT pid FROM tl_page WHERE id=?")
+						$objPage = Database::getInstance()->prepare("SELECT pid FROM tl_page WHERE id=?")
 												  ->limit(1)
 												  ->execute(Input::get('pid'));
 
@@ -888,7 +889,7 @@ class tl_fernschach_turniere extends Backend
 					$pagemounts[] = array($root);
 				}
 
-				$pagemounts[] = $this->Database->getChildRecords($root, 'tl_page');
+				$pagemounts[] = Database::getInstance()->getChildRecords($root, 'tl_page');
 			}
 
 			if (!empty($pagemounts))
@@ -961,7 +962,7 @@ class tl_fernschach_turniere extends Backend
 		if (isset($_GET['node']))
 		{
 			Scope::setBackendSessionValue('tl_fernschach_turniere_node', Input::get('node'));
-			$this->redirect(preg_replace('/&node=[^&]*/', '', $this->Environment->request));
+			$this->redirect(preg_replace('/&node=[^&]*/', '', Environment::get('request')));
 		}
 		$cat = Scope::getBackendSessionValue('tl_fernschach_turniere_node');
 
@@ -986,7 +987,11 @@ class tl_fernschach_turniere extends Backend
 				$breadcrumb[] = '<img src="bundles/contaofernschach/images/ordner_gelb.png" width="18" height="18" alt=""> <a href="' . Controller::addToUrl('node='.$objTemp->id) . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectNode']).'">' . $objTemp->title . '</a>';
 				$pid = $objTemp->pid;
 			}
-			$breadcrumb[] = '<img src="' . TL_FILES_URL . 'system/themes/' . Backend::getTheme() . '/images/pagemounts.gif" width="18" height="18" alt=""> <a href="' . Controller::addToUrl('node=0') . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
+			// Image::getHtml() ermittelt den Pfad zum Symbol des aktuellen
+			// Backend-Themes selbst. Bis Version 2.1.0 stand hier die Konstante
+			// TL_FILES_URL, die es in Contao 5 nicht mehr gibt — der Aufruf war
+			// dort ein Fatal Error, sobald man einen Knoten geöffnet hat.
+			$breadcrumb[] = Image::getHtml('pagemounts.svg', '', 'width="18" height="18"') . ' <a href="' . Controller::addToUrl('node=0') . '" title="'.StringUtil::specialchars($GLOBALS['TL_LANG']['MSC']['selectAllNodes']).'">' . $GLOBALS['TL_LANG']['MSC']['filterAll'] . '</a>';
 		}
 		$breadcrumb = array_reverse($breadcrumb);
 
@@ -1356,9 +1361,9 @@ class tl_fernschach_turniere extends Backend
 			if(isset($this->bewerbungen[$row['id']]))
 			{
 				$temp = '<span style="color:#9F9F9F;">Bewerbungen: <b>'.$this->bewerbungen[$row['id']]['anzahl'].'</b> [';
-				if($this->bewerbungen[$row['id']]['unklar']) $temp .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->bewerbungen[$row['id']]['unklar'].$this->generateImage($this->getImage('bundles/contaofernschach/images/fragezeichen.png', 12, 12, 'proportional'), 'ohne Entscheidung').'</span> ';
-				if($this->bewerbungen[$row['id']]['zusagen']) $temp .= '<span title="Anzahl der Zusagen">'.$this->bewerbungen[$row['id']]['zusagen'].$this->generateImage($this->getImage('bundles/contaofernschach/images/ja.png', 12, 12, 'proportional'), 'Zusagen').'</span> ';
-				if($this->bewerbungen[$row['id']]['absagen']) $temp .= '<span title="Anzahl der Absagen">'.$this->bewerbungen[$row['id']]['absagen'].$this->generateImage($this->getImage('bundles/contaofernschach/images/nein.png', 12, 12, 'proportional'), 'Absagen').'</span> ';
+				if($this->bewerbungen[$row['id']]['unklar']) $temp .= '<span title="Anzahl der nicht geklärten Bewerbungen">'.$this->bewerbungen[$row['id']]['unklar'].Image::getHtml('bundles/contaofernschach/images/fragezeichen.png', 'ohne Entscheidung', 'width="12" height="12"').'</span> ';
+				if($this->bewerbungen[$row['id']]['zusagen']) $temp .= '<span title="Anzahl der Zusagen">'.$this->bewerbungen[$row['id']]['zusagen'].Image::getHtml('bundles/contaofernschach/images/ja.png', 'Zusagen', 'width="12" height="12"').'</span> ';
+				if($this->bewerbungen[$row['id']]['absagen']) $temp .= '<span title="Anzahl der Absagen">'.$this->bewerbungen[$row['id']]['absagen'].Image::getHtml('bundles/contaofernschach/images/nein.png', 'Absagen', 'width="12" height="12"').'</span> ';
 				$temp = rtrim($temp).']</span><span style="width:20px; display:inline-block;"></span>';
 			}
 			return $temp;

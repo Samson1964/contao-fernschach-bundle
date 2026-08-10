@@ -104,9 +104,11 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_resetRecords'] = array
 				'inputType'               => 'text',
 				'eval'                    => array
 				(
-					'rgxp'                => 'digit', 
-					'mandatory'           => false, 
-					'style'               => 'width:90%', 
+					// Der Schlüssel 'mandatory' stand hier bis Version 2.1.0
+					// zweimal (erst false, dann true). PHP hat den zweiten Wert
+					// genommen; das Feld ist also seit jeher ein Pflichtfeld.
+					'rgxp'                => 'digit',
+					'style'               => 'width:90%',
 					'maxlength'           => 6,
 					'mandatory'           => true
 				),

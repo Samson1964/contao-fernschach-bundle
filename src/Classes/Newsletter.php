@@ -96,8 +96,14 @@ class Newsletter extends Backend
 		}
 
 		// Spezialfilter berücksichtigen
+		//
+		// Bis Version 2.1.0 stand hier eine Zuweisungskette
+		// ($filter = $filter[…] = array('tfs_filter')), die $filter mit einem
+		// festen Feld überschrieben hat. Keiner der nachfolgenden Vergleiche
+		// konnte dadurch zutreffen: Der Spezialfilter blieb wirkungslos und der
+		// Verteiler enthielt immer alle Datensätze.
 		$filter = Scope::getBackendSessionValue('filter');
-		$filter = $filter[$dc->table.'Filter'] = array('tfs_filter'); // Wert aus Spezialfilter
+		$filter = $filter[$dc->table.'Filter']['tfs_filter'] ?? ''; // Wert aus Spezialfilter
 		switch($filter)
 		{
 			case '2': // Geburtsdatum fehlt

@@ -345,7 +345,7 @@ class Helper extends Backend
 		if($monat == '01')
 		{
 			// Monat Januar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
-			$datum_zeit = mktime(23, 59, 59, 12, 31, ($jahr-1));
+			$datum_zeit = mktime(23, 59, 59, 12, 31, ((int) $jahr - 1));
 		}
 		else
 		{
@@ -655,8 +655,10 @@ class Helper extends Backend
 	 * Funktion checkResetbuchungen
 	 * ============================
 	 * Sucht in den Buchungen eines Spielers nach globalen Reset-Buchungen, prüft und aktualisiert diese
-	 * @param $id        ID des Spielers
-	 * @return           Keine Rückgabe. Es wird direkt in die Datenbank geschrieben
+	 *
+	 * @param int|string $playerId ID des Spielers
+	 *
+	 * @return void Es wird direkt in die Datenbank geschrieben
 	 */
 	public static function checkResetbuchungen($playerId)
 	{
@@ -671,9 +673,11 @@ class Helper extends Backend
 			$betragGlobal = abs(Config::get('fernschach_resetSaldo'));
 			$datumGlobal = abs(Config::get('fernschach_resetDate'));
 
-			// Reset-Buchungen suchen
+			// Reset-Buchungen suchen. Bis Version 2.1.0 stand hier $id — eine
+			// Variable, die es in dieser Methode gar nicht gibt. Die Abfrage lief
+			// damit gegen pid = null und fand nie etwas.
 			$objResets = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler_konto WHERE pid = ? AND resetRecord = ?")
-			                                     ->execute($id, 1);
+			                                     ->execute($playerId, 1);
 			if($objResets->numRows)
 			{
 				// Reset-Buchung ggfs. aktualisieren
@@ -868,15 +872,24 @@ class Helper extends Backend
 	}
 
 	/**
-	 * Spielernamen (id = Index) aus tl_fernschach_spieler laden
-	 * @param
-	 * @return    array
+	 * Lädt zu jeder Meldung den Namen des gemeldeten Spielers.
+	 *
+	 * Gebraucht wird das in der Teilnehmerliste eines Turniers, die nur die
+	 * Meldungs-ID kennt. Das Ergebnis wird für die Dauer der Anfrage gemerkt,
+	 * damit die Liste nicht für jede Zeile erneut abfragt.
+	 *
+	 * Bis Version 2.1.0 war die Methode nicht als static deklariert, wurde aber
+	 * statisch aufgerufen — unter PHP 8 ein Fatal Error. Außerdem stand hinter
+	 * der if-Bedingung ein Semikolon, wodurch der Zwischenspeicher nie griff.
+	 *
+	 * @return array Meldungs-ID => "Vorname Nachname"; leer, wenn es keine
+	 *               Meldungen gibt
 	 */
-	public function getMeldungen()
+	public static function getMeldungen()
 	{
 		static $spieler;
 
-		if(!$spieler);
+		if(!$spieler)
 		{
 			$objSpieler = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen ORDER BY nachname ASC, vorname ASC")
 			                                      ->execute();

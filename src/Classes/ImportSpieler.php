@@ -67,7 +67,7 @@ class ImportSpieler extends Backend
 
 			foreach ($arrUploaded as $txtFile)
 			{
-				$objFile = new File($txtFile, true);
+				$objFile = new File($txtFile);
 
 				if ($objFile->extension != 'csv')
 				{

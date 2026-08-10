@@ -68,7 +68,7 @@ class ImportTurniere extends Backend
 
 			foreach ($arrUploaded as $txtFile)
 			{
-				$objFile = new File($txtFile, true);
+				$objFile = new File($txtFile);
 
 				if ($objFile->extension != 'csv')
 				{
@@ -132,7 +132,10 @@ class ImportTurniere extends Backend
 							}
 						}
 
-						if($set['id'])
+						// Die Schlüssel entstehen erst durch die Kopfzeile der
+						// CSV-Datei; fehlt eine Spalte, gäbe es unter PHP 8 sonst
+						// eine Warnung wegen des unbekannten Schlüssels.
+						if(!empty($set['id']))
 						{
 							unset($set['pid']); // pid-Feld löschen, da nicht benötigt
 							// ID ist gesetzt, vorhandenes Turnier mit dieser ID überschreiben/ergänzen
@@ -144,14 +147,18 @@ class ImportTurniere extends Backend
 							Scope::createVersion('tl_fernschach_turniere', $set['id']);
 							$update_count++;
 						}
-						elseif($set['title'])
+						elseif(!empty($set['title']))
 						{
 							unset($set['id']); // ID-Feld muß gelöscht werden, sonst funktioniert das Update nicht
 							// Nur Turniere mit gesetztem Titel importieren
-							// Nach Titel suchen
+							// Nach Titel suchen. Bis Version 2.1.0 stand hier
+							// $set['titel'] — ein Schlüssel, den es im Feld nie
+							// gab. Die Suche lief damit gegen null und fand nie
+							// ein vorhandenes Turnier, sodass jeder Import
+							// Doppelgänger angelegt hat statt zu ergänzen.
 							$objResult = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere WHERE title = ?")
 							                                     ->limit(1)
-							                                     ->execute($set['titel']);
+							                                     ->execute($set['title']);
 
 							$set['tstamp'] = time(); // Änderungsdatum setzen
 

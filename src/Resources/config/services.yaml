@@ -47,5 +47,4 @@ services:
     Schachbulle\ContaoFernschachBundle\Controller\IccfImportController:
         arguments:
             - '@contao.framework'
-            - '@request_stack'
         public: true

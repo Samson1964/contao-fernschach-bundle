@@ -15,7 +15,6 @@ use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Importiert eine ICCF-Wertungsliste häppchenweise.
@@ -44,19 +43,14 @@ class IccfImportController
 
 	private ContaoFramework $framework;
 
-	private RequestStack $requestStack;
-
 	/**
-	 * @param ContaoFramework $framework    Wird gebraucht, um das Contao-Framework
-	 *                                      zu starten — ohne das gibt es keine
-	 *                                      Datenbankverbindung über Contao\Database
-	 * @param RequestStack    $requestStack Liefert die Sitzung mit den Angaben zur
-	 *                                      laufenden Einleseoperation
+	 * @param ContaoFramework $framework Wird gebraucht, um das Contao-Framework zu
+	 *                                   starten — ohne das gibt es keine
+	 *                                   Datenbankverbindung über Contao\Database
 	 */
-	public function __construct(ContaoFramework $framework, RequestStack $requestStack)
+	public function __construct(ContaoFramework $framework)
 	{
 		$this->framework = $framework;
-		$this->requestStack = $requestStack;
 	}
 
 	/**

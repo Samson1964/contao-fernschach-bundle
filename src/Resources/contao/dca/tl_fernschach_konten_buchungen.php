@@ -557,11 +557,14 @@ class tl_fernschach_konten_buchungen extends Backend
 	}
 
 	/**
-	 * Zahl in Euro-Betrag umwandeln
+	 * Formatiert einen Betrag als Euro-Angabe mit Vorzeichenfarbe.
 	 *
-	 * @param integer $value
+	 * @param string|int|float $value Der Betrag; ein Komma wird als Dezimaltrenner
+	 *                                 akzeptiert und vorher in einen Punkt gewandelt
+	 * @param string|bool      $typ   'h' faerbt gruen, 's' rot; ohne Angabe
+	 *                                 entscheidet das Vorzeichen des Betrags
 	 *
-	 * @return string
+	 * @return string Der Betrag in der Form "1,50 €", eingefasst in ein span-Element
 	 */
 	public function getEuro($value, $typ = false)
 	{
