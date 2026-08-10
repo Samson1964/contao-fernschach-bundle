@@ -64,7 +64,7 @@
 .fernschach-formular .fs-hinweis {
 	margin: 0 0 var(--fs-abstand);
 	padding: 0.75rem 1rem;
-	border-left: 4px solid;
+	border: 1px solid;
 	border-radius: var(--fs-radius);
 }
 

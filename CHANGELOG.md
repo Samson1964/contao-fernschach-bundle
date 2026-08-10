@@ -1,5 +1,9 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.2.1 (2026-08-10)
+
+* Change: Die Hinweisfelder des Meldeformulars (Fehler und Bestätigung) haben statt des dicken farbigen Balkens an der linken Kante einen dünnen Rahmen ringsum. Die Farbe von Hintergrund und Schrift unterscheidet die beiden Fälle weiterhin
+
 ## Version 2.2.0 (2026-08-10)
 
 Das Meldeformular für Mannschaften ist neu gebaut. Bisher entstand es über die Formularklasse des Helper-Bundles und übernahm Gestaltung und Skripte vom jeweiligen Theme — es sah auf jeder Website anders aus, und die Spieler waren aus vier Auswahllisten mit sämtlichen Mitgliedern zu suchen.
