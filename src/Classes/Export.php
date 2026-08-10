@@ -113,8 +113,8 @@ class Export extends Backend
 			// Preise-Tabelle anlegen und füllen
 			$spreadsheet->createSheet();
 			$spreadsheet->setActiveSheetIndex(0);
-			$spreadsheet->getActiveSheet()->getStyle('A1:AZ1')->applyFromArray($styleArray);
-			$spreadsheet->getActiveSheet()->getStyle('A2:AZ'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
+			$spreadsheet->getActiveSheet()->getStyle('A1:BA1')->applyFromArray($styleArray);
+			$spreadsheet->getActiveSheet()->getStyle('A2:BA'.$recordCount)->applyFromArray($styleArray2); // Zeilen mit Datensätzen formatieren
 			$spreadsheet->getActiveSheet()->getStyle('A1:A1')->applyFromArray($styleArray); // Um Markierung zurückzusetzen
 			$spreadsheet->getActiveSheet()->setTitle('Spieler')
 			            ->setCellValue('A1', 'Datensatz')
@@ -168,7 +168,8 @@ class Export extends Backend
 			            ->setCellValue('AW1', 'Saldo Beitrag '.Input::post('saldo_stichtag'))
 			            ->setCellValue('AX1', 'Saldo Nenngeld '.Input::post('saldo_stichtag'))
 			            ->setCellValue('AY1', 'Veröffentlicht')
-			            ->setCellValue('AZ1', 'Fertig');
+			            ->setCellValue('AZ1', 'Fertig')
+			            ->setCellValue('BA1', 'Interner Bereich');
 
 			// Daten schreiben
 			$zeile = 2;
@@ -232,7 +233,8 @@ class Export extends Backend
 				            ->setCellValue('AW'.$zeile, $item['saldo_b'])
 				            ->setCellValue('AX'.$zeile, $item['saldo_n'])
 				            ->setCellValue('AY'.$zeile, $item['published'])
-				            ->setCellValue('AZ'.$zeile, $item['fertig']);
+				            ->setCellValue('AZ'.$zeile, $item['fertig'])
+				            ->setCellValue('BA'.$zeile, $item['internerBereich']);
 				$zeile++;
 			}
 
@@ -570,6 +572,7 @@ class Export extends Backend
 						'saldo_n'                 => $this->User->hasAccess('saldo', 'fernschach_spieler') ? ($saldo_n ? sprintf("%01.2f", $saldo_n) : '') : 'Zugriff gesperrt',
 						'published'               => $records->published,
 						'fertig'                  => $records->fertig,
+						'internerBereich'         => \Schachbulle\ContaoFernschachBundle\Classes\Helper::getInternerBereich($records->id),
 					);
 				}
 			}

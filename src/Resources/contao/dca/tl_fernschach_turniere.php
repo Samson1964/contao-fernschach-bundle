@@ -20,6 +20,7 @@ use Contao\DataContainer;
 use Contao\Database;
 use Contao\Image;
 use Contao\Input;
+use Contao\Message;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
@@ -170,7 +171,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 		'__selector__'                => array('type', 'titleView', 'bewerbungErlaubt', 'nenngeldActive'), 
 		'default'                     => '{title_legend},title,type;{publish_legend},published',
 		'category'                    => '{title_legend},title,type,titleView;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{nenngeld_legend},nenngeldView,nenngeldActive;{publish_legend},archived,published',
-		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,klassenzuordnung,registrationDate,startDate,typ,bretter,art,artInfo,spielerMax,spielerGeschlecht,spielerAlterMin,spielerAlterMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},archived,published',
+		'tournament'                  => '{title_legend},title,type;{tournament_legend},kennziffer,klassenzuordnung,registrationDate,startDate,typ,bretter,art,artInfo,spielerMax,maxMeldungen,spielerGeschlecht,spielerAlterMin,spielerAlterMax;{nenngeld_legend},nenngeldView,nenngeldActive;{meldung_legend},onlineAnmeldung;{meldestand_legend:hide},onlineMeldestaende,versteckeNamen;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{applications_legend},bewerbungErlaubt;{publish_legend},archived,published',
 		'group'                       => '{title_legend},title,type;{tournament_legend},kennziffer;{turnierleiter_legend},turnierleiterName,turnierleiterEmail,turnierleiterUserId,turnierleiterInfo;{publish_legend},archived,published',
 	), 
 
@@ -234,6 +235,10 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'tl_class'            => 'w50'
 			),
 			'options_callback'        => array('tl_fernschach_turniere', 'getTypen'),
+			'save_callback'           => array
+			(
+				array('tl_fernschach_turniere', 'pruefeTyp')
+			),
 			'sql'                     => "varchar(64) NOT NULL default ''"
 		),
 		'titleView' => array
@@ -414,6 +419,26 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'maxlength'           => 6
 			),
 			'sql'                     => "int(6) unsigned NOT NULL default 0"
+		),
+		'maxMeldungen' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['maxMeldungen'],
+			'exclude'                 => true,
+			'sorting'                 => false,
+			'default'                 => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'digit',
+				'mandatory'           => false,
+				'tl_class'            => 'w50',
+				'maxlength'           => 3
+			),
+			// Voreinstellung 1: Ein Spieler darf sich genau einmal melden. Beim
+			// Anlegen der Spalte bekommen auch alle vorhandenen Turniere diesen
+			// Wert — genau so gewollt, weil Mehrfachmeldungen bisher überall
+			// möglich waren und unterbunden werden sollen.
+			'sql'                     => "int(3) unsigned NOT NULL default 1"
 		),
 		'bretter' => array
 		(
@@ -1102,46 +1127,146 @@ class tl_fernschach_turniere extends Backend
 
 
 	/**
-	 * Liefert die Liste der in der aktuellen Kategorie möglichen Typen
-	 * @param DataContainer
-	 * @return array
+	 * Liefert die an dieser Stelle im Baum zulässigen Turnierarten.
+	 *
+	 * Bis Version 2.0.0 hat diese Methode die unerwünschten Einträge mit unset()
+	 * direkt aus $GLOBALS['TL_LANG'] entfernt. Damit waren sie für den Rest der
+	 * Anfrage weg: Wurde die Auswahlliste einmal für einen Datensatz unterhalb
+	 * eines Turniers aufgebaut, kannte Contao die Art "tournament" anschließend
+	 * nicht mehr und zeigte sie als unbekannt an. Gearbeitet wird deshalb jetzt
+	 * auf einer Kopie.
+	 *
+	 * @param DataContainer $dc Der Data Container des bearbeiteten Datensatzes
+	 *
+	 * @return array Turnierart => Beschriftung. Die Art, die der Datensatz
+	 *               bereits hat, bleibt immer enthalten — sonst stünde beim
+	 *               Bearbeiten eines Altbestands ein leeres Auswahlfeld da und
+	 *               das Pflichtfeld ließe sich nicht mehr speichern
 	 */
 	public function getTypen(DataContainer $dc)
 	{
-		if(isset($dc->activeRecord->pid) && $dc->activeRecord->pid == 0)
+		$arrAlle = $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'] ?? array();
+		$arrErlaubt = self::getErlaubteTypen(self::getElternTyp($dc->id));
+
+		$arrTypen = array_intersect_key($arrAlle, array_flip($arrErlaubt));
+
+		// Den eigenen Wert immer anbieten
+		$objDatensatz = Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
+		                                       ->execute($dc->id);
+
+		if($objDatensatz->numRows && $objDatensatz->type && isset($arrAlle[$objDatensatz->type]))
 		{
-			// 1. Ebene, nur Kategorien erlaubt
-			unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['tournament']);
-			unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['group']);
+			$arrTypen[$objDatensatz->type] = $arrAlle[$objDatensatz->type];
 		}
-		elseif(isset($dc->activeRecord->pid) && $dc->activeRecord->pid > 0)
+
+		return $arrTypen;
+	}
+
+	/**
+	 * Ermittelt die Turnierart des übergeordneten Datensatzes.
+	 *
+	 * @param int|string|null $intId ID des Datensatzes, dessen Elternteil gesucht wird
+	 *
+	 * @return string Die Art des Elternteils, oder eine leere Zeichenkette, wenn
+	 *                der Datensatz auf der obersten Ebene liegt, es ihn nicht
+	 *                gibt oder das Elternteil verwaist ist
+	 */
+	public static function getElternTyp($intId)
+	{
+		if(!$intId)
 		{
-			// 2. - x. Ebene, dann Eltern-Typ prüfen
-			$objTyp = Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
-			                                  ->execute($dc->activeRecord->pid);
-			if($objTyp->numRows)
-			{
-				if($objTyp->type == 'category')
-				{
-					// Keine Gruppen innerhalb von Kategorien
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['group']);
-				}
-				elseif($objTyp->type == 'tournament')
-				{
-					// Keine Kategorien und Turnier innerhalb von Turnieren
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['category']);
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['tournament']);
-				}
-				elseif($objTyp->type == 'group')
-				{
-					// Keine Kategorien, Turniere und Gruppen innerhalb von Gruppen
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['category']);
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['tournament']);
-					unset($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options']['group']);
-				}
-			}
+			return '';
 		}
-		return $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'];
+
+		$objDatensatz = Database::getInstance()->prepare("SELECT pid FROM tl_fernschach_turniere WHERE id = ?")
+		                                       ->execute($intId);
+
+		if(!$objDatensatz->numRows || !$objDatensatz->pid)
+		{
+			return '';
+		}
+
+		$objEltern = Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
+		                                    ->execute($objDatensatz->pid);
+
+		return $objEltern->numRows ? (string) $objEltern->type : '';
+	}
+
+	/**
+	 * Legt fest, welche Turnierarten unterhalb einer bestimmten Art erlaubt sind.
+	 *
+	 * Der Baum ist bewusst flach gehalten: Kategorien dürfen weitere Kategorien
+	 * und Turniere aufnehmen, ein Turnier nur noch Gruppen, eine Gruppe gar
+	 * nichts mehr. Insbesondere darf unter einem Turnier **kein** weiteres
+	 * Turnier liegen — die Turnierauswahl im Frontend und die Meldelisten gehen
+	 * davon aus, dass ein Turnier ein Blatt des Baumes ist.
+	 *
+	 * @param string $strElternTyp Die Art des übergeordneten Datensatzes; eine
+	 *                             leere Zeichenkette steht für die oberste Ebene
+	 *
+	 * @return array Liste der erlaubten Arten, gegebenenfalls leer
+	 */
+	public static function getErlaubteTypen($strElternTyp)
+	{
+		switch($strElternTyp)
+		{
+			// Oberste Ebene: nur Kategorien
+			case '':
+				return array('category');
+
+			case 'category':
+				return array('category', 'tournament');
+
+			case 'tournament':
+				return array('group');
+
+			// Unterhalb einer Gruppe geht es nicht weiter
+			default:
+				return array();
+		}
+	}
+
+	/**
+	 * Weist eine unzulässige Turnierart beim Speichern zurück.
+	 *
+	 * Die Auswahlliste allein reicht nicht: Ein Datensatz kann auch durch
+	 * Kopieren oder Verschieben an eine Stelle geraten, an der seine Art nicht
+	 * erlaubt ist. Genau so sind die Turniere unterhalb von Turnieren
+	 * entstanden, die im Backend als unbekannte Art erschienen.
+	 *
+	 * Ein Altbestand, der bereits eine unzulässige Art hat, lässt sich weiterhin
+	 * bearbeiten und speichern — sonst käme man an den Titel eines solchen
+	 * Datensatzes gar nicht mehr heran. In dem Fall gibt es nur einen Hinweis.
+	 *
+	 * @param mixed         $varValue Die gewählte Turnierart
+	 * @param DataContainer $dc       Der Data Container des Datensatzes
+	 *
+	 * @return mixed Die unveränderte Turnierart
+	 *
+	 * @throws \Exception Wenn die Art an dieser Stelle im Baum nicht erlaubt ist
+	 *                    und der Datensatz sie noch nicht hatte
+	 */
+	public function pruefeTyp($varValue, DataContainer $dc)
+	{
+		$arrErlaubt = self::getErlaubteTypen(self::getElternTyp($dc->id));
+
+		if(!$varValue || in_array($varValue, $arrErlaubt, true))
+		{
+			return $varValue;
+		}
+
+		$objDatensatz = Database::getInstance()->prepare("SELECT type FROM tl_fernschach_turniere WHERE id = ?")
+		                                       ->execute($dc->id);
+
+		// Unveränderter Altbestand: durchlassen, aber darauf hinweisen
+		if($objDatensatz->numRows && $objDatensatz->type === $varValue)
+		{
+			Message::addInfo(sprintf($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_altbestand'] ?? 'Dieser Datensatz hat die an dieser Stelle unzulässige Turnierart "%s".', $varValue));
+
+			return $varValue;
+		}
+
+		throw new \Exception(sprintf($GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_nicht_erlaubt'] ?? 'Die Turnierart "%s" ist an dieser Stelle nicht erlaubt.', $varValue));
 	}
 
 	/**

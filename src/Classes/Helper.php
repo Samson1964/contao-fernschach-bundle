@@ -911,6 +911,106 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Beschreibt, ob ein Spieler ein Konto für den internen Bereich hat.
+	 *
+	 * Die Verbindung läuft über tl_member.fernschach_memberId, die auf die ID
+	 * des Spielers zeigt; angelegt und gepflegt wird sie vom Cronjob
+	 * Mitgliederprüfung. Ein Spieler ohne Frontend-Konto kann sich nicht
+	 * anmelden und damit weder Turniermeldungen abgeben noch seinen Kontoauszug
+	 * einsehen — für die Geschäftsstelle ist das eine der häufigsten Rückfragen,
+	 * deshalb steht es im Excel-Export.
+	 *
+	 * @param int|string $spieler ID des Spielers aus tl_fernschach_spieler
+	 *
+	 * @return string 'Ja' bei einem nutzbaren Konto, 'Ja (gesperrt)' bei einem
+	 *                deaktivierten und 'Nein', wenn es gar keines gibt. Gibt es
+	 *                mehrere Konten, zählt das erste gefundene aktive
+	 */
+	public static function getInternerBereich($spieler)
+	{
+		if(!$spieler)
+		{
+			return 'Nein';
+		}
+
+		$objMember = Database::getInstance()->prepare("SELECT disable FROM tl_member WHERE fernschach_memberId = ? ORDER BY disable ASC")
+		                                     ->execute($spieler);
+
+		if(!$objMember->numRows)
+		{
+			return 'Nein';
+		}
+
+		return $objMember->disable ? 'Ja (gesperrt)' : 'Ja';
+	}
+
+	/**
+	 * Zählt, wie oft ein Spieler für ein Turnier bereits gemeldet ist.
+	 *
+	 * Gezählt werden alle vorhandenen Datensätze, unabhängig vom Bearbeitungs-
+	 * stand: Eine Bewerbung, die noch niemand zu- oder abgesagt hat, ist genauso
+	 * eine Meldung wie eine bereits bestätigte.
+	 *
+	 * @param int|string $turnier      ID des Turniers (pid der Meldung)
+	 * @param int|string $spieler      ID des Spielers aus tl_fernschach_spieler
+	 * @param bool       $blnBewerbung true zählt in den Bewerbungen, false in den
+	 *                                 Anmeldungen
+	 *
+	 * @return int Anzahl der vorhandenen Meldungen; 0, wenn eine der beiden IDs
+	 *             fehlt
+	 */
+	public static function zaehleMeldungen($turnier, $spieler, $blnBewerbung = false)
+	{
+		if(!$turnier || !$spieler)
+		{
+			return 0;
+		}
+
+		$strTabelle = $blnBewerbung ? 'tl_fernschach_turniere_bewerbungen' : 'tl_fernschach_turniere_meldungen';
+
+		$objMeldungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM ".$strTabelle." WHERE pid = ? AND spielerId = ?")
+		                                        ->execute($turnier, $spieler);
+
+		return (int) $objMeldungen->anzahl;
+	}
+
+	/**
+	 * Prüft, ob sich ein Spieler für ein Turnier (noch) melden darf.
+	 *
+	 * Wie oft das erlaubt ist, steht am Turnier im Feld maxMeldungen; 0 bedeutet
+	 * unbegrenzt. Der Grund für die Begrenzung: Ohne sie haben sich Mitglieder
+	 * mehrfach für dasselbe Turnier beworben, weil sie die Bestätigungsmail
+	 * nicht gesehen haben — im Extremfall neunmal für dasselbe Turnier.
+	 *
+	 * @param object     $objTurnier   Turnierdatensatz, mindestens mit den
+	 *                                 Feldern id und maxMeldungen
+	 * @param int|string $spieler      ID des Spielers aus tl_fernschach_spieler
+	 * @param bool       $blnBewerbung true prüft die Bewerbungen, false die
+	 *                                 Anmeldungen
+	 *
+	 * @return bool True, wenn eine weitere Meldung erlaubt ist. False, sobald
+	 *              die eingestellte Zahl erreicht ist. Ohne Turnier oder ohne
+	 *              Spieler ebenfalls false, weil dann gar nichts zuzuordnen wäre
+	 */
+	public static function meldungErlaubt($objTurnier, $spieler, $blnBewerbung = false)
+	{
+		if(!$objTurnier || !$spieler)
+		{
+			return false;
+		}
+
+		$intMax = (int) ($objTurnier->maxMeldungen ?? 0);
+
+		// 0 = unbegrenzt
+		if($intMax < 1)
+		{
+			return true;
+		}
+
+		return self::zaehleMeldungen($objTurnier->id, $spieler, $blnBewerbung) < $intMax;
+	}
+
+	/**
 	 * Sucht für eine Spieler-ID alle Anmeldungen und Bewerbungen und gibt diese absteigend sortiert nach Meldedatum zurück
 	 * @param
 	 * @return    object

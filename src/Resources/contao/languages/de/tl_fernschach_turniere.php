@@ -21,6 +21,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ'] = array('Turniertyp', 'Typ 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['art'] = array('Turnierart', 'Art des Turniers');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['artInfo'] = array('Alternative Turnierart', 'Eigener Text für die Turnierart. Wird nur im Online-Meldeformular verwendet, wenn keine Turnierart ausgewählt wurde.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerMax'] = array('Maximale Spieleranzahl', 'Maximale Anzahl der Spieler für dieses Turnier. 0 = unbegrenzt.');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['maxMeldungen'] = array('Meldungen je Spieler', 'Wie oft darf sich derselbe Spieler für dieses Turnier anmelden bzw. bewerben? 0 = unbegrenzt. Ist die Zahl erreicht, wird das Turnier im Meldeformular nicht mehr angeboten.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerGeschlecht'] = array('Geschlecht beschränken', 'Geschlecht auswählen, das an diesem Turnier teilnehmen darf. Keine Auswahl = ohne Beschränkung.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMin'] = array('Mindestalter', 'Mindestalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['spielerAlterMax'] = array('Maximalalter', 'Maximalalter der Teilnehmer in Jahren. 0 = ohne Begrenzung.');
@@ -90,6 +91,9 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_options'] = array
 	'tournament' => 'Meldefähiges Turnier / Turnierklasse',
 	'group'      => 'Turniergruppe',
 );
+
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_altbestand'] = 'Dieser Datensatz hat die Turnierart "%s", die an dieser Stelle im Baum eigentlich nicht erlaubt ist. Bitte verschieben Sie ihn oder ändern Sie die Art.';
+$GLOBALS['TL_LANG']['tl_fernschach_turniere']['type_nicht_erlaubt'] = 'Die Turnierart "%s" ist an dieser Stelle nicht erlaubt. Unter einer Kategorie sind Kategorien und Turniere möglich, unter einem Turnier nur Turniergruppen, unter einer Turniergruppe nichts mehr.';
 
 $GLOBALS['TL_LANG']['tl_fernschach_turniere']['typ_options'] = array
 (

@@ -16,9 +16,11 @@ namespace Schachbulle\ContaoFernschachBundle\Modules;
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\Email;
 use Contao\FrontendUser;
+use Contao\Input;
 use Contao\Module;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
 
@@ -102,6 +104,16 @@ class Meldeformular_Mannschaft extends Module
 			return '<p class="error">Ihrem Benutzerkonto ist kein BdF-Mitglied zugeordnet. Bitte wenden Sie sich an die Geschäftsstelle.</p>';
 		}
 
+		// Rückkehr von der Umleitung nach dem Absenden: Bestätigung statt Formular
+		if(Input::get('send'))
+		{
+			return '<div class="fernschach-bestaetigung">'
+				.'<p class="confirmation"><b>Ihre Mannschaftsmeldung ist eingegangen.</b></p>'
+				.'<p>Sie erhalten zusätzlich eine Bestätigung per E-Mail an <b>'.$mitglied->email1.'</b>. '
+				.'Bitte sehen Sie auch im Spam-Ordner nach. Eine erneute Meldung für dasselbe Turnier ist nicht nötig.</p>'
+				.'</div>';
+		}
+
 		$beitragssaldo = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo(FrontendUser::getInstance()->fernschach_memberId);
 
 		$records = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_spieler WHERE published = ? AND archived = ? ORDER BY nachname ASC, vorname ASC")
@@ -177,27 +189,73 @@ class Meldeformular_Mannschaft extends Module
 		$form->addField(array('typ' => 'textarea', 'name' => 'bemerkungen', 'label' => 'Bemerkungen'));
 		$form->addField(array('typ' => 'fieldset', 'label' => ''));
 		$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
+		$fehler = '';
+
 		// validate() prüft auch, ob das Formular gesendet wurde
 		if($form->validate())
 		{
 			// Alle gesendeten und analysierten Daten holen (funktioniert nur mit POST)
 			$arrData = $form->fetchAll();
-			self::saveMeldung($arrData); // Daten sichern
-			// Seite neu laden
-			Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
-			Controller::reload();
+
+			if(self::saveMeldung($arrData))
+			{
+				// Nach dem Speichern umleiten statt neu laden — sonst fragt der
+				// Browser beim Aktualisieren nach dem erneuten Absenden und legt
+				// eine zweite Nenngeld-Sollbuchung an.
+				Controller::redirect(Controller::addToUrl('send=1'));
+			}
+
+			$fehler = '<p class="error">Ihre Meldung konnte nicht gespeichert werden. Möglicherweise haben Sie für dieses Turnier bereits eine Mannschaft gemeldet.</p>';
 		}
 
 		// Formular als String zurückgeben
-		return $form->generate();
+		return $fehler.$form->generate();
 
 	}
 
+	/**
+	 * Speichert eine Mannschaftsmeldung und verschickt die E-Mails.
+	 *
+	 * Gespeichert wird ausschließlich die Nenngeld-Sollbuchung auf dem Konto des
+	 * Mannschaftsführers; die eigentliche Mannschaftsaufstellung geht per E-Mail
+	 * an den Turnierdirektor.
+	 *
+	 * @param array $data Die abgeschickten Formularwerte, mindestens mit dem
+	 *                    Schlüssel 'turnier'
+	 *
+	 * @return bool True, wenn gespeichert wurde. False, wenn kein Turnier
+	 *              gewählt wurde, es das Turnier nicht (mehr) gibt oder für
+	 *              dieses Turnier bereits gemeldet wurde
+	 */
 	protected function saveMeldung($data)
 	{
 		// BdF-Mitgliedsdaten des angemeldeten Benutzers laden
 		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
+
+		if(!$mitglied || !$mitglied->numRows || empty($data['turnier']))
+		{
+			return false;
+		}
+
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+
+		if(!$objTurnier || !$objTurnier->numRows)
+		{
+			return false;
+		}
+
+		// Zweite Prüfung nach dem Absenden: Der Browser kann dieselbe Meldung
+		// über den Zurück-Knopf oder einen zweiten Tab erneut schicken.
+		if(self::bereitsGemeldet($objTurnier, $mitglied->id))
+		{
+			Scope::log(
+				'[Fernschach-Verwaltung] Mehrfache Mannschaftsmeldung abgewiesen: '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
+				__METHOD__,
+				ContaoContext::GENERAL
+			);
+
+			return false;
+		}
 
 		// Nenngeldbuchung Soll erzeugen
 		$zeit = time();
@@ -305,6 +363,8 @@ class Meldeformular_Mannschaft extends Module
 		$objEmail->subject = 'Mannschaftsmeldung '.$data['vereinsname'];
 		$objEmail->html = $text;
 		$objEmail->sendTo(array(Config::get('fernschach_turnierdirektorName').' <'.Config::get('fernschach_turnierdirektorEmail').'>'));
+
+		return true;
 	}
 
 	/**
@@ -331,6 +391,13 @@ class Meldeformular_Mannschaft extends Module
 
 		while($objTurniere->next())
 		{
+			// Turniere überspringen, für die dieser Mannschaftsführer schon
+			// gemeldet hat (siehe self::bereitsGemeldet)
+			if(self::bereitsGemeldet($objTurniere, $mitglied->id))
+			{
+				continue;
+			}
+
 			$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
 			$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
 			if($mitglied->sepaBeitrag)
@@ -347,6 +414,36 @@ class Meldeformular_Mannschaft extends Module
 		}
 
 		return $Turniere;
+	}
+
+	/**
+	 * Prüft, ob ein Mannschaftsführer für ein Turnier bereits gemeldet hat.
+	 *
+	 * Eine Mannschaftsmeldung legt keinen Datensatz in den Anmeldungen an — sie
+	 * hinterlässt als einzige Spur eine Nenngeld-Sollbuchung auf dem Konto des
+	 * Mannschaftsführers. Genau danach wird hier gesucht.
+	 *
+	 * Wie oft gemeldet werden darf, steht wie bei den Einzelturnieren am Turnier
+	 * im Feld maxMeldungen; 0 bedeutet unbegrenzt.
+	 *
+	 * @param object     $objTurnier Turnierdatensatz mit den Feldern id und maxMeldungen
+	 * @param int|string $spieler    ID des Mannschaftsführers aus tl_fernschach_spieler
+	 *
+	 * @return bool True, wenn die zulässige Zahl an Meldungen erreicht ist
+	 */
+	protected static function bereitsGemeldet($objTurnier, $spieler)
+	{
+		$intMax = (int) ($objTurnier->maxMeldungen ?? 0);
+
+		if($intMax < 1 || !$spieler)
+		{
+			return false;
+		}
+
+		$objBuchungen = Database::getInstance()->prepare("SELECT COUNT(*) AS anzahl FROM tl_fernschach_spieler_konto_nenngeld WHERE pid = ? AND turnier = ? AND typ = ? AND kategorie = ?")
+		                                        ->execute($spieler, $objTurnier->id, 's', 's');
+
+		return (int) $objBuchungen->anzahl >= $intMax;
 	}
 
 }

@@ -16,6 +16,7 @@ namespace Schachbulle\ContaoFernschachBundle\Modules;
 use Contao\BackendTemplate;
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\Email;
 use Contao\FrontendUser;
@@ -107,6 +108,13 @@ class Meldeformular_Spieler extends Module
 		{
 			return '<p class="error">Ihrem Benutzerkonto ist kein BdF-Mitglied zugeordnet. Bitte wenden Sie sich an die Geschäftsstelle.</p>';
 		}
+
+		// Rückkehr von der Umleitung nach dem Absenden: Bestätigung statt Formular
+		if(Input::get('send'))
+		{
+			return self::Bestaetigung($mitglied);
+		}
+
 		$salden_haupt = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, '');
 		$salden_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'beitrag');
 		$salden_nenngeld = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'nenngeld');
@@ -272,31 +280,128 @@ class Meldeformular_Spieler extends Module
 			$form->addField(array('typ' => 'fieldset', 'label' => ''));
 			$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
 		}
+		$fehler = '';
+
 		// validate() prüft auch, ob das Formular gesendet wurde
 		if($form->validate())
 		{
 			// Alle gesendeten und analysierten Daten holen (funktioniert nur mit POST)
 			$arrData = $form->fetchAll();
-			self::saveMeldung($arrData); // Daten sichern
-			// Seite neu laden
-			Controller::addToUrl('send=1'); // Hat keine Auswirkung, verhindert aber das das Formular ausgefüllt ist
-			Controller::reload();
+
+			if(self::saveMeldung($arrData))
+			{
+				// Nach dem Speichern umleiten statt neu laden. Erst dadurch
+				// entsteht ein GET-Aufruf, bei dem der Browser nicht mehr nach
+				// dem erneuten Absenden der Formulardaten fragt — genau daraus
+				// sind bisher Doppelmeldungen entstanden.
+				Controller::redirect(Controller::addToUrl('send=1'));
+			}
+
+			$fehler = '<p class="error">'.($this->fernschachverwaltung_bewerbung
+				? 'Ihre Bewerbung konnte nicht gespeichert werden. Möglicherweise haben Sie sich für dieses Turnier bereits beworben.'
+				: 'Ihre Anmeldung konnte nicht gespeichert werden. Möglicherweise sind Sie für dieses Turnier bereits gemeldet.').'</p>';
 		}
 
 		// Formular als String zurückgeben
-		return $form->generate();
+		return $fehler.$form->generate();
 
 	}
 
+	/**
+	 * Baut die Bestätigungsseite nach einer erfolgreichen Meldung.
+	 *
+	 * Bis Version 2.0.0 wurde nach dem Absenden nur die Seite neu geladen; der
+	 * Absender sah wieder das leere Formular und hatte keinen Anhaltspunkt, ob
+	 * seine Meldung angekommen war. Das war der Hauptgrund für die vielen
+	 * Mehrfachbewerbungen.
+	 *
+	 * @param object $mitglied Spielerdatensatz des angemeldeten Mitglieds
+	 *
+	 * @return string Der Bestätigungstext samt der zuletzt gespeicherten
+	 *                Meldungen des Spielers
+	 */
+	protected function Bestaetigung($mitglied)
+	{
+		$begriff = $this->fernschachverwaltung_bewerbung ? 'Bewerbung' : 'Anmeldung';
+
+		$ausgabe = '<div class="fernschach-bestaetigung">';
+		$ausgabe .= '<p class="confirmation"><b>Ihre '.$begriff.' ist eingegangen.</b></p>';
+		$ausgabe .= '<p>Sie erhalten zusätzlich eine Bestätigung per E-Mail an <b>'.$mitglied->email1.'</b>. ';
+		$ausgabe .= 'Bitte sehen Sie auch im Spam-Ordner nach. Eine erneute '.$begriff.' für dasselbe Turnier ist nicht nötig.</p>';
+
+		// Die zuletzt gespeicherten Meldungen als Beleg mit ausgeben
+		$meldungen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAnmeldungenBewerbungen($mitglied->id);
+
+		if($meldungen)
+		{
+			$ausgabe .= '<h4>Ihre letzten Meldungen</h4><ul>';
+			$nummer = 0;
+
+			foreach($meldungen as $item)
+			{
+				$ausgabe .= '<li>'.date('d.m.Y H:i', $item['datum']).' — '.$item['typ'].': '.$item['turnier'].'</li>';
+
+				if(++$nummer == 5)
+				{
+					break;
+				}
+			}
+
+			$ausgabe .= '</ul>';
+		}
+
+		$ausgabe .= '</div>';
+
+		return $ausgabe;
+	}
+
+	/**
+	 * Speichert eine Anmeldung oder Bewerbung und verschickt die E-Mails.
+	 *
+	 * Die Turnierauswahl im Formular enthält bereits nur zulässige Turniere.
+	 * Hier wird trotzdem noch einmal geprüft: Ein zweiter Browsertab, der
+	 * Zurück-Knopf oder ein doppelter Klick auf „Absenden" schicken sonst
+	 * dieselbe Meldung ein zweites Mal ab.
+	 *
+	 * @param array $data Die abgeschickten Formularwerte, mindestens mit den
+	 *                    Schlüsseln 'turnier', 'qualifikation' und 'bemerkungen'
+	 *
+	 * @return bool True, wenn die Meldung gespeichert wurde. False, wenn kein
+	 *              Turnier gewählt wurde, es das Turnier nicht (mehr) gibt oder
+	 *              der Spieler die zulässige Zahl an Meldungen bereits erreicht
+	 *              hat — in dem Fall wird nichts gespeichert und nichts
+	 *              verschickt
+	 */
 	protected function saveMeldung($data)
 	{
-		//print_r($data);
-		// Datenbank aktualisieren
-
 		$zeit = time();
 
 		// Mitgliedsdaten laden
 		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
+
+		if(!$mitglied || !$mitglied->numRows || empty($data['turnier']))
+		{
+			return false;
+		}
+
+		// Turnier laden und die Zahl der erlaubten Meldungen prüfen
+		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
+
+		if(!$objTurnier || !$objTurnier->numRows)
+		{
+			return false;
+		}
+
+		if(!\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurnier, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung))
+		{
+			Scope::log(
+				'[Fernschach-Verwaltung] Mehrfachmeldung abgewiesen: Spieler '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
+				__METHOD__,
+				ContaoContext::GENERAL
+			);
+
+			return false;
+		}
 
 		// Turnier prüfen
 		if($data['turnier'])
@@ -320,9 +425,6 @@ class Meldeformular_Spieler extends Module
 				                                     ->set($set)
 				                                     ->execute();
 				$meldungId = $objInsert->insertId;
-
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
-
 			}
 			else
 			{
@@ -350,9 +452,6 @@ class Meldeformular_Spieler extends Module
 				                                     ->set($set)
 				                                     ->execute();
 				$meldungId = $objInsert->insertId;
-
-				// Turnier laden
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 				// Nenngeldbuchung Soll erzeugen
 				$set = array
@@ -482,6 +581,8 @@ class Meldeformular_Spieler extends Module
 			$objEmail->html = $text;
 			$objEmail->sendTo(array($mitglied->vorname.' '.$mitglied->nachname.' <'.$mitglied->email1.'>'));
 		}
+
+		return true;
 	}
 
 	/**
@@ -597,6 +698,19 @@ class Meldeformular_Spieler extends Module
 					}
 				}
 				
+				// ==================================================
+				// Bereits vorhandene Meldungen prüfen
+				// ==================================================
+				// Am Turnier steht, wie oft sich derselbe Spieler melden darf
+				// (0 = unbegrenzt). Ist die Zahl erreicht, taucht das Turnier
+				// gar nicht erst in der Auswahl auf — das ist der wirksamste
+				// Schutz gegen die Mehrfachbewerbungen, die entstehen, wenn
+				// jemand das Formular zweimal abschickt.
+				if(!\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurniere, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung))
+				{
+					$turnieranmeldung = false;
+				}
+
 				// Anmeldung in Select-Box eintragen, wenn erlaubt
 				if($turnieranmeldung && $Gruppenname)
 				{

@@ -128,8 +128,14 @@ Zusätzliche Schaltflächen in der Kopfzeile:
 
 Turnierkategorien und Turniere in einer Baumstruktur. Je Turnier: Kennziffer,
 Klassenzuordnung, Melde- und Startdatum, Nenngeld, Teilnehmerhöchstzahl,
-Beschränkungen nach Geschlecht und Alter, Turnierleitung sowie die Schalter für
-Online-Anmeldung und Bewerbung.
+Meldungen je Spieler, Beschränkungen nach Geschlecht und Alter, Turnierleitung
+sowie die Schalter für Online-Anmeldung und Bewerbung.
+
+Der Baum ist bewusst flach: Unter einer **Kategorie** stehen weitere Kategorien
+und Turniere, unter einem **Turnier** nur noch **Turniergruppen**, unter einer
+Gruppe nichts mehr. Die Auswahlliste bietet nur die an der jeweiligen Stelle
+erlaubten Arten an; wird ein Datensatz durch Kopieren oder Verschieben an eine
+unzulässige Stelle gebracht, weist das Speichern die Art zurück.
 
 Untertabellen: **Meldungen**, **Bewerbungen** und die **Teilnehmerliste**.
 
@@ -187,7 +193,24 @@ Teilnehmerhöchstzahl) zum Spieler passen. Ohne SEPA-Mandat entscheidet der
 Kontostand darüber, ob eine Anmeldung möglich ist.
 
 Nach dem Absenden entstehen die Meldung, die Nenngeld-Sollbuchung und je eine
-E-Mail an die Turnierleitung und an den Spieler.
+E-Mail an die Turnierleitung und an den Spieler. Anschließend erscheint eine
+**Bestätigungsseite** mit den letzten Meldungen des Spielers; ein erneutes
+Absenden durch Aktualisieren der Seite ist damit ausgeschlossen.
+
+### Mehrfachmeldungen
+
+Am Turnier steht im Feld **Meldungen je Spieler**, wie oft sich derselbe Spieler
+für dieses Turnier melden darf. Die Voreinstellung ist **1**, der Wert 0 hebt die
+Begrenzung auf. Anmeldungen und Bewerbungen werden getrennt gezählt.
+
+Ist die Zahl erreicht, taucht das Turnier im Meldeformular gar nicht mehr auf.
+Zusätzlich prüft das Speichern noch einmal — sonst ließe sich die Sperre über den
+Zurück-Knopf oder einen zweiten Browsertab umgehen. Eine abgewiesene Meldung wird
+im Systemprotokoll vermerkt.
+
+Für Mannschaftsmeldungen gilt dasselbe Feld. Weil eine Mannschaftsmeldung keinen
+Datensatz in den Anmeldungen anlegt, wird dort die Nenngeld-Sollbuchung des
+Mannschaftsführers als Nachweis herangezogen.
 
 ### Kontoauszug BdF-Mitglied
 
@@ -268,6 +291,11 @@ landen.
 
 Excel-Datei der in der Liste gefilterten Spieler. Auf Wunsch enthält sie einen
 aus Geburtsdatum und Mitgliedsnummer gebildeten Kenncode zu einem Stichtag.
+
+Die letzte Spalte **Interner Bereich** zeigt, ob dem Spieler ein
+Frontend-Mitgliedskonto zugeordnet ist: *Ja*, *Ja (gesperrt)* bei einem
+deaktivierten Konto oder *Nein*. Ohne Konto kann sich der Spieler nicht anmelden
+und weder Turniermeldungen abgeben noch seinen Kontoauszug einsehen.
 
 ### ICCF-Wertungsliste importieren
 

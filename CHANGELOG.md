@@ -1,5 +1,21 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.1.0 (2026-08-09)
+
+**Achtung beim Update:** Das neue Turnierfeld „Meldungen je Spieler" wird bei allen vorhandenen Turnieren auf **1** gesetzt. Ab sofort kann sich also jeder Spieler nur noch einmal je Turnier melden. Wo das nicht gewünscht ist, muss der Wert im Turnier auf 0 (unbegrenzt) oder auf die gewünschte Zahl gesetzt werden.
+
+* Add: tl_fernschach_turniere.maxMeldungen -> Feld "Meldungen je Spieler" begrenzt, wie oft sich derselbe Spieler für ein Turnier anmelden bzw. bewerben darf (Voreinstellung 1, 0 = unbegrenzt). Anmeldungen und Bewerbungen werden getrennt gezählt
+* Add: Meldeformular Spieler-Turnieranmeldung -> Turniere, für die der Spieler die zulässige Zahl an Meldungen erreicht hat, werden nicht mehr angeboten
+* Add: Meldeformular Spieler-Turnieranmeldung -> Bestätigungsseite nach dem Absenden mit den letzten Meldungen des Spielers. Bisher wurde nur die Seite neu geladen und der Absender sah wieder das leere Formular — laut Leistungsreferat die eigentliche Ursache der Mehrfachbewerbungen (Rekord: neun Bewerbungen desselben Mitglieds für ein Turnier)
+* Add: Meldeformular Mannschaftsanmeldung -> ebenfalls Bestätigungsseite und Begrenzung; als Nachweis dient dort die Nenngeld-Sollbuchung des Mannschaftsführers, weil eine Mannschaftsmeldung keinen Datensatz in den Anmeldungen anlegt
+* Add: Excel-Export der Spieler -> neue Spalte BA "Interner Bereich" (Ja / Ja (gesperrt) / Nein) zeigt, ob dem Spieler ein Frontend-Mitgliedskonto zugeordnet ist
+* Add: Classes\Helper::zaehleMeldungen(), meldungErlaubt() und getInternerBereich()
+* Fix: Backend-Modul Turniere -> die Turnierart "tournament" wurde nach dem Öffnen eines Datensatzes unterhalb eines Turniers als unbekannt angezeigt. Ursache: die Auswahlliste hat die nicht erlaubten Arten mit unset() aus $GLOBALS['TL_LANG'] entfernt, womit sie für den Rest der Anfrage fehlten. Es wird jetzt auf einer Kopie gearbeitet
+* Fix: Backend-Modul Turniere -> unter einem Turnier ließ sich ein weiteres Turnier anlegen, sobald der Elterndatensatz nicht ermittelt werden konnte. Die Ermittlung läuft jetzt über die Datenbank statt über das in Contao 5 verfallene activeRecord, und ein save_callback weist unzulässige Kombinationen ab. Bereits vorhandene Datensätze mit unzulässiger Art bleiben bearbeitbar und erzeugen nur einen Hinweis
+* Change: Nach dem Absenden der Meldeformulare wird umgeleitet statt neu geladen. Erst dadurch fragt der Browser beim Aktualisieren nicht mehr nach dem erneuten Absenden der Formulardaten
+* Change: Meldeformular Spieler-Turnieranmeldung -> das Turnier wird beim Speichern nur noch einmal geladen statt dreimal
+* Add: Unit-Tests für die Begrenzung der Meldungen
+
 ## Version 2.0.0 (2026-08-02)
 
 Portierung auf Contao 4.13 **und** Contao 5 sowie auf PHP 8. An der Datenbank ändert sich nichts.
