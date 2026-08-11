@@ -40,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 	(
 		'label'                       => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['mainTitle'],
 		'dataContainer'               => DC_Table::class,
-		'ctable'                      => array('tl_fernschach_turniere_meldungen', 'tl_fernschach_turniere_spieler', 'tl_fernschach_turniere_bewerbungen'),
+		'ctable'                      => array('tl_fernschach_turniere_meldungen', 'tl_fernschach_turniere_spieler', 'tl_fernschach_turniere_bewerbungen', 'tl_fernschach_turniere_mannschaften'),
 		'enableVersioning'            => true,
 		'onload_callback'             => array
 		(
@@ -128,6 +128,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 				'href'                => 'table=tl_fernschach_turniere_meldungen',
 				'icon'                => 'bundles/contaofernschach/images/turnier_meldungen.png',
 				'button_callback'     => array('tl_fernschach_turniere', 'meldungenIcon')
+			),
+			'editMannschaften' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editMannschaften'],
+				'href'                => 'table=tl_fernschach_turniere_mannschaften',
+				'icon'                => 'bundles/contaofernschach/images/turnier_gruppe.png',
+				'button_callback'     => array('tl_fernschach_turniere', 'mannschaftenIcon')
 			),
 			'editTeilnehmer' => array
 			(
@@ -1411,6 +1418,35 @@ class tl_fernschach_turniere extends Backend
 			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> '; 
 		}
 
+	}
+
+	/**
+	 * Gibt die Schaltfläche für die gemeldeten Mannschaften zurück.
+	 *
+	 * Angeboten wird sie nur bei Turnieren vom Typ „Mannschaftsturnier" — bei
+	 * Kategorien, Gruppen und Einzelturnieren gibt es keine Mannschaften, dort
+	 * erscheint das Symbol abgeblendet.
+	 *
+	 * @param array  $row        Der Turnierdatensatz
+	 * @param string $href       Das Ziel aus der DCA-Definition
+	 * @param string $label      Beschriftung der Schaltfläche
+	 * @param string $title      Titel für das title-Attribut
+	 * @param string $icon       Pfad des Symbols
+	 * @param string $attributes Zusätzliche Attribute aus der DCA-Definition
+	 *
+	 * @return string Der fertige Verweis, oder ein abgeblendetes Symbol ohne Ziel
+	 */
+	public function mannschaftenIcon($row, $href, $label, $title, $icon, $attributes)
+	{
+		if ($row['type'] != 'tournament' || $row['typ'] != 'm')
+		{
+			$icon = 'bundles/contaofernschach/images/turnier_gruppe_inaktiv.png';
+			$title = 'Mannschaften gibt es nur bei Mannschaftsturnieren';
+
+			return '<span>'.Image::getHtml($icon, $label).'</span> ';
+		}
+
+		return '<a href="'.$this->addToUrl($href).'&id='.$row['id'].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**

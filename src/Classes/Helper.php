@@ -412,6 +412,34 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Prüft, ob der Beitrag eines Spielers einer Meldung nicht entgegensteht.
+	 *
+	 * Gemeldet werden darf, wer eine SEPA-Vereinbarung für den Beitrag erteilt
+	 * hat — dann wird eingezogen — oder wessen Beitragskonto nicht im Minus
+	 * steht. Anders als beim Nenngeld geht es hier nicht um die Höhe einer
+	 * einzelnen Forderung, sondern nur darum, dass keine Beitragsschuld offen
+	 * ist.
+	 *
+	 * @param object $playerRecord Spielerdatensatz mit den Feldern id und sepaBeitrag
+	 *
+	 * @return bool True, wenn der Beitrag einer Meldung nicht im Wege steht
+	 */
+	public static function beitragGedeckt($playerRecord)
+	{
+		if (!$playerRecord || !$playerRecord->id)
+		{
+			return false;
+		}
+
+		if ($playerRecord->sepaBeitrag)
+		{
+			return true;
+		}
+
+		return (float) self::getBeitragssaldo($playerRecord->id) >= 0;
+	}
+
+	/**
 	 * Prüft, ob ein Spieler das Nenngeld eines Turniers aufbringen kann.
 	 *
 	 * Zulässig ist die Meldung entweder mit einer SEPA-Vereinbarung für das

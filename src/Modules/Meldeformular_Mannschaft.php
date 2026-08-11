@@ -116,6 +116,15 @@ class Meldeformular_Mannschaft extends Module
 
 		$this->Template->mitglied = $mitglied;
 
+		// Ohne geregelten Beitrag geht gar nichts — weder für den
+		// Mannschaftsleiter noch für die Spieler, die er aufstellen will.
+		if (!Helper::beitragGedeckt($mitglied))
+		{
+			$this->Template->fehlertext = 'Eine Mannschaftsmeldung ist zurzeit nicht möglich: Ihr Beitragskonto weist '.self::formatBetrag(Helper::getBeitragssaldo($mitglied->id)).' aus und es liegt keine SEPA-Vereinbarung für den Beitrag vor. Bitte gleichen Sie Ihr Beitragskonto aus oder erteilen Sie der Geschäftsstelle eine SEPA-Vereinbarung.';
+
+			return;
+		}
+
 		// Das Nenngeld der Mannschaftsmeldung geht zulasten des Mannschafts-
 		// leiters. Ohne SEPA-Vereinbarung muss sein Nenngeldkonto es decken.
 		$nenngeldsaldo = Helper::getNenngeldsaldo($mitglied->id);
@@ -306,6 +315,15 @@ class Meldeformular_Mannschaft extends Module
 				continue;
 			}
 
+			// Auch für die aufgestellten Spieler gilt: entweder SEPA-Vereinbarung
+			// für den Beitrag oder ein Beitragskonto, das nicht im Minus steht.
+			if (!Helper::beitragGedeckt($objSpieler))
+			{
+				$fehler['spieler_'.$brett] = 'Dieser Spieler kann nicht gemeldet werden, weil sein Beitragskonto im Minus steht und keine SEPA-Vereinbarung für den Beitrag vorliegt.';
+
+				continue;
+			}
+
 			$vergeben[$id] = $brett;
 		}
 
@@ -315,10 +333,15 @@ class Meldeformular_Mannschaft extends Module
 	/**
 	 * Speichert die Meldung und verschickt die beiden E-Mails.
 	 *
-	 * Gespeichert wird ausschließlich die Nenngeld-Sollbuchung auf dem Konto des
-	 * Mannschaftsführers; die Aufstellung selbst geht per E-Mail an ihn und an
-	 * den Turnierdirektor. Zusätzlich landet eine Zusammenfassung in der Sitzung,
-	 * damit die Bestätigungsseite sie anzeigen kann.
+	 * Gespeichert werden die Mannschaft in tl_fernschach_turniere_mannschaften,
+	 * ihre Aufstellung in tl_fernschach_turniere_mannschaften_spieler, die
+	 * Nenngeld-Sollbuchung des Mannschaftsleiters und je Spieler ein Nenngeldsatz
+	 * über 0 €. Zusätzlich landet eine Zusammenfassung in der Sitzung, damit die
+	 * Bestätigungsseite sie anzeigen kann, und beide E-Mails gehen heraus.
+	 *
+	 * Bis Version 2.5.0 blieb von einer Mannschaftsmeldung nur die Sollbuchung
+	 * übrig; die Aufstellung stand ausschließlich in der E-Mail an den
+	 * Turnierdirektor und war im Backend nirgends zu sehen.
 	 *
 	 * @param array  $werte    Die geprüften Formularwerte
 	 * @param array  $turnier  Der gewählte Turniereintrag aus getTournaments()
@@ -355,7 +378,32 @@ class Meldeformular_Mannschaft extends Module
 			ContaoContext::GENERAL
 		);
 
-		// Namen der gemeldeten Spieler nachschlagen
+		$zeit = time();
+		$objDb = Database::getInstance();
+
+		// Die Mannschaft selbst
+		$objDb->prepare('INSERT INTO tl_fernschach_turniere_mannschaften %s')
+		      ->set(array
+		      (
+		      	'pid'             => $werte['turnier'],
+		      	'tstamp'          => $zeit,
+		      	'vereinsname'     => $werte['vereinsname'],
+		      	'vereinsnameAlt'  => $werte['vereinsname_alt'],
+		      	'mannschaftsname' => $werte['mannschaftsname'],
+		      	'spielerId'       => $mitglied->id,
+		      	'memberId'        => $mitglied->memberId,
+		      	'email'           => $mitglied->email1,
+		      	'meldungDatum'    => $zeit,
+		      	'nenngeld'        => $objTurnier->nenngeld,
+		      	'bemerkungen'     => $werte['bemerkungen'],
+		      	'published'       => '1',
+		      ))
+		      ->execute();
+
+		$intMannschaft = (int) $objDb->prepare('SELECT LAST_INSERT_ID() AS id')->execute()->id;
+
+		// Die Aufstellung, ein Datensatz je Brett, und je Spieler ein
+		// Nenngeldsatz über 0 €
 		$aufstellung = array();
 
 		foreach ($werte['spieler'] as $brett => $id)
@@ -365,28 +413,65 @@ class Meldeformular_Mannschaft extends Module
 			$aufstellung[$brett] = $objSpieler->nachname.', '.$objSpieler->vorname
 				.' (BdF-Nr. '.$objSpieler->memberId
 				.($objSpieler->memberInternationalId ? ' / ICCF-ID '.$objSpieler->memberInternationalId : '').')';
+
+			$objDb->prepare('INSERT INTO tl_fernschach_turniere_mannschaften_spieler %s')
+			      ->set(array
+			      (
+			      	'pid'                   => $intMannschaft,
+			      	'tstamp'                => $zeit,
+			      	'brett'                 => $brett,
+			      	'spielerId'             => $objSpieler->id,
+			      	'vorname'               => $objSpieler->vorname,
+			      	'nachname'              => $objSpieler->nachname,
+			      	'memberId'              => $objSpieler->memberId,
+			      	'memberInternationalId' => $objSpieler->memberInternationalId,
+			      ))
+			      ->execute();
+
+			$intBrett = (int) $objDb->prepare('SELECT LAST_INSERT_ID() AS id')->execute()->id;
+
+			// Der Satz über 0 € belastet nichts; er hält fest, dass dieser
+			// Spieler zu diesem Turnier gemeldet ist, ohne dass ihm das Nenngeld
+			// der Mannschaft angelastet würde — das trägt der Mannschaftsleiter.
+			$objDb->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
+			      ->set(array
+			      (
+			      	'pid'                 => $objSpieler->id,
+			      	'tstamp'              => $zeit,
+			      	'betrag'              => 0,
+			      	'typ'                 => 's',
+			      	'datum'               => $zeit,
+			      	'kategorie'           => 's',
+			      	'art'                 => 'n',
+			      	'verwendungszweck'    => 'Nenngeld-Forderung '.$objTurnier->title.' (Mannschaft '.$werte['mannschaftsname'].', Brett '.$brett.')',
+			      	'turnier'             => $werte['turnier'],
+			      	'comment'             => 'Datensatz erzeugt durch Mannschaftsmeldung am '.date('d.m.Y H:i', $zeit),
+			      	'mannschaftId'        => $intMannschaft,
+			      	'mannschaftSpielerId' => $intBrett,
+			      	'published'           => '1',
+			      ))
+			      ->execute();
 		}
 
-		// Nenngeldbuchung Soll erzeugen
-		$zeit = time();
-
-		Database::getInstance()->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
-		                       ->set(array
-		                       (
-		                       	'pid'              => $mitglied->id,
-		                       	'tstamp'           => $zeit,
-		                       	'betrag'           => $objTurnier->nenngeld,
-		                       	'typ'              => 's',
-		                       	'datum'            => $zeit,
-		                       	'kategorie'        => 's',
-		                       	'art'              => 'n',
-		                       	'verwendungszweck' => 'Nenngeld-Forderung '.$objTurnier->title,
-		                       	'turnier'          => $werte['turnier'],
-		                       	'comment'          => 'Datensatz erzeugt durch Mannschaftsmeldung am '.date('d.m.Y H:i', $zeit),
-		                       	'meldungId'        => 0,
-		                       	'published'        => '1',
-		                       ))
-		                       ->execute();
+		// Nenngeldbuchung Soll des Mannschaftsleiters
+		$objDb->prepare('INSERT INTO tl_fernschach_spieler_konto_nenngeld %s')
+		      ->set(array
+		      (
+		      	'pid'              => $mitglied->id,
+		      	'tstamp'           => $zeit,
+		      	'betrag'           => $objTurnier->nenngeld,
+		      	'typ'              => 's',
+		      	'datum'            => $zeit,
+		      	'kategorie'        => 's',
+		      	'art'              => 'n',
+		      	'verwendungszweck' => 'Nenngeld-Forderung '.$objTurnier->title.' (Mannschaft '.$werte['mannschaftsname'].')',
+		      	'turnier'          => $werte['turnier'],
+		      	'comment'          => 'Datensatz erzeugt durch Mannschaftsmeldung am '.date('d.m.Y H:i', $zeit),
+		      	'meldungId'        => 0,
+		      	'mannschaftId'     => $intMannschaft,
+		      	'published'        => '1',
+		      ))
+		      ->execute();
 
 		// Zusammenfassung für die Bestätigungsseite und die E-Mails
 		$zusammenfassung = array

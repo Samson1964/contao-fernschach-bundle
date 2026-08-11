@@ -41,6 +41,8 @@ $GLOBALS['TL_LANG'][$strTable]['comment'] = array('Kommentar', 'Interner Komment
 
 $GLOBALS['TL_LANG'][$strTable]['connection_legend'] = 'Verknüpfungen';
 $GLOBALS['TL_LANG'][$strTable]['meldungId'] = array('Buchung &harr; ID Meldung', 'Wenn Sie diesen Wert ändern, geht die Verbindung zur ID der zur Buchung gehörenden Meldung verloren. Der Wert 0 hebt die Verbindung auf, jeder andere Wert verbindet die Buchung mit einem anderen, möglicherweise nichtexistenten Meldungs-Datensatz!');
+$GLOBALS['TL_LANG'][$strTable]['mannschaftId'] = array('Buchung &harr; ID Mannschaft', 'Verbindung zur gemeldeten Mannschaft. Wird die Mannschaft gelöscht, verschwindet auch diese Buchung. Der Wert 0 hebt die Verbindung auf.');
+$GLOBALS['TL_LANG'][$strTable]['mannschaftSpielerId'] = array('Buchung &harr; ID Brett', 'Verbindung zum Brett der Aufstellung, für das dieser 0-€-Satz angelegt wurde. Der Wert 0 hebt die Verbindung auf.');
 
 $GLOBALS['TL_LANG'][$strTable]['publish_legend'] = 'Aktivieren';
 $GLOBALS['TL_LANG'][$strTable]['published'] = array('Aktiv', 'Aktivieren oder deaktivieren Sie hier die Buchung');

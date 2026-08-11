@@ -256,6 +256,12 @@ bereits gemachten Eingaben bleiben erhalten.
 Mannschaften melden, wie er möchte. Ein Turnier verschwindet nach einer Meldung
 also nicht aus der Auswahl; das Feld *Meldungen je Spieler* wirkt hier nicht.
 
+**Beitrag.** Melden darf nur, wer den Beitrag geregelt hat: SEPA-Vereinbarung für
+den Beitrag oder ein Beitragskonto, das nicht im Minus steht. Das gilt für den
+Mannschaftsleiter — sonst ist das Formular gesperrt — **und für jeden
+aufgestellten Spieler**; ein Brett mit einem Spieler im Minus wird abgewiesen und
+die Meldung nicht gespeichert.
+
 **Nenngeld.** Das Nenngeld der Mannschaft geht zulasten des Mannschaftsleiters.
 Angeboten wird ein Turnier deshalb nur, wenn er es aufbringen kann — entweder mit
 einer **SEPA-Vereinbarung für das Nenngeld** (dann wird abgebucht, der Kontostand
@@ -267,6 +273,14 @@ Fehlt beides, nennt das Formular die betroffenen Turniere mit ihrem Nenngeld und
 den aktuellen Kontostand, statt einfach nichts anzubieten. Unmittelbar vor der
 Buchung wird noch einmal geprüft — zwischen Aufbau und Absenden des Formulars
 kann sich der Kontostand geändert haben.
+
+**Was gespeichert wird.** Die Mannschaft landet in
+`tl_fernschach_turniere_mannschaften`, ihre Aufstellung Brett für Brett in
+`tl_fernschach_turniere_mannschaften_spieler`. Der Mannschaftsleiter bekommt die
+Nenngeld-Sollbuchung, jeder aufgestellte Spieler einen Nenngeld-Datensatz über
+**0 €** — der belastet nichts und hält nur fest, dass er zu diesem Turnier
+gemeldet ist. Im Backend führt die Schaltfläche **Mannschaften bearbeiten** am
+Turnier dorthin.
 
 **Bestätigung.** Nach dem Speichern leitet das Modul auf sich selbst um (`send=1`)
 und zeigt eine Bestätigungsseite, auf der Turnier, Nenngeld, Verein, Mannschaft,
@@ -463,6 +477,8 @@ Alle weiteren bekannten Felder — `geburtstag`, `staat`, `bdf_mitglied`,
 | `tl_fernschach_turniere_meldungen` | Anmeldungen |
 | `tl_fernschach_turniere_bewerbungen` | Bewerbungen |
 | `tl_fernschach_turniere_spieler` | Teilnehmerzuordnung |
+| `tl_fernschach_turniere_mannschaften` | Gemeldete Mannschaften |
+| `tl_fernschach_turniere_mannschaften_spieler` | Aufstellung je Mannschaft, ein Satz pro Brett |
 | `tl_fernschach_konten` | Kontenrahmen (Entwicklungsversion) |
 | `tl_fernschach_konten_buchungen` | Buchungen des Kontenrahmens |
 | `tl_fernschach_mitgliederstatistik` | Altersstrukturen |

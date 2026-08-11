@@ -149,7 +149,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{buchung_legend},betrag,typ,datum,sortierung,kategorie,art,verwendungszweck;{extras_legend},markierung,saldoReset;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{connection_legend},meldungId;{publish_legend},published'
+		'default'                     => '{buchung_legend},betrag,typ,datum,sortierung,kategorie,art,verwendungszweck;{extras_legend},markierung,saldoReset;{turnier_legend:hide},turnier;{comment_legend:hide},comment;{connection_legend},meldungId,mannschaftId,mannschaftSpielerId;{publish_legend},published'
 	),
 
 	// Fields
@@ -343,6 +343,25 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler_konto_nenngeld'] = array
 		'meldungId' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['meldungId'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+		),
+		// Verknüpfung mit einer Mannschaftsmeldung. Die Sollbuchung des
+		// Mannschaftsleiters trägt nur mannschaftId, der 0-€-Satz eines
+		// aufgestellten Spielers zusätzlich mannschaftSpielerId.
+		'mannschaftId' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['mannschaftId'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+		),
+		'mannschaftSpielerId' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_fernschach_spieler_konto_nenngeld']['mannschaftSpielerId'],
 			'exclude'                 => true,
 			'inputType'               => 'text',
 			'eval'                    => array('rgxp'=>'digit', 'tl_class'=>'w50'),

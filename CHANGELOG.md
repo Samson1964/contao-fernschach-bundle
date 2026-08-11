@@ -1,5 +1,21 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.6.0 (2026-08-11)
+
+Von einer Mannschaftsmeldung blieb bisher nur die Nenngeld-Sollbuchung des Mannschaftsleiters übrig. Die Aufstellung stand ausschließlich in der E-Mail an den Turnierdirektor und war im Backend nirgends zu sehen.
+
+**Achtung beim Update:** Es entstehen zwei neue Tabellen und zwei neue Spalten. Bitte im Contao Manager bzw. über `contao:migrate` die Datenbank aktualisieren.
+
+* Add: Neue Tabelle `tl_fernschach_turniere_mannschaften` als Untertabelle der Turniere — Verein, alter Vereinsname, Mannschaftsbezeichnung, Mannschaftsleiter mit Mitgliedsnummer und E-Mail, Meldedatum, Nenngeld, Bemerkungen
+* Add: Neue Tabelle `tl_fernschach_turniere_mannschaften_spieler` für die Aufstellung, ein Datensatz je Brett. Eine eigene Tabelle, weil die Zahl der Bretter je Turnier verschieden ist. Name und Nummern werden mitgeschrieben, damit die Aufstellung lesbar bleibt, wenn der Spielerdatensatz sich später ändert
+* Add: Für jeden aufgestellten Spieler entsteht ein Nenngeld-Datensatz über **0 €**. Er belastet nichts und hält fest, dass der Spieler zu diesem Turnier gemeldet ist
+* Add: Zwei Verknüpfungsspalten in `tl_fernschach_spieler_konto_nenngeld` — `mannschaftId` und `mannschaftSpielerId`
+* Add: Schaltfläche **Mannschaften bearbeiten** am Turnier. Sie erscheint nur bei Turnieren vom Typ *Mannschaftsturnier*, sonst abgeblendet
+* Add: Beim Löschen einer Mannschaft verschwinden Aufstellung und alle verknüpften Nenngeldsätze; beim Löschen eines einzelnen Bretts nur dessen 0-€-Satz
+* Fix: Die Voraussetzungen aus der Dokumentation wurden beim Mannschaftsformular nie geprüft. Jetzt gilt für den **Mannschaftsleiter**: SEPA-Vereinbarung für den Beitrag oder ein Beitragskonto, das nicht im Minus steht — sonst ist das Formular gesperrt und nennt den Kontostand
+* Fix: Dieselbe Bedingung gilt für **jeden aufgestellten Spieler**. Steht sein Beitragskonto im Minus und liegt keine SEPA-Vereinbarung vor, wird das Brett mit eigener Meldung abgewiesen und nichts gespeichert
+* Add: `Helper::beitragGedeckt()` fasst die Beitragsbedingung zusammen
+
 ## Version 2.5.0 (2026-08-11)
 
 Beim Löschen einer Anmeldung oder Bewerbung soll die Nenngeldforderung mit verschwinden — sonst schuldet ein Spieler Geld für ein Turnier, zu dem er nicht mehr gemeldet ist. Das geschah bisher nur bei Anmeldungen und nur, wenn die Buchung die Nummer der Meldung trug.
