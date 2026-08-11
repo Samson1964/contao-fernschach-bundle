@@ -137,7 +137,14 @@ Gruppe nichts mehr. Die Auswahlliste bietet nur die an der jeweiligen Stelle
 erlaubten Arten an; wird ein Datensatz durch Kopieren oder Verschieben an eine
 unzulässige Stelle gebracht, weist das Speichern die Art zurück.
 
-Untertabellen: **Meldungen**, **Bewerbungen** und die **Teilnehmerliste**.
+Untertabellen: **Meldungen**, **Bewerbungen**, die **Teilnehmerliste** und —
+bei Mannschaftsturnieren — die **Mannschaften** mit ihrer Aufstellung.
+
+Bei einem Mannschaftsturnier ist die Schaltfläche *Anmeldungen bearbeiten*
+abgeblendet: Dort meldet nicht der einzelne Spieler, sondern der
+Mannschaftsleiter eine Mannschaft. Liegt in den Anmeldungen eines
+Mannschaftsturniers noch Altbestand aus der Zeit vor den Mannschaftstabellen,
+bleibt sie anklickbar und nennt im Titel die Zahl der Einträge.
 
 Die Schaltfläche **Turnierstatistik** wertet Turniere, Meldungen und
 Bewerbungen nach Tag, Monat und Jahr sowie nach Turniertyp aus.

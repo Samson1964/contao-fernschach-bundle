@@ -1,5 +1,13 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.7.2 (2026-08-11)
+
+* Change: Bei einem **Mannschaftsturnier** ist die Schaltfläche **Anmeldungen bearbeiten** abgeblendet. Dort meldet nicht der einzelne Spieler, sondern der Mannschaftsleiter eine Mannschaft; das steht seit 2.6.0 unter *Mannschaften bearbeiten*. Der Titel beim Überfahren sagt das
+* Change: Abgeblendet wird nur, solange in den Anmeldungen dieses Turniers wirklich nichts liegt. Aus der Zeit vor den Mannschaftstabellen gibt es Turniere mit Altbestand — dort bleibt die Schaltfläche anklickbar und nennt im Titel die Zahl der Einträge, damit die Daten erreichbar bleiben
+* Fix: Auch die abgeblendete Schaltfläche für Kategorien und Gruppen bekommt ihren Titel zu sehen; der Text stand schon im Code, wurde aber nie ausgegeben
+
+**Nicht geändert:** Die Bewerbungen bleiben, wie sie sind. Bei Mannschaftsturnieren ist die Schaltfläche ohnehin nur bei gesetztem *Bewerbungen erlaubt* aktiv, und das Meldeformular schließt Mannschaftsturniere über `typ != 'm'` aus — es können dort also gar keine entstehen.
+
 ## Version 2.7.1 (2026-08-11)
 
 * Fix: Die mit 2.6.0 eingeführte Schaltfläche **Mannschaften bearbeiten** benutzte dasselbe Springer-Symbol wie **Teilnehmer bearbeiten**. In der Turnierliste standen dadurch zwei gleiche Springer nebeneinander. Die Mannschaften haben jetzt ein eigenes Symbol mit zwei Figuren (`turnier_mannschaften.png` und `turnier_mannschaften_inaktiv.png`)

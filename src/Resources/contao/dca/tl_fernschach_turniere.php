@@ -1410,14 +1410,33 @@ class tl_fernschach_turniere extends Backend
 			// Keine Bearbeitung von Meldungen bei Kategorien und Gruppen
 			$icon = 'bundles/contaofernschach/images/turnier_meldungen_inaktiv.png';
 			$title = 'Keine Meldungen möglich bei diesem Eintrag';
-			return '<span>'.Image::getHtml($icon, $label).'</span> ';
-		}
-		else
-		{
-			// Meldungen können bearbeitet werden
-			return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> '; 
+			return '<span title="'.StringUtil::specialchars($title).'">'.Image::getHtml($icon, $label).'</span> ';
 		}
 
+		// Bei einem Mannschaftsturnier melden nicht einzelne Spieler, sondern der
+		// Mannschaftsleiter meldet eine Mannschaft; das steht in den beiden
+		// Mannschaftstabellen und nicht in den Anmeldungen. Die Schaltfläche wird
+		// deshalb abgeblendet — aber nur, solange dort wirklich nichts liegt.
+		// Aus der Zeit vor den Mannschaftstabellen gibt es Turniere mit
+		// Altbestand, und den darf das Abblenden nicht unerreichbar machen.
+		if($row['typ'] == 'm')
+		{
+			$objMeldungen = Database::getInstance()->prepare('SELECT COUNT(*) AS anzahl FROM tl_fernschach_turniere_meldungen WHERE pid = ?')
+			                                        ->execute($row['id']);
+
+			if(!$objMeldungen->anzahl)
+			{
+				$icon = 'bundles/contaofernschach/images/turnier_meldungen_inaktiv.png';
+				$title = 'Bei einem Mannschaftsturnier stehen die Meldungen unter Mannschaften bearbeiten';
+
+				return '<span title="'.StringUtil::specialchars($title).'">'.Image::getHtml($icon, $label).'</span> ';
+			}
+
+			$title = $objMeldungen->anzahl.' Anmeldung(en) aus der Zeit vor den Mannschaftstabellen bearbeiten';
+		}
+
+		// Meldungen können bearbeitet werden
+		return '<a href="'.$this->addToUrl($href).'&id='.$row["id"].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
 	}
 
 	/**
