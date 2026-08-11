@@ -15,6 +15,7 @@ use Contao\Database;
 use Contao\Email;
 use Contao\Input;
 use Contao\System;
+use Schachbulle\ContaoFernschachBundle\Classes\Nenngeldbuchungen;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
 
 $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
@@ -29,7 +30,8 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'ptable'                      => 'tl_fernschach_turniere',
 		'onload_callback' => array
 		(
-			array('tl_fernschach_turniere_meldungen', 'checkPermission')
+			array('tl_fernschach_turniere_meldungen', 'checkPermission'),
+			array(Nenngeldbuchungen::class, 'hinweisUndAktion')
 		),
 		'onsubmit_callback'           => array
 		(
@@ -39,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_meldungen'] = array
 		'ondelete_callback'           => array
 		(
 			array('tl_fernschach_turniere_meldungen', 'InfoTurnierleiter'),
-			array('tl_fernschach_turniere_meldungen', 'LoescheBuchungen')
+			array(Nenngeldbuchungen::class, 'beimLoeschen')
 		),
 		'sql' => array
 		(
@@ -737,37 +739,6 @@ class tl_fernschach_turniere_meldungen extends Backend
 		}
 
 		return;
-	}
-
-	/**
-	 * ondelete_callback: Wird ausgeführt bevor ein Datensatz aus der Datenbank entfernt wird.
-	 * @param $dc
-	 */
-	public function LoescheBuchungen(DataContainer $dc)
-	{
-		$this->import(BackendUser::class, 'User');
-
-		// Löscht alle Buchungen zu dieser Meldung
-		$result = Database::getInstance()->prepare("DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId = ?")
-		                                  ->execute($dc->activeRecord->id);
-
-		return;
-
-		// Siehe DC_Table.php Funktion delete -> muß noch ausgebaut werden!
-		$set = array
-		(
-			'pid'          => $this->User->id, 
-			'tstamp'       => time(), 
-			'fromTable'    => 'tl_fernschach_spieler_konto_nenngeld', 
-			'query'        => 'DELETE FROM tl_fernschach_spieler_konto_nenngeld WHERE meldungId='.$dc->activeRecord->id, 
-			'affectedRows' => $affected, 
-			'data'         => serialize($data)
-		);
-
-		$undoset = Database::getInstance()->prepare("INSERT INTO tl_undo %s")
-		                                   ->set($set)
-		                                   ->execute();
-
 	}
 
 	/**

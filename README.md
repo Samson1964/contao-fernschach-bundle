@@ -142,6 +142,23 @@ Untertabellen: **Meldungen**, **Bewerbungen** und die **Teilnehmerliste**.
 Die Schaltfläche **Turnierstatistik** wertet Turniere, Meldungen und
 Bewerbungen nach Tag, Monat und Jahr sowie nach Turniertyp aus.
 
+#### Löschen von Meldungen und Bewerbungen
+
+Eine Anmeldung hinterlässt eine Nenngeld-Sollbuchung auf dem Konto des Spielers.
+Wird die Anmeldung gelöscht, verschwindet die Buchung mit — sonst bliebe eine
+Forderung für ein Turnier stehen, zu dem niemand mehr gemeldet ist. Die
+Sicherheitsabfrage vor dem Löschen weist darauf hin; über den Papierkorb lässt
+sich eine Buchung **nicht** zurückholen, sie steht aber mit Betrag und
+Verwendungszweck im Systemprotokoll.
+
+Eindeutig ist die Zuordnung nur, wenn die Buchung in `meldungId` die Nummer der
+Meldung trägt. Buchungen ohne diese Verknüpfung — die der Mannschaftsmeldungen
+und alle älteren Datensätze — werden **nicht** von selbst gelöscht: Meldet ein
+Mannschaftsleiter zwei Mannschaften zum selben Turnier, gehören beide Buchungen
+zu verschiedenen Meldungen. Stattdessen erscheint nach dem Löschen ein Hinweis,
+der die nach Spieler und Turnier passenden Buchungen benennt und sie auf
+Wunsch entfernt.
+
 ### Konten
 
 Freier Kontenrahmen mit Buchungen — als **Entwicklungsversion** gekennzeichnet
@@ -497,7 +514,8 @@ mit einem Fehler abzubrechen.
 
 * [Überblick](docs/README.md)
 * [Turnierarten](docs/TURNIERARTEN.md)
-* [Anmeldungen zu Turnieren](docs/TURNIERANMELDUNGEN.md)
+* [Anmeldungen zu Einzelturnieren](docs/TURNIERANMELDUNGEN_EINZEL.md)
+* [Anmeldungen zu Mannschaftsturnieren](docs/TURNIERANMELDUNGEN_MANNSCHAFT.md)
 * [Meldungen zuweisen](docs/MELDUNGEN_ZUWEISEN.md)
 * [Wartungsarbeiten](docs/WARTUNG.md)
 

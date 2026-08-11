@@ -1,5 +1,16 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.5.0 (2026-08-11)
+
+Beim Löschen einer Anmeldung oder Bewerbung soll die Nenngeldforderung mit verschwinden — sonst schuldet ein Spieler Geld für ein Turnier, zu dem er nicht mehr gemeldet ist. Das geschah bisher nur bei Anmeldungen und nur, wenn die Buchung die Nummer der Meldung trug.
+
+* Add: Neue Klasse `Classes\Nenngeldbuchungen` mit dem Rückruf für beide Tabellen. Buchungen mit passender `meldungId` werden wie bisher mitgelöscht
+* Add: Buchungen **ohne** `meldungId`, die nach Spieler und Turnier passen, werden nicht mehr übersehen. Gelöscht werden sie aber nicht von selbst — es könnte die Buchung einer anderen Meldung sein, seit ein Mannschaftsleiter mehrere Mannschaften zum selben Turnier melden darf. Stattdessen erscheint im Backend ein Hinweis, der jede gefundene Buchung mit Datum, Betrag und Verwendungszweck benennt und sie nach Rückfrage löscht
+* Add: `tl_fernschach_turniere_bewerbungen` bekommt denselben Rückruf. Eine Bewerbung erzeugt zwar keine Buchung, eine von Hand angelegte blieb bisher aber zurück
+* Add: Jede gelöschte Buchung steht mit Betrag und Verwendungszweck im Systemprotokoll. Über den Papierkorb lässt sich eine Buchung nicht zurückholen, das Protokoll ist die einzige Spur
+* Change: Die Sicherheitsabfrage am Löschknopf sagt jetzt bei beiden Tabellen, dass die Nenngeldbuchung mitgelöscht wird und nicht über den Papierkorb zurückzuholen ist
+* Change: Der alte Rückruf `LoescheBuchungen` in tl_fernschach_turniere_meldungen ist entfallen; er enthielt hinter einem `return` einen nie erreichten Block zum Papierkorb
+
 ## Version 2.4.0 (2026-08-10)
 
 **Sicherheitsrelevant für die Kasse:** Das Mannschaftsmeldeformular hat seit 2.2.0 nicht mehr geprüft, ob der Mannschaftsleiter das Nenngeld überhaupt aufbringen kann. Jede Mannschaft ließ sich mit leerem Nenngeldkonto und ohne SEPA-Vereinbarung melden — die Sollbuchung entstand trotzdem. Bis 2.1.1 hatte das Formular an dieser Stelle den *Beitragssaldo* geprüft; beim Neubau des Formulars ist die Prüfung ersatzlos entfallen.

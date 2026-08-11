@@ -32,6 +32,7 @@ $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['new'] = array('Neue B
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['edit'] = array('Bewerbung bearbeiten', 'Bewerbung %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['copy'] = array('Bewerbung kopieren', 'Bewerbung %s kopieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['delete'] = array('Bewerbung löschen', 'Bewerbung %s löschen');
+$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['deleteConfirm'] = 'Eine zugehörende Nenngeldbuchung wird dabei mitgelöscht und kann nicht über den Papierkorb zurückgeholt werden.';
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['toggle'] = array('Bewerbung aktivieren/deaktivieren', 'Bewerbung %s aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['show'] = array('Bewerbungsdetails anzeigen', 'Details der Bewerbung %s anzeigen');
 

@@ -15,6 +15,7 @@ use Contao\BackendUser;
 use Contao\DC_Table;
 use Contao\DataContainer;
 use Contao\Database;
+use Schachbulle\ContaoFernschachBundle\Classes\Nenngeldbuchungen;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
 
 
@@ -31,9 +32,20 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 		'dataContainer'               => DC_Table::class,
 		'ptable'                      => 'tl_fernschach_turniere',
 		'enableVersioning'            => true,
+		'onload_callback'             => array
+		(
+			array(Nenngeldbuchungen::class, 'hinweisUndAktion')
+		),
 		'onsubmit_callback'           => array
 		(
 			array('tl_fernschach_turniere_bewerbungen', 'setSpielername')
+		),
+		// Eine Bewerbung erzeugt selbst keine Nenngeldbuchung. Wurde eine später
+		// von Hand angelegt oder die Bewerbung in eine Anmeldung überführt, soll
+		// sie beim Löschen aber nicht zurückbleiben.
+		'ondelete_callback'           => array
+		(
+			array(Nenngeldbuchungen::class, 'beimLoeschen')
 		),
 		'sql' => array
 		(
@@ -88,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere_bewerbungen'] = array
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['delete'],
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
-				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
+				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? null).' '.($GLOBALS['TL_LANG']['tl_fernschach_turniere_bewerbungen']['deleteConfirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 				//'button_callback'     => array('tl_fernschach_turniere_bewerbungen', 'deleteArchive')
 			),
 			'toggle' => array
