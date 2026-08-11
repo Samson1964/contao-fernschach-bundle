@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.7.1 (2026-08-11)
+
+* Fix: Die mit 2.6.0 eingeführte Schaltfläche **Mannschaften bearbeiten** benutzte dasselbe Springer-Symbol wie **Teilnehmer bearbeiten**. In der Turnierliste standen dadurch zwei gleiche Springer nebeneinander. Die Mannschaften haben jetzt ein eigenes Symbol mit zwei Figuren (`turnier_mannschaften.png` und `turnier_mannschaften_inaktiv.png`)
+* Fix: Das abgeblendete Symbol trug keinen Titel. Beim Überfahren mit der Maus erfuhr man deshalb nicht, wofür es steht; jetzt erscheint „Mannschaften gibt es nur bei Turnieren vom Typ Mannschaftsturnier". Derselbe Mangel besteht bei den älteren Schaltflächen für Bewerbungen, Meldungen und Teilnehmer — dort unverändert gelassen, weil es bestehendes Verhalten ist
+
+**Hinweis:** Die beiden neuen Bilddateien landen erst mit einem `assets:install` im Web-Verzeichnis. Der Contao Manager erledigt das beim Aktualisieren; bei einer Aktualisierung von Hand muss der Befehl laufen, sonst bleibt die Schaltfläche unsichtbar — `Image::getHtml()` liefert bei fehlender Datei eine leere Zeichenkette, ohne Fehlermeldung.
+
 ## Version 2.7.0 (2026-08-11)
 
 Das Meldeformular für Einzelturniere entstand über die Formularklasse des Helper-Bundles; die Mitgliedsdaten waren als HTML-Zeichenkette mit `<span style="color:green">` einprogrammiert. Aussehen und Verhalten kamen damit vom Theme der jeweiligen Website.

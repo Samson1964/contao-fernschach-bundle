@@ -133,7 +133,7 @@ $GLOBALS['TL_DCA']['tl_fernschach_turniere'] = array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_turniere']['editMannschaften'],
 				'href'                => 'table=tl_fernschach_turniere_mannschaften',
-				'icon'                => 'bundles/contaofernschach/images/turnier_gruppe.png',
+				'icon'                => 'bundles/contaofernschach/images/turnier_mannschaften.png',
 				'button_callback'     => array('tl_fernschach_turniere', 'mannschaftenIcon')
 			),
 			'editTeilnehmer' => array
@@ -1440,10 +1440,12 @@ class tl_fernschach_turniere extends Backend
 	{
 		if ($row['type'] != 'tournament' || $row['typ'] != 'm')
 		{
-			$icon = 'bundles/contaofernschach/images/turnier_gruppe_inaktiv.png';
-			$title = 'Mannschaften gibt es nur bei Mannschaftsturnieren';
+			$icon = 'bundles/contaofernschach/images/turnier_mannschaften_inaktiv.png';
+			$title = 'Mannschaften gibt es nur bei Turnieren vom Typ Mannschaftsturnier';
 
-			return '<span>'.Image::getHtml($icon, $label).'</span> ';
+			// Der Titel gehört an das span. Ohne ihn erfährt niemand, wofür das
+			// abgeblendete Symbol steht — auch nicht beim Überfahren mit der Maus.
+			return '<span title="'.StringUtil::specialchars($title).'">'.Image::getHtml($icon, $label).'</span> ';
 		}
 
 		return '<a href="'.$this->addToUrl($href).'&id='.$row['id'].'" title="'.StringUtil::specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ';
