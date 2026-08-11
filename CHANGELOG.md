@@ -1,5 +1,19 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.7.0 (2026-08-11)
+
+Das Meldeformular für Einzelturniere entstand über die Formularklasse des Helper-Bundles; die Mitgliedsdaten waren als HTML-Zeichenkette mit `<span style="color:green">` einprogrammiert. Aussehen und Verhalten kamen damit vom Theme der jeweiligen Website.
+
+* Change: Eigene Vorlage `mod_fernschach_meldeformular.html5` mit eigenem Markup unter `.fernschach-formular`; die Gestaltung kommt aus `fernschach_formular.css`, dieselbe Datei wie beim Mannschaftsformular. Die Inline-Styles sind ersatzlos entfallen
+* Change: Die Turniere sind in Auswahlliste **und** Radio-Ansicht nach Turnierkategorie gruppiert; die Radio-Ansicht zeigt Nenngeld und Meldeschluss als eigene Zeile statt als angehängten Text
+* Change: Kontostände, offene Qualifikationen und die letzten Meldungen stehen in eigenen Blöcken; negative Salden werden über eine CSS-Klasse ausgezeichnet statt über `style="color:red"`
+* Fix: Der Vergleich des Nenngelds mit dem Guthaben lief über `(int)` auf das Nenngeld und schnitt die Nachkommastellen ab. Aus 25,50 wurde 25 — mit 25,49 auf dem Konto war die Anmeldung möglich, und es fehlte gut ein Euro. Gerechnet wird jetzt über `Helper::nenngeldGedeckt()` in Cent
+* Fix: Die Bedingung „SEPA-Beitrag oder ausgeglichenes Beitragskonto" führte bisher nur dazu, dass die Turnierauswahl fehlte — ohne jede Erklärung. Jetzt erscheint ein Hinweis mit dem Kontostand
+* Fix: War der Zugriff nicht erlaubt, gab das Modul den Text mit `echo` aus und damit außerhalb des Templates, an beliebiger Stelle der Seite. Der Text steht jetzt im Template
+* Change: Ein JavaScript braucht dieses Formular nicht und bekommt keines
+
+**Nachgeprüft, nicht geändert:** Die Altersberechnung arbeitet wie in `docs/TURNIERANMELDUNGEN_EINZEL.md` beschrieben — Mindestalter zum 31.12., Maximalalter zum 01.01. des laufenden Jahres. Belegt mit vier Grenzfällen in beiden Contao-Fassungen.
+
 ## Version 2.6.0 (2026-08-11)
 
 Von einer Mannschaftsmeldung blieb bisher nur die Nenngeld-Sollbuchung des Mannschaftsleiters übrig. Die Aufstellung stand ausschließlich in der E-Mail an den Turnierdirektor und war im Backend nirgends zu sehen.

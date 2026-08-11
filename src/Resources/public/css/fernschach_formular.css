@@ -264,6 +264,121 @@
 	color: var(--fs-text-leise);
 }
 
+/* ------------------------------------------- Turnieranmeldung Einzelspieler */
+
+.fernschach-formular .fs-einleitung {
+	margin-bottom: var(--fs-abstand);
+}
+
+.fernschach-formular .fs-einleitung > :first-child {
+	margin-top: 0;
+}
+
+/* Auswahl als Radio-Knöpfe, nach Turnierkategorie gruppiert */
+.fernschach-formular .fs-auswahl {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.fernschach-formular .fs-auswahl legend {
+	padding: 0;
+	font-weight: 600;
+}
+
+.fernschach-formular .fs-gruppe + .fs-gruppe {
+	margin-top: var(--fs-abstand);
+}
+
+.fernschach-formular .fs-gruppe-titel {
+	margin: 0 0 0.35rem;
+	color: var(--fs-text-leise);
+	font-size: 0.875rem;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.fernschach-formular .fs-radio {
+	display: flex;
+	gap: 0.6rem;
+	align-items: baseline;
+	padding: 0.4rem 0.5rem;
+	border-radius: var(--fs-radius);
+	font-weight: normal;
+	cursor: pointer;
+}
+
+.fernschach-formular .fs-radio:hover {
+	background: var(--fs-farbe-hell);
+}
+
+.fernschach-formular .fs-radio input {
+	flex: 0 0 auto;
+	margin: 0;
+}
+
+.fernschach-formular .fs-radio-info {
+	display: block;
+	color: var(--fs-text-leise);
+	font-size: 0.875rem;
+}
+
+/* Tabelle der Qualifikationen */
+.fernschach-formular .fs-tabelle-rahmen {
+	overflow-x: auto;
+}
+
+.fernschach-formular .fs-tabelle {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.fernschach-formular .fs-tabelle th,
+.fernschach-formular .fs-tabelle td {
+	padding: 0.4rem 0.6rem;
+	border-bottom: 1px solid var(--fs-rahmen);
+	text-align: left;
+	white-space: nowrap;
+}
+
+.fernschach-formular .fs-tabelle th {
+	color: var(--fs-text-leise);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+/* Liste der letzten Meldungen */
+.fernschach-formular .fs-meldungen {
+	margin: 0;
+	padding-left: 0;
+	list-style: none;
+}
+
+.fernschach-formular .fs-meldungen li {
+	padding: 0.25rem 0;
+	border-bottom: 1px solid var(--fs-rahmen);
+}
+
+.fernschach-formular .fs-meldung-datum {
+	display: inline-block;
+	min-width: 9rem;
+	color: var(--fs-text-leise);
+}
+
+.fernschach-formular .fs-meldung-typ {
+	display: inline-block;
+	min-width: 6rem;
+	font-weight: 600;
+}
+
+@media (max-width: 30rem) {
+	.fernschach-formular .fs-meldung-datum,
+	.fernschach-formular .fs-meldung-typ {
+		display: block;
+		min-width: 0;
+	}
+}
+
 /* ------------------------------------------------------------- Absenden */
 
 .fernschach-formular .fs-absenden {

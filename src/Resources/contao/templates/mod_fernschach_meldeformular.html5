@@ -1,0 +1,178 @@
+<?php
+/**
+ * Turnieranmeldung Einzelspieler — eigenes Formular der Fernschach-Verwaltung
+ *
+ * Das Markup trägt durchgehend die Klasse "fernschach-formular", damit das
+ * Aussehen aus fernschach_formular.css kommt und nicht vom Theme der jeweiligen
+ * Website abhängt.
+ *
+ * Alle vom Benutzer stammenden Werte laufen durch StringUtil::specialchars(),
+ * ohne doppelte Kodierung.
+ */
+
+use Contao\StringUtil;
+?>
+<div class="<?= $this->class ?> fernschach-formular" <?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?>>
+
+<?php if ($this->headline): ?>
+	<<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
+<?php endif; ?>
+
+<?php if ($this->bestaetigung !== null): ?>
+
+	<div class="fs-bestaetigung">
+		<p class="fs-hinweis fs-hinweis--erfolg"><strong>Ihre <?= $this->begriff ?> ist eingegangen.</strong></p>
+		<p>Eine Bestätigung geht an <strong><?= StringUtil::specialchars($this->mitglied->email1) ?></strong>. Bitte sehen Sie auch im Spam-Ordner nach — eine erneute <?= $this->begriff ?> für dasselbe Turnier ist nicht nötig.</p>
+
+		<?php if ($this->bestaetigung): ?>
+		<h3>Ihre letzten Meldungen</h3>
+		<ul class="fs-meldungen">
+			<?php foreach (array_slice($this->bestaetigung, 0, 5) as $eintrag): ?>
+			<li><span class="fs-meldung-datum"><?= date('d.m.Y H:i', (int) $eintrag['datum']) ?></span> <span class="fs-meldung-typ"><?= StringUtil::specialchars($eintrag['typ']) ?></span> <?= StringUtil::specialchars($eintrag['turnier']) ?></li>
+			<?php endforeach; ?>
+		</ul>
+		<?php endif; ?>
+	</div>
+
+<?php elseif ($this->fehlertext && !$this->mitglied): ?>
+
+	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+
+<?php else: ?>
+
+	<section class="fs-block">
+		<h3>Ihre Daten</h3>
+		<dl class="fs-liste">
+			<dt>Name</dt><dd><?= StringUtil::specialchars($this->mitglied->vorname) ?> <?= StringUtil::specialchars($this->mitglied->nachname) ?></dd>
+			<dt>BdF-Mitgliedsnummer</dt><dd><?= StringUtil::specialchars($this->mitglied->memberId) ?></dd>
+			<dt>E-Mail</dt><dd><?= StringUtil::specialchars($this->mitglied->email1) ?><?php if ($this->mitglied->email2): ?><br><?= StringUtil::specialchars($this->mitglied->email2) ?><?php endif; ?></dd>
+			<?php if ($this->konten['haupt']['zeigen']): ?>
+			<dt>Hauptkonto</dt><dd<?= $this->konten['haupt']['wert'] < 0 ? ' class="fs-negativ"' : '' ?>><?= $this->konten['haupt']['text'] ?></dd>
+			<?php endif; ?>
+			<dt>Beitragskonto</dt><dd<?= $this->konten['beitrag']['wert'] < 0 ? ' class="fs-negativ"' : '' ?>><?= $this->konten['beitrag']['text'] ?><?php if ($this->sepa['beitrag']): ?> <span class="fs-notiz">(SEPA-Vereinbarung liegt vor)</span><?php endif; ?></dd>
+			<dt>Nenngeldkonto</dt><dd<?= $this->konten['nenngeld']['wert'] < 0 ? ' class="fs-negativ"' : '' ?>><?= $this->konten['nenngeld']['text'] ?><?php if ($this->sepa['nenngeld']): ?> <span class="fs-notiz">(SEPA-Vereinbarung liegt vor)</span><?php endif; ?></dd>
+		</dl>
+	</section>
+
+	<?php if ($this->qualifikationen): ?>
+	<section class="fs-block">
+		<h3>Noch nicht genutzte Qualifikationen</h3>
+		<div class="fs-tabelle-rahmen">
+			<table class="fs-tabelle">
+				<thead>
+					<tr><th>Qualifikation für</th><th>im Turnier</th><th>vom</th><th>gültig bis</th></tr>
+				</thead>
+				<tbody>
+					<?php foreach ($this->qualifikationen as $q): ?>
+					<tr>
+						<td><?= StringUtil::specialchars($q['fuer']) ?></td>
+						<td><?= StringUtil::specialchars($q['im_turnier']) ?></td>
+						<td><?= StringUtil::specialchars($q['vom']) ?></td>
+						<td><?= StringUtil::specialchars($q['gueltig_bis']) ?></td>
+					</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
+	</section>
+	<?php endif; ?>
+
+	<?php if ($this->meldungen): ?>
+	<section class="fs-block">
+		<h3>Ihre letzten Meldungen</h3>
+		<ul class="fs-meldungen">
+			<?php foreach ($this->meldungen as $eintrag): ?>
+			<li><span class="fs-meldung-datum"><?= date('d.m.Y H:i', (int) $eintrag['datum']) ?></span> <span class="fs-meldung-typ"><?= StringUtil::specialchars($eintrag['typ']) ?></span> <?= StringUtil::specialchars($eintrag['turnier']) ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</section>
+	<?php endif; ?>
+
+	<?php if ($this->fehlertext): ?>
+
+	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+
+	<?php else: ?>
+
+	<?php if ($this->fehler): ?>
+	<p class="fs-hinweis fs-hinweis--fehler">Bitte prüfen Sie die rot gekennzeichneten Felder.</p>
+	<?php endif; ?>
+
+	<form method="post" class="fs-form" novalidate>
+		<input type="hidden" name="FORM_SUBMIT" value="fernschach_turnieranmeldung">
+		<input type="hidden" name="REQUEST_TOKEN" value="<?= $this->requestToken ?>">
+
+		<section class="fs-block">
+			<h3>Turnier</h3>
+
+			<?php if ($this->einleitung): ?>
+			<div class="fs-einleitung"><?= $this->einleitung ?></div>
+			<?php endif; ?>
+
+			<div class="fs-feld<?= isset($this->fehler['turnier']) ? ' fs-feld--fehler' : '' ?>">
+
+				<?php if ($this->radio): ?>
+
+				<fieldset class="fs-auswahl">
+					<legend>Turnier <span class="fs-pflicht" title="Pflichtfeld">*</span></legend>
+					<?php foreach ($this->turniere as $gruppe => $eintraege): ?>
+					<div class="fs-gruppe">
+						<p class="fs-gruppe-titel"><?= StringUtil::specialchars($gruppe) ?></p>
+						<?php foreach ($eintraege as $t): ?>
+						<label class="fs-radio">
+							<input type="radio" name="turnier" value="<?= $t['id'] ?>"<?= ($this->werte['turnier'] ?? 0) == $t['id'] ? ' checked' : '' ?>>
+							<span><?= StringUtil::specialchars($t['title']) ?>
+								<span class="fs-radio-info">Nenngeld <?= $t['nenngeld'] ?><?= $t['meldeschluss'] ? ', Meldeschluss '.$t['meldeschluss'] : ', ohne Meldeschluss' ?></span>
+							</span>
+						</label>
+						<?php endforeach; ?>
+					</div>
+					<?php endforeach; ?>
+				</fieldset>
+
+				<?php else: ?>
+
+				<label for="fs-turnier">Turnier <span class="fs-pflicht" title="Pflichtfeld">*</span></label>
+				<select name="turnier" id="fs-turnier" required>
+					<option value="">— bitte wählen —</option>
+					<?php foreach ($this->turniere as $gruppe => $eintraege): ?>
+					<optgroup label="<?= StringUtil::specialchars($gruppe) ?>">
+						<?php foreach ($eintraege as $t): ?>
+						<option value="<?= $t['id'] ?>"<?= ($this->werte['turnier'] ?? 0) == $t['id'] ? ' selected' : '' ?>><?= StringUtil::specialchars($t['title']) ?> — Nenngeld <?= $t['nenngeld'] ?><?= $t['meldeschluss'] ? ', Meldeschluss '.$t['meldeschluss'] : '' ?></option>
+						<?php endforeach; ?>
+					</optgroup>
+					<?php endforeach; ?>
+				</select>
+
+				<?php endif; ?>
+
+				<?php if (isset($this->fehler['turnier'])): ?><p class="fs-fehler"><?= $this->fehler['turnier'] ?></p><?php endif; ?>
+			</div>
+		</section>
+
+		<section class="fs-block">
+			<h3>Qualifikation</h3>
+			<div class="fs-feld">
+				<label for="fs-qualifikation">Bei Aufstiegsturnieren: letzte Qualifikation für die H- oder M-Klasse <span class="fs-optional">(freiwillig)</span></label>
+				<textarea name="qualifikation" id="fs-qualifikation" rows="3" placeholder="Turnierkennzeichen und Punktestand"><?= StringUtil::specialchars($this->werte['qualifikation'] ?? '') ?></textarea>
+			</div>
+		</section>
+
+		<section class="fs-block">
+			<h3>Bemerkungen</h3>
+			<div class="fs-feld">
+				<label for="fs-bemerkungen">Sonstiges <span class="fs-optional">(freiwillig)</span></label>
+				<textarea name="bemerkungen" id="fs-bemerkungen" rows="4" placeholder="z. B. Urlaub von … bis …"><?= StringUtil::specialchars($this->werte['bemerkungen'] ?? '') ?></textarea>
+			</div>
+		</section>
+
+		<p class="fs-absenden">
+			<button type="submit" class="fs-knopf"><?= $this->begriff ?> absenden</button>
+		</p>
+	</form>
+
+	<?php endif; ?>
+
+<?php endif; ?>
+
+</div>

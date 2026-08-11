@@ -22,12 +22,13 @@ use Contao\Email;
 use Contao\FrontendUser;
 use Contao\Input;
 use Contao\Module;
+use Schachbulle\ContaoFernschachBundle\Classes\Helper;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
 
 class Meldeformular_Spieler extends Module
 {
 
-	protected $strTemplate = 'mod_fernschach';
+	protected $strTemplate = 'mod_fernschach_meldeformular';
 
 	/**
 	 * Display a wildcard in the back end
@@ -50,311 +51,206 @@ class Meldeformular_Spieler extends Module
 	}
 
 	/**
-	 * Generate the module
+	 * Füllt das Template mit allem, was die Ausgabe braucht.
+	 *
+	 * Seit Version 2.7.0 baut das Modul eigenes Markup auf und bringt sein
+	 * Aussehen selbst mit. Vorher entstand das Formular über die Formularklasse
+	 * des Helper-Bundles, und die Mitgliedsdaten waren als HTML-Zeichenkette mit
+	 * `<span style="color:green">` einprogrammiert — auf jeder Website sah es
+	 * anders aus.
+	 *
+	 * @return void Die Ausgabe entsteht über $this->Template
 	 */
 	protected function compile()
 	{
-		global $objPage;
-		$fehler = false;
-		$fehlertext = '';
+		$this->Template->fehlertext = '';
+		$this->Template->bestaetigung = null;
+		$this->Template->mitglied = null;
+		$this->Template->turniere = array();
+		$this->Template->werte = array();
+		$this->Template->fehler = array();
+		$this->Template->qualifikationen = array();
+		$this->Template->meldungen = array();
+		$this->Template->konten = array();
+		$this->Template->sepa = array();
+		$this->Template->begriff = $this->fernschachverwaltung_bewerbung ? 'Bewerbung' : 'Anmeldung';
+		$this->Template->einleitung = $this->fernschachverwaltung_tournamentText;
+		$this->Template->radio = (bool) $this->fernschachverwaltung_radio;
+		$this->Template->requestToken = Scope::getRequestToken();
+
+		// Eigene Gestaltung einbinden. Ein Skript braucht dieses Formular nicht:
+		// Es hat keine dynamischen Felder, und die Prüfung gehört ohnehin auf
+		// den Server.
+		$GLOBALS['TL_CSS']['fernschach_formular'] = 'bundles/contaofernschach/css/fernschach_formular.css';
 
 		if($this->fernschachverwaltung_linkingMembers)
 		{
-			// Das Formular darf nur BdF-Mitgliedern angezeigt werden
-			// Jetzt auf BdF-Mitglied prüfen
-			$this->import(FrontendUser::class,'User'); // Frontend-Mitglied laden
-			if($this->User)
+			$this->import(FrontendUser::class, 'User');
+
+			if(!$this->User)
 			{
-				if(!$this->User->isMemberOf(Config::get('fernschach_memberFernschach')))
-				{
-					// Frontend-Mitglied gehört nicht zur Gruppe BdF-Mitglied
-					$fehler = true;
-					$fehlertext = 'Zugriff auf das Formular nicht erlaubt, da kein verifiziertes BdF-Mitglied.';
-				}
+				$this->Template->fehlertext = 'Zugriff auf das Formular nicht erlaubt, da Sie nicht angemeldet sind.';
+
+				return;
 			}
-			else
+
+			if(!$this->User->isMemberOf(Config::get('fernschach_memberFernschach')))
 			{
-				// Nicht im Frontend angemeldet
-				$fehler = true;
-				$fehlertext = 'Zugriff auf das Formular nicht erlaubt, da nicht angemeldet.';
+				$this->Template->fehlertext = 'Zugriff auf das Formular nicht erlaubt, da kein verifiziertes BdF-Mitglied.';
+
+				return;
 			}
 		}
 
-		if($fehler)
-		{
-			echo $fehlertext;
-		}
-		else
-		{
-			// Template füllen
-			$this->Template->daten = self::Formular();
-		}
-	}
+		$mitglied = Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
 
-	protected function Formular()
-	{
-		// Hinweis zur Version 2.0.0: Hier wurde früher zusätzlich ein
-		// \Haste\Form\Form erzeugt, das anschließend nie benutzt wurde — das
-		// eigentliche Formular baut weiter unten die Klasse Form aus dem
-		// Helper-Bundle. Der tote Aufruf ist entfallen, weil sich
-		// codefog/contao-haste unter Contao 5 nicht mehr installieren lässt.
-
-		// BdF-Mitgliedsdaten laden
-		$mitglied = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSpielerdatensatz(FrontendUser::getInstance()->fernschach_memberId);
-
-		// Ohne zugeordneten Spielerdatensatz gibt es nichts anzumelden. Vor der
-		// Version 2.0.0 lief die Methode trotzdem weiter und erzeugte unter
-		// PHP 8 für jedes Feld eine Warnung.
 		if(!$mitglied || !$mitglied->numRows)
 		{
-			return '<p class="error">Ihrem Benutzerkonto ist kein BdF-Mitglied zugeordnet. Bitte wenden Sie sich an die Geschäftsstelle.</p>';
+			$this->Template->fehlertext = 'Ihrem Benutzerkonto ist kein BdF-Mitglied zugeordnet. Bitte wenden Sie sich an die Geschäftsstelle.';
+
+			return;
 		}
 
-		// Rückkehr von der Umleitung nach dem Absenden: Bestätigung statt Formular
+		$this->Template->mitglied = $mitglied;
+
+		// Rückkehr von der Umleitung nach dem Absenden
 		if(Input::get('send'))
 		{
-			return self::Bestaetigung($mitglied);
+			$this->Template->bestaetigung = Helper::getAnmeldungenBewerbungen($mitglied->id);
+
+			return;
 		}
 
-		$salden_haupt = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, '');
-		$salden_beitrag = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'beitrag');
-		$salden_nenngeld = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getSaldo(FrontendUser::getInstance()->fernschach_memberId, 'nenngeld');
-		$mitgliedsdaten = '<h4>Angemeldeter Benutzer</h4>';
-		$mitgliedsdaten .= '<ul>';
-		$mitgliedsdaten .= '<li>Anmeldename: <b>'.FrontendUser::getInstance()->username.'</b></li>';
-		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.FrontendUser::getInstance()->firstname.' '.FrontendUser::getInstance()->lastname.'</b></li>';
-		$mitgliedsdaten .= '<li>E-Mail-Adresse: <b>'.FrontendUser::getInstance()->email.'</b></li>';
-		$mitgliedsdaten .= '</ul>';
-		$mitgliedsdaten .= '<h4>Zugeordnetes BdF-Mitglied</h4>';
-		$mitgliedsdaten .= '<ul>';
-		$mitgliedsdaten .= '<li>Vor- und Nachname: <b>'.$mitglied->vorname.' '.$mitglied->nachname.'</b></li>';
-		$mitgliedsdaten .= '<li>Mitgliedsnummer: <b>'.$mitglied->memberId.'</b></li>';
-		$mitgliedsdaten .= '<li>E-Mail-Adresse 1: <b>'.$mitglied->email1.'</b></li>';
-		$mitgliedsdaten .= '<li>E-Mail-Adresse 2: <b>'.$mitglied->email2.'</b></li>';
-		$mitgliedsdaten .= '<li>Beitragssaldo: <b>'.\Schachbulle\ContaoFernschachBundle\Classes\Helper::getBeitragssaldo($mitglied->id).'</b></li>';
-		// Saldo Hauptkonto ermitteln und ausgeben
-		$value = end($salden_haupt);
-		if($value >= 0)
-		{
-			$html_start = '<span style="color:green;">';
-			$html_ende = ' €<span>';
-		}
-		else
-		{
-			$html_start = '<span style="color:red;">';
-			$html_ende = ' €<span>';
-		}
-		$saldo = str_replace('.', ',', sprintf('%0.2f',$value));
-		if($value != 0) $mitgliedsdaten .= '<li>Kontostand Hauptkonto: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
-		// Saldo Beitragskonto ermitteln und ausgeben
-		$beitragssaldo = end($salden_beitrag);
-		if($beitragssaldo >= 0)
-		{
-			$html_start = '<span style="color:green;">';
-			$html_ende = ' €<span>';
-		}
-		else
-		{
-			$html_start = '<span style="color:red;">';
-			$html_ende = ' €<span>';
-		}
-		$saldo = str_replace('.', ',', sprintf('%0.2f',$beitragssaldo));
-		$mitgliedsdaten .= '<li>Kontostand Beitrag: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
-		// Saldo Nenngeldkonto ermitteln und ausgeben
-		$nenngeldsaldo = end($salden_nenngeld);
-		if($nenngeldsaldo >= 0)
-		{
-			$html_start = '<span style="color:green;">';
-			$html_ende = ' €<span>';
-		}
-		else
-		{
-			$html_start = '<span style="color:red;">';
-			$html_ende = ' €<span>';
-		}
-		$saldo = str_replace('.', ',', sprintf('%0.2f',$nenngeldsaldo));
-		$mitgliedsdaten .= '<li>Kontostand Nenngeld: <b>'.$html_start.$saldo.$html_ende.'</b></li>';
+		// Kontostände und SEPA-Lage
+		$beitragssaldo = Helper::getBeitragssaldo($mitglied->id);
+		$nenngeldsaldo = Helper::getNenngeldsaldo($mitglied->id);
+		$hauptsalden = Helper::getSaldo($mitglied->id, '', false, false);
+		$hauptsaldo = (float) (end($hauptsalden) ?: 0);
 
-		// SEPA-Mandate prüfen
-		$sepamandate = '';
-		$sepacount = 0;
-		if($mitglied->sepaBeitrag)
-		{
-			$sepacount++;
-			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Beitrag | ';
-		}
-		else
-		{
-			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Beitrag | ';
-		}
-		if($mitglied->sepaNenngeld)
-		{
-			$sepacount++;
-			$sepamandate .= '<img src="bundles/contaofernschach/images/ja.png" width="12"> Nenngeld';
-		}
-		else
-		{
-			$sepamandate .= '<img src="bundles/contaofernschach/images/nein.png" width="12"> Nenngeld';
-		}
-		$mitgliedsdaten .= '<li>SEPA-Mandate: <b>'.$sepamandate.'</b></li>';
-		if($sepacount != 2)
-		{
-			//$mitgliedsdaten .= '<li><span style="color:red;">Es fehlen SEPA-Mandate, weshalb die Turnierauswahl nicht möglich oder eingeschränkt sein könnte.</span></li>';
-		}
-		if(!$mitglied->sepaBeitrag && $beitragssaldo < 0)
-		{
-			$mitgliedsdaten .= '<li><span style="color:red;">Eine Turnieranmeldung ist wegen fehlendem SEPA-Beitragsmandat bzw. negativem Beitragskonto nicht möglich.</span></li>';
-		}
-		else
-		{
-			if(!$mitglied->sepaNenngeld && $nenngeldsaldo < 0)
-			{
-				$mitgliedsdaten .= '<li><span style="color:red;">Es werden u.U. nicht alle Turniere angezeigt, weil Ihr Nenngeldkonto zu wenig Guthaben hat oder Sie kein SEPA-Mandat für Nenngeld erteilt haben.</span></li>';
-			}
-		}
-		$mitgliedsdaten .= '</ul>';
+		$this->Template->konten = array
+		(
+			'haupt'    => array('wert' => $hauptsaldo, 'text' => self::formatBetrag($hauptsaldo), 'zeigen' => 0.0 != $hauptsaldo),
+			'beitrag'  => array('wert' => (float) $beitragssaldo, 'text' => self::formatBetrag($beitragssaldo), 'zeigen' => true),
+			'nenngeld' => array('wert' => $nenngeldsaldo, 'text' => self::formatBetrag($nenngeldsaldo), 'zeigen' => true),
+		);
 
-		// Offene Qualifikationsbescheinigungen des Spielers laden
-		$mitgliedsdaten .= '<h4>Noch nicht genutzte Qualifikationen</h4>';
-		$qualifikationen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getQualifikationen($mitglied);
-		if($qualifikationen)
+		$this->Template->sepa = array
+		(
+			'beitrag'  => (bool) $mitglied->sepaBeitrag,
+			'nenngeld' => (bool) $mitglied->sepaNenngeld,
+		);
+
+		$this->Template->qualifikationen = Helper::getQualifikationen($mitglied) ?: array();
+		$this->Template->meldungen = self::letzteMeldungen($mitglied, 5);
+
+		// Ohne geregelten Beitrag ist keine Meldung möglich — das ist die erste
+		// Bedingung aus der Ablaufbeschreibung und hat Vorrang vor allem anderen.
+		if(!Helper::beitragGedeckt($mitglied))
 		{
-			$mitgliedsdaten .= '<table>';
-			$mitgliedsdaten .= '<tr>';
-			$mitgliedsdaten .= '<th>Qualifikation für</th>';
-			$mitgliedsdaten .= '<th>im Turnier</th>';
-			$mitgliedsdaten .= '<th>vom</th>';
-			$mitgliedsdaten .= '<th>gültig bis</th>';
-			$mitgliedsdaten .= '</tr>';
-			foreach($qualifikationen as $item)
-			{
-				$mitgliedsdaten .= '<tr>';
-				$mitgliedsdaten .= '<td>'.$item['fuer'].'</td>';
-				$mitgliedsdaten .= '<td>'.$item['im_turnier'].'</td>';
-				$mitgliedsdaten .= '<td>'.$item['vom'].'</td>';
-				$mitgliedsdaten .= '<td>'.$item['gueltig_bis'].'</td>';
-				$mitgliedsdaten .= '</tr>';
-			}
-			$mitgliedsdaten .= '</table>';
-		}
-		else
-		{
-			$mitgliedsdaten .= 'Keine offenen Qualifikationen vorhanden.';
+			$this->Template->fehlertext = 'Eine '.$this->Template->begriff.' ist zurzeit nicht möglich: Ihr Beitragskonto weist '.self::formatBetrag($beitragssaldo).' aus und es liegt keine SEPA-Vereinbarung für den Beitrag vor. Bitte gleichen Sie Ihr Beitragskonto aus oder erteilen Sie der Geschäftsstelle eine SEPA-Vereinbarung.';
+
+			return;
 		}
 
-		// Meldungen des Spielers laden
-		$mitgliedsdaten .= '<h4>Letzte 5 Anmeldungen</h4>';
-		$mitgliedsdaten .= '<ul>';
-		$anmeldungen_bewerbungen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAnmeldungenBewerbungen($mitglied->id);
-		$nummer = 0;
-		foreach($anmeldungen_bewerbungen as $item)
+		$turniere = self::getTournaments($mitglied, $nenngeldsaldo);
+		$this->Template->turniere = $turniere;
+
+		if(!$turniere)
 		{
-			if($item['typ'] == 'Anmeldung')
-			{
-				$nummer++;
-				$mitgliedsdaten .= '<li>';
-				$mitgliedsdaten .= date('d.m.Y H:i', $item['datum']).' '.$item['turnier'];
-				$mitgliedsdaten .= '</li>';
-			}
-			if($nummer == 5) break;
+			$this->Template->fehlertext = $mitglied->sepaNenngeld
+				? 'Zurzeit steht kein Turnier zur '.$this->Template->begriff.' offen.'
+				: 'Zurzeit steht kein Turnier zur '.$this->Template->begriff.' offen. Möglich ist auch, dass das Guthaben auf Ihrem Nenngeldkonto ('.self::formatBetrag($nenngeldsaldo).') für keines der offenen Turniere reicht und keine SEPA-Vereinbarung für das Nenngeld vorliegt.';
+
+			return;
 		}
-		$mitgliedsdaten .= '</ul>';
 
-		$form = new \Schachbulle\ContaoHelperBundle\Classes\Form();
-		$form->addField(array('typ' => 'hidden', 'name' => 'FORM_SUBMIT', 'value' => 'form_turnieranmeldung'));
-		$form->addField(array('typ' => 'hidden', 'name' => 'REQUEST_TOKEN', 'value' => Scope::getRequestToken()));
-		$form->addField(array('typ' => 'fieldset', 'label' => 'Persönliche Daten'));
-		$form->addField(array('typ' => 'explanation', 'label' => $mitgliedsdaten));
-		$form->addField(array('typ' => 'fieldset', 'label' => ''));
-		if($mitglied->sepaBeitrag || $beitragssaldo >= 0)
+		$werte = array
+		(
+			'turnier'       => (int) Input::post('turnier'),
+			'qualifikation' => trim((string) Input::post('qualifikation')),
+			'bemerkungen'   => trim((string) Input::post('bemerkungen')),
+		);
+
+		$this->Template->werte = $werte;
+
+		if(Input::post('FORM_SUBMIT') !== 'fernschach_turnieranmeldung')
 		{
-			$form->addField(array('typ' => 'fieldset', 'label' => 'Turnier'));
-			$form->addField(array('typ' => 'explanation', 'label' => '<b>'.$this->fernschachverwaltung_tournamentText.'</b>'));
-			if($this->fernschachverwaltung_radio) $form->addField(array('typ' => 'radio', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied, $nenngeldsaldo)));
-			else $form->addField(array('typ' => 'select', 'name' => 'turnier', 'mandatory' => true, 'options' => self::getTournaments($mitglied, $nenngeldsaldo)));
-			$form->addField(array('typ' => 'fieldset', 'label' => ''));
-			$form->addField(array('typ' => 'fieldset', 'label' => 'Bei Aufstiegsturnieren: Letzte Qualifikation für die H- oder M-Klasse'));
-			$form->addField(array('typ' => 'textarea', 'name' => 'qualifikation', 'label' => 'Turnierkennzeichen und Punktestand'));
-			$form->addField(array('typ' => 'fieldset', 'label' => ''));
-			$form->addField(array('typ' => 'fieldset', 'label' => 'Bemerkungen'));
-			$form->addField(array('typ' => 'textarea', 'name' => 'bemerkungen', 'label' => 'Sonstiges (z.B. Urlaub von ... bis ...)'));
-			$form->addField(array('typ' => 'fieldset', 'label' => ''));
-			$form->addField(array('typ' => 'submit', 'label' => 'Anmeldung absenden'));
+			return;
 		}
-		$fehler = '';
 
-		// validate() prüft auch, ob das Formular gesendet wurde
-		if($form->validate())
+		if(!$werte['turnier'] || !self::turnierErlaubt($turniere, $werte['turnier']))
 		{
-			// Alle gesendeten und analysierten Daten holen (funktioniert nur mit POST)
-			$arrData = $form->fetchAll();
+			$this->Template->fehler = array('turnier' => 'Bitte wählen Sie ein Turnier aus der Liste aus.');
 
-			if(self::saveMeldung($arrData))
-			{
-				// Nach dem Speichern umleiten statt neu laden. Erst dadurch
-				// entsteht ein GET-Aufruf, bei dem der Browser nicht mehr nach
-				// dem erneuten Absenden der Formulardaten fragt — genau daraus
-				// sind bisher Doppelmeldungen entstanden.
-				Controller::redirect(Controller::addToUrl('send=1'));
-			}
+			return;
+		}
 
-			$fehler = '<p class="error">'.($this->fernschachverwaltung_bewerbung
+		if(!self::saveMeldung($werte))
+		{
+			$this->Template->fehler = array('turnier' => $this->fernschachverwaltung_bewerbung
 				? 'Ihre Bewerbung konnte nicht gespeichert werden. Möglicherweise haben Sie sich für dieses Turnier bereits beworben.'
-				: 'Ihre Anmeldung konnte nicht gespeichert werden. Möglicherweise sind Sie für dieses Turnier bereits gemeldet.').'</p>';
+				: 'Ihre Anmeldung konnte nicht gespeichert werden. Möglicherweise sind Sie für dieses Turnier bereits gemeldet.');
+
+			return;
 		}
 
-		// Formular als String zurückgeben
-		return $fehler.$form->generate();
-
+		// Nach dem Speichern umleiten statt neu laden. Erst dadurch entsteht ein
+		// GET-Aufruf, bei dem der Browser nicht mehr nach dem erneuten Absenden
+		// der Formulardaten fragt — genau daraus sind Doppelmeldungen entstanden.
+		Controller::redirect(Controller::addToUrl('send=1'));
 	}
 
 	/**
-	 * Baut die Bestätigungsseite nach einer erfolgreichen Meldung.
+	 * Prüft, ob eine Turniernummer in der angebotenen Auswahl vorkommt.
 	 *
-	 * Bis Version 2.0.0 wurde nach dem Absenden nur die Seite neu geladen; der
-	 * Absender sah wieder das leere Formular und hatte keinen Anhaltspunkt, ob
-	 * seine Meldung angekommen war. Das war der Hauptgrund für die vielen
-	 * Mehrfachbewerbungen.
+	 * Die Auswahl ist nach Turnierkategorien gruppiert; gesucht wird deshalb in
+	 * allen Gruppen.
 	 *
-	 * @param object $mitglied Spielerdatensatz des angemeldeten Mitglieds
+	 * @param array $turniere Die Auswahl aus getTournaments()
+	 * @param int   $id       Die abgeschickte Turniernummer
 	 *
-	 * @return string Der Bestätigungstext samt der zuletzt gespeicherten
-	 *                Meldungen des Spielers
+	 * @return bool True, wenn das Turnier angeboten wurde
 	 */
-	protected function Bestaetigung($mitglied)
+	protected function turnierErlaubt($turniere, $id)
 	{
-		$begriff = $this->fernschachverwaltung_bewerbung ? 'Bewerbung' : 'Anmeldung';
-
-		$ausgabe = '<div class="fernschach-bestaetigung">';
-		$ausgabe .= '<p class="confirmation"><b>Ihre '.$begriff.' ist eingegangen.</b></p>';
-		$ausgabe .= '<p>Sie erhalten zusätzlich eine Bestätigung per E-Mail an <b>'.$mitglied->email1.'</b>. ';
-		$ausgabe .= 'Bitte sehen Sie auch im Spam-Ordner nach. Eine erneute '.$begriff.' für dasselbe Turnier ist nicht nötig.</p>';
-
-		// Die zuletzt gespeicherten Meldungen als Beleg mit ausgeben
-		$meldungen = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAnmeldungenBewerbungen($mitglied->id);
-
-		if($meldungen)
+		foreach($turniere as $gruppe)
 		{
-			$ausgabe .= '<h4>Ihre letzten Meldungen</h4><ul>';
-			$nummer = 0;
-
-			foreach($meldungen as $item)
+			if(isset($gruppe[$id]))
 			{
-				$ausgabe .= '<li>'.date('d.m.Y H:i', $item['datum']).' — '.$item['typ'].': '.$item['turnier'].'</li>';
-
-				if(++$nummer == 5)
-				{
-					break;
-				}
+				return true;
 			}
-
-			$ausgabe .= '</ul>';
 		}
 
-		$ausgabe .= '</div>';
-
-		return $ausgabe;
+		return false;
 	}
+
+	/**
+	 * Liefert die letzten Meldungen eines Spielers.
+	 *
+	 * @param object $mitglied Spielerdatensatz
+	 * @param int    $anzahl   Höchstzahl der zurückgegebenen Einträge
+	 *
+	 * @return array Liste mit den Schlüsseln 'datum', 'typ' und 'turnier'
+	 */
+	protected function letzteMeldungen($mitglied, $anzahl)
+	{
+		$meldungen = Helper::getAnmeldungenBewerbungen($mitglied->id);
+
+		return \is_array($meldungen) ? \array_slice($meldungen, 0, $anzahl) : array();
+	}
+
+	/**
+	 * Formatiert einen Geldbetrag deutsch mit Euro-Zeichen.
+	 *
+	 * @param float|int|string $betrag Der Betrag in Euro
+	 *
+	 * @return string Der Betrag als „1.234,50 €"
+	 */
+	protected static function formatBetrag($betrag)
+	{
+		return number_format((float) $betrag, 2, ',', '.').' €';
+	}
+
 
 	/**
 	 * Speichert eine Anmeldung oder Bewerbung und verschickt die E-Mails.
@@ -712,21 +608,32 @@ class Meldeformular_Spieler extends Module
 					$turnieranmeldung = false;
 				}
 
-				// Anmeldung in Select-Box eintragen, wenn erlaubt
+				// Turnier in die Auswahl eintragen, wenn erlaubt
 				if($turnieranmeldung && $Gruppenname)
 				{
-					// Optgroup-Label festlegen
-					$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
-					if(!isset($Turniere[$Gruppe])) $Turniere[$Gruppe] = array(); // Unterarray anlegen
-
-					$meldedatum = $objTurniere->registrationDate ? ' | Meldedatum: '.date('d.m.Y', $objTurniere->registrationDate) : ' | ohne Meldedatum';
-					$nenngeld = ' | Nenngeld: '.trim(str_replace('.', ',', sprintf('%0.2f', $objTurniere->nenngeld))).' €';
-					// Turnier eintragen in Liste, wenn vorhandenes Nenngeld ausreicht
-					$saldo = (string)$saldo; // Es gibt ein Problem mit der Saldoberechnung: 4 wird übergeben, ebi Umwandlung in int wird 3 draus, bei Umwandlung in String bleibt es 4!
-					if($mitglied->sepaNenngeld || $saldo >= (int)$objTurniere->nenngeld)
+					// Der Vergleich lief früher über (int) auf das Nenngeld und
+					// hat die Nachkommastellen abgeschnitten: Aus 25,50 wurde 25,
+					// und mit 25,49 auf dem Konto war die Meldung möglich.
+					// Helper::nenngeldGedeckt() rechnet in Cent.
+					if(!Helper::nenngeldGedeckt($mitglied, $objTurniere->nenngeld, $saldo))
 					{
-						$Turniere[$Gruppe][$objTurniere->id] = $objTurniere->title.$nenngeld.$meldedatum;
+						continue;
 					}
+
+					$Gruppe = $Gruppenname ? $Gruppenname : $Standardgruppe;
+
+					if(!isset($Turniere[$Gruppe]))
+					{
+						$Turniere[$Gruppe] = array();
+					}
+
+					$Turniere[$Gruppe][$objTurniere->id] = array
+					(
+						'id'           => (int) $objTurniere->id,
+						'title'        => $objTurniere->title,
+						'nenngeld'     => self::formatBetrag($objTurniere->nenngeld),
+						'meldeschluss' => $objTurniere->registrationDate ? date('d.m.Y', (int) $objTurniere->registrationDate) : '',
+					);
 				}
 			}
 		}

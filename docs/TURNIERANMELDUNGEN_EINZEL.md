@@ -12,6 +12,10 @@ Die Pflichtfelder im Formular sind:
 
 Zusätzlich gibt es optionale Eingabefelder für Qualifikationen und Bemerkungen.
 
+Seit Version 2.7.0 bringt das Formular sein Aussehen selbst mit (`fernschach_formular.css`); vom Theme wird nichts mehr übernommen. Über der Turnierauswahl stehen die eigenen Daten mit den Kontoständen von Haupt-, Beitrags- und Nenngeldkonto, die offenen Qualifikationen und die letzten Meldungen. Die Modul-Einstellung *Radio-Buttons bei Turnierauswahl* schaltet zwischen Auswahlliste und Radio-Knöpfen um; in beiden Fällen sind die Turniere nach Kategorie gruppiert.
+
+**Damit ein Turnier überhaupt angeboten wird**, muss eine übergeordnete Turnierkategorie das Feld *In Turnieranmeldung anzeigen* (`titleView`) gesetzt haben — sie liefert die Gruppenüberschrift. Fehlt sie, erscheint das Turnier ohne weitere Meldung nicht in der Auswahl.
+
 ### Voraussetzungen einer Turnieranmeldung
 
 * SEPA-Mandat Beitrag liegt vor oder Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich.

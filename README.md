@@ -206,8 +206,26 @@ Zeigt die Kurzdokumentation der Erweiterung im Backend an.
 Angeboten werden nur Turniere, die veröffentlicht sind, deren übergeordnete
 Kategorien ebenfalls veröffentlicht sind, deren Meldeschluss noch nicht
 verstrichen ist und deren Beschränkungen (Klasse, Geschlecht, Alter,
-Teilnehmerhöchstzahl) zum Spieler passen. Ohne SEPA-Mandat entscheidet der
-Kontostand darüber, ob eine Anmeldung möglich ist.
+Teilnehmerhöchstzahl) zum Spieler passen.
+
+**Beitrag und Nenngeld.** Ohne SEPA-Vereinbarung für den Beitrag muss das
+Beitragskonto ausgeglichen sein — sonst erscheint statt der Turnierauswahl ein
+Hinweis mit dem Kontostand. Beim Nenngeld entscheidet je Turnier, ob eine
+SEPA-Vereinbarung vorliegt oder das Guthaben das Nenngeld deckt; verglichen wird
+auf den Cent genau.
+
+**Damit ein Turnier überhaupt erscheint**, muss eine übergeordnete
+Turnierkategorie das Feld *In Turnieranmeldung anzeigen* gesetzt haben — sie
+liefert die Gruppenüberschrift der Auswahl. Fehlt sie, taucht das Turnier ohne
+weitere Meldung nicht auf.
+
+**Aufbau.** Über der Turnierauswahl stehen die eigenen Daten mit den
+Kontoständen, die offenen Qualifikationen und die letzten Meldungen. Die
+Turniere sind nach Kategorie gruppiert, in der Auswahlliste als `optgroup`, bei
+eingeschalteten Radio-Buttons als Abschnitt mit Überschrift. Seit Version 2.7.0
+bringt das Formular sein Aussehen selbst mit (`fernschach_formular.css`,
+dieselbe Datei wie beim Mannschaftsformular); vom Theme wird nichts übernommen.
+Ein JavaScript braucht es nicht.
 
 Nach dem Absenden entstehen die Meldung, die Nenngeld-Sollbuchung und je eine
 E-Mail an die Turnierleitung und an den Spieler. Anschließend erscheint eine
