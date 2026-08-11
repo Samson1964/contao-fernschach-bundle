@@ -312,9 +312,39 @@
 	background: var(--fs-farbe-hell);
 }
 
-.fernschach-formular .fs-radio input {
+/*
+ * Viele Themes blenden die nativen Auswahlknöpfe aus und zeichnen einen Ersatz:
+ * Der echte Knopf bekommt position:absolute, und über ::before und ::after am
+ * Folgeelement entsteht ein gezeichneter Kreis, für den die Beschriftung einen
+ * Einzug tragen muss.
+ *
+ * Das setzt eine bestimmte Markup-Folge voraus, die dieses Formular nicht hat.
+ * Die Folge auf bdf-fernschachbund.de: Der echte Knopf stand an einer festen
+ * Stelle irgendwo auf der Seite statt in seiner Zeile, war nicht anklickbar,
+ * und die Beschriftung trug einen Einzug für einen Kreis, der nicht zu ihr
+ * gehörte. Deshalb wird das hier vollständig zurückgenommen.
+ */
+.fernschach-formular .fs-radio input[type="radio"] {
+	position: static;
+	left: auto;
+	top: auto;
 	flex: 0 0 auto;
+	width: 1em;
+	height: 1em;
 	margin: 0;
+	opacity: 1;
+	pointer-events: auto;
+	appearance: auto;
+	-webkit-appearance: radio;
+}
+
+.fernschach-formular .fs-radio > span {
+	padding-left: 0;
+}
+
+.fernschach-formular .fs-radio > span::before,
+.fernschach-formular .fs-radio > span::after {
+	content: none;
 }
 
 .fernschach-formular .fs-radio-info {

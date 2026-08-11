@@ -1,5 +1,10 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.7.3 (2026-08-11)
+
+* Fix: Bei eingeschalteter Turnierauswahl über **Radio-Buttons** sahen die Knöpfe auf bdf-fernschachbund.de zerrissen aus. Das Theme blendet die nativen Auswahlknöpfe aus (`position: absolute`, `pointer-events: none`) und zeichnet über `::before` und `::after` am Folgeelement einen Ersatzkreis, für den die Beschriftung einen Einzug von 35 px tragen muss. Diese Markup-Folge hat das Formular nicht: Der echte Knopf stand dadurch an einer festen Stelle irgendwo auf der Seite statt in seiner Zeile, ließ sich nicht anklicken, und die Beschriftung trug den Einzug für einen Kreis, der nicht zu ihr gehörte
+* Change: Innerhalb von `.fernschach-formular` werden diese Fremdregeln jetzt vollständig zurückgenommen — der native Knopf steht wieder in der Zeile, ist anklickbar, und die gezeichneten Ersatzkreise entfallen. Damit hängt auch die Auswahl nicht mehr am Theme, so wie es für den Rest des Formulars schon galt
+
 ## Version 2.7.2 (2026-08-11)
 
 * Change: Bei einem **Mannschaftsturnier** ist die Schaltfläche **Anmeldungen bearbeiten** abgeblendet. Dort meldet nicht der einzelne Spieler, sondern der Mannschaftsleiter eine Mannschaft; das steht seit 2.6.0 unter *Mannschaften bearbeiten*. Der Titel beim Überfahren sagt das
