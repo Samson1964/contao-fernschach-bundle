@@ -412,6 +412,44 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Ermittelt, wann sich ein Spieler zuletzt für ein Turnier gemeldet hat.
+	 *
+	 * Gebraucht wird das für die Erklärung im Meldeformular: Verschwindet ein
+	 * Turnier aus der Auswahl, weil die zulässige Zahl an Meldungen erreicht ist,
+	 * soll der Benutzer erfahren, wann er selbst gemeldet hat.
+	 *
+	 * @param int|string $turnier      ID des Turniers aus tl_fernschach_turniere
+	 * @param int|string $spieler      ID des Spielers aus tl_fernschach_spieler
+	 * @param bool       $blnBewerbung true sucht in den Bewerbungen, false in den
+	 *                                 Anmeldungen
+	 *
+	 * @return string Das Datum als TT.MM.JJJJ; leer, wenn sich keine Meldung
+	 *                findet oder sie kein brauchbares Datum trägt
+	 */
+	public static function letzteMeldung($turnier, $spieler, $blnBewerbung = false)
+	{
+		if(!$turnier || !$spieler)
+		{
+			return '';
+		}
+
+		$strTabelle = $blnBewerbung ? 'tl_fernschach_turniere_bewerbungen' : 'tl_fernschach_turniere_meldungen';
+
+		$objMeldung = Database::getInstance()->prepare('SELECT meldungDatum, tstamp FROM '.$strTabelle.' WHERE pid = ? AND spielerId = ? ORDER BY meldungDatum DESC, id DESC')
+		                                      ->limit(1)
+		                                      ->execute($turnier, $spieler);
+
+		if(!$objMeldung->numRows)
+		{
+			return '';
+		}
+
+		$intZeit = (int) ($objMeldung->meldungDatum ?: $objMeldung->tstamp);
+
+		return $intZeit ? date('d.m.Y', $intZeit) : '';
+	}
+
+	/**
 	 * Prüft, ob der Beitrag eines Spielers einer Meldung nicht entgegensteht.
 	 *
 	 * Gemeldet werden darf, wer eine SEPA-Vereinbarung für den Beitrag erteilt

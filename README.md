@@ -336,10 +336,17 @@ Am Turnier steht im Feld **Meldungen je Spieler**, wie oft sich derselbe Spieler
 für dieses Turnier melden darf. Die Voreinstellung ist **1**, der Wert 0 hebt die
 Begrenzung auf. Anmeldungen und Bewerbungen werden getrennt gezählt.
 
-Ist die Zahl erreicht, taucht das Turnier im Meldeformular gar nicht mehr auf.
-Zusätzlich prüft das Speichern noch einmal — sonst ließe sich die Sperre über den
-Zurück-Knopf oder einen zweiten Browsertab umgehen. Eine abgewiesene Meldung wird
-im Systemprotokoll vermerkt.
+Ist die Zahl erreicht, steht das Turnier nicht mehr zur Auswahl. Das Formular
+**nennt es aber** samt Grund und dem Datum der eigenen Meldung, statt es
+kommentarlos wegzulassen. Zusätzlich prüft das Speichern noch einmal — sonst
+ließe sich die Sperre über den Zurück-Knopf oder einen zweiten Browsertab
+umgehen. Eine abgewiesene Meldung wird im Systemprotokoll vermerkt.
+
+> **Achtung bei Sammelturnieren.** Bei Turnieren, die eine ganze Klasse
+> sammeln — etwa *Hauptturnierklasse (Server)* —, bleiben die Meldungen liegen,
+> bis der Turnierdirektor eine Turniergruppe anlegt und sie dorthin verschiebt.
+> Mit *Meldungen je Spieler* = 1 kann sich in dieser Wartezeit niemand ein
+> zweites Mal melden. Dort gehört der Wert in der Regel auf 0.
 
 **Für Mannschaftsturniere gilt das Feld nicht.** Ein Mannschaftsleiter darf
 beliebig viele Mannschaften seines Vereins melden („Musterstadt I",

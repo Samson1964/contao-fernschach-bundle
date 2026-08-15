@@ -88,6 +88,23 @@ use Contao\StringUtil;
 	</section>
 	<?php endif; ?>
 
+	<?php
+	// Der Block steht bewusst vor der Fallunterscheidung: Fallen durch die
+	// Sperren *alle* Turniere weg, bleibt sonst nur „kein Turnier offen" stehen —
+	// und genau dann braucht der Benutzer die Erklärung am dringendsten.
+	?>
+	<?php if ($this->gesperrt): ?>
+	<div class="fs-hinweis fs-hinweis--info">
+		<p>Diese Turniere stehen Ihnen zurzeit <strong>nicht</strong> zur Auswahl:</p>
+		<ul class="fs-gesperrt">
+			<?php foreach ($this->gesperrt as $eintrag): ?>
+			<li><?= StringUtil::specialchars($eintrag['title']) ?> <span class="fs-gesperrt-grund">— <?= StringUtil::specialchars($eintrag['grund']) ?></span></li>
+			<?php endforeach; ?>
+		</ul>
+		<p class="fs-nachsatz">Bitte wenden Sie sich an den Turnierdirektor, wenn Sie sich dennoch melden möchten.</p>
+	</div>
+	<?php endif; ?>
+
 	<?php if ($this->fehlertext): ?>
 
 	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>

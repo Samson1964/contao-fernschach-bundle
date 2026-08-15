@@ -1,5 +1,18 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.8.0 (2026-08-15)
+
+Ein Mitglied konnte sich nicht mehr für die Hauptturnierklasse melden — das Turnier fehlte in der Auswahl, ohne jede Erklärung. Turnierleiter, Turnierdirektor und Webmaster haben gemeinsam gesucht. Die Ursache: Das Mitglied hatte dort bereits gemeldet, und seit Version 2.1.0 steht `maxMeldungen` bei allen Turnieren auf 1.
+
+Die Begrenzung ist gewollt. Dass ein Turnier deswegen **wortlos** verschwindet, war es nie.
+
+* Add: Das Meldeformular nennt jetzt die Turniere, die es nicht anbietet, samt Grund — „Sie haben die zulässige Zahl an Meldungen bereits erreicht, zuletzt am 30.11.2025" oder „Das Nenngeld von 2,50 € ist durch Ihr Nenngeldkonto nicht gedeckt". Dargestellt als Auskunft, nicht als Fehler
+* Add: Der Hinweis erscheint auch dann, wenn dadurch **alle** Turniere wegfallen. Vorher stand da nur „Zurzeit steht kein Turnier zur Anmeldung offen", was in dieser Lage schlicht falsch ist
+* Add: `Helper::letzteMeldung()` liefert das Datum der eigenen Meldung für die Erklärung
+* Change: Nicht erklärt werden Klasse, Geschlecht und Alter. Das sind Eigenschaften des Spielers, an denen er nichts ändern kann; sie aufzuzählen brächte ihn nicht weiter
+
+**Für Turnierdirektoren:** Bei Sammelturnieren einer Klasse — etwa *Hauptturnierklasse (Server)*, wo Meldungen bis zur Zuteilung in eine Turniergruppe liegenbleiben — ist `Meldungen je Spieler` = 1 in der Regel zu streng. Wer dort eine offene Meldung hat, kann sich kein zweites Mal melden. Der Wert lässt sich am Turnier auf 0 (unbegrenzt) setzen.
+
 ## Version 2.7.3 (2026-08-11)
 
 * Fix: Bei eingeschalteter Turnierauswahl über **Radio-Buttons** sahen die Knöpfe auf bdf-fernschachbund.de zerrissen aus. Das Theme blendet die nativen Auswahlknöpfe aus (`position: absolute`, `pointer-events: none`) und zeichnet über `::before` und `::after` am Folgeelement einen Ersatzkreis, für den die Beschriftung einen Einzug von 35 px tragen muss. Diese Markup-Folge hat das Formular nicht: Der echte Knopf stand dadurch an einer festen Stelle irgendwo auf der Seite statt in seiner Zeile, ließ sich nicht anklicken, und die Beschriftung trug den Einzug für einen Kreis, der nicht zu ihr gehörte

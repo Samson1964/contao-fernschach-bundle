@@ -71,6 +71,7 @@ class Meldeformular_Spieler extends Module
 		$this->Template->fehler = array();
 		$this->Template->qualifikationen = array();
 		$this->Template->meldungen = array();
+		$this->Template->gesperrt = array();
 		$this->Template->konten = array();
 		$this->Template->sepa = array();
 		$this->Template->begriff = $this->fernschachverwaltung_bewerbung ? 'Bewerbung' : 'Anmeldung';
@@ -152,14 +153,19 @@ class Meldeformular_Spieler extends Module
 			return;
 		}
 
-		$turniere = self::getTournaments($mitglied, $nenngeldsaldo);
+		$gesperrt = array();
+		$turniere = self::getTournaments($mitglied, $nenngeldsaldo, $gesperrt);
 		$this->Template->turniere = $turniere;
+		$this->Template->gesperrt = $gesperrt;
 
 		if(!$turniere)
 		{
-			$this->Template->fehlertext = $mitglied->sepaNenngeld
-				? 'Zurzeit steht kein Turnier zur '.$this->Template->begriff.' offen.'
-				: 'Zurzeit steht kein Turnier zur '.$this->Template->begriff.' offen. Möglich ist auch, dass das Guthaben auf Ihrem Nenngeldkonto ('.self::formatBetrag($nenngeldsaldo).') für keines der offenen Turniere reicht und keine SEPA-Vereinbarung für das Nenngeld vorliegt.';
+			// Sind alle offenen Turniere an einer Sperre gescheitert, stehen sie
+			// mit Grund über dieser Meldung — dann wäre „kein Turnier offen"
+			// schlicht falsch.
+			$this->Template->fehlertext = $gesperrt
+				? 'Darüber hinaus steht Ihnen zurzeit kein weiteres Turnier zur '.$this->Template->begriff.' offen.'
+				: 'Zurzeit steht kein Turnier zur '.$this->Template->begriff.' offen.';
 
 			return;
 		}
@@ -493,9 +499,10 @@ class Meldeformular_Spieler extends Module
 	 *
 	 * @return array
 	 */
-	public function getTournaments($mitglied, $saldo)
+	public function getTournaments($mitglied, $saldo, &$gesperrt = null)
 	{
 		$Turniere = array();
+		$gesperrt = array();
 		$Standardgruppe = 'Weitere Turniere'; // Name des optgroup-Labels für nichtzugeordnete Turniere
 		$zeit = time();
 		$monat = date('m', $zeit);
@@ -603,7 +610,12 @@ class Meldeformular_Spieler extends Module
 				// gar nicht erst in der Auswahl auf — das ist der wirksamste
 				// Schutz gegen die Mehrfachbewerbungen, die entstehen, wenn
 				// jemand das Formular zweimal abschickt.
-				if(!\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurniere, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung))
+				// Ist die zulässige Zahl erreicht, verschwindet das Turnier aus der
+				// Auswahl. Damit das niemanden ratlos zurücklässt, wird es samt
+				// Grund vermerkt und über dem Formular genannt.
+				$blnGemeldet = !\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurniere, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung);
+
+				if($blnGemeldet)
 				{
 					$turnieranmeldung = false;
 				}
@@ -617,6 +629,12 @@ class Meldeformular_Spieler extends Module
 					// Helper::nenngeldGedeckt() rechnet in Cent.
 					if(!Helper::nenngeldGedeckt($mitglied, $objTurniere->nenngeld, $saldo))
 					{
+						$gesperrt[] = array
+						(
+							'title' => $objTurniere->title,
+							'grund' => 'Das Nenngeld von '.self::formatBetrag($objTurniere->nenngeld).' ist durch Ihr Nenngeldkonto nicht gedeckt',
+						);
+
 						continue;
 					}
 
@@ -633,6 +651,19 @@ class Meldeformular_Spieler extends Module
 						'title'        => $objTurniere->title,
 						'nenngeld'     => self::formatBetrag($objTurniere->nenngeld),
 						'meldeschluss' => $objTurniere->registrationDate ? date('d.m.Y', (int) $objTurniere->registrationDate) : '',
+					);
+				}
+				elseif($blnGemeldet && $Gruppenname)
+				{
+					// Nur diese eine Bedingung wird erklärt. Klasse, Geschlecht und
+					// Alter sind Eigenschaften des Spielers, die er nicht ändern
+					// kann; sie hier aufzuzählen brächte ihn nicht weiter.
+					$strDatum = \Schachbulle\ContaoFernschachBundle\Classes\Helper::letzteMeldung($objTurniere->id, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung);
+
+					$gesperrt[] = array
+					(
+						'title' => $objTurniere->title,
+						'grund' => 'Sie haben die zulässige Zahl an Meldungen bereits erreicht'.($strDatum ? ', zuletzt am '.$strDatum : ''),
 					);
 				}
 			}
