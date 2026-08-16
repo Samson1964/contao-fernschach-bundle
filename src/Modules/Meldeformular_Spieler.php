@@ -287,7 +287,6 @@ class Meldeformular_Spieler extends Module
 			return false;
 		}
 
-		// Turnier laden und die Zahl der erlaubten Meldungen prüfen
 		$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($data['turnier']);
 
 		if(!$objTurnier || !$objTurnier->numRows)
@@ -295,16 +294,15 @@ class Meldeformular_Spieler extends Module
 			return false;
 		}
 
-		if(!\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurnier, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung))
-		{
-			Scope::log(
-				'[Fernschach-Verwaltung] Mehrfachmeldung abgewiesen: Spieler '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
-				__METHOD__,
-				ContaoContext::GENERAL
-			);
-
-			return false;
-		}
+		// Seit Version 2.9.0 wird die Zahl der Meldungen je Spieler nicht mehr
+		// geprüft — der BdF wünscht diese Kontrolle nicht mehr. Jede Meldung wird
+		// stattdessen protokolliert, damit sich Doppelmeldungen nachträglich
+		// erkennen lassen.
+		Scope::log(
+			'[Fernschach-Verwaltung] '.($this->fernschachverwaltung_bewerbung ? 'Bewerbung' : 'Anmeldung').': '.$mitglied->nachname.', '.$mitglied->vorname.' (ID '.$mitglied->id.') für Turnier '.$objTurnier->title.' (ID '.$objTurnier->id.')',
+			__METHOD__,
+			ContaoContext::GENERAL
+		);
 
 		// Turnier prüfen
 		if($data['turnier'])
@@ -610,15 +608,10 @@ class Meldeformular_Spieler extends Module
 				// gar nicht erst in der Auswahl auf — das ist der wirksamste
 				// Schutz gegen die Mehrfachbewerbungen, die entstehen, wenn
 				// jemand das Formular zweimal abschickt.
-				// Ist die zulässige Zahl erreicht, verschwindet das Turnier aus der
-				// Auswahl. Damit das niemanden ratlos zurücklässt, wird es samt
-				// Grund vermerkt und über dem Formular genannt.
-				$blnGemeldet = !\Schachbulle\ContaoFernschachBundle\Classes\Helper::meldungErlaubt($objTurniere, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung);
-
-				if($blnGemeldet)
-				{
-					$turnieranmeldung = false;
-				}
+				// Das Turnierfeld maxMeldungen wird seit Version 2.9.0 nicht mehr
+				// ausgewertet: Der BdF wünscht die Kontrolle der Meldungen je
+				// Spieler nicht mehr. Wer sich ein zweites Mal melden will, kann
+				// das tun.
 
 				// Turnier in die Auswahl eintragen, wenn erlaubt
 				if($turnieranmeldung && $Gruppenname)
@@ -651,19 +644,6 @@ class Meldeformular_Spieler extends Module
 						'title'        => $objTurniere->title,
 						'nenngeld'     => self::formatBetrag($objTurniere->nenngeld),
 						'meldeschluss' => $objTurniere->registrationDate ? date('d.m.Y', (int) $objTurniere->registrationDate) : '',
-					);
-				}
-				elseif($blnGemeldet && $Gruppenname)
-				{
-					// Nur diese eine Bedingung wird erklärt. Klasse, Geschlecht und
-					// Alter sind Eigenschaften des Spielers, die er nicht ändern
-					// kann; sie hier aufzuzählen brächte ihn nicht weiter.
-					$strDatum = \Schachbulle\ContaoFernschachBundle\Classes\Helper::letzteMeldung($objTurniere->id, $mitglied->id, (bool) $this->fernschachverwaltung_bewerbung);
-
-					$gesperrt[] = array
-					(
-						'title' => $objTurniere->title,
-						'grund' => 'Sie haben die zulässige Zahl an Meldungen bereits erreicht'.($strDatum ? ', zuletzt am '.$strDatum : ''),
 					);
 				}
 			}

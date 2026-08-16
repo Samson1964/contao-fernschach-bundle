@@ -412,44 +412,6 @@ class Helper extends Backend
 	}
 
 	/**
-	 * Ermittelt, wann sich ein Spieler zuletzt für ein Turnier gemeldet hat.
-	 *
-	 * Gebraucht wird das für die Erklärung im Meldeformular: Verschwindet ein
-	 * Turnier aus der Auswahl, weil die zulässige Zahl an Meldungen erreicht ist,
-	 * soll der Benutzer erfahren, wann er selbst gemeldet hat.
-	 *
-	 * @param int|string $turnier      ID des Turniers aus tl_fernschach_turniere
-	 * @param int|string $spieler      ID des Spielers aus tl_fernschach_spieler
-	 * @param bool       $blnBewerbung true sucht in den Bewerbungen, false in den
-	 *                                 Anmeldungen
-	 *
-	 * @return string Das Datum als TT.MM.JJJJ; leer, wenn sich keine Meldung
-	 *                findet oder sie kein brauchbares Datum trägt
-	 */
-	public static function letzteMeldung($turnier, $spieler, $blnBewerbung = false)
-	{
-		if(!$turnier || !$spieler)
-		{
-			return '';
-		}
-
-		$strTabelle = $blnBewerbung ? 'tl_fernschach_turniere_bewerbungen' : 'tl_fernschach_turniere_meldungen';
-
-		$objMeldung = Database::getInstance()->prepare('SELECT meldungDatum, tstamp FROM '.$strTabelle.' WHERE pid = ? AND spielerId = ? ORDER BY meldungDatum DESC, id DESC')
-		                                      ->limit(1)
-		                                      ->execute($turnier, $spieler);
-
-		if(!$objMeldung->numRows)
-		{
-			return '';
-		}
-
-		$intZeit = (int) ($objMeldung->meldungDatum ?: $objMeldung->tstamp);
-
-		return $intZeit ? date('d.m.Y', $intZeit) : '';
-	}
-
-	/**
 	 * Prüft, ob der Beitrag eines Spielers einer Meldung nicht entgegensteht.
 	 *
 	 * Gemeldet werden darf, wer eine SEPA-Vereinbarung für den Beitrag erteilt
@@ -1226,10 +1188,18 @@ class Helper extends Backend
 	/**
 	 * Prüft, ob sich ein Spieler für ein Turnier (noch) melden darf.
 	 *
+	 * ACHTUNG: **Von den Meldeformularen wird diese Methode seit Version 2.9.0
+	 * nicht mehr aufgerufen.** Der BdF wünscht die Kontrolle der Meldungen je
+	 * Spieler seit dem 16.08.2026 nicht mehr; das Turnierfeld maxMeldungen wird
+	 * ausgewertet von niemandem mehr. Die Methode bleibt samt Tests erhalten,
+	 * damit die Begrenzung sich mit einer Zeile wieder einschalten lässt, falls
+	 * der Wunsch zurückkommt.
+	 *
 	 * Wie oft das erlaubt ist, steht am Turnier im Feld maxMeldungen; 0 bedeutet
-	 * unbegrenzt. Der Grund für die Begrenzung: Ohne sie haben sich Mitglieder
-	 * mehrfach für dasselbe Turnier beworben, weil sie die Bestätigungsmail
-	 * nicht gesehen haben — im Extremfall neunmal für dasselbe Turnier.
+	 * unbegrenzt. Der Grund für die frühere Begrenzung: Ohne sie haben sich
+	 * Mitglieder mehrfach für dasselbe Turnier beworben, weil sie die
+	 * Bestätigungsmail nicht gesehen haben — im Extremfall neunmal für dasselbe
+	 * Turnier. Dagegen hilft inzwischen die Bestätigungsseite nach dem Absenden.
 	 *
 	 * @param object     $objTurnier   Turnierdatensatz, mindestens mit den
 	 *                                 Feldern id und maxMeldungen

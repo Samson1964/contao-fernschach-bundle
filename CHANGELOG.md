@@ -1,5 +1,17 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.9.0 (2026-08-16)
+
+Der BdF wünscht die Kontrolle der Meldungen je Spieler nicht mehr. Ein Spieler darf sich für ein Turnier so oft melden, wie er möchte.
+
+* Change: Das Turnierfeld `maxMeldungen` wird von den Meldeformularen **nicht mehr ausgewertet** — weder beim Aufbau der Turnierauswahl noch beim Speichern
+* Change: Im Backend heißt das Feld jetzt **Meldungen je Spieler (wird ignoriert)**. Der Hilfetext nennt das Datum der Entscheidung und erklärt, dass das Feld nur erhalten bleibt, falls die Begrenzung später wieder gebraucht wird
+* Change: Statt einer Sperre wird jede Anmeldung und jede Bewerbung im Systemprotokoll vermerkt, mit Spieler und Turnier. Nur daran lässt sich eine versehentliche Doppelmeldung nachträglich erkennen
+* Change: Die Erklärung „Sie haben die zulässige Zahl an Meldungen bereits erreicht" aus 2.8.0 entfällt mit ihrem Anlass. Der Hinweis auf nicht angebotene Turniere bleibt für das nicht gedeckte Nenngeld
+* Change: `Helper::letzteMeldung()` ist entfallen; sie wurde nur für diese Erklärung gebraucht. `Helper::meldungErlaubt()` und `Helper::zaehleMeldungen()` bleiben samt Tests erhalten und sind im Kommentar als derzeit ungenutzt gekennzeichnet — so lässt sich die Begrenzung mit einer Zeile wieder einschalten
+
+**Zum Hintergrund:** Die Begrenzung kam mit 2.1.0 auf Wunsch des Leistungsreferats, weil sich ein Mitglied neunmal für dasselbe Turnier beworben hatte. Sie wurde dabei mit dem Vorgabewert 1 auf alle bestehenden Turniere angewandt — und blockierte anschließend Meldungen, die zulässig sein sollten, zuletzt in der Hauptturnierklasse. Gegen versehentliche Doppelmeldungen hilft weiterhin die Bestätigungsseite nach dem Absenden, die es seit derselben Version gibt.
+
 ## Version 2.8.0 (2026-08-15)
 
 Ein Mitglied konnte sich nicht mehr für die Hauptturnierklasse melden — das Turnier fehlte in der Auswahl, ohne jede Erklärung. Turnierleiter, Turnierdirektor und Webmaster haben gemeinsam gesucht. Die Ursache: Das Mitglied hatte dort bereits gemeldet, und seit Version 2.1.0 steht `maxMeldungen` bei allen Turnieren auf 1.

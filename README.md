@@ -128,8 +128,8 @@ Zusätzliche Schaltflächen in der Kopfzeile:
 
 Turnierkategorien und Turniere in einer Baumstruktur. Je Turnier: Kennziffer,
 Klassenzuordnung, Melde- und Startdatum, Nenngeld, Teilnehmerhöchstzahl,
-Meldungen je Spieler/Mannschaftsleiter, Beschränkungen nach Geschlecht und Alter, Turnierleitung
-sowie die Schalter für Online-Anmeldung und Bewerbung.
+Beschränkungen nach Geschlecht und Alter, Turnierleitung sowie die Schalter für
+Online-Anmeldung und Bewerbung.
 
 Der Baum ist bewusst flach: Unter einer **Kategorie** stehen weitere Kategorien
 und Turniere, unter einem **Turnier** nur noch **Turniergruppen**, unter einer
@@ -279,7 +279,7 @@ bereits gemachten Eingaben bleiben erhalten.
 
 **Mehrere Mannschaften.** Ein Mannschaftsleiter darf für dasselbe Turnier so viele
 Mannschaften melden, wie er möchte. Ein Turnier verschwindet nach einer Meldung
-also nicht aus der Auswahl; das Feld *Meldungen je Spieler* wirkt hier nicht.
+also nicht aus der Auswahl.
 
 **Beitrag.** Melden darf nur, wer den Beitrag geregelt hat: SEPA-Vereinbarung für
 den Beitrag oder ein Beitragskonto, das nicht im Minus steht. Das gilt für den
@@ -332,21 +332,21 @@ solche Meldung ab, sodass keine unvollständige Aufstellung entstehen kann.
 
 ### Mehrfachmeldungen
 
-Am Turnier steht im Feld **Meldungen je Spieler**, wie oft sich derselbe Spieler
-für dieses Turnier melden darf. Die Voreinstellung ist **1**, der Wert 0 hebt die
-Begrenzung auf. Anmeldungen und Bewerbungen werden getrennt gezählt.
+**Seit dem 16.08.2026 gibt es keine Begrenzung mehr.** Ein Spieler darf sich für
+ein Turnier so oft melden, wie er möchte; der BdF wünscht diese Kontrolle nicht
+mehr. Das Turnierfeld **Meldungen je Spieler** heißt im Backend deshalb
+*Meldungen je Spieler (wird ignoriert)* und wird von den Meldeformularen nicht
+mehr ausgewertet. Es bleibt erhalten, falls die Begrenzung später wieder
+gebraucht wird — `Helper::meldungErlaubt()` ist samt Tests vorhanden und müsste
+nur wieder aufgerufen werden.
 
-Ist die Zahl erreicht, steht das Turnier nicht mehr zur Auswahl. Das Formular
-**nennt es aber** samt Grund und dem Datum der eigenen Meldung, statt es
-kommentarlos wegzulassen. Zusätzlich prüft das Speichern noch einmal — sonst
-ließe sich die Sperre über den Zurück-Knopf oder einen zweiten Browsertab
-umgehen. Eine abgewiesene Meldung wird im Systemprotokoll vermerkt.
+Statt einer Sperre wird jede Anmeldung und jede Bewerbung im **Systemprotokoll**
+vermerkt, mit Spieler und Turnier. Nur daran lässt sich eine versehentliche
+Doppelmeldung nachträglich erkennen. Gegen das versehentliche zweimalige
+Abschicken hilft weiterhin die Bestätigungsseite nach dem Absenden.
 
-> **Achtung bei Sammelturnieren.** Bei Turnieren, die eine ganze Klasse
-> sammeln — etwa *Hauptturnierklasse (Server)* —, bleiben die Meldungen liegen,
-> bis der Turnierdirektor eine Turniergruppe anlegt und sie dorthin verschiebt.
-> Mit *Meldungen je Spieler* = 1 kann sich in dieser Wartezeit niemand ein
-> zweites Mal melden. Dort gehört der Wert in der Regel auf 0.
+Nach wie vor erklärt das Formular, wenn ein Turnier aus einem **anderen** Grund
+nicht zur Auswahl steht — etwa weil das Nenngeld nicht gedeckt ist.
 
 **Für Mannschaftsturniere gilt das Feld nicht.** Ein Mannschaftsleiter darf
 beliebig viele Mannschaften seines Vereins melden („Musterstadt I",

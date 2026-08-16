@@ -32,6 +32,8 @@ Für ein Mindest- oder Maximalalter wird nicht der Anmeldetag und auch nicht der
 
 ## Verarbeitung des Anmeldeformulars
 
+Seit dem 16.08.2026 gibt es **keine Begrenzung der Meldungen je Spieler** mehr. Das Turnierfeld `maxMeldungen` wird nicht mehr ausgewertet; es heißt im Backend *Meldungen je Spieler (wird ignoriert)*. Stattdessen wird jede Anmeldung und jede Bewerbung im Systemprotokoll vermerkt.
+
 1. Prüfung der vom Formular versendeten Daten.
 2. Die Meldung wird in die Tabelle tl_fernschach_turniere_meldungen eingetragen. 
 3. Die Meldung wird einem Spieler aus der Tabelle tl_fernschach_spieler zugeordnet. Wird der Spieler dort nicht gefunden, wird ein neuer Datensatz angelegt.
