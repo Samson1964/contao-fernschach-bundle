@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.9.1 (2026-08-19)
+
+* Fix: In der Liste **Ihre letzten Meldungen** im Meldeformular stand bei jeder **Bewerbung** das falsche Turnier — nämlich das der zuletzt gelesenen Anmeldung. Ursache war ein Vertipper in `Helper::getAnmeldungenBewerbungen()`: Die Bewerbungsschleife las `$objAnmeldungen->pid` statt `$objBewerbungen->pid`. Gemeldet für Mitglied 11399, wo zwei Länderkampf-Bewerbungen als „WCCC46CT" erschienen
+* Fix: Dieselbe Liste im Backend-Modul *Turniere des Spielers* (`ZeigeTurniere`) war aus demselben Grund falsch
+* Change: Die Turnierliste auf der Spieler-Bearbeitungsseite hatte die Datensammlung noch einmal Zeile für Zeile enthalten — dort richtig, weshalb der Fehler im Backend nicht auffiel. Beide Ansichten holen die Liste jetzt aus derselben Funktion, damit sie nicht wieder auseinanderlaufen. Die Ausgabe ist unverändert, nachgewiesen durch Vergleich vor und nach der Umstellung
+
 ## Version 2.9.0 (2026-08-16)
 
 Der BdF wünscht die Kontrolle der Meldungen je Spieler nicht mehr. Ein Spieler darf sich für ein Turnier so oft melden, wie er möchte.

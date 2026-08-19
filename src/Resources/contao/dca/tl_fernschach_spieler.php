@@ -2785,18 +2785,13 @@ class tl_fernschach_spieler extends Backend
 	public function getTournaments(DataContainer $dc)
 	{
 
-		// Der Backend-Einstieg heißt seit Contao 4 "contao" und wird über den
-		// Router ermittelt. Die frühere Fallunterscheidung über die Konstante
-		// VERSION ist entfallen — es gibt sie in Contao 5 nicht mehr.
-		$linkprefix = System::getContainer()->get('router')->generate('contao_backend');
-		$imageEdit = Image::getHtml('edit.svg', 'Bewerbung des Mitglieds bearbeiten');
-
-		$spieler_id = $dc->activeRecord->id;
-
-		$objAnmeldungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_meldungen WHERE spielerId = ?")
-		                                          ->execute($spieler_id);
-		$objBewerbungen = Database::getInstance()->prepare("SELECT * FROM tl_fernschach_turniere_bewerbungen WHERE spielerId = ?")
-		                                          ->execute($spieler_id);
+		// Die Datensammlung stand hier früher noch einmal Zeile für Zeile — mit dem
+		// Ergebnis, dass sich in der Fassung des Helpers ein Vertipper einnisten
+		// konnte, den hier niemand sah: Dort las die Bewerbungsschleife die
+		// Turniernummer der Anmeldung. Im Frontend stand deshalb bei jeder
+		// Bewerbung das falsche Turnier. Beide Ansichten holen die Liste jetzt aus
+		// derselben Quelle.
+		$records = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getAnmeldungenBewerbungen($dc->activeRecord->id);
 
 		$ausgabe = '<div class="long widget" style="margin-top:10px;">'; // Wichtig damit das Auf- und Zuklappen funktioniert
 		$ausgabe .= '<h3><label>'.$GLOBALS['TL_LANG']['tl_fernschach_spieler']['turnierAnmeldungenBewerbungen'][0].'</label></h3>';
@@ -2810,43 +2805,6 @@ class tl_fernschach_spieler extends Backend
 		$ausgabe .= '</tr>';
 		$oddeven = 'odd';
 
-		// Datensätze zusammenfassen
-		$records = array();
-		if($objAnmeldungen->numRows)
-		{
-			while($objAnmeldungen->next())
-			{
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
-				$records[] = array
-				(
-					'typ'        => 'Anmeldung',
-					'datum'      => $objAnmeldungen->meldungDatum,
-					'turnier'    => $objTurnier ? $objTurnier->title : '',
-					'status'     => 0,
-					'id'         => $objAnmeldungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_meldungen&amp;act=edit&amp;id='.$objAnmeldungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
-				);
-			}
-		}
-		if($objBewerbungen->numRows)
-		{
-			while($objBewerbungen->next())
-			{
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objBewerbungen->pid);
-				$records[] = array
-				(
-					'typ'        => 'Bewerbung',
-					'datum'      => $objBewerbungen->applicationDate,
-					'turnier'    => $objTurnier ? $objTurnier->title : '',
-					'status'     => 0,
-					'id'         => $objBewerbungen->id,
-					'link'       => '<a href="'.$linkprefix.'?do=fernschach-turniere&amp;table=tl_fernschach_turniere_bewerbungen&amp;act=edit&amp;id='.$objBewerbungen->id.'&amp;popup=1&amp;rt='.Scope::getRequestToken().'" onclick="Backend.openModalIframe({\'width\':768,\'title\':\'Eintrag in Bewerbungen bearbeiten\',\'url\':this.href});return false">'.$imageEdit.'</a>'
-				);
-			}
-		}
-
-		// Liste sortieren
-		if($records) $records = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($records, array('datum' => SORT_DESC));
 
 		$row = 0;
 		foreach($records as $item)

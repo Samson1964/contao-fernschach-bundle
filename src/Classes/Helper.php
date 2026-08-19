@@ -1271,7 +1271,7 @@ class Helper extends Backend
 		{
 			while($objBewerbungen->next())
 			{
-				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objAnmeldungen->pid);
+				$objTurnier = \Schachbulle\ContaoFernschachBundle\Classes\Helper::getTurnierdatensatz($objBewerbungen->pid);
 				$records[] = array
 				(
 					'typ'        => 'Bewerbung',
