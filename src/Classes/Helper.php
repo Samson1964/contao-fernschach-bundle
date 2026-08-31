@@ -59,6 +59,54 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Liest ein Datum aus einer Mitgliedschaft als Zahl im Format JJJJMMTT.
+	 *
+	 * Gespeichert wird JJJJMMTT — im Bestand stehen aber auch Datensätze in der
+	 * Anzeigeform TT.MM.JJJJ. Woher sie stammen, ist nicht mehr zu klären; ein
+	 * Speichern im Backend wandelt sie über putDate() wieder um, sodass sie beim
+	 * Ansehen des Datensatzes nicht auffallen.
+	 *
+	 * Ungeprüft verglichen richten sie Schaden an. PHP 8 vergleicht eine nicht
+	 * durchgängig numerische Zeichenkette mit einer Zahl als **Zeichenketten**:
+	 * '31.12.2025' >= 20260831 ergibt true, weil '3' größer als '2' ist. Eine
+	 * längst beendete Mitgliedschaft gilt damit als aktiv — daher die Meldung
+	 * „ist gestrichen, hat aber eine aktive Mitgliedschaft" im Wartungsprotokoll.
+	 *
+	 * @param mixed $varWert Wert aus dem Feld 'from' oder 'to' einer Mitgliedschaft
+	 *
+	 * @return int Das Datum als JJJJMMTT; 0, wenn leer oder nicht lesbar
+	 */
+	public static function mitgliedschaftsdatum($varWert)
+	{
+		$strWert = trim((string) $varWert);
+
+		if('' === $strWert)
+		{
+			return 0;
+		}
+
+		if(ctype_digit($strWert))
+		{
+			// Unvollständige Angaben werden mit Nullen aufgefüllt — genauso liest
+			// getDate() sie: 202512 ist der Dezember 2025, 2025 das Jahr 2025.
+			switch(strlen($strWert))
+			{
+				case 6:
+					return (int) $strWert * 100;
+
+				case 4:
+					return (int) $strWert * 10000;
+
+				default:
+					return (int) $strWert;
+			}
+		}
+
+		// Punktierte Schreibweise: dieselbe Umwandlung wie beim Speichern
+		return (int) \Schachbulle\ContaoHelperBundle\Classes\Helper::putDate($strWert);
+	}
+
+	/**
 	 * Funktion checkMembership
 	 * ==================================================================
 	 * Liefert den Status der BdF-Mitgliedschaft zurück: true oder false
@@ -76,36 +124,39 @@ class Helper extends Backend
 		
 		if(!$heute) $heute = date('Ymd');
 
+		$heute = (int) $heute;
+
 		$mitgliedschaften = StringUtil::deserialize($playerRecord->memberships); // String umwandeln
-		//print_r($mitgliedschaften);
 		$return = false;
 
 		if(is_array($mitgliedschaften))
 		{
-			//print_r($mitgliedschaften);
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
+				// Beide Daten als Zahl JJJJMMTT lesen, damit auch Datensätze mit
+				// punktierten Angaben richtig verglichen werden
+				$von = self::mitgliedschaftsdatum($mitgliedschaft['from'] ?? 0);
+				$bis = self::mitgliedschaftsdatum($mitgliedschaft['to'] ?? 0);
+
+				if($von == 0 && $bis == 0)
 				{
 					// Leerer Datensatz (wird nicht berücksichtigt)
 				}
-				elseif($mitgliedschaft['from'] > 0 && $mitgliedschaft['to'] > 0)
+				elseif($von > 0 && $bis > 0)
 				{
 					// Beendete Mitgliedschaft
-					if($mitgliedschaft['from'] <= $heute && $mitgliedschaft['to'] >= $heute)
+					if($von <= $heute && $bis >= $heute)
 					{
 						// Mitgliedschaft zum Zeitpunkt von $heute gefunden
-						//echo 'OK '.$heute.'<br>';
 						$return = true;
 					}
 				}
-				elseif($mitgliedschaft['from'] == 0 || $mitgliedschaft['from'] <= $heute)
+				elseif($von == 0 || $von <= $heute)
 				{
 					// Beginndatum nicht gesetzt oder kleiner/gleich aktuellem Tag, also möglicherweise Mitglied
-					if($mitgliedschaft['to'] == 0 || $mitgliedschaft['to'] > $heute)
+					if($bis == 0 || $bis > $heute)
 					{
 						// Endedatum nicht gesetzt oder größer aktuellem Tag, also Mitglied
-						//echo 'OK '.$heute.'<br>';
 						$return = true;
 					}
 				}
@@ -190,11 +241,14 @@ class Helper extends Backend
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if($mitgliedschaft['from'] == 0 && $mitgliedschaft['to'] == 0)
+				$von = self::mitgliedschaftsdatum($mitgliedschaft['from'] ?? 0);
+				$bis = self::mitgliedschaftsdatum($mitgliedschaft['to'] ?? 0);
+
+				if($von == 0 && $bis == 0)
 				{
 					// Leerer Datensatz (wird nicht berücksichtigt)
 				}
-				elseif($mitgliedschaft['to'] == $datum)
+				elseif($bis == (int) $datum)
 				{
 					// Datum gefunden
 					return true;
@@ -223,7 +277,11 @@ class Helper extends Backend
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if(substr($mitgliedschaft['from'],0,4) == $jahr)
+				// Erst als Zahl JJJJMMTT lesen: Bei punktierten Altdaten stünden in
+				// den ersten vier Zeichen sonst Tag und Monat statt des Jahres.
+				$von = self::mitgliedschaftsdatum($mitgliedschaft['from'] ?? 0);
+
+				if($von && substr((string) $von, 0, 4) == $jahr)
 				{
 					// Jahr gefunden
 					return true;
@@ -279,9 +337,12 @@ class Helper extends Backend
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if($mitgliedschaft['from'] > $from) $from = $mitgliedschaft['from'];
-				if($mitgliedschaft['to'] > $to) $to = $mitgliedschaft['to'];
-				if($mitgliedschaft['to'] == $datum) $datum_gefunden = true;
+				$von = self::mitgliedschaftsdatum($mitgliedschaft['from'] ?? 0);
+				$bis = self::mitgliedschaftsdatum($mitgliedschaft['to'] ?? 0);
+
+				if($von > $from) $from = $von;
+				if($bis > $to) $to = $bis;
+				if($bis == (int) $datum) $datum_gefunden = true;
 			}
 		}
 
@@ -315,11 +376,13 @@ class Helper extends Backend
 		{
 			foreach($mitgliedschaften as $mitgliedschaft)
 			{
-				if($mitgliedschaft['from'] > $beginn)
+				$von = self::mitgliedschaftsdatum($mitgliedschaft['from'] ?? 0);
+
+				if($von > $beginn)
 				{
 					// Aktueller Mitgliedsbeginn ist größer als der ältere Mitgliedsbeginn, darum komplett übernehmen
-					$beginn = $mitgliedschaft['from'];
-					$ende = $mitgliedschaft['to'];
+					$beginn = $von;
+					$ende = self::mitgliedschaftsdatum($mitgliedschaft['to'] ?? 0);
 				}
 			}
 		}

@@ -6,6 +6,7 @@ use Contao\Config;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\StringUtil;
+use Schachbulle\ContaoFernschachBundle\Classes\Helper;
 use Contao\System;
 
 /**
@@ -104,7 +105,14 @@ class Streichung
 					{
 						for($x = 0; $x < count($mitgliedschaften); $x++)
 						{
-							if($mitgliedschaften[$x]['to'] == 0)
+							// Als Zahl JJJJMMTT lesen. Steht im Bestand eine
+							// punktierte Angabe, verglichen sich '31.12.2025' und
+							// 20251231 nie — der Cron hielt das Streichdatum für
+							// fehlend und hängte bei jedem Lauf eine weitere
+							// Mitgliedschaft an.
+							$bis = Helper::mitgliedschaftsdatum($mitgliedschaften[$x]['to'] ?? 0);
+
+							if($bis == 0)
 							{
 								// Kein Streichdatum eingetragen, deshalb jetzt eintragen und speichern
 								$found = true;
@@ -120,7 +128,7 @@ class Streichung
 								                        ->execute($objPlayer->id);
 								System::getContainer()->get('monolog.logger.contao.cron')->info('[Fernschach-Wartung] Spieler '.$objPlayer->nachname.','.$objPlayer->vorname.' (ID '.$objPlayer->id.') hat ein Streichdatum ('.$objPlayer->streichung.'), aber kein Mitgliedschaftsende &#10142; Mitgliedschaft geändert');
 							}
-							if($mitgliedschaften[$x]['to'] == $objPlayer->streichung)
+							if($bis == (int) $objPlayer->streichung)
 							{
 								// Streichdatum ist bereits eingetragen
 								$found = true;

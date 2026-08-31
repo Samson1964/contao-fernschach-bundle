@@ -171,4 +171,77 @@ class HelperTest extends TestCase
 		$this->assertTrue(Helper::nenngeldGedeckt($objSpieler, 0, 0.0));
 		$this->assertFalse(Helper::nenngeldGedeckt($objSpieler, 0.01, 0.0));
 	}
+
+	/**
+	 * Ein Datum aus einer Mitgliedschaft wird immer als JJJJMMTT gelesen.
+	 *
+	 * Gespeichert wird JJJJMMTT, im Bestand stehen aber auch punktierte Angaben
+	 * aus der Anzeigeform. Beides muss dieselbe Zahl ergeben.
+	 *
+	 * @return void
+	 */
+	public function testMitgliedschaftsdatumLiestBeideSchreibweisen(): void
+	{
+		$this->assertSame(20251231, Helper::mitgliedschaftsdatum('20251231'));
+		$this->assertSame(20251231, Helper::mitgliedschaftsdatum('31.12.2025'));
+		$this->assertSame(20251231, Helper::mitgliedschaftsdatum(20251231));
+	}
+
+	/**
+	 * Unvollständige Angaben werden mit Nullen aufgefüllt.
+	 *
+	 * @return void
+	 */
+	public function testMitgliedschaftsdatumFuelltUnvollstaendigeAngabenAuf(): void
+	{
+		$this->assertSame(20251200, Helper::mitgliedschaftsdatum('202512'));
+		$this->assertSame(20251200, Helper::mitgliedschaftsdatum('12.2025'));
+		$this->assertSame(20250000, Helper::mitgliedschaftsdatum('2025'));
+	}
+
+	/**
+	 * Leere und unlesbare Angaben ergeben 0.
+	 *
+	 * @return void
+	 */
+	public function testMitgliedschaftsdatumOhneWert(): void
+	{
+		$this->assertSame(0, Helper::mitgliedschaftsdatum(''));
+		$this->assertSame(0, Helper::mitgliedschaftsdatum(0));
+		$this->assertSame(0, Helper::mitgliedschaftsdatum(null));
+		$this->assertSame(0, Helper::mitgliedschaftsdatum('Unsinn'));
+	}
+
+	/**
+	 * Eine beendete Mitgliedschaft gilt auch dann als beendet, wenn die Daten
+	 * punktiert gespeichert sind.
+	 *
+	 * Genau hier lag der Fehler: PHP 8 vergleicht '31.12.2025' mit 20260831 als
+	 * Zeichenketten, und '3' ist größer als '2'. Die Mitgliedschaft galt damit
+	 * als aktiv, obwohl sie seit Monaten beendet war.
+	 *
+	 * @return void
+	 */
+	public function testBeendeteMitgliedschaftMitPunktiertenDaten(): void
+	{
+		$objSpieler = new \stdClass();
+		$objSpieler->id = 424;
+		$objSpieler->nachname = 'Tagsold';
+		$objSpieler->vorname = 'Christian';
+		$objSpieler->memberId = 11111;
+		$objSpieler->death = '';
+		$objSpieler->isDeletion = '';
+		$objSpieler->streichung = 0;
+		$objSpieler->memberships = serialize(array(array('from' => '01.06.2015', 'to' => '31.12.2025', 'status' => 'Streichung')));
+
+		$this->assertFalse(Helper::checkMembership($objSpieler, 20260831));
+
+		// Zum Gegenbeweis dieselbe Mitgliedschaft numerisch
+		$objSpieler->memberships = serialize(array(array('from' => '20150601', 'to' => '20251231', 'status' => 'Streichung')));
+		$this->assertFalse(Helper::checkMembership($objSpieler, 20260831));
+
+		// Und eine laufende Mitgliedschaft, punktiert gespeichert
+		$objSpieler->memberships = serialize(array(array('from' => '01.06.2015', 'to' => 0, 'status' => '')));
+		$this->assertTrue(Helper::checkMembership($objSpieler, 20260831));
+	}
 }

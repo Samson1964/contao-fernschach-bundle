@@ -1,5 +1,21 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.9.2 (2026-08-31)
+
+Im Wartungsprotokoll stand „Spieler Tagsold,Christian (ID 424) ist gestrichen, hat aber eine aktive Mitgliedschaft.", obwohl der Datensatz in Ordnung aussah.
+
+Ursache sind Mitgliedschaften, deren Datumsangaben als `31.12.2025` statt als `20251231` gespeichert sind. Woher dieser Altbestand stammt, ließ sich nicht mehr klären; auffallen kann er nicht, weil die Anzeige punktierte Werte unverändert durchreicht und ein Speichern im Backend sie sogar stillschweigend umwandelt.
+
+Schaden richten sie beim Vergleich an: PHP 8 vergleicht eine nicht durchgängig numerische Zeichenkette mit einer Zahl als **Zeichenketten**. `'31.12.2025' >= 20260831` ergibt `true`, weil `'3'` größer als `'2'` ist — eine seit Monaten beendete Mitgliedschaft galt damit als aktiv.
+
+* Add: `Helper::mitgliedschaftsdatum()` liest ein Datum aus einer Mitgliedschaft immer als Zahl JJJJMMTT, gleich in welcher Schreibweise es gespeichert ist. Unvollständige Angaben werden wie in der Anzeige mit Nullen aufgefüllt
+* Fix: `checkMembership()`, `searchMembership()`, `searchNoMembership()`, `isMemberBegin()` und `Mitgliedschaft()` vergleichen jetzt über diese Normalisierung. Damit verschwindet die falsche Meldung im Wartungsprotokoll
+* Fix: `isMemberBegin()` las das Jahr über `substr($wert, 0, 4)`. Bei punktierten Angaben standen dort Tag und Monat — die Suche nach einem Mitgliedschaftsbeginn ging ins Leere
+* Fix: Der Cronjob **Streichung** verglich das Streichdatum unmittelbar mit dem gespeicherten Wert. Bei punktierten Angaben stimmte der Vergleich nie überein, der Cron hielt das Mitgliedschaftsende für fehlend und hängte bei jedem Lauf eine weitere Mitgliedschaft an
+* Add: Vier Unit-Tests halten das Verhalten fest, darunter der gemeldete Fall
+
+**Hinweis:** Die Datenbank wird nicht angefasst — die betroffenen Datensätze bleiben, wie sie sind, werden aber richtig gelesen. Wer sie bereinigen möchte, öffnet den Spieler im Backend und speichert ihn; dabei wandelt der Wizard die Angaben in die Speicherform um.
+
 ## Version 2.9.1 (2026-08-19)
 
 * Fix: In der Liste **Ihre letzten Meldungen** im Meldeformular stand bei jeder **Bewerbung** das falsche Turnier — nämlich das der zuletzt gelesenen Anmeldung. Ursache war ein Vertipper in `Helper::getAnmeldungenBewerbungen()`: Die Bewerbungsschleife las `$objAnmeldungen->pid` statt `$objBewerbungen->pid`. Gemeldet für Mitglied 11399, wo zwei Länderkampf-Bewerbungen als „WCCC46CT" erschienen
