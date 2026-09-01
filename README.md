@@ -123,6 +123,15 @@ Zusätzliche Schaltflächen in der Kopfzeile:
 | Buchungen importieren | Kontobuchungen aus einer CSV-Datei einlesen |
 | Buchungen verschieben | Buchungen zwischen den drei Konten aller Spieler sortieren |
 | Serienmail-Empfänger setzen | Empfängerliste des gewählten Newsletter-Archivs aus den Spielerdaten aufbauen |
+| Mitgliedschaften prüfen | Sucht und bereinigt Datumsangaben in der falschen Schreibweise (siehe unten) |
+
+#### Mitgliedschaften prüfen
+
+Sucht Mitgliedschaften, deren Datumsangaben in der Anzeigeform `TT.MM.JJJJ`
+statt in der Speicherform `JJJJMMTT` stehen, und schreibt sie auf Rückfrage
+um. Der erste Aufruf listet nur auf. Vor jeder Änderung entsteht eine
+Version. Einzelheiten in [docs/WARTUNG.md](docs/WARTUNG.md).
+
 
 ### Turniere
 

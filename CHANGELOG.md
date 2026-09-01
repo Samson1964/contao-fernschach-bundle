@@ -1,5 +1,12 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.10.0 (2026-08-31)
+
+* Add: Neue Wartungsroutine **Mitgliedschaften prüfen** im Backend-Modul *Spieler*. Sie sucht Mitgliedschaften, deren Datumsangaben in der Anzeigeform `TT.MM.JJJJ` statt in der Speicherform `JJJJMMTT` stehen — der Altbestand, der zu den falschen Meldungen im Wartungsprotokoll geführt hat
+* Add: Der erste Aufruf **sucht nur** und listet die betroffenen Spieler mit dem alten und dem künftigen Wert auf; verändert wird nichts. Das Bereinigen erfolgt erst nach einer Rückfrage
+* Add: Vor jeder Änderung entsteht eine Version, der alte Stand lässt sich also zurückholen. Jede Änderung steht im Systemprotokoll
+* Add: Lässt sich für einen Datensatz keine Version anlegen, wird er übersprungen und am Ende genannt. Ein Abbruch mitten im Lauf würde einen halb bereinigten Bestand hinterlassen, von dem niemand wüsste, wie weit er reicht
+
 ## Version 2.9.2 (2026-08-31)
 
 Im Wartungsprotokoll stand „Spieler Tagsold,Christian (ID 424) ist gestrichen, hat aber eine aktive Mitgliedschaft.", obwohl der Datensatz in Ordnung aussah.

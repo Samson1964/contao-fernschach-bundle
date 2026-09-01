@@ -94,6 +94,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'href'                => 'key=setNewsletter',
 				'attributes'          => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter_confirm'] ?? null) . '\'))return false;Backend.getScrollOffset()"',
 			),
+			'pruefeMitgliedschaften' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeMitgliedschaften'],
+				'href'                => 'key=pruefeMitgliedschaften',
+				'icon'                => 'bundles/contaofernschach/images/fragezeichen.png',
+				'attributes'          => 'onclick="Backend.getScrollOffset();"',
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
