@@ -18,9 +18,11 @@ Seit Version 2.7.0 bringt das Formular sein Aussehen selbst mit (`fernschach_for
 
 ### Voraussetzungen einer Turnieranmeldung
 
-* SEPA-Mandat Beitrag liegt vor oder Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich.
+* SEPA-Mandat Beitrag liegt vor oder Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich. Im Januar zählt dabei der Stand vom 31.12. des Vorjahres, weil der Jahresbeitrag zum 1. Januar gebucht wird.
 * SEPA-Mandat Nenngeld liegt vor oder Nenngeldkonto ist nicht im Minus. Im ersten Fall stehen alle Turniere zur Auswahl. Im zweiten Fall stehen nur Turniere zur Auswahl, wo das Nenngeld das Guthaben auf dem Nenngeldkonto nicht übersteigt.
 * Die Turnierparameter (Teilnehmeranzahl, Qualifikation, Geschlecht, Mindest- oder Maximalalter) passen zum meldewilligen Spieler.
+
+Dieselben Voraussetzungen gelten für **Bewerbungen** — es ist dasselbe Modul, nur mit anderer Betriebsart. Welche der Prüfungen angewendet werden, steht seit Version 2.12.0 in *System → Einstellungen* unter *Prüfungen bei Turnieranmeldungen*; ohne Auswahl gelten alle.
 
 #### Berechnung Mindest- und Maximalalter
 

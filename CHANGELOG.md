@@ -1,5 +1,14 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.12.0 (2026-09-08)
+
+* Add: Die Einstellung **Prüfungen bei Turnieranmeldungen** wird jetzt ausgewertet. Sie trug seit jeher den Zusatz „noch nicht implementiert": Die drei Prüfungen gab es im Code, das Feld daneben tat aber nichts
+* Add: Ohne Auswahl gelten **alle drei** Prüfungen. Auf einer bestehenden Installation ist das Feld leer, weil es nie ausgewertet wurde — eine leere Auswahl als „gar keine Prüfung" zu lesen, hätte beim Update sämtliche Sperren stillschweigend aufgehoben. Zum Abschalten einer Prüfung werden die übrigen angehakt
+* Change: Option 3 hieß „nur bei Einzelturnieren". Seit Version 2.5.0 wird auch der Mannschaftsleiter auf die Deckung des Nenngeldes geprüft; die Beschriftung sagt das jetzt
+* Change: Die Januar-Regelung beim Beitragskonto (Stand vom 31.12. des Vorjahres, weil der Jahresbeitrag zum 1. Januar gebucht wird) hängt an Option 2 und ist damit abschaltbar. Sie galt bisher immer
+* Change: Die Autovervollständigung im Mannschaftsformular bietet Spieler nach derselben Regel an, nach der später auch gemeldet wird. Bisher stand die Bedingung dort ein zweites Mal im Code und hätte auseinanderlaufen können
+* Add: `Helper::getBeitragssaldo()` nimmt einen Stichtag entgegen. Ohne ihn ließe sich die Januar-Regelung nur im Januar nachweisen
+
 ## Version 2.11.0 (2026-09-08)
 
 ### Mitgliedergruppen

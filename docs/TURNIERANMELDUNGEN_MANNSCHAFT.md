@@ -11,6 +11,8 @@ Das Formular wird in einem geschützten Bereich der Website angezeigt, der nur f
 * Das SEPA-Mandat Beitrag liegt vor oder das Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich.
 * Das SEPA-Mandat Nenngeld liegt vor oder das Nenngeldkonto ist nicht im Minus. Im ersten Fall stehen alle Turniere zur Auswahl. Im zweiten Fall stehen nur Turniere zur Auswahl, wo das Nenngeld das Guthaben auf dem Nenngeldkonto nicht übersteigt.
 
+Welche dieser Prüfungen angewendet werden, steht seit Version 2.12.0 in *System → Einstellungen* unter *Prüfungen bei Turnieranmeldungen*; ohne Auswahl gelten alle. Die Nenngeldprüfung (Option 3) gilt ausdrücklich auch hier, nicht nur bei Einzelturnieren.
+
 ### Voraussetzungen für Spieler der zu meldenden Mannschaft
 
 * Das SEPA-Mandat Beitrag liegt vor oder das Beitragskonto ist nicht im Minus. Trifft beides nicht zu, ist keine Anmeldung möglich.

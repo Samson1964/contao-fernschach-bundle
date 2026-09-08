@@ -35,6 +35,10 @@ class HelperTest extends TestCase
 		{
 			$this->markTestSkipped('Ohne Contao-Autoloader (CONTAO_AUTOLOAD) sind diese Tests nicht ausführbar.');
 		}
+
+		// Die Prüfungen richten sich nach einer Einstellung. Ohne Auswahl gelten
+		// alle — das ist der Zustand, den diese Tests voraussetzen
+		unset($GLOBALS['TL_CONFIG']['fernschach_check_turnieranmeldung']);
 	}
 
 	/**

@@ -272,6 +272,10 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_check_turnieranmeldung']
 	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'],
 	'inputType'               => 'checkbox',
 	'options'                 => array('1', '2', '3'),
+	// Ohne Auswahl gelten alle Pruefungen (siehe Classes\Einstellungen). Die
+	// Vorbelegung sorgt dafuer, dass in einer neuen Installation dasselbe auch
+	// im Feld steht, statt dass man raten muss, was ein leeres Feld bedeutet
+	'default'                 => array('1', '2', '3'),
 	'reference'               => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung_options'],
 	'eval'                    => array
 	(

@@ -25,7 +25,7 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorEmail'] = array('E
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterName'] = array('Name Schatzmeister','Name des Schatzmeisters. Er wird angeschrieben, wenn in der Verwaltung ein Todesfall erfasst wird.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterEmail'] = array('E-Mail-Adresse Schatzmeister','E-Mail-Adresse des Schatzmeisters. Fehlt sie, unterbleibt die Nachricht über einen Todesfall und es entsteht stattdessen ein Eintrag im Systemprotokoll.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_hinweis_kontoauszug'] = array('Hinweis Kontoauszug','Hinweistext statt der Kontoauszug-Ausgabe, wenn Benutzer kein BdF-Mitglied ist.');
-$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'] = array('Turnieranmeldung (noch nicht implementiert!)','Optionen für die Prüfung von Turnieranmeldungen');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'] = array('Prüfungen bei Turnieranmeldungen','Welche Voraussetzungen eine Anmeldung oder Bewerbung erfüllen muss. Ohne Auswahl gelten alle Prüfungen. Option 2 wirkt nur zusammen mit Option 1.');
 
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_resetKontenOptions'] = array
 (
@@ -38,5 +38,5 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung_options'] 
 (
 	'1' => 'SEPA-Mandat Beitrag muß vorhanden sein oder Saldo Beitragskonto >= 0 €',
 	'2' => 'Saldo Beitragskonto >= 0 € ohne Berücksichtigung Januar (bei fehlendem SEPA-Mandat Beitrag)',
-	'3' => 'SEPA-Mandat Nenngeld muß vorhanden sein oder Saldo Nenngeldkonto >= 0 € (nur bei Einzelturnieren)',
+	'3' => 'SEPA-Mandat Nenngeld muß vorhanden sein oder Nenngeld durch das Nenngeldkonto gedeckt (Einzel- und Mannschaftsturniere)',
 );

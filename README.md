@@ -94,7 +94,30 @@ Alle Einstellungen stehen unter *System → Einstellungen* in der Legende
 | Name / E-Mail-Adresse Turnierdirektor | Empfänger der Mannschaftsmeldungen |
 | Name / E-Mail-Adresse Schatzmeister | Empfänger der Nachricht über einen Todesfall. Fehlt die Adresse, unterbleibt die Nachricht und es entsteht ein Eintrag im Systemprotokoll |
 | Hinweis Kontoauszug | Text, der im Frontend statt des Kontoauszugs erscheint, wenn der angemeldete Benutzer kein BdF-Mitglied ist |
-| Turnieranmeldung | Prüfoptionen für Anmeldungen — **noch nicht implementiert** |
+| Prüfungen bei Turnieranmeldungen | Welche Voraussetzungen eine Anmeldung oder Bewerbung erfüllen muss (siehe unten). Ohne Auswahl gelten alle Prüfungen |
+
+### Prüfungen bei Turnieranmeldungen
+
+Die Einstellung bestimmt, was eine Anmeldung **und** eine Bewerbung bestehen muss.
+Alle drei Prüfungen gelten für Einzel- und für Mannschaftsturniere; bei einer
+Mannschaftsmeldung wird der Mannschaftsleiter geprüft, dazu jeder aufgestellte
+Spieler auf den Beitrag.
+
+| Option | Bedeutung |
+| --- | --- |
+| 1 | SEPA-Mandat Beitrag liegt vor **oder** das Beitragskonto ist nicht im Minus |
+| 2 | Im Januar zählt der Stand vom 31.12. des Vorjahres. Der Jahresbeitrag wird zum 1. Januar gebucht — ohne diese Regel stünde jedes Mitglied ohne SEPA-Mandat den ganzen Januar über im Minus und käme an keine Anmeldung, bevor es überweisen konnte. Wirkt nur zusammen mit Option 1 |
+| 3 | SEPA-Mandat Nenngeld liegt vor **oder** das Nenngeld des Turniers ist durch das Nenngeldkonto gedeckt. Turniere, die daran scheitern, erscheinen im Formular mit Begründung, statt einfach zu fehlen |
+
+**Ohne Auswahl gelten alle drei Prüfungen.** Das Feld wurde bis Version 2.11.0
+nicht ausgewertet und ist auf einer bestehenden Installation deshalb leer; eine
+leere Auswahl als „gar keine Prüfung“ zu lesen, hätte beim Update sämtliche
+Sperren stillschweigend aufgehoben. Zum Abschalten einer Prüfung werden also die
+übrigen angehakt.
+
+Der Kontostand, den das Meldeformular anzeigt, ist derselbe, den die Prüfung
+verwendet — Anzeige und Entscheidung dürfen nicht auseinanderlaufen, sonst sieht
+der Absender eine Null und bekommt trotzdem eine Absage.
 
 ## Backend-Module
 

@@ -447,25 +447,36 @@ class Helper extends Backend
 	}
 
 	/**
-	 * function getBeitragssaldo
-	 * =================================================================
-	 * Liefert den aktuellen Stand des Beitragskontos. Dabei gilt folgende Regelung:
-	 * - aktueller Monat ist Januar: Stand vom 31.12. des Vorjahres zurückgeben
-	 * - aktueller Monat ist nicht Januar: Stand aktuell zurückgeben
+	 * Liefert den maßgeblichen Stand des Beitragskontos.
 	 *
-	 * @param integer $id         ID des Spielers
+	 * Im Januar wird der Stand vom 31.12. des Vorjahres zurückgegeben, sonst der
+	 * aktuelle. Grund: Der Jahresbeitrag wird zum 1. Januar gebucht. Ohne diese
+	 * Regel stünde jedes Mitglied ohne SEPA-Mandat den ganzen Januar über im
+	 * Minus und käme an keine Turnieranmeldung, bevor es überweisen konnte.
 	 *
-	 * @return float              Saldo
+	 * Die Regel hängt an der Einstellung *Prüfungen bei Turnieranmeldungen*
+	 * (Option 2). Ist sie abgewählt, zählt auch im Januar der aktuelle Stand.
+	 * Derselbe Wert steht im Meldeformular als Kontostand — Anzeige und Prüfung
+	 * dürfen nicht auseinanderlaufen, sonst sieht der Absender eine Null und
+	 * bekommt trotzdem eine Absage.
+	 *
+	 * @param integer  $id        ID des Spielers aus tl_fernschach_spieler
+	 * @param int|null $zeitpunkt Stichtag als Zeitstempel; ohne Angabe gilt heute.
+	 *                            Gebraucht wird der Parameter für die Prüfstände:
+	 *                            Die Januar-Regel ließe sich sonst nur im Januar
+	 *                            nachweisen
+	 *
+	 * @return float Der Saldo in Euro; 0, wenn es keine Buchungen gibt
 	 */
-	public static function getBeitragssaldo($id)
+	public static function getBeitragssaldo($id, $zeitpunkt = null)
 	{
-		$datum = date('d.m.Y');
+		$datum = date('d.m.Y', $zeitpunkt ?: time());
 		// Umwandeln auf Mitternacht
 		$tag = substr($datum, 0, 2);
 		$monat = substr($datum, 3, 2);
 		$jahr = substr($datum, 6, 4);
 
-		if($monat == '01')
+		if($monat == '01' && Einstellungen::pruefungAktiv(Einstellungen::PRUEFUNG_JANUAR))
 		{
 			// Monat Januar ist aktuell, dann Saldodatum auf 31.12.JJJJ 23:59:59 setzen
 			$datum_zeit = mktime(23, 59, 59, 12, 31, ((int) $jahr - 1));
@@ -549,6 +560,12 @@ class Helper extends Backend
 			return false;
 		}
 
+		// Ist die Prüfung abgewählt, steht der Beitrag einer Meldung nie im Weg
+		if (!Einstellungen::pruefungAktiv(Einstellungen::PRUEFUNG_BEITRAG))
+		{
+			return true;
+		}
+
 		if ($playerRecord->sepaBeitrag)
 		{
 			return true;
@@ -577,6 +594,12 @@ class Helper extends Backend
 	 */
 	public static function nenngeldGedeckt($playerRecord, $nenngeld, $saldo = null)
 	{
+		// Ist die Prüfung abgewählt, spielt die Deckung keine Rolle
+		if (!Einstellungen::pruefungAktiv(Einstellungen::PRUEFUNG_NENNGELD))
+		{
+			return true;
+		}
+
 		if ($playerRecord->sepaNenngeld)
 		{
 			return true;
@@ -1251,8 +1274,10 @@ class Helper extends Backend
 				continue;
 			}
 
-			// Ohne SEPA-Mandat nur, wenn das Beitragskonto ausgeglichen ist
-			if (!$objSpieler->sepaBeitrag && self::getBeitragssaldo($objSpieler->id) < 0)
+			// Nur wer auch gemeldet werden duerfte: dieselbe Regel wie im
+			// Formular, damit die Auswahl keine Spieler anbietet, die beim
+			// Absenden wieder herausfallen
+			if (!self::beitragGedeckt($objSpieler))
 			{
 				continue;
 			}
