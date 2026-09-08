@@ -29,6 +29,7 @@ $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular'] = array('Meldef
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_meldeformular_team'] = array('Meldeformular Mannschaftsanmeldung', 'Meldeformular Mannschaftsanmeldung anzeigen');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen'] = array('Titel und Normen ausgeben','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titelnormen_liste'] = array('Glückwunschliste Titel und Normen','Ausgabe der Titel und Normen aus der Fernschach-Verwaltung');
+$GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_beitritt'] = array('Beitrittserklärung', 'Formular für den Beitritt zum BdF anzeigen. Legt aus jeder Absendung einen Spielerdatensatz an und benachrichtigt den Schatzmeister.');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_kontoauszug'] = array('Kontoauszug BdF-Mitglied', 'Kontoauszug des angemeldeten Mitglieds anzeigen.');
 $GLOBALS['TL_LANG']['FMD']['fernschachverwaltung_titel'] = array('Liste der Titelträger', 'Liste der Titelträger anzeigen.');
 

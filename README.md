@@ -22,7 +22,7 @@ Entwickelt für und im Einsatz beim [Deutschen Fernschachbund (BdF)](https://www
 * [Cronjobs](#cronjobs)
 * [Import und Export](#import-und-export)
 * [Serienmails](#serienmails)
-* [Beitrittsformular](#beitrittsformular)
+* [Beitrittserklärung](#beitrittserklärung)
 * [Datenbanktabellen](#datenbanktabellen)
 * [Umstieg von 1.9.x auf 2.0.0](#umstieg-von-19x-auf-200)
 * [Entwicklung](#entwicklung)
@@ -84,7 +84,7 @@ Alle Einstellungen stehen unter *System → Einstellungen* in der Legende
 
 | Einstellung | Bedeutung |
 | --- | --- |
-| Beitrittsformular | Contao-Formular, dessen Absendungen automatisch einen Spielerdatensatz anlegen (siehe [Beitrittsformular](#beitrittsformular)) |
+| Beitrittsformular | Contao-Formular, dessen Absendungen automatisch einen Spielerdatensatz anlegen — der alte Weg, siehe [Beitrittserklärung](#beitrittserklärung). Für neue Einrichtungen genügt das Frontend-Modul |
 | Globalen Reset-Buchungsdatensatz aktivieren | Schaltet die verbandsweiten Saldo-Resets ein. Ist die Option aus, werden vorhandene Reset-Buchungen beim Aufruf der Buchungen eines Spielers gelöscht |
 | Reset-Buchungsdatensätze | Beliebig viele Resets mit Nummer, Datum, Saldo und den betroffenen Konten (Haupt-, Beitrags-, Nenngeldkonto). Sie gelten für **alle** Spieler |
 | Standard-Mitgliedergruppe | Frontend-Mitgliedergruppe für **alle** Konten. Sie bleibt auch BdF-Mitgliedern erhalten. Leer lassen, wenn nicht gewünscht |
@@ -257,6 +257,7 @@ Zeigt die Kurzdokumentation der Erweiterung im Backend an.
 | Titel und Normen ausgeben | Titel und Normen eines wählbaren Zeitraums |
 | Glückwunschliste Titel und Normen | Wie oben, zusätzlich auf eine Höchstzahl begrenzt |
 | Kontoauszug BdF-Mitglied | Buchungen und Kontostand des angemeldeten Mitglieds |
+| Beitrittserklärung | Aufnahmeantrag für neue Mitglieder (siehe [Beitrittserklärung](#beitrittserklärung)) |
 
 ### Meldeformular Spieler-Turnieranmeldung
 
@@ -542,17 +543,34 @@ Einstellungen gewählten Newsletter-Archivs aus den Spielerdaten aufgebaut. Ein
 `parseTemplate`-Hook ergänzt beim Newsletterversand die spielerbezogenen
 Platzhalter.
 
-## Beitrittsformular
+## Beitrittserklärung
+
+Das Frontend-Modul **Beitrittserklärung** nimmt Aufnahmeanträge entgegen: Es
+bringt die neunzehn Felder, ihre Prüfung, eine Sicherheitsfrage und das
+Aussehen selbst mit. Aus jeder Absendung entsteht ein veröffentlichter
+Spielerdatensatz — noch keine Mitgliedschaft, die trägt die Geschäftsstelle
+ein. Anschließend geht eine Nachricht an den Schatzmeister (mit allen Angaben,
+einem Link auf den Datensatz und einem Hinweis auf gleichnamige Datensätze mit
+demselben Geburtsdatum) und, sofern angegeben, eine Bestätigung an den
+Antragsteller.
+
+Empfänger und Absender stehen in *System → Einstellungen*. Einzelheiten in
+[docs/BEITRITTSERKLAERUNG.md](docs/BEITRITTSERKLAERUNG.md).
+
+### Der alte Weg über ein Contao-Formular
 
 Wird in den Einstellungen ein Contao-Formular als Beitrittsformular hinterlegt,
-legt jede Absendung dieses Formulars automatisch einen veröffentlichten
-Spielerdatensatz an. Ausgewertet werden die Formularfelder `nachname`,
-`vorname`, `strasse`, `plz`, `ort`, `telefon`, `email` und `mitgliedsnummer`.
-Alle weiteren bekannten Felder — `geburtstag`, `staat`, `bdf_mitglied`,
-`fernschach_erfolge`, `nahschach_erfolge`, `elo`, `dwz`, `beitrittsmonat`,
-`beitrittszustimmung` — sammelt die Erweiterung als Fließtext im Feld
-*Informationen zum Beitritt*. Der Vorgang wird im Systemprotokoll vermerkt.
+legt jede Absendung dieses Formulars weiterhin automatisch einen
+veröffentlichten Spielerdatensatz an. Ausgewertet werden die Formularfelder
+`nachname`, `vorname`, `strasse`, `plz`, `ort`, `telefon`, `email` und
+`mitgliedsnummer`; alle weiteren bekannten Felder — `geburtstag`, `staat`,
+`bdf_mitglied`, `fernschach_erfolge`, `nahschach_erfolge`, `elo`, `dwz`,
+`beitrittsmonat`, `beitrittszustimmung` — sammelt die Erweiterung als Fließtext
+im Feld *Informationen zum Beitritt*.
 
+Der Weg bleibt bestehen, ist aber für neue Einrichtungen nicht mehr zu
+empfehlen: Er verlangt, das Formular mit genau den richtigen Feldnamen
+nachzubauen, prüft nichts und benachrichtigt niemanden.
 ## Datenbanktabellen
 
 | Tabelle | Inhalt |
@@ -624,6 +642,7 @@ mit einem Fehler abzubrechen.
 * [Anmeldungen zu Einzelturnieren](docs/TURNIERANMELDUNGEN_EINZEL.md)
 * [Anmeldungen zu Mannschaftsturnieren](docs/TURNIERANMELDUNGEN_MANNSCHAFT.md)
 * [Meldungen zuweisen](docs/MELDUNGEN_ZUWEISEN.md)
+* [Beitrittserklärung](docs/BEITRITTSERKLAERUNG.md)
 * [Wartungsarbeiten](docs/WARTUNG.md)
 
 ## Lizenz

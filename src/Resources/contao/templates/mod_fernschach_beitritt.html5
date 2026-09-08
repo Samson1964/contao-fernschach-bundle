@@ -1,0 +1,125 @@
+<?php
+/**
+ * Beitrittserklärung zum BdF — eigenes Formular der Fernschach-Verwaltung
+ *
+ * Die Felder kommen aus Classes\Beitritt::felder(); diese Vorlage entscheidet
+ * nur, wie sie aussehen. Ein neues Feld ist damit dort nachzutragen und nicht
+ * hier.
+ *
+ * Das Markup trägt durchgehend die Klasse "fernschach-formular", damit das
+ * Aussehen aus fernschach_formular.css kommt und nicht vom Theme der jeweiligen
+ * Website abhängt. Alle vom Benutzer stammenden Werte laufen durch
+ * StringUtil::specialchars().
+ */
+
+use Contao\StringUtil;
+
+/**
+ * Gibt die Beschriftung eines Feldes samt Pflicht- oder Freiwilligkeitsvermerk aus.
+ */
+$beschriftung = static function (string $name, array $feld): string
+{
+	$html = StringUtil::specialchars($feld['label']);
+	$html .= !empty($feld['pflicht'])
+		? ' <span class="fs-pflicht" title="Pflichtfeld">*</span>'
+		: ' <span class="fs-optional">(freiwillig)</span>';
+
+	return $html;
+};
+?>
+<div class="<?= $this->class ?> fernschach-formular" <?= $this->cssID ?><?php if ($this->style): ?> style="<?= $this->style ?>"<?php endif; ?>>
+
+<?php if ($this->headline): ?>
+	<<?= $this->hl ?>><?= $this->headline ?></<?= $this->hl ?>>
+<?php endif; ?>
+
+<?php if ($this->bestaetigung): ?>
+
+	<div class="fs-bestaetigung">
+		<p class="fs-hinweis fs-hinweis--erfolg"><strong>Ihre Beitrittserklärung ist eingegangen.</strong></p>
+		<p>Die Geschäftsstelle prüft Ihren Antrag und meldet sich bei Ihnen. Haben Sie eine E-Mail-Adresse angegeben, ist eine Bestätigung unterwegs — bitte sehen Sie auch im Spam-Ordner nach. Ein zweites Absenden ist nicht nötig.</p>
+	</div>
+
+<?php else: ?>
+
+	<?php if ($this->fehlertext): ?>
+	<p class="fs-hinweis fs-hinweis--fehler"><?= $this->fehlertext ?></p>
+	<?php endif; ?>
+
+	<form method="post" action="<?= $this->action ?>" class="fs-formular" novalidate>
+		<input type="hidden" name="FORM_SUBMIT" value="fs_beitritt">
+		<input type="hidden" name="REQUEST_TOKEN" value="<?= $this->requestToken ?>">
+
+		<section class="fs-block">
+			<h3>Ihre Angaben</h3>
+
+			<?php foreach ($this->felder as $name => $feld): ?>
+			<?php $fehler = $this->fehler[$name] ?? ''; ?>
+			<?php $wert = (string) ($this->werte[$name] ?? ''); ?>
+
+			<div class="fs-feld<?= $fehler ? ' fs-feld--fehler' : '' ?>">
+
+				<?php if ('checkbox' === $feld['typ']): ?>
+
+				<label class="fs-radio">
+					<input type="checkbox" name="<?= $name ?>" value="ja"<?= $wert ? ' checked' : '' ?>>
+					<span><?= StringUtil::specialchars($feld['label']) ?><?php if (!empty($feld['pflicht'])): ?> <span class="fs-pflicht" title="Pflichtfeld">*</span><?php endif; ?></span>
+				</label>
+
+				<?php elseif ('radio' === $feld['typ']): ?>
+
+				<fieldset class="fs-auswahl">
+					<legend><?= $beschriftung($name, $feld) ?></legend>
+					<?php foreach ($feld['optionen'] as $schluessel => $text): ?>
+					<label class="fs-radio">
+						<input type="radio" name="<?= $name ?>" value="<?= StringUtil::specialchars((string) $schluessel) ?>"<?= $wert === (string) $schluessel ? ' checked' : '' ?>>
+						<span><?= StringUtil::specialchars($text) ?></span>
+					</label>
+					<?php endforeach; ?>
+				</fieldset>
+
+				<?php elseif ('select' === $feld['typ']): ?>
+
+				<label for="fs-<?= $name ?>"><?= $beschriftung($name, $feld) ?></label>
+				<select name="<?= $name ?>" id="fs-<?= $name ?>">
+					<option value="">— bitte wählen —</option>
+					<?php foreach ($this->monate as $schluessel => $text): ?>
+					<option value="<?= $schluessel ?>"<?= $wert === (string) $schluessel ? ' selected' : '' ?>><?= StringUtil::specialchars($text) ?></option>
+					<?php endforeach; ?>
+				</select>
+
+				<?php elseif ('textarea' === $feld['typ']): ?>
+
+				<label for="fs-<?= $name ?>"><?= $beschriftung($name, $feld) ?></label>
+				<textarea name="<?= $name ?>" id="fs-<?= $name ?>" rows="3"><?= StringUtil::specialchars($wert) ?></textarea>
+
+				<?php else: ?>
+
+				<label for="fs-<?= $name ?>"><?= $beschriftung($name, $feld) ?></label>
+				<input type="<?= $feld['typ'] ?>" name="<?= $name ?>" id="fs-<?= $name ?>" value="<?= StringUtil::specialchars($wert) ?>"<?php if (isset($feld['maxlaenge'])): ?> maxlength="<?= $feld['maxlaenge'] ?>"<?php endif; ?>>
+
+				<?php endif; ?>
+
+				<?php if (!empty($feld['hinweis'])): ?><p class="fs-notiz"><?= StringUtil::specialchars($feld['hinweis']) ?></p><?php endif; ?>
+				<?php if ($fehler): ?><p class="fs-fehler"><?= StringUtil::specialchars($fehler) ?></p><?php endif; ?>
+			</div>
+
+			<?php endforeach; ?>
+		</section>
+
+		<section class="fs-block">
+			<h3>Sicherheitsfrage</h3>
+			<div class="fs-feld<?= isset($this->fehler['fs_captcha']) ? ' fs-feld--fehler' : '' ?>">
+				<?= $this->captcha->parse() ?>
+				<?php if (isset($this->fehler['fs_captcha'])): ?><p class="fs-fehler"><?= StringUtil::specialchars($this->fehler['fs_captcha']) ?></p><?php endif; ?>
+			</div>
+		</section>
+
+		<p class="fs-absenden">
+			<button type="submit" class="fs-knopf">Beitrittserklärung absenden</button>
+		</p>
+	</form>
+
+<?php endif; ?>
+
+</div>

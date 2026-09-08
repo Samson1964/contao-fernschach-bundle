@@ -153,6 +153,8 @@
 }
 
 .fernschach-formular input[type="text"],
+.fernschach-formular input[type="email"],
+.fernschach-formular input[type="tel"],
 .fernschach-formular select,
 .fernschach-formular textarea {
 	box-sizing: border-box;
@@ -166,6 +168,8 @@
 }
 
 .fernschach-formular input[type="text"]:focus-visible,
+.fernschach-formular input[type="email"]:focus-visible,
+.fernschach-formular input[type="tel"]:focus-visible,
 .fernschach-formular select:focus-visible,
 .fernschach-formular textarea:focus-visible {
 	outline: 2px solid var(--fs-farbe);
@@ -173,8 +177,22 @@
 }
 
 .fernschach-formular .fs-feld--fehler input[type="text"],
+.fernschach-formular .fs-feld--fehler input[type="email"],
+.fernschach-formular .fs-feld--fehler input[type="tel"],
 .fernschach-formular .fs-feld--fehler select {
 	border-color: var(--fs-fehler);
+}
+
+/*
+ * Ein Feld für vier Ziffern über die ganze Zeilenbreite sieht aus, als
+ * gehörte mehr hinein, als hineingehört.
+ */
+.fernschach-formular #fs-plz,
+.fernschach-formular #fs-elo,
+.fernschach-formular #fs-dwz,
+.fernschach-formular #fs-mitgliedsnummer,
+.fernschach-formular #fs-geburtstag {
+	max-width: 12rem;
 }
 
 .fernschach-formular .fs-fehler {
@@ -389,6 +407,45 @@
 .fernschach-formular .fs-radio-info::before {
 	content: "—";
 	margin-right: 0.35em;
+}
+
+/*
+ * Sicherheitsfrage. Das Markup kommt aus dem Contao-Kern (form_captcha) und
+ * bringt seine eigenen Klassen mit: widget, captcha, captcha_text. Hier wird es
+ * nur so weit angefaßt, dass es zu den übrigen Feldern paßt.
+ */
+.fernschach-formular .widget-captcha label {
+	display: block;
+	margin-bottom: 0.25rem;
+	font-weight: 600;
+}
+
+.fernschach-formular .widget-captcha .invisible {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+}
+
+.fernschach-formular .widget-captcha .mandatory {
+	color: var(--fs-fehler);
+}
+
+.fernschach-formular input.captcha {
+	width: 6rem;
+}
+
+.fernschach-formular .captcha_text {
+	margin-left: 0.6rem;
+	color: var(--fs-text-leise);
+	font-size: 0.875rem;
+}
+
+.fernschach-formular .widget-captcha p.error {
+	margin: 0 0 0.35rem;
+	color: var(--fs-fehler);
+	font-size: 0.875rem;
 }
 
 /* Tabelle der Qualifikationen */

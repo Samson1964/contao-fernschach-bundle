@@ -1,5 +1,18 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.13.0 (2026-09-08)
+
+* Add: Neues Frontend-Modul **Beitrittserklärung**. Es bringt die neunzehn Felder, ihre Prüfung, eine Sicherheitsfrage und das Aussehen selbst mit — ein von Hand gebautes Contao-Formular wird nicht mehr gebraucht
+* Add: Der **Schatzmeister wird benachrichtigt**, mit allen Angaben, einem Link auf den neuen Datensatz und dem Antragsteller als Rückantwortadresse
+* Add: Gibt es bereits einen Datensatz mit **demselben Namen und Geburtsdatum**, steht das in der Nachricht. Angenommen wird der Antrag trotzdem — wer schon einmal Mitglied war, tritt zu Recht ein zweites Mal ein
+* Add: Der Antragsteller bekommt eine **Eingangsbestätigung**, sofern er eine E-Mail-Adresse angegeben hat
+* Add: Geprüft wird auf dem Server: Pflichtfelder, ein Geburtsdatum, das es wirklich gibt und nicht in der Zukunft liegt, eine E-Mail-Adresse, die wie eine aussieht, Elo und DWZ als Zahl zwischen 500 und 3500 — und bei Auswahlfeldern, dass auch nur ankommt, was angeboten wurde
+* Add: Der **Beitrittsmonat** ist eine Auswahl aus dem laufenden und den drei folgenden Monaten statt eines Textfeldes
+* Change: Das **Geburtsdatum** landet jetzt im Feld `birthday` statt nur im Fließtext. Der alte Weg konnte es nicht umrechnen und hat es deshalb liegen lassen
+* Change: Eine **Mitgliedsnummer** wird nur übernommen, wenn die Frage nach der früheren Mitgliedschaft mit *Ja* beantwortet wurde
+* Change: Nach dem Absenden wird umgeleitet und die Bestätigung gezeigt. Ohne diese Umleitung schickt ein Neuladen der Seite den Antrag ein zweites Mal ab
+* Change: Der alte Weg über ein Contao-Formular und den Hook `processFormData` **bleibt bestehen**; wer ihn eingerichtet hat, muss nichts umstellen. Für neue Einrichtungen ist er nicht mehr zu empfehlen
+
 ## Version 2.12.0 (2026-09-08)
 
 * Add: Die Einstellung **Prüfungen bei Turnieranmeldungen** wird jetzt ausgewertet. Sie trug seit jeher den Zusatz „noch nicht implementiert": Die drei Prüfungen gab es im Code, das Feld daneben tat aber nichts
