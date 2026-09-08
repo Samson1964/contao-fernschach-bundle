@@ -184,8 +184,11 @@ $GLOBALS['TL_LANG']['tl_fernschach_spieler']['nenngeldkonto'] = array('Nenngeldk
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['importSpieler'] = array('Import Spieler', 'Neue Spieler importieren bzw. alte Spieler ergänzen');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['exportXLS'] = array('Export Spieler', 'Excel-Export der ausgewählten Spieler');
 $GLOBALS['TL_LANG']['tl_fernschach_spieler']['setNewsletter'] = array('Serienmail', 'Aktuelle Spielerliste in Serienmail-Newsletter-Archiv exportieren.');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeVerstorbene'] = array('Verstorbene prüfen', 'Zeigt Spieler, bei denen der Todesvermerk ohne Todestag gespeichert ist, und solche, deren Mitgliedschaft trotz Todestag noch offen ist. Der Bericht ändert nichts.');
-$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeMitgliedschaften'] = array('Mitgliedschaften prüfen', 'Sucht Mitgliedschaften, deren Datumsangaben in der Anzeigeform TT.MM.JJJJ statt in der Speicherform JJJJMMTT stehen. Zeigt sie zunächst nur an; das Bereinigen erfolgt erst nach Rückfrage und legt vorher eine Version an.');
+// Der zweite Wert ist nicht nur der Tooltip der Schaltfläche: Contao hängt
+// ihn auch an die Überschrift der Seite an. Deshalb kurz halten; die
+// ausführliche Erklärung steht im Bericht selbst.
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeVerstorbene'] = array('Verstorbene prüfen', 'Todesvermerke ohne Todestag suchen');
+$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeMitgliedschaften'] = array('Mitgliedschaften prüfen', 'Datumsangaben in der falschen Schreibweise suchen');
 
 /**
  * Select-Felder

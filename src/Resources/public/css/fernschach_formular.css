@@ -18,12 +18,26 @@
 	--fs-erfolg: #1e6b34;
 	--fs-erfolg-hell: #e9f5ec;
 	--fs-rahmen: #c9d2dc;
+	--fs-text: #1f2933;
 	--fs-text-leise: #5b6874;
 	--fs-abstand: 1rem;
 	--fs-radius: 6px;
 
 	max-width: 46rem;
 	line-height: 1.5;
+	color: var(--fs-text);
+}
+
+/*
+ * Beschriftungen bekommen ihre Farbe ausdruecklich. Das Theme der
+ * BdF-Website (Materialize) faerbt jedes label hellgrau (#9e9e9e) - auf
+ * weissem Grund kaum zu lesen, und bei einer Zustimmungserklaerung will man
+ * lesen koennen, wozu man zustimmt.
+ */
+.fernschach-formular label,
+.fernschach-formular legend,
+.fernschach-formular .fs-radio > span {
+	color: var(--fs-text);
 }
 
 /* Dunkles Erscheinungsbild, wenn das Betriebssystem es vorgibt */
@@ -36,6 +50,7 @@
 		--fs-erfolg: #a6d9b6;
 		--fs-erfolg-hell: #1b2b20;
 		--fs-rahmen: #3d4650;
+		--fs-text: #e6edf3;
 		--fs-text-leise: #9aa6b2;
 	}
 }
@@ -157,6 +172,13 @@
 .fernschach-formular input[type="tel"],
 .fernschach-formular select,
 .fernschach-formular textarea {
+	/*
+	 * display ausdruecklich: Materialize blendet jede Auswahlliste aus
+	 * (select { display: none }) und zeichnet an ihrer Stelle eine eigene aus
+	 * Listenelementen - allerdings nur fuer Listen, die sein Skript kennt.
+	 * Unsere kennt es nicht, sie war auf der BdF-Website schlicht unsichtbar.
+	 */
+	display: block;
 	box-sizing: border-box;
 	width: 100%;
 	padding: 0.5rem 0.65rem;
@@ -196,7 +218,7 @@
 }
 
 .fernschach-formular .fs-fehler {
-	margin: 0.35rem 0 0;
+	margin: 0.6rem 0 0;
 	color: var(--fs-fehler);
 	font-size: 0.875rem;
 }
@@ -368,7 +390,8 @@
  * und die Beschriftung trug einen Einzug für einen Kreis, der nicht zu ihr
  * gehörte. Deshalb wird das hier vollständig zurückgenommen.
  */
-.fernschach-formular .fs-radio input[type="radio"] {
+.fernschach-formular .fs-radio input[type="radio"],
+.fernschach-formular .fs-radio input[type="checkbox"] {
 	position: static;
 	left: auto;
 	top: auto;
@@ -379,11 +402,27 @@
 	opacity: 1;
 	pointer-events: auto;
 	appearance: auto;
+}
+
+.fernschach-formular .fs-radio input[type="radio"] {
 	-webkit-appearance: radio;
 }
 
+.fernschach-formular .fs-radio input[type="checkbox"] {
+	-webkit-appearance: checkbox;
+}
+
+/*
+ * Das Theme gibt der Beschriftung eine feste Hoehe von 25 Pixeln samt
+ * passender Zeilenhoehe. Bei einer einzeiligen Beschriftung faellt das nicht
+ * auf; eine dreizeilige Zustimmungserklaerung wird darin zusammengedrueckt,
+ * und zwei Turniertitel untereinander kleben aneinander.
+ */
 .fernschach-formular .fs-radio > span {
 	padding-left: 0;
+	height: auto;
+	line-height: inherit;
+	user-select: auto;
 }
 
 .fernschach-formular .fs-radio > span::before,
@@ -407,6 +446,16 @@
 .fernschach-formular .fs-radio-info::before {
 	content: "—";
 	margin-right: 0.35em;
+}
+
+/*
+ * Die Sicherheitsfrage steht frei zwischen den Bloecken und dem Absendeknopf.
+ * Sie bekommt bewusst keinen Rahmen und keine Ueberschrift: Contao blendet sie
+ * fuer Besucher mit JavaScript selbst aus, und ein leerer Kasten mit
+ * Ueberschrift wuerde ratlos zurueckbleiben.
+ */
+.fernschach-formular .fs-sicherheitsfrage {
+	margin-bottom: calc(var(--fs-abstand) * 1.5);
 }
 
 /*

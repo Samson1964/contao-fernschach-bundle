@@ -319,6 +319,13 @@ class Todesfall extends Backend
 
 		$strAusgabe .= '<h2 class="sub_headline">Verstorbene prüfen</h2>';
 
+		// Alles Weitere in den Behälter, den auch die Listen des Backends
+		// benutzen: Ohne ihn stehen Überschriften und Tabellen am linken Rand
+		// der Seite, während die Überschrift darüber eingerückt ist
+		$strAusgabe .= '<div class="tl_listing_container">';
+
+		$strAusgabe .= '<p class="tl_help" style="margin:0 0 12px">Wird bei einem Spieler <em>Verstorben</em> gesetzt, ist der Todestag Pflicht: Ohne ihn endet die Mitgliedschaft nicht, und der Beitrag läuft weiter. Der Bericht zeigt die Altfälle aus der Zeit vor dieser Regel und die Fälle, die der tägliche Cronjob noch schließen wird. Verändert wird hier nichts.</p>';
+
 		$strAusgabe .= self::abschnitt(
 			'Verstorben, aber ohne Todestag',
 			'Diese Datensätze stammen aus der Zeit, bevor der Todestag Pflichtfeld war. Ohne ihn endet die Mitgliedschaft nicht, und der Beitrag läuft weiter. Das Datum muss von Hand nachgetragen werden — notfalls als ungefähres Datum.',
@@ -335,7 +342,7 @@ class Todesfall extends Backend
 			true
 		);
 
-		return $strAusgabe;
+		return $strAusgabe.'</div>';
 	}
 
 	/**
@@ -372,11 +379,14 @@ class Todesfall extends Backend
 		foreach ($arrTreffer as $arrSpieler)
 		{
 			$strWechsel = 'odd' === $strWechsel ? 'even' : 'odd';
-			$strZiel = 'contao?do=fernschach-spieler&amp;act=edit&amp;id='.$arrSpieler['id'].'&amp;rt='.Scope::getRequestToken();
+			// Im Fenster bearbeiten: Der Bericht bleibt stehen, und nach dem
+			// Speichern ist man wieder in der Liste statt in der Spielerübersicht
+			$strZiel = 'contao?do=fernschach-spieler&amp;act=edit&amp;id='.$arrSpieler['id'].'&amp;popup=1&amp;nb=1&amp;rt='.Scope::getRequestToken();
+			$strTitel = StringUtil::specialchars($arrSpieler['name']);
 
 			$strAusgabe .= '<tr class="'.$strWechsel.'">';
 			$strAusgabe .= '<td class="tl_file_list">'.StringUtil::specialchars((string) $arrSpieler['memberId']).'</td>';
-			$strAusgabe .= '<td class="tl_file_list"><a href="'.$strZiel.'" title="Datensatz bearbeiten">'.StringUtil::specialchars($arrSpieler['name']).'</a></td>';
+			$strAusgabe .= '<td class="tl_file_list"><a href="'.$strZiel.'" title="Datensatz bearbeiten" onclick="Backend.openModalIframe({\'title\':\''.str_replace("'", "\'", $strTitel).'\',\'url\':this.href});return false">'.$strTitel.'</a></td>';
 			$strAusgabe .= '<td class="tl_file_list">'.($blnTodestag
 				? StringUtil::specialchars((string) \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($arrSpieler['todestag']))
 				: (!empty($arrSpieler['archiviert']) ? 'archiviert' : 'aktiv')).'</td>';

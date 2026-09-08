@@ -107,13 +107,18 @@ $beschriftung = static function (string $name, array $feld): string
 			<?php endforeach; ?>
 		</section>
 
-		<section class="fs-block">
-			<h3>Sicherheitsfrage</h3>
-			<div class="fs-feld<?= isset($this->fehler['fs_captcha']) ? ' fs-feld--fehler' : '' ?>">
-				<?= $this->captcha->parse() ?>
-				<?php if (isset($this->fehler['fs_captcha'])): ?><p class="fs-fehler"><?= StringUtil::specialchars($this->fehler['fs_captcha']) ?></p><?php endif; ?>
-			</div>
-		</section>
+		<?php
+		/*
+		 * Die Sicherheitsfrage steht ohne Ueberschrift und ohne eigenen Kasten
+		 * da: Contao blendet sie fuer Besucher mit eingeschaltetem JavaScript
+		 * selbst aus und traegt die Antwort ein - dann bliebe von einem Kasten
+		 * nur eine leere Umrandung mit der Ueberschrift darueber stehen.
+		 */
+		?>
+		<div class="fs-sicherheitsfrage<?= isset($this->fehler['fs_captcha']) ? ' fs-feld--fehler' : '' ?>">
+			<?= $this->captcha->parse() ?>
+			<?php if (isset($this->fehler['fs_captcha'])): ?><p class="fs-fehler"><?= StringUtil::specialchars($this->fehler['fs_captcha']) ?></p><?php endif; ?>
+		</div>
 
 		<p class="fs-absenden">
 			<button type="submit" class="fs-knopf">Beitrittserklärung absenden</button>

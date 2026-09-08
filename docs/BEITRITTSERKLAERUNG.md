@@ -10,6 +10,12 @@ Frontend-Modul **Beitrittserklärung** anlegen und auf einer Seite einbinden —
 mehr ist nicht nötig. Das Modul bringt Felder, Prüfung, Aussehen und Versand
 selbst mit; ein Contao-Formular wird dafür nicht gebraucht.
 
+Das Aussehen kommt aus `fernschach_formular.css` und setzt sich gegen das Theme
+durch. Nötig ist das, weil verbreitete Themes — auf bdf-fernschachbund.de etwa
+Materialize — Ankreuz- und Auswahlfelder ausblenden und durch eigene Zeichnungen
+ersetzen, die eine bestimmte Markup-Folge voraussetzen. Ohne diese Regeln wären
+Ankreuzfelder unsichtbar und Auswahllisten gar nicht vorhanden.
+
 Damit die Benachrichtigung ankommt, gehören in *System → Einstellungen*:
 
 * **Name** und **E-Mail-Adresse des Schatzmeisters** — der Empfänger. Fehlt die
@@ -54,7 +60,10 @@ zählt allein, was hinten ankommt.
 * **Elo** und **DWZ** sind, wenn angegeben, Zahlen zwischen 500 und 3500.
 * **Auswahl- und Ankreuzfelder** nehmen nur an, was auch angeboten wurde.
 * Eine **Sicherheitsfrage** (Rechenaufgabe des Contao-Kerns samt verstecktem
-  Lockfeld) hält einfache Maschinen ab.
+  Lockfeld) hält einfache Maschinen ab. Wer JavaScript eingeschaltet hat,
+  bekommt sie nie zu sehen: Contao blendet sie dann selbst aus und trägt die
+  Antwort ein. Deshalb steht sie ohne Überschrift und ohne Kasten da — sonst
+  bliebe eine leere Umrandung stehen.
 
 Beanstandungen stehen als Sammelmeldung über dem Formular und noch einmal
 einzeln am jeweiligen Feld. Alle Eingaben bleiben stehen.

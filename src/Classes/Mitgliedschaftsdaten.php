@@ -257,11 +257,16 @@ class Mitgliedschaftsdaten extends Backend
 
 		$strAusgabe .= '<h2 class="sub_headline">Mitgliedschaften prüfen</h2>';
 
+		// Alles Weitere in den Behälter, den auch die Listen des Backends
+		// benutzen: Ohne ihn stehen Meldungen und Tabellen am linken Rand der
+		// Seite, während die Überschrift darüber eingerückt ist
+		$strAusgabe .= '<div class="tl_listing_container">';
+
 		if (!$arrBetroffen)
 		{
 			$strAusgabe .= '<div class="tl_message"><p class="tl_confirm">Alle Mitgliedschaften stehen in der Speicherform JJJJMMTT. Es ist nichts zu tun.</p></div>';
 
-			return $strAusgabe;
+			return $strAusgabe.'</div>';
 		}
 
 		$intZeilen = 0;
@@ -294,7 +299,10 @@ class Mitgliedschaftsdaten extends Backend
 				$strWechsel = 'odd' === $strWechsel ? 'even' : 'odd';
 				$strAusgabe .= '<tr class="'.$strWechsel.'">';
 				$strAusgabe .= '<td class="tl_file_list">'.($intNummer ? '' : StringUtil::specialchars((string) $arrSpieler['memberId'])).'</td>';
-				$strAusgabe .= '<td class="tl_file_list">'.($intNummer ? '' : StringUtil::specialchars($arrSpieler['name'])).'</td>';
+				// Im Fenster bearbeiten, damit der Bericht stehenbleibt
+				$strZiel = 'contao?do=fernschach-spieler&amp;act=edit&amp;id='.$arrSpieler['id'].'&amp;popup=1&amp;nb=1&amp;rt='.Scope::getRequestToken();
+				$strTitel = StringUtil::specialchars($arrSpieler['name']);
+				$strAusgabe .= '<td class="tl_file_list">'.($intNummer ? '' : '<a href="'.$strZiel.'" title="Datensatz bearbeiten" onclick="Backend.openModalIframe({\'title\':\''.str_replace("'", "\'", $strTitel).'\',\'url\':this.href});return false">'.$strTitel.'</a>').'</td>';
 				$strAusgabe .= '<td class="tl_file_list">'.StringUtil::specialchars($arrZeile['alt']).'</td>';
 				$strAusgabe .= '<td class="tl_file_list">'.StringUtil::specialchars($arrZeile['neu']).'</td>';
 				$strAusgabe .= '</tr>';
@@ -310,7 +318,7 @@ class Mitgliedschaftsdaten extends Backend
 		$strAusgabe .= '<a href="'.$strZiel.'" class="tl_submit" style="display:inline-block" onclick="return confirm(\''.$strFrage.'\')">Jetzt bereinigen</a>';
 		$strAusgabe .= '</div>';
 
-		return $strAusgabe;
+		return $strAusgabe.'</div>';
 	}
 
 	/**

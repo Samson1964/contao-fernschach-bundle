@@ -1,5 +1,22 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.14.0 (2026-09-08)
+
+### Formulare im Frontend
+
+* Fix: **Ankreuzfelder waren unsichtbar.** Das Theme der BdF-Website blendet sie aus (`position:absolute; opacity:0`) und zeichnet an ihrer Stelle ein eigenes Kästchen, für das unser Markup nicht paßt. Für Auswahlknöpfe war das seit 2.7.1 zurückgenommen, für Ankreuzfelder nicht — die Beitrittserklärung ließ sich damit gar nicht abschicken
+* Fix: **Auswahllisten waren gar nicht da.** Dasselbe Theme setzt `select { display: none }` und ersetzt jede Liste durch eine eigene Konstruktion — allerdings nur die, die sein Skript kennt. Betrifft den Beitrittsmonat und die Turnierauswahl, wenn sie nicht als Auswahlknöpfe angeboten wird
+* Fix: **Beschriftungen waren hellgrau** (#9e9e9e) und auf weißem Grund kaum zu lesen. Die Formulare setzen ihre Textfarbe jetzt selbst
+* Fix: **Feste Zeilenhöhe von 25 Pixeln** aus dem Theme aufgehoben. Eine einzeilige Beschriftung überlebt das; eine dreizeilige Zustimmungserklärung wurde darin zusammengedrückt, und zwei Turniertitel klebten aneinander
+* Change: Die **Sicherheitsfrage** steht ohne Überschrift und ohne eigenen Kasten da. Contao blendet sie für Besucher mit JavaScript selbst aus und trägt die Antwort ein — vom Kasten blieb eine leere Umrandung mit Überschrift zurück
+* Change: Etwas mehr Luft zwischen einem Feld und seiner Fehlermeldung
+
+### Berichte im Backend
+
+* Fix: Überschriften, Meldungen und Tabellen der Berichte *Verstorbene prüfen* und *Mitgliedschaften prüfen* standen am linken Seitenrand, während die Überschrift darüber eingerückt war. Sie stehen jetzt im selben Behälter wie die übrigen Listen des Backends
+* Change: Die Erklärung zum Bericht steht **unter** der Überschrift statt in ihr. Contao hängt den zweiten Wert einer Sprachzeile an die Seitenüberschrift an; die ausführliche Fassung sprengte sie
+* Add: Ein Klick auf den Namen öffnet den Spielerdatensatz **im Fenster**. Der Bericht bleibt dabei stehen
+
 ## Version 2.13.0 (2026-09-08)
 
 * Add: Neues Frontend-Modul **Beitrittserklärung**. Es bringt die neunzehn Felder, ihre Prüfung, eine Sicherheitsfrage und das Aussehen selbst mit — ein von Hand gebautes Contao-Formular wird nicht mehr gebraucht
