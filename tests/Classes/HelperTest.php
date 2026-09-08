@@ -244,4 +244,123 @@ class HelperTest extends TestCase
 		$objSpieler->memberships = serialize(array(array('from' => '01.06.2015', 'to' => 0, 'status' => '')));
 		$this->assertTrue(Helper::checkMembership($objSpieler, 20260831));
 	}
+
+	/**
+	 * Setzt die beiden Mitgliedergruppen aus den Einstellungen.
+	 *
+	 * Config::get() liest aus $GLOBALS['TL_CONFIG'], deshalb reicht es, die
+	 * Werte dort zu hinterlegen — eine gebootete Contao-Installation ist dafür
+	 * nicht nötig.
+	 *
+	 * @param string $strStandard ID der Standard-Mitgliedergruppe, '' = nicht gesetzt
+	 * @param string $strBdF      ID der BdF-Mitgliedergruppe, '' = nicht gesetzt
+	 *
+	 * @return void
+	 */
+	private function gruppenEinstellen(string $strStandard, string $strBdF): void
+	{
+		$GLOBALS['TL_CONFIG']['fernschach_memberDefault'] = $strStandard;
+		$GLOBALS['TL_CONFIG']['fernschach_memberFernschach'] = $strBdF;
+	}
+
+	/**
+	 * Die Standardgruppe bleibt einem BdF-Mitglied erhalten.
+	 *
+	 * Bis Version 2.10.1 tauschte die Wartung die beiden Gruppen gegeneinander
+	 * aus. Ein Mitglied verlor damit alle Rechte, die an der Standardgruppe
+	 * hingen, sobald es in den BdF eintrat — und bekam sie beim Austritt
+	 * zurück. Der Bot schob die Konten so zwischen beiden Gruppen hin und her.
+	 *
+	 * @return void
+	 */
+	public function testStandardgruppeBleibtBeiBdfMitgliedern(): void
+	{
+		$this->gruppenEinstellen('2', '5');
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('2')), true);
+
+		$this->assertSame(array('2', '5'), \Contao\StringUtil::deserialize($strGruppen, true));
+	}
+
+	/**
+	 * Beim Austritt fällt nur die BdF-Gruppe weg, die Standardgruppe bleibt.
+	 *
+	 * @return void
+	 */
+	public function testBeimAustrittBleibtNurDieStandardgruppe(): void
+	{
+		$this->gruppenEinstellen('2', '5');
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('2', '5')), false);
+
+		$this->assertSame(array('2'), \Contao\StringUtil::deserialize($strGruppen, true));
+	}
+
+	/**
+	 * Fehlt die Standardgruppe im Konto, wird sie nachgetragen — auch beim
+	 * BdF-Mitglied.
+	 *
+	 * @return void
+	 */
+	public function testFehlendeStandardgruppeWirdNachgetragen(): void
+	{
+		$this->gruppenEinstellen('2', '5');
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array()), true);
+
+		$this->assertSame(array('2', '5'), \Contao\StringUtil::deserialize($strGruppen, true));
+	}
+
+	/**
+	 * Von Hand vergebene Gruppen bleiben unangetastet.
+	 *
+	 * Hier lag ein zweiter Fehler: array_search() liefert false, wenn die
+	 * gesuchte Gruppe fehlt, und isset(false) ist wahr. Die alte Fassung
+	 * löschte damit den Schlüssel 0 — also eine völlig fremde Gruppe.
+	 *
+	 * @return void
+	 */
+	public function testFremdeGruppenBleibenErhalten(): void
+	{
+		$this->gruppenEinstellen('2', '5');
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('9', '2')), true);
+		$this->assertSame(array('9', '2', '5'), \Contao\StringUtil::deserialize($strGruppen, true));
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('9', '2')), false);
+		$this->assertSame(array('9', '2'), \Contao\StringUtil::deserialize($strGruppen, true));
+	}
+
+	/**
+	 * Ist eine der Gruppen nicht eingestellt, wird sie weder eingetragen noch
+	 * entfernt.
+	 *
+	 * @return void
+	 */
+	public function testNichtEingestellteGruppenBleibenAussenVor(): void
+	{
+		$this->gruppenEinstellen('', '');
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('9')), true);
+		$this->assertSame(array('9'), \Contao\StringUtil::deserialize($strGruppen, true));
+
+		$strGruppen = Helper::mitgliedergruppen(serialize(array('9')), false);
+		$this->assertSame(array('9'), \Contao\StringUtil::deserialize($strGruppen, true));
+	}
+
+	/**
+	 * Zweimal hintereinander aufgerufen kommt dasselbe heraus — sonst würde die
+	 * Wartung bei jedem Lauf eine Änderung melden und eine Version anlegen.
+	 *
+	 * @return void
+	 */
+	public function testZweiterLaufAendertNichts(): void
+	{
+		$this->gruppenEinstellen('2', '5');
+
+		$strErster = Helper::mitgliedergruppen(serialize(array('2')), true);
+		$strZweiter = Helper::mitgliedergruppen($strErster, true);
+
+		$this->assertSame($strErster, $strZweiter);
+	}
 }

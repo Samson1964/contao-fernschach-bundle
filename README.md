@@ -87,11 +87,12 @@ Alle Einstellungen stehen unter *System → Einstellungen* in der Legende
 | Beitrittsformular | Contao-Formular, dessen Absendungen automatisch einen Spielerdatensatz anlegen (siehe [Beitrittsformular](#beitrittsformular)) |
 | Globalen Reset-Buchungsdatensatz aktivieren | Schaltet die verbandsweiten Saldo-Resets ein. Ist die Option aus, werden vorhandene Reset-Buchungen beim Aufruf der Buchungen eines Spielers gelöscht |
 | Reset-Buchungsdatensätze | Beliebig viele Resets mit Nummer, Datum, Saldo und den betroffenen Konten (Haupt-, Beitrags-, Nenngeldkonto). Sie gelten für **alle** Spieler |
-| Standard-Mitgliedergruppe | Frontend-Mitgliedergruppe für Konten ohne BdF-Mitgliedschaft. Leer lassen, wenn nicht gewünscht |
-| BdF-Mitgliedergruppe | Frontend-Mitgliedergruppe für Konten mit BdF-Mitgliedschaft. Der Cronjob *Mitgliederprüfung* trägt sie automatisch ein und aus |
+| Standard-Mitgliedergruppe | Frontend-Mitgliedergruppe für **alle** Konten. Sie bleibt auch BdF-Mitgliedern erhalten. Leer lassen, wenn nicht gewünscht |
+| BdF-Mitgliedergruppe | Zusätzliche Frontend-Mitgliedergruppe für Konten mit BdF-Mitgliedschaft. Der Cronjob *Mitgliederprüfung* trägt sie automatisch ein und aus |
 | Serienmail-Verteiler | Newsletter-Archiv, dessen Empfängerliste für Serienmails benutzt wird |
 | E-Mail-Absender / E-Mail-Adresse | Absender aller automatisch verschickten E-Mails |
 | Name / E-Mail-Adresse Turnierdirektor | Empfänger der Mannschaftsmeldungen |
+| Name / E-Mail-Adresse Schatzmeister | Empfänger der Nachricht über einen Todesfall. Fehlt die Adresse, unterbleibt die Nachricht und es entsteht ein Eintrag im Systemprotokoll |
 | Hinweis Kontoauszug | Text, der im Frontend statt des Kontoauszugs erscheint, wenn der angemeldete Benutzer kein BdF-Mitglied ist |
 | Turnieranmeldung | Prüfoptionen für Anmeldungen — **noch nicht implementiert** |
 
@@ -124,6 +125,7 @@ Zusätzliche Schaltflächen in der Kopfzeile:
 | Buchungen verschieben | Buchungen zwischen den drei Konten aller Spieler sortieren |
 | Serienmail-Empfänger setzen | Empfängerliste des gewählten Newsletter-Archivs aus den Spielerdaten aufbauen |
 | Mitgliedschaften prüfen | Sucht und bereinigt Datumsangaben in der falschen Schreibweise (siehe unten) |
+| Verstorbene prüfen | Zeigt Todesvermerke ohne Todestag und Verstorbene mit noch offener Mitgliedschaft (siehe unten) |
 
 #### Mitgliedschaften prüfen
 
@@ -131,6 +133,30 @@ Sucht Mitgliedschaften, deren Datumsangaben in der Anzeigeform `TT.MM.JJJJ`
 statt in der Speicherform `JJJJMMTT` stehen, und schreibt sie auf Rückfrage
 um. Der erste Aufruf listet nur auf. Vor jeder Änderung entsteht eine
 Version. Einzelheiten in [docs/WARTUNG.md](docs/WARTUNG.md).
+
+#### Verstorbene prüfen
+
+Zeigt zwei Listen: Spieler, bei denen der Todesvermerk ohne Todestag
+gespeichert ist, und Verstorbene, deren Mitgliedschaft noch offen ist. Der
+Bericht ändert nichts — ein fehlender Todestag lässt sich nicht errechnen, und
+die offenen Mitgliedschaften schließt der Cronjob *Todesfallprüfung* beim
+nächsten Lauf. Jeder Name führt direkt zum Datensatz.
+
+#### Todesfall eines Mitglieds
+
+Wird bei einem Spieler *Verstorben* gesetzt, hängen daran drei Dinge:
+
+* Der **Todestag ist Pflicht**. Ohne ihn endet die Mitgliedschaft nicht und der
+  Beitrag läuft weiter, deshalb lässt sich der Datensatz ohne Datum nicht mehr
+  speichern. Ist das genaue Datum unbekannt, gehört ein ungefähres hinein.
+* Der **Schatzmeister wird benachrichtigt**, sobald der Todestag zum ersten Mal
+  eingetragen wird — mit Name, BdF-Nummer, Todestag und einem Link auf den
+  Datensatz. Eine spätere Korrektur des Datums löst keine zweite Nachricht aus;
+  Datensätze aus dem Import ebenfalls nicht.
+* Die **laufende Mitgliedschaft endet** mit dem Todestag, eingetragen vom
+  täglichen Cronjob mit dem Status *Verstorben*. War die Mitgliedschaft bereits
+  vorher beendet — jemand stirbt Jahre nach seinem Austritt —, bleibt sie
+  unangetastet.
 
 
 ### Turniere
@@ -415,6 +441,7 @@ der Contao-Cron eingerichtet ist.
 | Nenngeldprüfung | stündlich | Sucht Nenngeldkonten mit negativem Saldo |
 | Mitgliedschaftsende | täglich | Beendet zum Vortag ausgelaufene Mitgliedschaften |
 | Streichung | täglich | Hält Streichungsdatum und Mitgliedschaftsende widerspruchsfrei |
+| Todesfallprüfung | täglich | Beendet die Mitgliedschaft Verstorbener mit dem Todestag und meldet Todesvermerke ohne Todestag |
 
 Die Intervalle einiger Prüfungen lassen sich über die Voreinstellungen
 `fernschach_intervall_memberbridgeCheck` und `fernschach_intervall_membershipsCheck`

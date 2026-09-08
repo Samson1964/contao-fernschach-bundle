@@ -101,6 +101,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 				'icon'                => 'bundles/contaofernschach/images/fragezeichen.png',
 				'attributes'          => 'onclick="Backend.getScrollOffset();"',
 			),
+			'pruefeVerstorbene' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_fernschach_spieler']['pruefeVerstorbene'],
+				'href'                => 'key=pruefeVerstorbene',
+				'icon'                => 'bundles/contaofernschach/images/verstorben.png',
+				'attributes'          => 'onclick="Backend.getScrollOffset();"',
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -465,8 +472,12 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			'sorting'                 => false,
 			'flag'                    => 12,
 			'inputType'               => 'text',
+			// Pflichtfeld: Ohne Todestag endet die Mitgliedschaft nicht und der
+			// Beitrag laeuft weiter. Die Angabe wird nur verlangt, wenn
+			// "Verstorben" angehakt ist - nur dann steht das Feld in der Palette
 			'eval'                    => array
 			(
+				'mandatory'           => true,
 				'maxlength'           => 10,
 				'tl_class'            => 'w50 wizard',
 				'datepicker'          => true,
@@ -476,9 +487,13 @@ $GLOBALS['TL_DCA']['tl_fernschach_spieler'] = array
 			(
 				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
 			),
+			// Reihenfolge beachten: putDate macht aus der Eingabe erst die Zahl
+			// JJJJMMTT, die der zweite Rueckruf mit dem gespeicherten Stand
+			// vergleicht, um den Schatzmeister genau einmal zu benachrichtigen
 			'save_callback' => array
 			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate'),
+				array('\Schachbulle\ContaoFernschachBundle\Classes\Todesfall', 'benachrichtigeSchatzmeister')
 			),
 			'sql'                     => "int(8) unsigned NOT NULL default '0'"
 		),

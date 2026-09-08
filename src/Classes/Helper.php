@@ -107,6 +107,61 @@ class Helper extends Backend
 	}
 
 	/**
+	 * Stellt die Mitgliedergruppen eines Frontend-Kontos richtig.
+	 *
+	 * Die Standard-Mitgliedergruppe gehört zu jedem Konto und bleibt immer
+	 * bestehen, auch bei BdF-Mitgliedern. Nur die BdF-Mitgliedergruppe kommt
+	 * hinzu oder fällt weg. Bis Version 2.10.1 tauschte die Wartung die beiden
+	 * Gruppen gegeneinander aus; Rechte, die an der Standardgruppe hängen,
+	 * gingen einem Mitglied damit verloren, sobald es in den BdF eintrat.
+	 *
+	 * Ist eine der beiden Gruppen in den Einstellungen nicht hinterlegt, wird
+	 * sie weder eingetragen noch entfernt. Gruppen, die von Hand vergeben
+	 * wurden, bleiben unangetastet.
+	 *
+	 * @param mixed $varGruppen    Inhalt von tl_member.groups, serialisiert oder als Array
+	 * @param bool  $blnMitglied   true = Konto gehört einem BdF-Mitglied
+	 *
+	 * @return string Serialisierte Gruppenliste, wie sie in tl_member.groups gehört.
+	 *                Die Schlüssel sind lückenlos, damit ein Vergleich mit dem
+	 *                gespeicherten Wert nicht an der Reihenfolge scheitert
+	 */
+	public static function mitgliedergruppen($varGruppen, $blnMitglied)
+	{
+		$arrGruppen = StringUtil::deserialize($varGruppen, true);
+
+		// Alles als Zeichenkette führen: Contao speichert die IDs so, die
+		// Einstellungen liefern sie je nach Feldtyp als Zahl
+		$arrGruppen = array_map('strval', $arrGruppen);
+
+		$strStandard = (string) Config::get('fernschach_memberDefault');
+		$strBdF = (string) Config::get('fernschach_memberFernschach');
+
+		// Standardgruppe gehört immer dazu
+		if('' !== $strStandard && !in_array($strStandard, $arrGruppen, true))
+		{
+			$arrGruppen[] = $strStandard;
+		}
+
+		if('' !== $strBdF)
+		{
+			if($blnMitglied)
+			{
+				if(!in_array($strBdF, $arrGruppen, true)) $arrGruppen[] = $strBdF;
+			}
+			else
+			{
+				// array_search liefert false, wenn die Gruppe fehlt. Ein
+				// isset() darauf ist immer wahr und löschte bisher den
+				// Schlüssel 0, also eine fremde Gruppe
+				$arrGruppen = array_values(array_diff($arrGruppen, array($strBdF)));
+			}
+		}
+
+		return serialize(array_values(array_unique($arrGruppen)));
+	}
+
+	/**
 	 * Funktion checkMembership
 	 * ==================================================================
 	 * Liefert den Status der BdF-Mitgliedschaft zurück: true oder false

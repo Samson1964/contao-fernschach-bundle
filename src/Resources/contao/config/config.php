@@ -47,6 +47,7 @@ $GLOBALS['BE_MOD']['fernschach'] = array
 		'moveBuchung'         => array('Schachbulle\ContaoFernschachBundle\Classes\Konto\MoveBuchung', 'run'),
 		'send'                => array('Schachbulle\ContaoFernschachBundle\Classes\Mailer', 'send'), 
 		'pruefeMitgliedschaften' => array('Schachbulle\ContaoFernschachBundle\Classes\Mitgliedschaftsdaten', 'run'),
+		'pruefeVerstorbene' => array('Schachbulle\ContaoFernschachBundle\Classes\Todesfall', 'run'),
 	),
 	'fernschach-turniere'     => array
 	(

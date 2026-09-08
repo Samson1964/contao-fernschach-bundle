@@ -6,7 +6,6 @@ use Contao\Config;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
-use Contao\StringUtil;
 use Contao\System;
 use Contao\Versions;
 use Schachbulle\ContaoFernschachBundle\Classes\Scope;
@@ -255,67 +254,21 @@ class Mitgliederpruefung
 
 	}
 
-	///**
-	// * Funktion setGroups
-	// *
-	// * param $value      Serialisiertes Array mit den Mitgliedergruppen aus tl_member.groups
-	// * param $status     TRUE = Mitgliedschaft eintragen, FALSE = Mitgliedschaft austragen
-	// * return array      Aktualisiertes serialisiertes Array
-	// */
-	//public function setGroups($value, $status)
-	//{
-	//	$gruppen = StringUtil::deserialize($value); // Mitgliedergruppen in Array umwandeln
-    //
-	//	if($status)
-	//	{
-	//		// BdF-Mitgliedschaft eintragen
-	//		if(Config::get('fernschach_memberFernschach')) $gruppen[] = Config::get('fernschach_memberFernschach');
-	//		// Standard-Mitgliedschaft entfernen
-	//		$key = array_search(Config::get('fernschach_memberDefault'), $gruppen);
-	//		if(isset($key)) unset($gruppen[$key]);
-	//	}
-	//	else
-	//	{
-	//		// Standard-Mitgliedschaft eintragen
-	//		if(Config::get('fernschach_memberDefault')) $gruppen[] = Config::get('fernschach_memberDefault');
-	//		// BdF-Mitgliedschaft entfernen
-	//		$key = array_search(Config::get('fernschach_memberFernschach'), $gruppen);
-	//		if(isset($key)) unset($gruppen[$key]);
-	//	}
-    //
-	//	return serialize(array_unique($gruppen));
-	//}
-
 	/**
-	 * Funktion setGroups
+	 * Stellt die Mitgliedergruppen eines Frontend-Kontos richtig.
 	 *
-	 * param $value      Serialisierter String mit den Mitgliedergruppen aus tl_member.groups
-	 * param $status     TRUE = Mitgliedschaft eintragen, FALSE = Mitgliedschaft austragen
-	 * return string     Aktualisierter serialisierter String
+	 * Die Arbeit macht Helper::mitgliedergruppen(); hier steht nur noch der
+	 * Aufruf, damit beide Wartungswege - der Cronjob und die Wartung aus dem
+	 * Backend - dieselbe Regel anwenden.
+	 *
+	 * @param mixed $value  Inhalt von tl_member.groups, serialisiert
+	 * @param bool  $status true = Konto gehoert einem BdF-Mitglied
+	 *
+	 * @return string Serialisierte Gruppenliste fuer tl_member.groups
 	 */
 	public function setGroups($value, $status)
 	{
-		$gruppen = StringUtil::deserialize($value, true); // Deserialisieren, um das Gruppen-Array wiederherzustellen
-		if(!is_array($gruppen)) $gruppen = array();
-
-		if($status)
-		{
-			// BdF-Mitgliedschaft eintragen
-			if(Config::get('fernschach_memberFernschach')) $gruppen[] = (string)Config::get('fernschach_memberFernschach');
-			// Standard-Mitgliedschaft entfernen
-			$key = array_search(Config::get('fernschach_memberDefault'), $gruppen);
-			if(isset($key)) unset($gruppen[$key]);
-		}
-		else
-		{
-			// Standard-Mitgliedschaft eintragen
-			if(Config::get('fernschach_memberDefault')) $gruppen[] = (string)Config::get('fernschach_memberDefault');
-			// BdF-Mitgliedschaft entfernen
-			$key = array_search(Config::get('fernschach_memberFernschach'), $gruppen);
-			if(isset($key)) unset($gruppen[$key]);
-		}
-
-		return serialize(array_unique($gruppen));
+		return \Schachbulle\ContaoFernschachBundle\Classes\Helper::mitgliedergruppen($value, $status);
 	}
 
 }

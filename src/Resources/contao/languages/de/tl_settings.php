@@ -22,6 +22,8 @@ $GLOBALS['TL_LANG']['tl_settings']['fernschach_emailVon'] = array('E-Mail-Absend
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_emailAdresse'] = array('E-Mail-Adresse','Globale E-Mail-Absenderadresse, z.B. info@bdf-fernschachbund.de');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorName'] = array('Name Turnierdirektor','Name des Turnierdirektors');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_turnierdirektorEmail'] = array('E-Mail-Adresse Turnierdirektor','E-Mail-Adresse des Turnierdirektors');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterName'] = array('Name Schatzmeister','Name des Schatzmeisters. Er wird angeschrieben, wenn in der Verwaltung ein Todesfall erfasst wird.');
+$GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterEmail'] = array('E-Mail-Adresse Schatzmeister','E-Mail-Adresse des Schatzmeisters. Fehlt sie, unterbleibt die Nachricht über einen Todesfall und es entsteht stattdessen ein Eintrag im Systemprotokoll.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_hinweis_kontoauszug'] = array('Hinweis Kontoauszug','Hinweistext statt der Kontoauszug-Ausgabe, wenn Benutzer kein BdF-Mitglied ist.');
 $GLOBALS['TL_LANG']['tl_settings']['fernschach_check_turnieranmeldung'] = array('Turnieranmeldung (noch nicht implementiert!)','Optionen für die Prüfung von Turnieranmeldungen');
 

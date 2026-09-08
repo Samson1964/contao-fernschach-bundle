@@ -1,5 +1,22 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.11.0 (2026-09-08)
+
+### Mitgliedergruppen
+
+* Change: Die Standard-Mitgliedergruppe bleibt einem Frontend-Konto jetzt immer erhalten, auch wenn der Spieler BdF-Mitglied ist. Bisher tauschte die Wartung die beiden Gruppen gegeneinander aus und schob die Konten so bei jedem Ein- und Austritt zwischen ihnen hin und her; alles, was an der Standardgruppe hing, ging dabei verloren
+* Fix: Fehlte eine der beiden Gruppen in der Liste eines Kontos, löschte die Wartung stattdessen die erste eingetragene Gruppe — eine völlig fremde. Ursache war `isset()` auf dem Rückgabewert von `array_search()`, der bei einem Fehlschlag `false` ist; `isset(false)` ist wahr, und `unset($gruppen[false])` trifft den Schlüssel 0
+* Change: Die Regel steht nur noch an einer Stelle (`Helper::mitgliedergruppen()`). Der Cronjob und die Wartung aus dem Backend hatten je eine eigene Kopie davon
+
+### Todesfall eines Mitglieds
+
+* Add: Der **Todestag ist Pflicht**, sobald *Verstorben* gesetzt wird. Ohne ihn endet die Mitgliedschaft nicht und der Beitrag läuft weiter
+* Add: Beim ersten Eintrag des Todestages wird der **Schatzmeister benachrichtigt** — mit Name, BdF-Nummer, Todestag und einem Link auf den Datensatz. Eine spätere Korrektur löst keine zweite Nachricht aus
+* Add: Neue Einstellungen *Name Schatzmeister* und *E-Mail-Adresse Schatzmeister*. Fehlt die Adresse, unterbleibt die Nachricht und es entsteht ein Eintrag im Systemprotokoll
+* Add: Neuer täglicher Cronjob **Todesfallprüfung**. Er trägt den Todestag als Ende der laufenden Mitgliedschaft ein (Status *Verstorben*). Eine bereits beendete Mitgliedschaft bleibt unangetastet — wer Jahre nach seinem Austritt stirbt, war zum Todeszeitpunkt kein Mitglied mehr
+* Add: Neue Schaltfläche **Verstorbene prüfen** im Backend-Modul *Spieler*. Sie zeigt Todesvermerke ohne Todestag — den Altbestand, den keine Routine heilen kann — und Verstorbene mit noch offener Mitgliedschaft. Der Bericht ändert nichts, jeder Name führt zum Datensatz
+* Change: Todesvermerke ohne Todestag stehen als **eine** Zeile je Lauf im Protokoll, nicht als eine Zeile je Spieler. Die Meldung wiederholt sich täglich, solange niemand die Daten nachträgt
+
 ## Version 2.10.1 (2026-09-08)
 
 * Change: Bei der Turnierauswahl als Radio-Knöpfe stehen Nenngeld und Meldeschluss jetzt in derselben Zeile wie der Turniertitel. Bisher rutschten sie darunter, womit jeder Eintrag zwei Zeilen hoch war

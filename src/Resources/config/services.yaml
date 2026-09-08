@@ -35,6 +35,12 @@ services:
         tags:
             - { name: contao.cronjob, interval: hourly, method: onHourly }
 
+    Schachbulle\ContaoFernschachBundle\Cron\Todesfallpruefung:
+        arguments:
+            - '@contao.framework'
+        tags:
+            - { name: contao.cronjob, interval: daily, method: onDaily }
+
     Schachbulle\ContaoFernschachBundle\Cron\Streichung:
         arguments:
             - '@contao.framework'

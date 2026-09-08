@@ -18,7 +18,7 @@ use Contao\Backend;
  * Paletten
  */
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][] = 'fernschach_resetActive';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_turnierdirektorName,fernschach_turnierdirektorEmail,fernschach_hinweis_kontoauszug,fernschach_check_turnieranmeldung';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{fernschach_legend:hide},fernschach_beitrittsformular,fernschach_resetActive,fernschach_memberDefault,fernschach_memberFernschach,fernschach_newsletter,fernschach_emailVon,fernschach_emailAdresse,fernschach_turnierdirektorName,fernschach_turnierdirektorEmail,fernschach_schatzmeisterName,fernschach_schatzmeisterEmail,fernschach_hinweis_kontoauszug,fernschach_check_turnieranmeldung';
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['fernschach_resetActive'] = 'fernschach_resetRecords';
 
 /**
@@ -231,6 +231,28 @@ $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_turnierdirektorEmail'] =
 	),
 );
 
+// Name Schatzmeister
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_schatzmeisterName'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterName'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'tl_class'            => 'w50 clr',
+	),
+);
+
+// E-Mail-Adresse Schatzmeister
+$GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_schatzmeisterEmail'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_settings']['fernschach_schatzmeisterEmail'],
+	'inputType'               => 'text',
+	'eval'                    => array
+	(
+		'rgxp'                => 'email',
+		'tl_class'            => 'w50',
+	),
+);
 // Hinweistext im Kontoauszug, wenn Benutzer kein BdF-Mitglied ist
 $GLOBALS['TL_DCA']['tl_settings']['fields']['fernschach_hinweis_kontoauszug'] = array
 (
