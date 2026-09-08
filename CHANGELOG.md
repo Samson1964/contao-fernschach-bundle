@@ -1,5 +1,11 @@
 # Fernschach-Verwaltung Changelog
 
+## Version 2.10.1 (2026-09-08)
+
+* Change: Bei der Turnierauswahl als Radio-Knöpfe stehen Nenngeld und Meldeschluss jetzt in derselben Zeile wie der Turniertitel. Bisher rutschten sie darunter, womit jeder Eintrag zwei Zeilen hoch war
+* Change: Beide Angaben haben dieselbe Schriftgröße wie der Turniertitel und tragen die Hervorhebungsfarbe des Formulars. Ein Gedankenstrich trennt sie vom Titel — so wie in der Auswahlliste, wenn das Formular die Turniere nicht als Knöpfe anbietet
+* Fix: Zwischen zwei Turnieren steht jetzt ein Abstand. Brach ein langer Titel um, standen zwei Turniere so dicht beieinander wie die beiden Zeilen eines einzigen Titels
+
 ## Version 2.10.0 (2026-08-31)
 
 * Add: Neue Wartungsroutine **Mitgliedschaften prüfen** im Backend-Modul *Spieler*. Sie sucht Mitgliedschaften, deren Datumsangaben in der Anzeigeform `TT.MM.JJJJ` statt in der Speicherform `JJJJMMTT` stehen — der Altbestand, der zu den falschen Meldungen im Wartungsprotokoll geführt hat

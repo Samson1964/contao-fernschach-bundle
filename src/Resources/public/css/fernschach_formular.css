@@ -325,6 +325,15 @@
 	cursor: pointer;
 }
 
+/*
+ * Bricht ein langer Turniertitel um, stehen zwei Turniere ohne diesen Abstand
+ * so dicht beieinander wie die beiden Zeilen eines einzigen Titels. Man sieht
+ * dann nicht mehr, wo ein Eintrag aufhoert und der naechste anfaengt.
+ */
+.fernschach-formular .fs-radio + .fs-radio {
+	margin-top: 0.4rem;
+}
+
 .fernschach-formular .fs-radio:hover {
 	background: var(--fs-farbe-hell);
 }
@@ -364,10 +373,22 @@
 	content: none;
 }
 
+/*
+ * Nenngeld und Meldeschluss stehen in derselben Zeile wie der Turniertitel und
+ * in derselben Schriftgroesse. Unterschieden werden sie durch die Farbe, der
+ * Gedankenstrich trennt sie vom Titel - genauso wie in der Auswahlliste, wenn
+ * das Formular die Turniere nicht als Knoepfe anbietet.
+ *
+ * Frueher stand hier display:block. Die Angabe rutschte damit unter den Titel,
+ * ein Eintrag war zwei Zeilen hoch und die Liste wirkte unruhig.
+ */
 .fernschach-formular .fs-radio-info {
-	display: block;
-	color: var(--fs-text-leise);
-	font-size: 0.875rem;
+	color: var(--fs-farbe);
+}
+
+.fernschach-formular .fs-radio-info::before {
+	content: "—";
+	margin-right: 0.35em;
 }
 
 /* Tabelle der Qualifikationen */
